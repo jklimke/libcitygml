@@ -83,8 +83,7 @@ void CityGMLHandler::initNodes( void )
 	INSERTNODETYPE( lowerCorner );
 	INSERTNODETYPE( upperCorner );
 	INSERTNODETYPE( Solid );
-	INSERTNODETYPE( surfaceMember );
-	INSERTNODETYPE( CompositeSurface );
+    INSERTNODETYPE( surfaceMember );
 	INSERTNODETYPE( TriangulatedSurface );
 	INSERTNODETYPE( TexturedSurface );
 	INSERTNODETYPE( Triangle );
@@ -101,6 +100,27 @@ void CityGMLHandler::initNodes( void )
 	INSERTNODETYPE( lod2Geometry );
 	INSERTNODETYPE( lod3Geometry );
 	INSERTNODETYPE( lod4Geometry );
+    INSERTNODETYPE( lod1MultiCurve );
+    INSERTNODETYPE( lod2MultiCurve );
+    INSERTNODETYPE( lod3MultiCurve );
+    INSERTNODETYPE( lod4MultiCurve );
+    INSERTNODETYPE( lod1MultiSurface );
+    INSERTNODETYPE( lod2MultiSurface );
+    INSERTNODETYPE( lod3MultiSurface );
+    INSERTNODETYPE( lod4MultiSurface );
+    INSERTNODETYPE( lod1TerrainIntersection );
+    INSERTNODETYPE( lod2TerrainIntersection );
+    INSERTNODETYPE( lod3TerrainIntersection );
+    INSERTNODETYPE( lod4TerrainIntersection );
+
+    INSERTNODETYPE( MultiPoint );
+    INSERTNODETYPE( MultiCurve );
+    INSERTNODETYPE( MultiSurface );
+    INSERTNODETYPE( MultiSolid );
+
+    INSERTNODETYPE( CompositeCurve );
+    INSERTNODETYPE( CompositeSurface );
+    INSERTNODETYPE( CompositeSolid );
 
 	// bldg
 	INSERTNODETYPE( Building );
