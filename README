@@ -1,0 +1,5 @@
+libcitygml - Copyright (c) 2010 Joachim Pouderoux, BRGM
+
+http://code.google.com/p/libcitygml
+
+Use CMake on the CMakeLists.txt to generate a Visual Studio 20xy solution or a set of Makefiles.

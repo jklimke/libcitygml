@@ -1,0 +1,22 @@
+libcitygml - Copyright (c) 2010 Joachim Pouderoux, BRGM
+
+http://code.google.com/p/libcitygml
+
+To use libcitygml with OpenSceneGraph (min 2.8), here is some instructions:
+	- Copy FindCityGML.cmake and FindXerces.cmake from libcitygml/CMakeModules
+		to $(OSG_SRC_DIR)/CMakeModules
+	- Copy libcitygml/test/osgplugin/* to $(OSG_SRC_DIR)/src/osgPlugins/citygml
+	- Add the following line to $(OSG_SRC_DIR)/src/osgPlugins/CMakeLists.txt
+		ADD_SUBDIRECTORY(citygml)
+
+Use CMake to reconfigure OpenSceneGraph installation.
+Generate project and build!
+
+You can use Open Scene Graph plugin with LibXml2 or Xerces (default),
+according to your libcitygml building configuration.
+WARNING: no control is done, it is your responsability to select the
+	corresponding parameters. (i.e. if your build libcitygml with libxml2,
+	you have to select LibXml2 when configuring the Open Scene Graph plugin.
+
+Please report any bugs to http://code.google.com/p/libcitygml/issues/list
+Thank you.
