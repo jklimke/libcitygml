@@ -325,6 +325,9 @@ namespace citygml
 		Geometry* _currentGeometry;
         std::set<Geometry*> _geometries;
 
+		Composite* _currentComposite;
+		std::set<Composite*> _composites;
+
 		Polygon* _currentPolygon;
 
 		LinearRing* _currentRing;

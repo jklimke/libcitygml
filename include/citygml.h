@@ -388,6 +388,7 @@ namespace citygml
 	};
 
 	///////////////////////////////////////////////////////////////////////////////
+	// Polygon Class
 
 	class Geometry;
 
@@ -470,6 +471,7 @@ namespace citygml
 	};
 
 	///////////////////////////////////////////////////////////////////////////////
+	// Geometry Class
 
 	enum GeometryType 
 	{
@@ -487,9 +489,10 @@ namespace citygml
 	{
 		friend class CityGMLHandler;
 		friend class CityObject;
+		friend class Composite;
 		friend std::ostream& operator<<( std::ostream&, const citygml::Geometry& );
 	public:
-		Geometry( const std::string& id, GeometryType type = GT_Unknown, unsigned int lod = 0 ) : Object( id ), _type( type ), _lod( lod ) {}
+		Geometry( const std::string& id, GeometryType type = GT_Unknown, unsigned int lod = 0 ) : Object( id ), _type( type ), _lod( lod ), _composite( 0 ) {}
 
 		LIBCITYGML_EXPORT ~Geometry();
 
@@ -516,6 +519,40 @@ namespace citygml
 		unsigned int _lod;
 
 		std::vector< Polygon* > _polygons;
+
+		Composite *_composite;
+	};
+
+	///////////////////////////////////////////////////////////////////////////////
+	// Composite Class
+
+	class Composite : public Object
+	{
+		friend class CityGMLHandler;
+		friend class CityObject;
+		friend std::ostream& operator<<( std::ostream&, const citygml::Composite& );
+	public:
+		Composite( const std::string& id, unsigned int lod = 0 ) : Object( id ), _lod( lod) {}
+
+		LIBCITYGML_EXPORT ~Composite();
+
+		// Get the composite lod
+		inline unsigned int getLOD( void ) const { return _lod; }
+
+		// Get the geometries
+		inline unsigned int size( void ) const { return _geometries.size(); }
+		inline Geometry* operator[]( unsigned int i ) { return _geometries[i]; }
+		inline const Geometry* operator[]( unsigned int i ) const { return _geometries[i]; }
+
+	protected:
+		void addGeometry( Geometry* );
+
+		void finish( AppearanceManager&, Appearance*, const ParserParams& );
+
+		bool merge( Composite* );
+
+		unsigned int _lod;
+		std::vector< Geometry* > _geometries;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -534,8 +571,10 @@ namespace citygml
 
 		virtual ~CityObject()
 		{ 
-			std::vector< Geometry* >::const_iterator it = _geometries.begin();
-			for ( ; it != _geometries.end(); ++it ) delete *it;
+			std::vector< Geometry* >::const_iterator itGeom = _geometries.begin();
+			for ( ; itGeom != _geometries.end(); ++itGeom ) delete *itGeom;
+			std::vector< Composite* >::const_iterator itComp = _composites.begin();
+			for ( ; itComp != _composites.end(); ++itComp ) delete *itComp;
 		}
 
 		// Get the object type
@@ -554,6 +593,9 @@ namespace citygml
 
 		// Access the geometries
 		inline const Geometry* getGeometry( unsigned int i ) const { return _geometries[i]; }
+
+		// Access the composites
+		inline const Composite* getComposite( unsigned int i ) const { return _composites[i]; }
 
 		// Access the children
 		inline unsigned int getChildCount( void ) const { return _children.size(); }
@@ -574,7 +616,8 @@ namespace citygml
 
 		Envelope _envelope;
 
-		std::vector< Geometry* > _geometries;		
+		std::vector< Geometry* > _geometries;
+		std::vector< Composite* > _composites;		
 		std::vector< CityObject* > _children;
 	};
 
@@ -742,6 +785,7 @@ namespace citygml
 	std::ostream& operator<<( std::ostream&, const citygml::Envelope& );
 	std::ostream& operator<<( std::ostream&, const citygml::Object& );
 	std::ostream& operator<<( std::ostream&, const citygml::Geometry& );
+	std::ostream& operator<<( std::ostream&, const citygml::Composite& );
 	std::ostream& operator<<( std::ostream&, const citygml::CityObject& );
 	std::ostream& operator<<( std::ostream&, const citygml::CityModel & );
 }

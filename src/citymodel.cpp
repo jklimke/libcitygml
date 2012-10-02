@@ -247,6 +247,7 @@ namespace citygml
     }
 		
 	///////////////////////////////////////////////////////////////////////////////
+	// Polygon handling
 
 	Polygon::~Polygon( void ) 
 	{ 
@@ -448,6 +449,7 @@ namespace citygml
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
+	// Geometry handling
 
 	Geometry::~Geometry() 
 	{ 
@@ -496,6 +498,60 @@ namespace citygml
 		g->_polygons.clear();
 
 		_id += "+" + g->_id;
+
+		return true;
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+	// Composite handling
+
+	Composite::~Composite()
+	{
+		std::vector< Geometry* >::const_iterator it = _geometries.begin();
+		for (; it != _geometries.end(); ++it ) delete *it;
+	}
+
+	void Composite::addGeometry( Geometry* g )
+	{
+		g->_composite = this;
+		_geometries.push_back( g );
+	}
+
+	void Composite::finish( AppearanceManager& appearanceManager, Appearance* defAppearance, const ParserParams& params )
+	{
+		Appearance* myappearance = appearanceManager.getAppearance( getId() );
+		std::vector< Geometry* >::const_iterator it = _geometries.begin();
+		for ( ; it != _geometries.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : defAppearance, params );
+
+		bool finish = false;
+		while ( !finish && params.optimize )
+		{
+			finish = true;
+			int len = (int)_geometries.size();
+			for ( int i = 0; finish && i < len - 1; i++ )
+			{
+				for ( int j = i+1; finish && j < len - 1; j++ )
+				{
+					if ( !_geometries[i]->merge( _geometries[j] ) ) continue;
+					delete _geometries[j];
+					_geometries.erase( _geometries.begin() + j );
+					finish = false;
+				}
+			}
+		}
+	}
+
+	bool Composite::merge( Composite* c )
+	{
+		if ( !c || c->_lod != _lod ) return false;
+
+		unsigned int gSize = c->_geometries.size();
+		for ( unsigned int i = 0; i < gSize; i++ )
+			_geometries.push_back( c->_geometries[i] );
+
+		c->_geometries.clear();
+
+		_id += "+" + c->_id;
 
 		return true;
 	}
@@ -598,22 +654,45 @@ namespace citygml
 	void CityObject::finish( AppearanceManager& appearanceManager, const ParserParams& params ) 
 	{
 		Appearance* myappearance = appearanceManager.getAppearance( getId() );
-		std::vector< Geometry* >::const_iterator it = _geometries.begin();
-		for ( ; it != _geometries.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+		
+		if ( _composites.size() > 0 )
+		{
+			std::vector< Composite* >::const_iterator it = _composites.begin();
+			for ( ; it != _composites.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+		} else {		
+			std::vector< Geometry* >::const_iterator it = _geometries.begin();
+			for ( ; it != _geometries.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+		}
 
 		bool finish = false;
 		while ( !finish && params.optimize ) 
 		{
-			finish = true;
-			int len = _geometries.size();
-			for ( int i = 0; finish && i < len - 2; i++ ) 
+			if ( _composites.size() > 0 )
 			{
-				for ( int j = i+1; finish && j < len - 1; j++ ) 
+				finish = true;
+				int len = _composites.size();
+				for ( int i = 0; finish && i < len - 2; i++ ) 
 				{
-					if ( !_geometries[i]->merge( _geometries[j] ) ) continue;
-					delete _geometries[j];					
-					_geometries.erase( _geometries.begin() + j );
-					finish = false;
+					for ( int j = i+1; finish && j < len - 1; j++ ) 
+					{
+						if ( !_composites[i]->merge( _composites[j] ) ) continue;
+						delete _composites[j];					
+						_composites.erase( _composites.begin() + j );
+						finish = false;
+					}
+				}
+			} else {
+				finish = true;
+				int len = _geometries.size();
+				for ( int i = 0; finish && i < len - 2; i++ ) 
+				{
+					for ( int j = i+1; finish && j < len - 1; j++ ) 
+					{
+						if ( !_geometries[i]->merge( _geometries[j] ) ) continue;
+						delete _geometries[j];					
+						_geometries.erase( _geometries.begin() + j );
+						finish = false;
+					}
 				}
 			}
 		}

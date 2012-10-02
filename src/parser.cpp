@@ -34,7 +34,7 @@ std::vector< std::string > CityGMLHandler::s_knownNamespace;
 
 CityGMLHandler::CityGMLHandler( const ParserParams& params ) 
 : _params( params ), _model( 0 ), _currentCityObject( 0 ), _currentObject( 0 ),
-_currentGeometry( 0 ), _currentPolygon( 0 ), _currentRing( 0 ),  _currentGeometryType( GT_Unknown ),
+_currentGeometry( 0 ), _currentComposite( 0 ), _currentPolygon( 0 ), _currentRing( 0 ),  _currentGeometryType( GT_Unknown ),
 _currentAppearance( 0 ), _currentLOD( params.minLOD ), 
 _filterNodeType( false ), _filterDepth( 0 ), _exterior( true ), _geoTransform( 0 )
 { 
@@ -431,6 +431,13 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 		pushObject( _currentGeometry );
 		break;
 
+	case NODETYPE( CompositeSurface ):
+		LOD_FILTER();
+		_currentComposite = new Composite( getGmlIdAttribute( attributes ), _currentLOD );
+		_composites.insert( _currentComposite );
+		pushObject( _currentComposite );
+		break;
+	
 	case NODETYPE( Triangle ):
 	case NODETYPE( Polygon ):
 		LOD_FILTER();
@@ -720,11 +727,25 @@ void CityGMLHandler::endElement( const std::string& name )
 	case NODETYPE( surfaceMember ):
 	case NODETYPE( TriangulatedSurface ):
 		if ( _currentCityObject && _currentGeometry )
-        	_currentCityObject->_geometries.push_back( _currentGeometry );          
+		{
+        	_currentCityObject->_geometries.push_back( _currentGeometry );
+			if ( _currentComposite )
+				_currentComposite->addGeometry( _currentGeometry );
+		}
 		else 
 			delete _currentGeometry;
 		_geometries.erase( _currentGeometry );
 		_currentGeometry = 0;
+		popObject();
+		break;
+
+	case NODETYPE( CompositeSurface ):
+		if ( _currentCityObject && _currentComposite )
+			_currentCityObject->_composites.push_back( _currentComposite );
+		else
+			delete _currentComposite;
+		_composites.erase( _currentComposite );
+		_currentComposite = 0;
 		popObject();
 		break;
 
