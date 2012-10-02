@@ -485,7 +485,9 @@ namespace citygml
 		GT_Ceiling,
 	};
 
-	class Geometry : public Object
+    class Composite;
+
+    class Geometry : public Object
 	{
 		friend class CityGMLHandler;
 		friend class CityObject;
