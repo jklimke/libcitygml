@@ -655,46 +655,38 @@ namespace citygml
 	{
 		Appearance* myappearance = appearanceManager.getAppearance( getId() );
 		
-		if ( _composites.size() > 0 )
-		{
-			std::vector< Composite* >::const_iterator it = _composites.begin();
-			for ( ; it != _composites.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
-		} else {		
-			std::vector< Geometry* >::const_iterator it = _geometries.begin();
-			for ( ; it != _geometries.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
-		}
+        std::vector< Composite* >::const_iterator itComp = _composites.begin();
+        for ( ; itComp != _composites.end(); ++itComp ) (*itComp)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+        std::vector< Geometry* >::const_iterator itGeom = _geometries.begin();
+        for ( ; itGeom != _geometries.end(); ++itGeom ) (*itGeom)->finish( appearanceManager, myappearance ? myappearance : 0, params );
 
 		bool finish = false;
 		while ( !finish && params.optimize ) 
 		{
-			if ( _composites.size() > 0 )
-			{
-				finish = true;
-				int len = _composites.size();
-				for ( int i = 0; finish && i < len - 2; i++ ) 
-				{
-					for ( int j = i+1; finish && j < len - 1; j++ ) 
-					{
-						if ( !_composites[i]->merge( _composites[j] ) ) continue;
-						delete _composites[j];					
-						_composites.erase( _composites.begin() + j );
-						finish = false;
-					}
-				}
-			} else {
-				finish = true;
-				int len = _geometries.size();
-				for ( int i = 0; finish && i < len - 2; i++ ) 
-				{
-					for ( int j = i+1; finish && j < len - 1; j++ ) 
-					{
-						if ( !_geometries[i]->merge( _geometries[j] ) ) continue;
-						delete _geometries[j];					
-						_geometries.erase( _geometries.begin() + j );
-						finish = false;
-					}
-				}
-			}
+            finish = true;
+            int lenComp = _composites.size();
+            for ( int i = 0; finish && i < lenComp - 2; i++ )
+            {
+                for ( int j = i+1; finish && j < lenComp - 1; j++ )
+                {
+                    if ( !_composites[i]->merge( _composites[j] ) ) continue;
+                    delete _composites[j];
+                    _composites.erase( _composites.begin() + j );
+                }
+            }
+
+            int lenGeom = _geometries.size();
+            for ( int i = 0; finish && i < lenGeom - 2; i++ )
+            {
+                for ( int j = i+1; finish && j < lenGeom - 1; j++ )
+                {
+                    if ( !_geometries[i]->merge( _geometries[j] ) ) continue;
+                    delete _geometries[j];
+                    _geometries.erase( _geometries.begin() + j );
+                }
+            }
+
+            finish = false;
 		}
 	}
 

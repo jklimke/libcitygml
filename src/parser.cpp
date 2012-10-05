@@ -428,7 +428,7 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 		_orientation = '+';
 		_currentGeometry = new Geometry( getGmlIdAttribute( attributes ), _currentGeometryType, _currentLOD );
         _geometries.insert( _currentGeometry );
-		pushObject( _currentGeometry );
+        pushObject( _currentGeometry );
 		break;
 
 	case NODETYPE( CompositeSurface ):
@@ -726,11 +726,13 @@ void CityGMLHandler::endElement( const std::string& name )
 
 	case NODETYPE( surfaceMember ):
 	case NODETYPE( TriangulatedSurface ):
-		if ( _currentCityObject && _currentGeometry )
+        if ( _currentCityObject && _currentGeometry )
 		{
-        	_currentCityObject->_geometries.push_back( _currentGeometry );
-			if ( _currentComposite )
-				_currentComposite->addGeometry( _currentGeometry );
+            if ( _currentComposite ) {
+                _currentComposite->addGeometry( _currentGeometry );
+            } else {
+                _currentCityObject->_geometries.push_back( _currentGeometry );
+            }
 		}
 		else 
 			delete _currentGeometry;

@@ -573,10 +573,10 @@ namespace citygml
 
 		virtual ~CityObject()
 		{ 
-			std::vector< Geometry* >::const_iterator itGeom = _geometries.begin();
+            std::vector< Composite* >::const_iterator itComp = _composites.begin();
+            for ( ; itComp != _composites.end(); ++itComp ) delete *itComp;
+            std::vector< Geometry* >::const_iterator itGeom = _geometries.begin();
 			for ( ; itGeom != _geometries.end(); ++itGeom ) delete *itGeom;
-			std::vector< Composite* >::const_iterator itComp = _composites.begin();
-			for ( ; itComp != _composites.end(); ++itComp ) delete *itComp;
 		}
 
 		// Get the object type
