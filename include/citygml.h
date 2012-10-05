@@ -508,6 +508,8 @@ namespace citygml
 
 		inline GeometryType getType( void ) const { return _type; }
 
+        inline Composite* getComposite( void ) const { return _composite; }
+
 	protected:
 		void addPolygon( Polygon* );
 
@@ -522,7 +524,7 @@ namespace citygml
 
 		std::vector< Polygon* > _polygons;
 
-		Composite *_composite;
+        Composite* _composite;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -536,25 +538,10 @@ namespace citygml
 	public:
 		Composite( const std::string& id, unsigned int lod = 0 ) : Object( id ), _lod( lod) {}
 
-		LIBCITYGML_EXPORT ~Composite();
-
-		// Get the composite lod
-		inline unsigned int getLOD( void ) const { return _lod; }
-
-		// Get the geometries
-		inline unsigned int size( void ) const { return _geometries.size(); }
-		inline Geometry* operator[]( unsigned int i ) { return _geometries[i]; }
-		inline const Geometry* operator[]( unsigned int i ) const { return _geometries[i]; }
+        inline unsigned int getLOD( void ) const { return _lod; }
 
 	protected:
-		void addGeometry( Geometry* );
-
-		void finish( AppearanceManager&, Appearance*, const ParserParams& );
-
-		bool merge( Composite* );
-
-		unsigned int _lod;
-		std::vector< Geometry* > _geometries;
+        unsigned int _lod;
 	};
 
 	///////////////////////////////////////////////////////////////////////////////

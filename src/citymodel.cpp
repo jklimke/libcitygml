@@ -315,13 +315,13 @@ namespace citygml
 
 	void Polygon::mergeRings( AppearanceManager &appearanceManager )
 	{
-		_vertices.reserve( _vertices.size() + _exteriorRing->size() );
-		TexCoords texCoords;
-		bool t = appearanceManager.getTexCoords( _exteriorRing->getId(), texCoords );
-		_exteriorRing->finish( t ? &texCoords : &_texCoords ); 
-		if ( t ) std::copy( texCoords.begin(), texCoords.end(), std::back_inserter( _texCoords ) );
+        _vertices.reserve( _vertices.size() + _exteriorRing->size() );
+        TexCoords texCoords;
+        bool t = appearanceManager.getTexCoords( _exteriorRing->getId(), texCoords );
+        _exteriorRing->finish( t ? &texCoords : &_texCoords );
+        if ( t ) std::copy( texCoords.begin(), texCoords.end(), std::back_inserter( _texCoords ) );
 
-		std::copy( _exteriorRing->getVertices().begin(), _exteriorRing->getVertices().end(), std::back_inserter( _vertices ) );
+        std::copy( _exteriorRing->getVertices().begin(), _exteriorRing->getVertices().end(), std::back_inserter( _vertices ) );
 
 		for ( unsigned int i = 0; i < _interiorRings.size(); i++ )
 		{
@@ -503,60 +503,6 @@ namespace citygml
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
-	// Composite handling
-
-	Composite::~Composite()
-	{
-		std::vector< Geometry* >::const_iterator it = _geometries.begin();
-		for (; it != _geometries.end(); ++it ) delete *it;
-	}
-
-	void Composite::addGeometry( Geometry* g )
-	{
-		g->_composite = this;
-		_geometries.push_back( g );
-	}
-
-	void Composite::finish( AppearanceManager& appearanceManager, Appearance* defAppearance, const ParserParams& params )
-	{
-		Appearance* myappearance = appearanceManager.getAppearance( getId() );
-		std::vector< Geometry* >::const_iterator it = _geometries.begin();
-		for ( ; it != _geometries.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : defAppearance, params );
-
-		bool finish = false;
-		while ( !finish && params.optimize )
-		{
-			finish = true;
-			int len = (int)_geometries.size();
-			for ( int i = 0; finish && i < len - 1; i++ )
-			{
-				for ( int j = i+1; finish && j < len - 1; j++ )
-				{
-					if ( !_geometries[i]->merge( _geometries[j] ) ) continue;
-					delete _geometries[j];
-					_geometries.erase( _geometries.begin() + j );
-					finish = false;
-				}
-			}
-		}
-	}
-
-	bool Composite::merge( Composite* c )
-	{
-		if ( !c || c->_lod != _lod ) return false;
-
-		unsigned int gSize = c->_geometries.size();
-		for ( unsigned int i = 0; i < gSize; i++ )
-			_geometries.push_back( c->_geometries[i] );
-
-		c->_geometries.clear();
-
-		_id += "+" + c->_id;
-
-		return true;
-	}
-
-	///////////////////////////////////////////////////////////////////////////////
 
 	std::string getCityObjectsClassName( CityObjectsTypeMask mask )
 	{
@@ -654,40 +600,34 @@ namespace citygml
 	void CityObject::finish( AppearanceManager& appearanceManager, const ParserParams& params ) 
 	{
 		Appearance* myappearance = appearanceManager.getAppearance( getId() );
-		
-        std::vector< Composite* >::const_iterator itComp = _composites.begin();
-        for ( ; itComp != _composites.end(); ++itComp ) (*itComp)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+
         std::vector< Geometry* >::const_iterator itGeom = _geometries.begin();
-        for ( ; itGeom != _geometries.end(); ++itGeom ) (*itGeom)->finish( appearanceManager, myappearance ? myappearance : 0, params );
-
-		bool finish = false;
-		while ( !finish && params.optimize ) 
-		{
-            finish = true;
-            int lenComp = _composites.size();
-            for ( int i = 0; finish && i < lenComp - 2; i++ )
-            {
-                for ( int j = i+1; finish && j < lenComp - 1; j++ )
-                {
-                    if ( !_composites[i]->merge( _composites[j] ) ) continue;
-                    delete _composites[j];
-                    _composites.erase( _composites.begin() + j );
-                }
+        for ( ; itGeom != _geometries.end(); ++itGeom ) {
+            if ( !( (*itGeom)->getComposite() ) ) {
+                (*itGeom)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+            } else {
+                Composite* geomComposite = (*itGeom)->getComposite();
+                myappearance = appearanceManager.getAppearance( geomComposite->getId() );
+                (*itGeom)->finish( appearanceManager, myappearance ? myappearance : 0, params );
             }
+        }
 
-            int lenGeom = _geometries.size();
-            for ( int i = 0; finish && i < lenGeom - 2; i++ )
+        bool finish = false;
+        while ( !finish && params.optimize )
+        {
+            finish = true;
+            int len = _geometries.size();
+            for ( int i = 0; finish && i < len - 2; i++ )
             {
-                for ( int j = i+1; finish && j < lenGeom - 1; j++ )
+                for ( int j = i+1; finish && j < len - 1; j++ )
                 {
                     if ( !_geometries[i]->merge( _geometries[j] ) ) continue;
                     delete _geometries[j];
                     _geometries.erase( _geometries.begin() + j );
+                    finish = false;
                 }
             }
-
-            finish = false;
-		}
+        }
 	}
 
 	///////////////////////////////////////////////////////////////////////////////

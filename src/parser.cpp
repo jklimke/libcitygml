@@ -728,11 +728,10 @@ void CityGMLHandler::endElement( const std::string& name )
 	case NODETYPE( TriangulatedSurface ):
         if ( _currentCityObject && _currentGeometry )
 		{
-            if ( _currentComposite ) {
-                _currentComposite->addGeometry( _currentGeometry );
-            } else {
-                _currentCityObject->_geometries.push_back( _currentGeometry );
-            }
+            if ( _currentComposite )
+                _currentGeometry->_composite = _currentComposite;
+
+            _currentCityObject->_geometries.push_back( _currentGeometry );
 		}
 		else 
 			delete _currentGeometry;
