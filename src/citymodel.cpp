@@ -123,7 +123,7 @@ namespace citygml
 
 		for ( unsigned int i = 0; i < len; i++ )
 		{
-			if ( ( _vertices[i] - _vertices[ ( i + 1 ) % len ] ).sqrLength() <= FLT_EPSILON )
+            if ( ( _vertices[i] - _vertices[ ( i + 1 ) % len ] ).sqrLength() <= DBL_EPSILON )
 			{
 				_vertices.erase( _vertices.begin() + i );
 				if ( texCoords && texCoords->size() > i) texCoords->erase( texCoords->begin() + i );
