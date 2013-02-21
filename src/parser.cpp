@@ -46,6 +46,9 @@ CityGMLHandler::~CityGMLHandler( void )
 {
     for ( std::set<Geometry*>::iterator it = _geometries.begin(); it != _geometries.end(); it++ )
         delete *it;
+    if(_geoTransform){
+      delete  (GeoTransform*)_geoTransform;
+    }
 }
 
 void CityGMLHandler::initNodes( void ) 
