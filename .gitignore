@@ -11,3 +11,8 @@
 *.lai
 *.la
 *.a
+
+build
+build_debug
+CMakeLists.txt.user
+install
