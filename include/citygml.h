@@ -544,6 +544,60 @@ namespace citygml
         unsigned int _lod;
 	};
 
+    ///////////////////////////////////////////////////////////////////////////////
+    // TransformationMatrix Class
+
+    class TransformationMatrix : public Object
+    {
+        friend class CityGMLHandler;
+        friend class CityObject;
+        friend std::ostream& operator<<( std::ostream&, const citygml::TransformationMatrix& );
+    public:
+        TransformationMatrix()
+            : Object("")
+        {
+            for (size_t i = 0; i < 16; ++i)
+                _matrix[i] = 0.0;
+        }
+
+        TransformationMatrix(double* matrix)
+            : Object("")
+        {
+            for (size_t i = 0; i < 16; ++i)
+                _matrix[i] = matrix[i];
+        }
+
+        inline double* getMatrix() { return _matrix; }
+
+    protected:
+        double _matrix[16];
+    };
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // ImplicitGeometry Class
+
+    class ImplicitGeometry : public Object
+    {
+        friend class CityGMLHandler;
+        friend class CityObject;
+        friend std::ostream& operator<<( std::ostream&, const citygml::ImplicitGeometry& );
+    public:
+        ImplicitGeometry(const std::string& id) : Object(id) {}
+
+        inline void setMatrix(const TransformationMatrix& matrix) { _matrix = matrix; }
+        inline TransformationMatrix getMatrix( void ) const { return _matrix; }
+
+        // Get the number of geometries contains in the object
+        inline unsigned int size( void ) const { return _geometries.size(); }
+
+        // Access the geometries
+        inline Geometry* getGeometry( unsigned int i ) const { return _geometries[i]; }
+
+    protected:
+        TransformationMatrix _matrix;
+        std::vector< Geometry* > _geometries;
+    };
+
 	///////////////////////////////////////////////////////////////////////////////
 
 	LIBCITYGML_EXPORT std::string getCityObjectsClassName( CityObjectsTypeMask mask );
@@ -561,9 +615,16 @@ namespace citygml
 		virtual ~CityObject()
 		{ 
             std::vector< Composite* >::const_iterator itComp = _composites.begin();
-            for ( ; itComp != _composites.end(); ++itComp ) delete *itComp;
+            for ( ; itComp != _composites.end(); ++itComp )
+                delete *itComp;
+
             std::vector< Geometry* >::const_iterator itGeom = _geometries.begin();
-			for ( ; itGeom != _geometries.end(); ++itGeom ) delete *itGeom;
+            for ( ; itGeom != _geometries.end(); ++itGeom )
+                delete *itGeom;
+
+            std::vector< ImplicitGeometry* >::const_iterator itImplGeom = _implicitGeometries.begin();
+            for (; itImplGeom != _implicitGeometries.end(); ++itImplGeom)
+                delete *itImplGeom;
 		}
 
 		// Get the object type
@@ -586,6 +647,12 @@ namespace citygml
 		// Access the composites
 		inline const Composite* getComposite( unsigned int i ) const { return _composites[i]; }
 
+        // Get the number of implicit geometries contains in the object
+        inline unsigned int getImplicitGeometryCount( void ) const { return _implicitGeometries.size(); }
+
+        // Access the implicit geometries
+        inline const ImplicitGeometry* getImplicitGeometry( unsigned int i ) const { return _implicitGeometries[i]; }
+
 		// Access the children
 		inline unsigned int getChildCount( void ) const { return _children.size(); }
 
@@ -606,7 +673,8 @@ namespace citygml
 		Envelope _envelope;
 
 		std::vector< Geometry* > _geometries;
-		std::vector< Composite* > _composites;		
+        std::vector< Composite* > _composites;
+        std::vector< ImplicitGeometry* > _implicitGeometries;
 		std::vector< CityObject* > _children;
 	};
 
