@@ -47,6 +47,9 @@ CityGMLHandler::~CityGMLHandler( void )
 {
     for ( std::set<Geometry*>::iterator it = _geometries.begin(); it != _geometries.end(); it++ )
         delete *it;
+    if(_geoTransform){
+      delete  (GeoTransform*)_geoTransform;
+    }
 }
 
 void CityGMLHandler::initNodes( void ) 
@@ -1017,9 +1020,10 @@ void CityGMLHandler::createGeoTransform( std::string srsName )
 	if ( _model->_srsName == "" ) _model->_srsName = srsName;
 
 	if ( srsName != _model->_srsName ) { std::cerr << "Warning: More than one SRS is defined. The SRS " << srsName << " is declared while the scene SRS has been set to " << _model->_srsName << std::endl; /*return;*/ }
-
-	if ( _params.destSRS == "" ) return;
 	
-	delete (GeoTransform*)_geoTransform;
+	
+	
+	if ( _params.destSRS == "" ) return;
+	if(_geoTransform) delete (GeoTransform*)_geoTransform;
 	_geoTransform = new GeoTransform( proj4Name, _params.destSRS );
 }
