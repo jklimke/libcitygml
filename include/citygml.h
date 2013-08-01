@@ -290,7 +290,7 @@ namespace citygml
 
 		~AppearanceManager( void );
 
-		typedef enum ForSide 
+        enum ForSide
 		{
 			FS_ANY = 0,	// appearance for any side
 			FS_FRONT,	// appearance for front side
@@ -494,7 +494,7 @@ namespace citygml
 		friend class Composite;
 		friend std::ostream& operator<<( std::ostream&, const citygml::Geometry& );
 	public:
-		Geometry( const std::string& id, GeometryType type = GT_Unknown, unsigned int lod = 0 ) : Object( id ), _type( type ), _lod( lod ), _composite( 0 ) {}
+        Geometry( const std::string& id, GeometryType type = GT_Unknown, unsigned int lod = 0 ) : Object( id ), _finished(false), _type( type ), _lod( lod ), _composite( 0 ) {}
 
 		LIBCITYGML_EXPORT ~Geometry();
 
@@ -518,6 +518,8 @@ namespace citygml
 		bool merge( Geometry* );
 
 	protected:
+        bool _finished;
+
 		GeometryType _type;
 
 		unsigned int _lod;
@@ -556,8 +558,12 @@ namespace citygml
         TransformationMatrix()
             : Object("")
         {
-            for (size_t i = 0; i < 16; ++i)
-                _matrix[i] = 0.0;
+            double matrix[] = {1.0, 0.0, 0.0, 0.0,
+                               0.0, 1.0, 0.0, 0.0,
+                               0.0, 0.0, 1.0, 0.0,
+                               0.0, 0.0, 0.0, 1.0};
+            memcpy(_matrix, matrix, sizeof(double)*16);
+            memcpy(_transposedMatrix, matrix, sizeof(double)*16);
         }
 
         TransformationMatrix(double* matrix)
@@ -565,12 +571,19 @@ namespace citygml
         {
             for (size_t i = 0; i < 16; ++i)
                 _matrix[i] = matrix[i];
+
+            for (size_t i = 0; i < 4; ++i)
+                for (size_t j = 0; j < 4; ++j)
+                    _transposedMatrix[i+j*4] = _matrix[j+i*4];
         }
 
         inline double* getMatrix() { return _matrix; }
+        inline double* getTransposedMatrix() { return _transposedMatrix; }
+
 
     protected:
         double _matrix[16];
+        double _transposedMatrix[16];
     };
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -587,15 +600,23 @@ namespace citygml
         inline void setMatrix(const TransformationMatrix& matrix) { _matrix = matrix; }
         inline TransformationMatrix getMatrix( void ) const { return _matrix; }
 
+        inline void setReferencePoint(const TVec3d& referencePoint) { _referencePoint = referencePoint; }
+        inline TVec3d getReferencePoint() const { return _referencePoint; }
+
         // Get the number of geometries contains in the object
         inline unsigned int size( void ) const { return _geometries.size(); }
 
         // Access the geometries
         inline Geometry* getGeometry( unsigned int i ) const { return _geometries[i]; }
 
+        // Access the srs of the implicit geometry
+        inline std::string getSRSName() const { return _srsName; }
+
     protected:
-        TransformationMatrix _matrix;
+        TransformationMatrix     _matrix;
+        TVec3d                   _referencePoint;
         std::vector< Geometry* > _geometries;
+        std::string              _srsName;
     };
 
 	///////////////////////////////////////////////////////////////////////////////

@@ -31,9 +31,11 @@
 #include <fstream>
 #include <set>
 
+class GeoTransform;
+
 namespace citygml
 {	
-	#define NODETYPE(_t_) CG_ ## _t_
+    #define NODETYPE(_t_) CG_ ## _t_
 
 	// CityGML node types
 	enum CityGMLNodeType
@@ -110,6 +112,9 @@ namespace citygml
         NODETYPE( CompositeCurve ),
         NODETYPE( CompositeSurface ),
         NODETYPE( CompositeSolid ),
+
+        NODETYPE( referencePoint ),
+        NODETYPE( Point ),
 
 		// bldg
 		NODETYPE( Building ),
@@ -364,9 +369,11 @@ namespace citygml
 
 		bool _appearanceAssigned;
 
+        bool _referencePoint;
+
 		GeometryType _currentGeometryType;
 
-		void* _geoTransform;
+        GeoTransform* _geoTransform;
 	};
 }
 
