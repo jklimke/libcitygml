@@ -31,9 +31,11 @@
 #include <fstream>
 #include <set>
 
+class GeoTransform;
+
 namespace citygml
 {	
-	#define NODETYPE(_t_) CG_ ## _t_
+    #define NODETYPE(_t_) CG_ ## _t_
 
 	// CityGML node types
 	enum CityGMLNodeType
@@ -45,6 +47,9 @@ namespace citygml
 		NODETYPE( cityObjectMember ),
 		NODETYPE( creationDate ),	
 		NODETYPE( terminationDate ),
+        NODETYPE( ImplicitGeometry ),
+        NODETYPE( relativeGMLGeometry ),
+        NODETYPE( transformationMatrix ),
 
 		// grp
 		NODETYPE( CityObjectGroup ),
@@ -108,6 +113,9 @@ namespace citygml
         NODETYPE( CompositeSurface ),
         NODETYPE( CompositeSolid ),
 
+        NODETYPE( referencePoint ),
+        NODETYPE( Point ),
+
 		// bldg
 		NODETYPE( Building ),
 		NODETYPE( BuildingPart ),
@@ -157,6 +165,11 @@ namespace citygml
 		// veg
 		NODETYPE( PlantCover ),
 		NODETYPE( SolitaryVegetationObject ),
+        NODETYPE( species ),
+        NODETYPE( lod1ImplicitRepresentation ),
+        NODETYPE( lod2ImplicitRepresentation ),
+        NODETYPE( lod3ImplicitRepresentation ),
+        NODETYPE( lod4ImplicitRepresentation ),
 
 		// trans
 		NODETYPE( TrafficArea ),
@@ -328,6 +341,9 @@ namespace citygml
 		Composite* _currentComposite;
 		std::set<Composite*> _composites;
 
+        ImplicitGeometry*           _currentImplicitGeometry;
+        std::map<std::string, ImplicitGeometry*> _implicitGeometries;
+
 		Polygon* _currentPolygon;
 
 		LinearRing* _currentRing;
@@ -353,9 +369,11 @@ namespace citygml
 
 		bool _appearanceAssigned;
 
+        bool _referencePoint;
+
 		GeometryType _currentGeometryType;
 
-		void* _geoTransform;
+        GeoTransform* _geoTransform;
 	};
 }
 

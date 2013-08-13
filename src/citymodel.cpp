@@ -465,7 +465,11 @@ namespace citygml
 
 	void Geometry::finish( AppearanceManager& appearanceManager, Appearance* defAppearance,  const ParserParams& params )
 	{
-		Appearance* myappearance = appearanceManager.getAppearance( getId() );
+        // only need to finish geometry once
+        if (_finished)
+            return;
+
+        Appearance* myappearance = appearanceManager.getAppearance( getId() );
 		std::vector< Polygon* >::const_iterator it = _polygons.begin();
 		for ( ; it != _polygons.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : defAppearance, params.tesselate );
 
@@ -485,6 +489,7 @@ namespace citygml
 				}
 			}
 		}
+        _finished = true;
 	}
 
 	bool Geometry::merge( Geometry* g ) 
@@ -609,6 +614,19 @@ namespace citygml
                 Composite* geomComposite = (*itGeom)->getComposite();
                 myappearance = appearanceManager.getAppearance( geomComposite->getId() );
                 (*itGeom)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+            }
+        }
+
+        std::vector< ImplicitGeometry* >::const_iterator itImplGeom = _implicitGeometries.begin();
+        for( ; itImplGeom != _implicitGeometries.end(); ++itImplGeom) {
+            for(std::vector< Geometry* >::const_iterator it = (*itImplGeom)->_geometries.begin(); it != (*itImplGeom)->_geometries.end(); ++it) {
+                if ( !( (*it)->getComposite() ) ) {
+                    (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+                } else {
+                    Composite* geomComposite = (*it)->getComposite();
+                    myappearance = appearanceManager.getAppearance( geomComposite->getId() );
+                    (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+                }
             }
         }
 
