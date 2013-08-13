@@ -34,9 +34,11 @@ std::vector< std::string > CityGMLHandler::s_knownNamespace;
 
 CityGMLHandler::CityGMLHandler( const ParserParams& params ) 
 : _params( params ), _model( 0 ), _currentCityObject( 0 ), _currentObject( 0 ),
-_currentGeometry( 0 ), _currentComposite( 0 ), _currentPolygon( 0 ), _currentRing( 0 ),  _currentGeometryType( GT_Unknown ),
+  _currentGeometry( 0 ), _currentComposite( 0 ), _currentImplicitGeometry(0),
+  _currentPolygon( 0 ), _currentRing( 0 ),  _currentGeometryType( GT_Unknown ),
 _currentAppearance( 0 ), _currentLOD( params.minLOD ), 
-_filterNodeType( false ), _filterDepth( 0 ), _exterior( true ), _geoTransform( 0 )
+_filterNodeType( false ), _filterDepth( 0 ), _exterior( true ), _geoTransform( 0 ),
+  _referencePoint( false )
 { 
 	_objectsMask = getCityObjectsTypeMaskFromString( _params.objectsMask );
 	initNodes(); 
@@ -47,7 +49,7 @@ CityGMLHandler::~CityGMLHandler( void )
     for ( std::set<Geometry*>::iterator it = _geometries.begin(); it != _geometries.end(); it++ )
         delete *it;
     if(_geoTransform){
-      delete  (GeoTransform*)_geoTransform;
+      delete  _geoTransform;
     }
 }
 
@@ -62,6 +64,9 @@ void CityGMLHandler::initNodes( void )
 	INSERTNODETYPE( cityObjectMember );
 	INSERTNODETYPE( creationDate );
 	INSERTNODETYPE( terminationDate );
+    INSERTNODETYPE( ImplicitGeometry );
+    INSERTNODETYPE( relativeGMLGeometry );
+    INSERTNODETYPE( transformationMatrix );
 
 	// grp
 	INSERTNODETYPE( CityObjectGroup );
@@ -125,6 +130,9 @@ void CityGMLHandler::initNodes( void )
     INSERTNODETYPE( CompositeSurface );
     INSERTNODETYPE( CompositeSolid );
 
+    INSERTNODETYPE( referencePoint );
+    INSERTNODETYPE( Point );
+
 	// bldg
 	INSERTNODETYPE( Building );
 	INSERTNODETYPE( BuildingPart );
@@ -174,6 +182,12 @@ void CityGMLHandler::initNodes( void )
 	// veg
 	INSERTNODETYPE( PlantCover );
 	INSERTNODETYPE( SolitaryVegetationObject );
+    INSERTNODETYPE( species );
+
+    INSERTNODETYPE( lod1ImplicitRepresentation );
+    INSERTNODETYPE( lod2ImplicitRepresentation );
+    INSERTNODETYPE( lod3ImplicitRepresentation );
+    INSERTNODETYPE( lod4ImplicitRepresentation );
 
 	// trans
 	INSERTNODETYPE( TrafficArea );
@@ -266,6 +280,17 @@ template<class T> inline void parseValue( std::stringstream &s, T &v )
 	if ( !s.eof() ) s >> v;
 }
 
+inline void parseMatrixValue( std::stringstream &s , double* m)
+{
+    for (size_t i = 0; i < 16; ++i)
+    {
+        if(s.eof())
+            break;
+
+        s >> m[i];
+    }
+}
+
 template<> inline void parseValue( std::stringstream &s, bool &v ) 
 {
 	// parsing a bool is special because "true" and "1" are true while "false" and "0" are false
@@ -352,7 +377,8 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 	CityGMLNodeType nodeType = getNodeTypeFromName( localname );
 
 	// get the LOD level if node name starts with 'lod'
-	if ( localname.length() > 3 && localname.find( "lod" ) == 0 ) _currentLOD = localname[3] - '0';
+    if ( localname.length() > 3 && localname.find( "lod" ) == 0 )
+        _currentLOD = localname[3] - '0';
 
 #define LOD_FILTER() if ( _currentLOD < (int)_params.minLOD || _currentLOD > (int)_params.maxLOD ) break;
 
@@ -416,14 +442,28 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 		MANAGE_SURFACETYPE( InteriorWall );
 		MANAGE_SURFACETYPE( Ceiling );
 #undef MANAGE_SURFACETYPE
-
 		// Geometry management
 
+    case NODETYPE( ImplicitGeometry ):
+        _currentImplicitGeometry = new ImplicitGeometry("");
+        pushObject( _currentImplicitGeometry );
+
+        break;
+
+    case NODETYPE( referencePoint ):
+        _referencePoint = true;
+        break;
 	case NODETYPE( TexturedSurface ):
 	case NODETYPE( OrientableSurface ):
 		_orientation = getAttribute( attributes, "orientation", "+" )[0];
 		break;
 
+    case NODETYPE( MultiSurface ):
+        if (_currentImplicitGeometry)
+        {
+            _currentImplicitGeometry->_id = getGmlIdAttribute( attributes);
+        }
+        break;
 	case NODETYPE( surfaceMember ):
 	case NODETYPE( TriangulatedSurface ):
 		LOD_FILTER();
@@ -440,7 +480,30 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 		_composites.insert( _currentComposite );
 		pushObject( _currentComposite );
 		break;
-	
+    case NODETYPE( relativeGMLGeometry ):
+        {
+            std::string id = getAttribute(attributes, "xlink:href", "");
+            if (_currentImplicitGeometry && id != "")
+            {
+                id = id.substr(1);  // cut of # at the beginning
+                std::map<std::string, ImplicitGeometry*>::iterator it = _implicitGeometries.find(id);
+
+                if (it != _implicitGeometries.end())
+                {
+                    // copy geometry from other implicite geometry
+
+                    ImplicitGeometry* implGeometry = it->second;
+                    for (size_t i = 0; i < implGeometry->size(); ++i)
+                    {
+                        _currentImplicitGeometry->_geometries.push_back(implGeometry->getGeometry(i));
+                    }
+
+                    // copy reference system
+                    _currentImplicitGeometry->_srsName = implGeometry->_srsName;
+                }
+            }
+        }
+        break;
 	case NODETYPE( Triangle ):
 	case NODETYPE( Polygon ):
 		LOD_FILTER();
@@ -458,7 +521,10 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 		if ( _srsDimension != 3 ) 
 			std::cerr << "Warning ! srsDimension of gml:posList not set to 3!" << std::endl;
 
-		createGeoTransform( getAttribute( attributes, "srsName", "" ) );		
+        createGeoTransform( getAttribute( attributes, "srsName", "" ) );
+        if (_currentImplicitGeometry)
+            _currentImplicitGeometry->_srsName = _geoTransform->getSourceURN();
+
 		break;
 
 	case NODETYPE( interior ): _exterior = false; break;
@@ -559,14 +625,27 @@ void CityGMLHandler::endElement( const std::string& name )
 
 	switch ( nodeType ) 
 	{
-	case NODETYPE( CityModel ):
+
+    // core:transformationMatrix
+    case NODETYPE( transformationMatrix ):
+        if (_currentImplicitGeometry)
+        {
+            double elements[16];
+            parseMatrixValue( buffer, elements );
+            _currentImplicitGeometry->setMatrix(TransformationMatrix(elements));
+        }
+        break;
+    case NODETYPE( referencePoint ):
+        _referencePoint = false;
+        break;
+    case NODETYPE( CityModel ):
 		MODEL_FILTER();
 		_model->finish( _params );
 		if ( _geoTransform )
 		{
 			std::cout << "The coordinates were transformed from " << _model->_srsName << " to "
-								<< ((GeoTransform*)_geoTransform)->getDestURN() << std::endl;
-			_model->_srsName = ((GeoTransform*)_geoTransform)->getDestURN();
+                                << _geoTransform->getDestURN() << std::endl;
+            _model->_srsName = _geoTransform->getDestURN();
 		}
 		if ( _model->_srsName == "" )
 		{
@@ -677,7 +756,7 @@ void CityGMLHandler::endElement( const std::string& name )
 	case NODETYPE( upperCorner ):
 		{
 			TVec3d p;
-			parseValue( buffer, p, (GeoTransform*)_geoTransform, _translate );
+            parseValue( buffer, p, _geoTransform, _translate );
 			if ( nodeType == NODETYPE( lowerCorner ) )
 				_points.insert( _points.begin(), p );
 			else
@@ -727,6 +806,16 @@ void CityGMLHandler::endElement( const std::string& name )
 
 		// Geometry management 
 
+    case NODETYPE( ImplicitGeometry ):
+        if ( _currentCityObject && _currentImplicitGeometry )
+        {
+            _currentCityObject->_implicitGeometries.push_back( _currentImplicitGeometry );
+            _implicitGeometries[_currentImplicitGeometry->getId()] = _currentImplicitGeometry;
+        } else
+            delete _currentImplicitGeometry;
+        _currentImplicitGeometry = 0;
+        popObject();
+        break;
 	case NODETYPE( surfaceMember ):
 	case NODETYPE( TriangulatedSurface ):
         if ( _currentCityObject && _currentGeometry )
@@ -734,7 +823,10 @@ void CityGMLHandler::endElement( const std::string& name )
             if ( _currentComposite )
                 _currentGeometry->_composite = _currentComposite;
 
-            _currentCityObject->_geometries.push_back( _currentGeometry );
+            if ( _currentImplicitGeometry )
+                _currentImplicitGeometry->_geometries.push_back( _currentGeometry );
+            else
+                _currentCityObject->_geometries.push_back( _currentGeometry );
 		}
 		else 
 			delete _currentGeometry;
@@ -757,7 +849,7 @@ void CityGMLHandler::endElement( const std::string& name )
 	case NODETYPE( Polygon ):
 		if ( _currentGeometry && _currentPolygon )
 		{
-			//_currentPolygon->finish( ( nodeType == NODETYPE( Triangle ) ) ? false : _params.tesselate );							
+            //_currentPolygon->finish( ( nodeType == NODETYPE( Triangle ) ) ? false : _params.tesselate );
 			_currentGeometry->addPolygon( _currentPolygon );
 		}
 		_currentPolygon = 0;
@@ -765,11 +857,13 @@ void CityGMLHandler::endElement( const std::string& name )
 		break;
 
 	case NODETYPE( pos ):
-		if ( _currentCityObject )
+        if ( _currentCityObject )
 		{
 			TVec3d p;
-			parseValue( buffer, p, (GeoTransform*)_geoTransform, _translate );
-			if ( !_currentPolygon )
+            parseValue( buffer, p, _geoTransform, _translate );
+            if (_referencePoint && _currentImplicitGeometry)
+                _currentImplicitGeometry->setReferencePoint(p);
+            else if ( !_currentPolygon )
 				_points.push_back( p );
 			else if ( _currentRing )
 				_currentRing->addVertex( p );
@@ -778,10 +872,12 @@ void CityGMLHandler::endElement( const std::string& name )
 
 	case NODETYPE( coordinates ):
 	case NODETYPE( posList ):
-		if ( !_currentPolygon ) { parseVecList( buffer, _points, (GeoTransform*)_geoTransform, _translate ); break; }
+        if ( !_currentPolygon ) { parseVecList( buffer, _points, _geoTransform, _translate ); break; }
 		_currentPolygon->_negNormal = ( _orientation != '+' );
-		if ( _currentRing ) 
-			parseVecList( buffer, _currentRing->getVertices(), (GeoTransform*)_geoTransform, _translate );
+        if (_currentImplicitGeometry && _currentRing)
+            parseVecList( buffer, _currentRing->getVertices());
+        else if ( _currentRing )
+            parseVecList( buffer, _currentRing->getVertices(), _geoTransform, _translate );
 		break;
 
 	case NODETYPE( interior ):
@@ -950,6 +1046,6 @@ void CityGMLHandler::createGeoTransform( std::string srsName )
 	
 	
 	if ( _params.destSRS == "" ) return;
-	if(_geoTransform) delete (GeoTransform*)_geoTransform;
+    if(_geoTransform) delete _geoTransform;
 	_geoTransform = new GeoTransform( proj4Name, _params.destSRS );
 }
