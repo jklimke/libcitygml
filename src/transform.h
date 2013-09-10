@@ -32,6 +32,7 @@ public:
 		_destSRS = getProjection( _destURN );
 		_trans = ( _sourceSRS && _destSRS ) ? OGRCreateCoordinateTransformation( (OGRSpatialReference*)_sourceSRS, (OGRSpatialReference*)_destSRS ) : 0;
 #else
+        std::cerr << "Trying to create a Coordinate Tranformation without GDAL support enabled. The data will stay at its source coordinate system." << std::endl;
 		_sourceSRS = 0;
 		_destSRS = 0;
 		_trans = 0;
@@ -63,7 +64,7 @@ public:
 		if ( _trans ) ((OGRCoordinateTransformation*)_trans)->Transform( 1, &p.x, &p.y );
 #else
 	inline void transform( TVec2d & ) const
-	{
+	{        
 #endif
 	}
 
