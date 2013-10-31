@@ -132,6 +132,14 @@ IF   (LIBCITYGML_VRML)
 	ADD_SUBDIRECTORY( test/citygml2vrml )
 ENDIF(LIBCITYGML_VRML)
 
+
+IF(APPLE)
+	IF(${OSG_OSX_SDK_NAME} STREQUAL "macosx10.8" OR ${OSG_OSX_SDK_NAME} STREQUAL "macosx10.9")
+		# 64 Bit Works, i386,ppc is not supported any more
+        SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures for OSX" FORCE)
+        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.8 -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
+	ENDIF(${OSG_OSX_SDK_NAME} STREQUAL "macosx10.8" OR ${OSG_OSX_SDK_NAME} STREQUAL "macosx10.9")
+ENDIF(APPLE)
 #-----------------------------------------------------------------------------
 ### uninstall target
 #-----------------------------------------------------------------------------
