@@ -81,7 +81,7 @@ ENDIF(MSVC_IDE)
 SET(CMAKE_DEBUG_POSTFIX  "d")
 
 # Dynamic vs Static Linking
-OPTION(LIBCITYGML_DYNAMIC "Set to ON to build libcitygml for dynamic linking.  Use OFF for static." OFF)
+OPTION(LIBCITYGML_DYNAMIC "Set to ON to build libcitygml for dynamic linking.  Use OFF for static." ON)
 IF   (LIBCITYGML_DYNAMIC)
     SET(LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC "SHARED")
 ELSE (LIBCITYGML_DYNAMIC)
@@ -109,7 +109,7 @@ OPTION(LIBCITYGML_USE_XERCESC "Set to ON to build libcitygml with Xerces-c libra
 OPTION(LIBCITYGML_USE_LIBXML2 "Set to ON to build libcitygml with LibXml2 library." OFF)
 
 # gdal library
-OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library and support coordinates reprojections." OFF)
+OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library and support coordinates reprojections." ON)
 
 IF ( LIBCITYGML_USE_XERCESC )
 	IF( LIBCITYGML_USE_LIBXML2 )
@@ -133,13 +133,6 @@ IF   (LIBCITYGML_VRML)
 ENDIF(LIBCITYGML_VRML)
 
 
-IF(APPLE)
-	IF(${OSG_OSX_SDK_NAME} STREQUAL "macosx10.8" OR ${OSG_OSX_SDK_NAME} STREQUAL "macosx10.9")
-		# 64 Bit Works, i386,ppc is not supported any more
-        SET(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "Build architectures for OSX" FORCE)
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.8 -fvisibility-inlines-hidden" CACHE STRING "Flags used by the compiler during all build types." FORCE)
-	ENDIF(${OSG_OSX_SDK_NAME} STREQUAL "macosx10.8" OR ${OSG_OSX_SDK_NAME} STREQUAL "macosx10.9")
-ENDIF(APPLE)
 #-----------------------------------------------------------------------------
 ### uninstall target
 #-----------------------------------------------------------------------------
