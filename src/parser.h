@@ -28,6 +28,7 @@
 #include <string>
 #include <algorithm>
 #include <stack>
+#include <vector>
 #include <fstream>
 #include <set>
 
@@ -333,7 +334,9 @@ namespace citygml
 		std::stack<CityObject*> _cityObjectStack;
 
 		Object* _currentObject;
-		std::stack<Object*> _objectStack;
+        std::stack<Object*> _objectStack;
+
+        std::vector<std::string> _cityGMLidStack; // Stores the citygml id of all elements in the current hierarchy
 
 		Geometry* _currentGeometry;
         std::set<Geometry*> _geometries;

@@ -210,6 +210,32 @@ namespace citygml
 		}
 	}
 
+    void AppearanceManager::reassignNode(const std::string& nodeid, std::vector<std::string> from) {
+
+        if ( !getAppearance<Appearance*>( nodeid ) )
+            _appearancesMap[nodeid] = std::vector<Appearance*>(0);
+
+        // Reassign all apperances assingened to the nodes ids in from to nodeid
+        for ( const std::string& gmlID : from) {
+
+            if (gmlID.empty()) continue;
+
+            auto it = _appearancesMap.find(gmlID);
+
+            if (it == _appearancesMap.end()) continue;
+
+            // it->second == value in the _appearancesMap with key gmlID
+            for (Appearance* apperance : it->second) {
+                _appearancesMap[nodeid].push_back(apperance);
+            }
+
+            // We could remove the apperance from the old id... however it may be required for another object
+            // ... citygml actually does not allow that but nobody understands citygml anyway...
+
+        }
+
+    }
+
 	bool AppearanceManager::assignTexCoords( TexCoords* tex ) 
 	{ 
 		_lastCoords = tex;

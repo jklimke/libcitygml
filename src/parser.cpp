@@ -376,6 +376,9 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 
 	CityGMLNodeType nodeType = getNodeTypeFromName( localname );
 
+    _cityGMLidStack.push_back(getGmlIdAttribute(attributes));
+
+
 	// get the LOD level if node name starts with 'lod'
     if ( localname.length() > 3 && localname.find( "lod" ) == 0 )
         _currentLOD = localname[3] - '0';
@@ -508,6 +511,7 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 	case NODETYPE( Polygon ):
 		LOD_FILTER();
 		_currentPolygon = new Polygon( getGmlIdAttribute( attributes ) );
+
 		pushObject( _currentPolygon );
 		break;
 
@@ -604,7 +608,7 @@ void CityGMLHandler::endElement( const std::string& name )
 {
 	std::string localname = getNodeName( name );
 
-	_nodePath.pop_back();
+    _nodePath.pop_back();
 
 	CityGMLNodeType nodeType = getNodeTypeFromName( localname );
 
@@ -851,7 +855,10 @@ void CityGMLHandler::endElement( const std::string& name )
 		{
             //_currentPolygon->finish( ( nodeType == NODETYPE( Triangle ) ) ? false : _params.tesselate );
 			_currentGeometry->addPolygon( _currentPolygon );
+            // Assign the apperances that are currenty assigned to parent elements of this polygon to it
+            _model->_appearanceManager.reassignNode(_currentPolygon->getId(), _cityGMLidStack);
 		}
+
 		_currentPolygon = 0;
 		popObject();
 		break;
@@ -1000,7 +1007,7 @@ void CityGMLHandler::endElement( const std::string& name )
 		break;
 	default:
 		break;
-	};
+    };
 
 	clearBuffer();
 }

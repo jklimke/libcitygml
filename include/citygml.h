@@ -333,12 +333,13 @@ namespace citygml
 
 		inline Tesselator* getTesselator( void ) { return _tesselator; }
 
-	protected:
+    protected:
 		void refresh( void );
 
 		template < typename AppType > AppType getAppearance( const std::string& nodeid, ForSide side = FS_ANY ) const;
 		void addAppearance( Appearance* );
 		void assignNode( const std::string& nodeid );
+        void reassignNode(const std::string& nodeid, std::vector<std::string> from);
 		bool assignTexCoords( TexCoords* );
 
 		void finish( void );
