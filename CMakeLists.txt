@@ -35,6 +35,7 @@ IF(WIN32)
     IF(UNIX)
         ADD_DEFINITIONS(-DNOMINMAX)
     ENDIF(UNIX)
+
 ########################################################################################################
 # the foolowing options are MSVC specific,
 # the first OSG_MSVC_VERSIONED_DLL activate a custom build-time layout that should allow to run examples and application
@@ -64,6 +65,17 @@ IF(WIN32)
         # ENDIF(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 4 AND ${CMAKE_PATCH_VERSION} LESS 7)
     ENDIF(MSVC)
 ENDIF(WIN32)
+
+if(UNIX)
+    if(APPLE)
+        MESSAGE(STATUS "APPLE")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
+    else(APPLE)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
+
+        MESSAGE(STATUS "Setting UNIX compile flags: ${CMAKE_CXX_FLAGS}")
+    endif(APPLE)
+endif(UNIX)
 
 IF(MSVC_IDE)
 	# From CMake 2.8.2, new way to manage output generation dirs !

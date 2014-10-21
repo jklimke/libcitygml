@@ -126,7 +126,7 @@ namespace citygml
 		catch ( const xercesc::XMLException& e ) 
 		{
 			std::cerr << "CityGML: XML Exception occures during initialization!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ) << std::endl;
-			return false;
+            return nullptr;
 		}
 
 		CityGMLHandlerXerces* handler = new CityGMLHandlerXerces( params );

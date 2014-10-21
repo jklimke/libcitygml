@@ -198,7 +198,7 @@ namespace citygml
         _lastId = nodeid;
 
         if ( !getAppearance< Appearance * >( nodeid ) )
-            _appearancesMap[ nodeid ] = std::vector< Appearance* >(0);
+            _appearancesMap[ nodeid ] = std::vector< Appearance* >();
 
 		Appearance* currentAppearance = _appearances[ _appearances.size() - 1 ];
 		ForSide side = currentAppearance->getIsFront() ? FS_FRONT : FS_BACK;
@@ -213,9 +213,9 @@ namespace citygml
     void AppearanceManager::reassignNode(const std::string& nodeid, std::vector<std::string> from) {
 
         if ( !getAppearance<Appearance*>( nodeid ) )
-            _appearancesMap[nodeid] = std::vector<Appearance*>(0);
+            _appearancesMap[nodeid] = std::vector<Appearance*>();
 
-        // Reassign all apperances assingened to the nodes ids in from to nodeid
+        // Reassign all material apperances assingened to the nodes id's in from to nodeid
         for ( const std::string& gmlID : from) {
 
             if (gmlID.empty()) continue;
@@ -225,12 +225,13 @@ namespace citygml
             if (it == _appearancesMap.end()) continue;
 
             // it->second == value in the _appearancesMap with key gmlID
-            for (Appearance* apperance : it->second) {
+            std::vector<Appearance*> apperances = it->second;
+            for (Appearance* apperance : apperances) {
+                if (apperance == nullptr) continue;
                 _appearancesMap[nodeid].push_back(apperance);
             }
 
             // We could remove the apperance from the old id... however it may be required for another object
-            // ... citygml actually does not allow that but nobody understands citygml anyway...
 
         }
 

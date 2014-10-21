@@ -609,6 +609,7 @@ void CityGMLHandler::endElement( const std::string& name )
 	std::string localname = getNodeName( name );
 
     _nodePath.pop_back();
+    _cityGMLidStack.pop_back();
 
 	CityGMLNodeType nodeType = getNodeTypeFromName( localname );
 
