@@ -36,7 +36,7 @@ CityGMLHandler::CityGMLHandler( const ParserParams& params )
 : _params( params ), _model( 0 ), _currentCityObject( 0 ), _currentObject( 0 ),
   _currentGeometry( 0 ), _currentComposite( 0 ), _currentImplicitGeometry(0),
   _currentPolygon( 0 ), _currentRing( 0 ),  _currentGeometryType( GT_Unknown ),
-_currentAppearance( 0 ), _currentLOD( params.minLOD ), 
+_currentAppearance( 0 ), _currentLOD( params.minLOD ), _currentTheme(""),
 _filterNodeType( false ), _filterDepth( 0 ), _exterior( true ), _geoTransform( 0 ),
   _referencePoint( false )
 { 
@@ -239,6 +239,7 @@ void CityGMLHandler::initNodes( void )
 	INSERTNODETYPE( emissiveColor );
 	INSERTNODETYPE( ambientIntensity );
 	INSERTNODETYPE( isFront );
+    INSERTNODETYPE( theme );
 
 	// Set the known namespaces
 
@@ -549,7 +550,7 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 			if ( uri != "" ) 
 			{
 				if ( uri.length() > 0 && uri[0] == '#' ) uri = uri.substr( 1 );		
-				_model->_appearanceManager.assignNode( uri );
+                _model->getOrCreateAppearanceManager(_currentTheme).assignNode( uri );
 				_appearanceAssigned = true;
 			}
 		}
@@ -563,7 +564,7 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 			if ( ring != "" )
 			{
 				if ( ring.length() > 0 && ring[0] == '#' ) ring = ring.substr( 1 );
-				_model->_appearanceManager.assignNode( ring );
+                _model->getOrCreateAppearanceManager(_currentTheme).assignNode( ring );
 			}
 		}
 		break;
@@ -571,14 +572,14 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 	case NODETYPE( SimpleTexture ):
 	case NODETYPE( ParameterizedTexture ):
 		_currentAppearance = new Texture( getGmlIdAttribute( attributes ) );
-		_model->_appearanceManager.addAppearance( _currentAppearance );
+        _model->getOrCreateAppearanceManager(_currentTheme).addAppearance( _currentAppearance );
 		_appearanceAssigned = false;
 		pushObject( _currentAppearance );
 		break;
 
 	case NODETYPE( GeoreferencedTexture ):
 		_currentAppearance = new GeoreferencedTexture( getGmlIdAttribute( attributes ) );
-		_model->_appearanceManager.addAppearance( _currentAppearance );
+        _model->getOrCreateAppearanceManager(_currentTheme).addAppearance( _currentAppearance );
 		_appearanceAssigned = false;
 		pushObject( _currentAppearance );
 		break;
@@ -586,7 +587,7 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 	case NODETYPE( Material ):
 	case NODETYPE( X3DMaterial ):
 		_currentAppearance = new Material( getGmlIdAttribute( attributes ) );
-		_model->_appearanceManager.addAppearance( _currentAppearance );
+        _model->getOrCreateAppearanceManager(_currentTheme).addAppearance( _currentAppearance );
 		_appearanceAssigned = false;
 		pushObject( _currentAppearance );
 		break;
@@ -598,7 +599,6 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 	case NODETYPE( uriAttribute ):
 		_attributeName = getAttribute( attributes, "name", "" );
 		break;
-
 	default:
 		break;
 	};
@@ -621,8 +621,9 @@ void CityGMLHandler::endElement( const std::string& name )
 		return; 
 	}
 
-	// Trim the char buffer  
-	std::stringstream buffer;
+    // Trim the char buffer
+    std::string valueStr = trim(_buff.str());
+    std::stringstream buffer;
 	buffer << trim( _buff.str() );
 
 	// set the LOD level if node name starts with 'lod'
@@ -645,7 +646,7 @@ void CityGMLHandler::endElement( const std::string& name )
         break;
     case NODETYPE( CityModel ):
 		MODEL_FILTER();
-		_model->finish( _params );
+        _model->finish( _params );
 		if ( _geoTransform )
 		{
 			std::cout << "The coordinates were transformed from " << _model->_srsName << " to "
@@ -857,8 +858,8 @@ void CityGMLHandler::endElement( const std::string& name )
             //_currentPolygon->finish( ( nodeType == NODETYPE( Triangle ) ) ? false : _params.tesselate );
 			_currentGeometry->addPolygon( _currentPolygon );
             // Assign the apperances that are currenty assigned to parent elements of this polygon to it
-            _model->_appearanceManager.reassignNode(_currentPolygon->getId(), _cityGMLidStack);
-		}
+            _model->reassignNodeToAllAppearances(_currentPolygon, _cityGMLidStack);
+        }
 
 		_currentPolygon = 0;
 		popObject();
@@ -916,7 +917,7 @@ void CityGMLHandler::endElement( const std::string& name )
 			if ( uri != "" ) 
 			{
 				if ( uri.length() > 0 && uri[0] == '#' ) uri = uri.substr( 1 );
-				_model->_appearanceManager.assignNode( uri );
+                _model->getOrCreateAppearanceManager(_currentTheme).assignNode( uri );
 			}
 		}
 		break;
@@ -927,7 +928,7 @@ void CityGMLHandler::endElement( const std::string& name )
 		{            
 			TexCoords *vec = new TexCoords();
 			parseVecList( buffer, *vec );			
-			_model->_appearanceManager.assignTexCoords( vec );
+            _model->getOrCreateAppearanceManager(_currentTheme).assignTexCoords( vec );
 		}
 		break;
 
@@ -946,8 +947,8 @@ void CityGMLHandler::endElement( const std::string& name )
 	case NODETYPE( Material ):
 	case NODETYPE( X3DMaterial ):
 		if ( _currentAppearance && _currentGeometry && !_appearanceAssigned )
-			_model->_appearanceManager.assignNode( _currentGeometry->getId() );
-		_model->_appearanceManager.refresh();
+            _model->getOrCreateAppearanceManager(_currentTheme).assignNode( _currentGeometry->getId() );
+        _model->getOrCreateAppearanceManager(_currentTheme).refresh();
 		_currentAppearance = 0;
 		popObject();
 		break;
@@ -1006,8 +1007,11 @@ void CityGMLHandler::endElement( const std::string& name )
 			parseValue( buffer, geoRefTexture->_preferWorldFile );
 		}
 		break;
+    case NODETYPE( theme ):
+        _currentTheme = valueStr;
+        break;
 	default:
-		break;
+        break;
     };
 
 	clearBuffer();
