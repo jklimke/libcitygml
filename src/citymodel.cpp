@@ -683,6 +683,15 @@ namespace citygml
 		for ( ; it != _cityObjectsMap.end(); ++it ) 
 			for ( unsigned int i = 0; i < it->second.size(); i++ )
 				delete it->second[i];
+
+        for (AppearanceThemes::iterator appIt = _appearanceThemes.begin(); appIt != _appearanceThemes.end(); ++appIt)
+        {
+            if (appIt->second)
+            {
+                delete appIt->second;
+                appIt->second = NULL;
+            }
+        }
 	}
 
 	void CityModel::addCityObject( CityObject* o )
@@ -698,14 +707,61 @@ namespace citygml
 			it->second.push_back( o );
 	}
 
-	void CityModel::finish( const ParserParams& params ) 
+    void CityModel::finish( const ParserParams& params )
 	{
-		// Assign appearances to cityobjects => geometries => polygons
+        // get theme from params or use default theme
+        std::string theme = params.theme.empty() ? getDefaultTheme() : params.theme;
+
+        // make sure a valid was given
+        if (_appearanceThemes.find(theme) == _appearanceThemes.end())
+        {
+            // fallback to default theme
+            theme = getDefaultTheme();
+        }
+
+        // Assign appearances to cityobjects => geometries => polygons
 		CityObjectsMap::const_iterator it = _cityObjectsMap.begin();
 		for ( ; it != _cityObjectsMap.end(); ++it ) 
 			for ( unsigned int i = 0; i < it->second.size(); i++ )
-				it->second[i]->finish( _appearanceManager, params );
+                it->second[i]->finish( *_appearanceThemes[theme], params );
 
-		_appearanceManager.finish();
+        for (AppearanceThemes::iterator appIt = _appearanceThemes.begin(); appIt != _appearanceThemes.end(); ++appIt)
+        {
+            appIt->second->finish();
+        }
 	}
+
+     AppearanceManager& CityModel::getOrCreateAppearanceManager(const std::string& theme)
+     {
+         AppearanceThemes::iterator it = _appearanceThemes.find(theme);
+         if (it != _appearanceThemes.end())
+         {
+             // return appearance manager
+             return *it->second;
+         }
+
+         // create new appearance manager for the theme
+         AppearanceManager* mananger = new AppearanceManager();
+         _appearanceThemes[theme] = mananger;
+
+         return *mananger;
+     }
+
+     std::string CityModel::getDefaultTheme() const
+     {
+         if (_appearanceThemes.size() == 0)
+         {
+             return "";
+         } else {
+             return _appearanceThemes.begin()->first;
+         }
+     }
+
+    void CityModel::reassignNodeToAllAppearances(Polygon* polygon, std::vector<std::string>& cityGMLidStack)
+    {
+        for (auto appIt: _appearanceThemes)
+        {
+            appIt.second->reassignNode(polygon->getId(), cityGMLidStack);
+        }
+    }
 }

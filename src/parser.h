@@ -221,7 +221,8 @@ namespace citygml
 		NODETYPE( diffuseColor ),
 		NODETYPE( emissiveColor ),
 		NODETYPE( ambientIntensity ),
-		NODETYPE( isFront )
+        NODETYPE( isFront ),
+        NODETYPE( theme )
 	};
 	
 	// CityGML SAX parsing handler
@@ -352,6 +353,8 @@ namespace citygml
 		LinearRing* _currentRing;
 
 		Appearance* _currentAppearance;
+
+        std::string _currentTheme;
 
 		CityObjectsTypeMask _objectsMask;
 

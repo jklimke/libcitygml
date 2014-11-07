@@ -22,6 +22,7 @@
 #include <vector>
 #include <sstream>
 #include <map>
+#include <functional>
 #include <stdio.h>
 #include <stdlib.h>
 #include "vecs.h"
@@ -103,7 +104,16 @@ namespace citygml
 	class ParserParams
 	{
 	public:
-		ParserParams( void ) : objectsMask( "All" ), minLOD( 0 ), maxLOD( 4 ), optimize( false ), pruneEmptyObjects( false ), tesselate( true ), destSRS( "" ) { }
+        ParserParams( void )
+            : objectsMask( "All" )
+            , minLOD( 0 )
+            , maxLOD( 4 )
+            , optimize( false )
+            , pruneEmptyObjects( false )
+            , tesselate( true )
+            , destSRS( "" )
+            , theme("")
+        { }
 
 	public:
 		std::string objectsMask; 
@@ -113,6 +123,7 @@ namespace citygml
 		bool pruneEmptyObjects; 
 		bool tesselate;
 		std::string destSRS;
+        std::string theme;
 	};
 
 	LIBCITYGML_EXPORT CityModel* load( std::istream& stream, const ParserParams& params );
@@ -357,6 +368,7 @@ namespace citygml
 
 		Tesselator* _tesselator;
 	};
+    typedef std::map<std::string, AppearanceManager*>  AppearanceThemes;
 
 	///////////////////////////////////////////////////////////////////////////////
 
@@ -806,7 +818,7 @@ namespace citygml
 	{
 		friend class CityGMLHandler;
 	public:
-		CityModel( const std::string& id = "CityModel" ) : Object( id ) {} 
+        CityModel( const std::string& id = "CityModel" ) : Object( id ) {}
 
 		LIBCITYGML_EXPORT ~CityModel( void );
 
@@ -838,12 +850,16 @@ namespace citygml
 
 		inline const std::string& getSRSName( void ) const { return _srsName; }
 
+        AppearanceManager& LIBCITYGML_EXPORT getOrCreateAppearanceManager(const std::string& theme);
+        std::string LIBCITYGML_EXPORT getDefaultTheme() const;
+        void LIBCITYGML_EXPORT reassignNodeToAllAppearances(Polygon* polygon, std::vector<std::string>& cityGMLidStack);
+
 	protected:
 		void addCityObject( CityObject* o );
 
 		inline void addCityObjectAsRoot( CityObject* o ) { if ( o ) _roots.push_back( o ); }
 
-		void finish( const ParserParams& );
+        void finish(const ParserParams& );
 
 	protected:
 		Envelope _envelope;
@@ -852,7 +868,7 @@ namespace citygml
 
 		CityObjectsMap _cityObjectsMap;
 
-		AppearanceManager _appearanceManager;
+        AppearanceThemes _appearanceThemes;
 		
 		std::string _srsName;
 		
