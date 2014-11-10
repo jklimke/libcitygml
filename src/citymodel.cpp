@@ -202,8 +202,8 @@ namespace citygml
 
 		Appearance* currentAppearance = _appearances[ _appearances.size() - 1 ];
 		ForSide side = currentAppearance->getIsFront() ? FS_FRONT : FS_BACK;
-		if ( dynamic_cast< Texture* >( currentAppearance ) && !getAppearance< Texture* >( nodeid, side ) ||
-			 dynamic_cast< Material* >( currentAppearance ) && !getAppearance< Material* >( nodeid, side ) )
+        if ( (dynamic_cast< Texture* >( currentAppearance ) && !getAppearance< Texture* >( nodeid, side )) ||
+             (dynamic_cast< Material* >( currentAppearance ) && !getAppearance< Material* >( nodeid, side ) ))
 		{
             _appearancesMap[ nodeid ].push_back( currentAppearance );
 			if ( _lastCoords ) { assignTexCoords( _lastCoords ); _lastId = ""; }
@@ -292,7 +292,7 @@ namespace citygml
 		return _negNormal ? -normal : normal;
 	}
 
-	void Polygon::tesselate( AppearanceManager &appearanceManager, const TVec3d& normal )
+    void Polygon::tesselate( AppearanceManager &appearanceManager, const TVec3d& normal )
 	{
 		_indices.clear();
 
@@ -301,6 +301,7 @@ namespace citygml
 			mergeRings( appearanceManager );
 			return;
 		}
+
 
 		TexCoords texCoords;
 		bool t = appearanceManager.getTexCoords( _exteriorRing->getId(), texCoords );
@@ -340,7 +341,7 @@ namespace citygml
 		clearRings();
 	}
 
-	void Polygon::mergeRings( AppearanceManager &appearanceManager )
+    void Polygon::mergeRings(AppearanceManager &appearanceManager )
 	{
         _vertices.reserve( _vertices.size() + _exteriorRing->size() );
         TexCoords texCoords;
@@ -436,7 +437,7 @@ namespace citygml
 		return true;
 	}
 
-	void Polygon::finish( AppearanceManager& appearanceManager, bool doTesselate ) 
+    void Polygon::finish( AppearanceManager &appearanceManager, bool doTesselate )
 	{
 		TVec3d normal = computeNormal();
 		if ( doTesselate ) tesselate( appearanceManager, normal );	else mergeRings( appearanceManager );
@@ -447,7 +448,7 @@ namespace citygml
 			_normals[i] = TVec3f( (float)normal.x, (float)normal.y, (float)normal.z );
 	}
 
-	void Polygon::finish( AppearanceManager& appearanceManager, Appearance* defAppearance, bool doTesselate )
+    void Polygon::finish( AppearanceManager &appearanceManager, Appearance* defAppearance, bool doTesselate )
 	{	
 		if ( !appearanceManager.getTexCoords( getId(), _texCoords ) ) 
 			appearanceManager.getTexCoords( _geometry->getId(), _texCoords );
@@ -497,7 +498,7 @@ namespace citygml
             return;
 
         Appearance* myappearance = appearanceManager.getAppearance( getId() );
-		std::vector< Polygon* >::const_iterator it = _polygons.begin();
+        std::vector< Polygon* >::const_iterator it = _polygons.begin();
 		for ( ; it != _polygons.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : defAppearance, params.tesselate );
 
 		bool finish = false;
@@ -629,9 +630,10 @@ namespace citygml
 		return mask;
 	}
 
-	void CityObject::finish( AppearanceManager& appearanceManager, const ParserParams& params ) 
+    void CityObject::finish( AppearanceManager &appearanceManager, const ParserParams& params )
 	{
-		Appearance* myappearance = appearanceManager.getAppearance( getId() );
+
+        Appearance* myappearance = appearanceManager.getAppearance( getId() );
 
         std::vector< Geometry* >::const_iterator itGeom = _geometries.begin();
         for ( ; itGeom != _geometries.end(); ++itGeom ) {
@@ -719,11 +721,16 @@ namespace citygml
             theme = getDefaultTheme();
         }
 
+        AppearanceManager& appearanceManager = getOrCreateAppearanceManager(theme);
+
         // Assign appearances to cityobjects => geometries => polygons
 		CityObjectsMap::const_iterator it = _cityObjectsMap.begin();
-		for ( ; it != _cityObjectsMap.end(); ++it ) 
-			for ( unsigned int i = 0; i < it->second.size(); i++ )
-                it->second[i]->finish( *_appearanceThemes[theme], params );
+        for ( ; it != _cityObjectsMap.end(); ++it ) {
+            for ( unsigned int i = 0; i < it->second.size(); i++ ) {
+                it->second[i]->finish( appearanceManager, params );
+            }
+        }
+
 
         for (AppearanceThemes::iterator appIt = _appearanceThemes.begin(); appIt != _appearanceThemes.end(); ++appIt)
         {

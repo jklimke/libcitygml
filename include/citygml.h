@@ -451,8 +451,8 @@ namespace citygml
 		inline const Material* getMaterialBack( void ) const { return _materials[ BACK ]; }
 
 	protected:
-		void finish( AppearanceManager&, bool doTesselate );
-		void finish( AppearanceManager&, Appearance*,  bool doTesselate );
+        void finish( AppearanceManager&, bool doTesselate );
+        void finish( AppearanceManager&, Appearance*,  bool doTesselate );
 
 		void addRing( LinearRing* );
 
@@ -699,7 +699,7 @@ namespace citygml
 		inline std::vector< CityObject* >& getChildren( void ) { return _children; }
 
 	protected:
-		void finish( AppearanceManager&, const ParserParams& );
+        void finish( AppearanceManager&, const ParserParams& );
 
 	protected:
 		CityObjectsType _type;
