@@ -558,7 +558,7 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 
 	case NODETYPE( textureCoordinates ):
 		MODEL_FILTER();
-		if ( Texture* texture = dynamic_cast<Texture*>( _currentAppearance ) ) 
+		if ( dynamic_cast<Texture*>( _currentAppearance ) )
 		{			
 			std::string ring = getAttribute( attributes, "ring" );
 			if ( ring != "" )
@@ -572,6 +572,10 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 	case NODETYPE( SimpleTexture ):
 	case NODETYPE( ParameterizedTexture ):
 		_currentAppearance = new Texture( getGmlIdAttribute( attributes ) );
+            if(_currentAppearance->getId().compare("UUID_cb340888-ac24-4ae9-9cf7-2cb02f9a97da"))
+            {
+                std::cout << "found UUID_cb340888-ac24-4ae9-9cf7-2cb02f9a97da in theme "<< _currentTheme << std::endl;
+            }
         _model->getOrCreateAppearanceManager(_currentTheme).addAppearance( _currentAppearance );
 		_appearanceAssigned = false;
 		pushObject( _currentAppearance );

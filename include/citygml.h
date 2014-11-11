@@ -344,6 +344,8 @@ namespace citygml
 
 		inline Tesselator* getTesselator( void ) { return _tesselator; }
 
+        const std::string description();
+        
     protected:
 		void refresh( void );
 
