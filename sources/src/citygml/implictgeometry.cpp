@@ -27,14 +27,19 @@ namespace citygml {
         return m_referencePoint;
     }
 
-    unsigned int ImplicitGeometry::size() const
+    void ImplicitGeometry::addGeometry(Geometry* geom)
+    {
+        m_geometries.push_back(std::unique_ptr<Geometry>(geom));
+    }
+
+    unsigned int ImplicitGeometry::getGeometriesCount() const
     {
         return m_geometries.size();
     }
 
-    Geometry*ImplicitGeometry::getGeometry(unsigned int i) const
+    Geometry& ImplicitGeometry::getGeometry(unsigned int i) const
     {
-        return m_geometries[i];
+        return *m_geometries[i];
     }
 
     std::string ImplicitGeometry::getSRSName() const

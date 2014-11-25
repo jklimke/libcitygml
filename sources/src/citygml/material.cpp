@@ -7,6 +7,11 @@ namespace citygml {
 
     }
 
+    std::shared_ptr<Material> Material::createNewMaterial(const std::string& id)
+    {
+        return std::shared_ptr<Material>(new Material(id));
+    }
+
     TVec3f Material::getDiffuse() const
     {
         return m_diffuse;
@@ -72,19 +77,30 @@ namespace citygml {
         m_targetIDs.insert(id);
     }
 
-    bool Material::targets(const Object& obj) const
+    bool Material::targets(const AppearanceTarget& obj) const
     {
         return m_targetIDs.count(obj.getId()) > 0;
     }
 
-    Material*Material::asMaterial()
+    void Material::copyTargetDefinition(const AppearanceTarget&, const AppearanceTarget& newTarget)
     {
-        return this;
+        // There are no settings associated with a target... so its enough to just add the new target id
+        m_targetIDs.insert(newTarget.getId());
     }
 
-    const Material* Material::asMaterial() const
+    std::vector<std::string> Material::getTargetIDs() const
     {
-        return this;
+        return std::vector<std::string>(m_targetIDs.begin(), m_targetIDs.end());
+    }
+
+    std::shared_ptr<Material> Material::asMaterial()
+    {
+        return shared_from_this();
+    }
+
+    std::shared_ptr<const Material> Material::asMaterial() const
+    {
+        return shared_from_this();
     }
 
 }

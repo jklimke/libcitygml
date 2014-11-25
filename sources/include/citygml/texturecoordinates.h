@@ -12,9 +12,12 @@ namespace citygml {
 
     class LinearRing;
 
+    /**
+     * @brief The TextureCoordinates class describes a mapping of texture coordinates to the vertices of a linear ring
+     */
     class TextureCoordinates : public Object {
     public:
-        TextureCoordinates(std::string targetID, std::vector<TVec2f> coords);
+        TextureCoordinates(std::string id, std::string targetID, std::vector<TVec2f> coords);
         bool targets(const LinearRing& ring) const;
         const std::vector<TVec2f>& getCoords() const;
         bool eraseCoordinate(unsigned int i);

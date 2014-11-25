@@ -55,15 +55,15 @@ namespace citygml {
         return m_vertices;
     }
 
-    void LinearRing::removeDuplicateVertices(const std::vector<TextureTarget*>& targets )
+    void LinearRing::removeDuplicateVertices(const std::vector<TextureTarget&>& targets )
     {
         std::vector<TextureCoordinates&> coordinatesList;
 
         for (TextureTarget& texTarget : targets) {
 
-            if (!texTarget.getTexCoordinates().targets(*this)) continue;
+            if (!texTarget.getTexCoordinatesList().targets(*this)) continue;
 
-            coordinatesList.push_back(texTarget.getTexCoordinates());
+            coordinatesList.push_back(texTarget.getTexCoordinatesList());
 
         }
 

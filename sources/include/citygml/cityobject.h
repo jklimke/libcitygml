@@ -1,13 +1,16 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
-#include <citygml/object.h>
+#include <citygml/appearancetarget.h>
 #include <citygml/vecs.hpp>
 #include <citygml/envelope.h>
 
 #define MAKE_RGBA( _r_, _g_, _b_, _a_ ) TVec4f( _r_/255.f, _g_/255.f, _b_/255.f, _a_/255.f )
 #define MAKE_RGB( _r_, _g_, _b_ ) MAKE_RGBA( _r_, _g_, _b_, 255 )
+
+class Tesselator;
 
 namespace citygml {
 
@@ -17,7 +20,7 @@ namespace citygml {
     class Composite;
     class AppearanceManager;
 
-    class CityObject : public Object
+    class CityObject : public AppearanceTarget
     {
     public:
 
@@ -67,49 +70,42 @@ namespace citygml {
         // Return the envelope (ie. the bounding box) of the object
         const Envelope& getEnvelope() const;
 
+        void setEnvelope(Envelope envelope);
+
         // Get the default diffuse color of this object class
         virtual TVec4f getDefaultColor() const = 0;
 
         // Get the number of geometries contains in the object
-        unsigned int size() const;
+        unsigned int getGeometriesCount() const;
 
         // Access the geometries
-        const Geometry* getGeometry( unsigned int i ) const;
-
-        // Access the composites
-        const Composite* getComposite( unsigned int i ) const;
+        const Geometry& getGeometry( unsigned int i ) const;
 
         // Get the number of implicit geometries contains in the object
         unsigned int getImplicitGeometryCount() const;
 
         // Access the implicit geometries
-        const ImplicitGeometry* getImplicitGeometry( unsigned int i ) const;
+        const ImplicitGeometry& getImplicitGeometry( unsigned int i ) const;
 
         // Access the children
-        unsigned int getChildCount() const;
+        unsigned int getChildCityObjecsCount() const;
 
-        const CityObject* getChild( unsigned int i ) const;
+        const CityObject& getChildCityObject( unsigned int i ) const;
 
-        CityObject* getChild( unsigned int i );
+        CityObject& getChildCityObject( unsigned int i );
 
-        const std::vector< CityObject* >& getChildren() const;
-
-        std::vector< CityObject* >& getChildren();
+        void finish( bool tesselate, Tesselator& tesselator, bool mergePolygons );
 
         virtual ~CityObject();
-
-    protected:
-       void finish( AppearanceManager&, const ParserParams& );
 
     protected:
         CityObjectsType m_type;
 
         Envelope m_envelope;
 
-        std::vector<Geometry*> m_geometries;
-        std::vector<Composite*> m_composites;
-        std::vector<ImplicitGeometry*> m_implicitGeometries;
-        std::vector<CityObject*> m_children;
+        std::vector<std::unique_ptr<Geometry>> m_geometries;
+        std::vector<std::unique_ptr<ImplicitGeometry>> m_implicitGeometries;
+        std::vector<std::unique_ptr<CityObject>> m_children;
     };
 
     typedef unsigned int CityObjectsTypeMask;

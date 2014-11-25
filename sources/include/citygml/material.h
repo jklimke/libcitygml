@@ -7,10 +7,12 @@
 
 namespace citygml {
 
+    class CityGMLFactory;
+
     class LIBCITYGML_EXPORT Material : virtual public Appearance
     {
+        friend class CityGMLFactory;
     public:
-        Material( const std::string& id );
 
         TVec3f getDiffuse() const;
         void setDiffuse(TVec3f diffuse);
@@ -31,12 +33,16 @@ namespace citygml {
         void setTransparency(float transparancy);
 
         void addTargetID(std::string id);
-        virtual bool targets(const Object& obj) const;
+        virtual bool targets(const AppearanceTarget& obj) const;
+        virtual void copyTargetDefinition(const AppearanceTarget& oldTarget, const AppearanceTarget& newTarget);
+        virtual std::vector<std::string> getTargetIDs() const;
 
-        virtual Material* asMaterial() override;
-        virtual const Material* asMaterial() const override;
+        virtual std::shared_ptr<Material> asMaterial() override;
+        virtual std::shared_ptr<const Material> asMaterial() const override;
+
 
     protected:
+        Material( const std::string& id );
         TVec3f m_diffuse;
         TVec3f m_emissive;
         TVec3f m_specular;

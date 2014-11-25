@@ -41,21 +41,24 @@ namespace citygml
 
     }
 
+    void CityModel::addToCityObjectsMapRecursive(const CityObject& cityObj)
+    {
+
+        auto it = m_cityObjectsMap.find(cityObj.getType());
+
+        if (it == m_cityObjectsMap.end()) {
+            m_cityObjectsMap[cityObj.getType()] = std::vector<const CityObject&> {cityObj};
+        } else {
+            it->second.push_back(cityObj);
+        }
+
+        for (int i = 0; i < cityObj.getChildCityObjecsCount(); i++) {
+            addToCityObjectsMapRecursive(cityObj.getChildCityObject(i));
+        }
+    }
+
     CityModel::~CityModel()
     {
-        CityObjectsMap::const_iterator it = m_cityObjectsMap.begin();
-        for ( ; it != m_cityObjectsMap.end(); ++it )
-            for ( unsigned int i = 0; i < it->second.size(); i++ )
-                delete it->second[i];
-
-        for (AppearanceThemes::iterator appIt = m_appearanceThemes.begin(); appIt != m_appearanceThemes.end(); ++appIt)
-        {
-            if (appIt->second)
-            {
-                delete appIt->second;
-                appIt->second = NULL;
-            }
-        }
     }
 
     const Envelope& CityModel::getEnvelope() const
@@ -63,9 +66,19 @@ namespace citygml
         return m_envelope;
     }
 
+    void CityModel::setEnvelope(Envelope e)
+    {
+        m_envelope = e;
+    }
+
     const TVec3d& CityModel::getTranslationParameters() const
     {
         return m_translation;
+    }
+
+    void CityModel::setTranslationParameters(const TVec3d& param)
+    {
+        m_translation = param;
     }
 
     unsigned int CityModel::size() const
@@ -81,13 +94,13 @@ namespace citygml
         return m_cityObjectsMap;
     }
 
-    const CityObjects* CityModel::getCityObjectsByType( CityObject::CityObjectsType type) const
+    const ConstCityObjects& CityModel::getAllCityObjectsOfType( CityObject::CityObjectsType type) const
     {
         CityObjectsMap::const_iterator it = m_cityObjectsMap.find( type );
         return ( it != m_cityObjectsMap.end() ) ? &it->second : 0;
     }
 
-    const CityObjects& CityModel::getCityObjectsRoots() const
+    const ConstCityObjects& CityModel::getRootCityObjects() const
     {
         return m_roots;
     }
@@ -97,88 +110,16 @@ namespace citygml
         return m_srsName;
     }
 
-    AppearanceManager& CityModel::getOrCreateAppearanceManager(const std::string& theme, std::shared_ptr<citygml::CityGMLLogger> logger)
+
+    void CityModel::finish(bool tesselate, Tesselator& tesselator, bool mergePolygons )
     {
+        // Apply appearances to targets
 
-    }
+        // Finish all cityobjcts
 
-    void CityModel::addCityObject( CityObject* o )
-    {
-        CityObjectsMap::iterator it = m_cityObjectsMap.find( o->getType() );
-        if ( it == m_cityObjectsMap.end() )
-        {
-            CityObjects v;
-            v.push_back( o );
-            m_cityObjectsMap[ o->getType() ] = v;
-        }
-        else
-            it->second.push_back( o );
-    }
-
-    void CityModel::finish( const ParserParams& params, std::shared_ptr<CityGMLLogger> logger )
-    {
-        // get theme from params or use default theme
-        std::string theme = params.theme.empty() ? getDefaultTheme() : params.theme;
-
-        // make sure a valid was given
-        if (m_appearanceThemes.find(theme) == m_appearanceThemes.end())
-        {
-            // fallback to default theme
-            theme = getDefaultTheme();
-        }
-
-        AppearanceManager& appearanceManager = getOrCreateAppearanceManager(theme, logger);
-
-        for(auto themePair : m_appearanceThemes) {
-            CITYGML_LOG_DEBUG(logger, "Found theme: " << themePair.first << " (" << themePair.second->description() << ")");
-        }
-
-
-        // Assign appearances to cityobjects => geometries => polygons
-        CityObjectsMap::const_iterator it = m_cityObjectsMap.begin();
-        for ( ; it != m_cityObjectsMap.end(); ++it ) {
-            for ( unsigned int i = 0; i < it->second.size(); i++ ) {
-                it->second[i]->finish( appearanceManager, params );
-            }
-        }
-
-
-        for (AppearanceThemes::iterator appIt = m_appearanceThemes.begin(); appIt != m_appearanceThemes.end(); ++appIt)
-        {
-            appIt->second->finish();
-        }
-    }
-
-    std::shared_ptr<Appearance> CityModel::findAppearanceInAllThemes(const std::string& appearanceID)
-    {
-        for (const auto& appearanceThemePair : m_appearanceThemes) {
-
-            std::shared_ptr<Appearance> result = appearanceThemePair.second->getAppearanceByID(appearanceID);
-
-            if (result != nullptr) {
-                return result;
-            }
-
-        }
-
-        return nullptr;
-    }
-
-    std::string CityModel::getDefaultTheme() const
-    {
-        if (m_appearanceThemes.size() == 0)
-        {
-            return "";
-        } else {
-            return m_appearanceThemes.begin()->first;
-        }
-    }
-
-    void CityModel::reassignNodeToAllAppearances(Polygon* polygon, std::vector<std::string>& cityGMLidStack)
-    {
-        for (auto appIt: m_appearanceThemes)
-        {
-            appIt.second->reassignNode(polygon->getId(), cityGMLidStack);
+        // Build city objects map
+        for (std::unique_ptr<CityObject> obj : m_roots) {
+            addToCityObjectsMapRecursive(*obj);
         }
     }
 

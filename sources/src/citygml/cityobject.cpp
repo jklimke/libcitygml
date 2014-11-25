@@ -65,24 +65,24 @@ namespace citygml {
         return s;
     }
 
-    const Envelope&CityObject::getEnvelope() const
+    const Envelope& CityObject::getEnvelope() const
     {
         return m_envelope;
     }
 
-    unsigned int CityObject::size() const
+    void CityObject::setEnvelope(Envelope envelope)
+    {
+        m_envelope = envelope;
+    }
+
+    unsigned int CityObject::getGeometriesCount() const
     {
         return m_geometries.size();
     }
 
-    const Geometry* CityObject::getGeometry(unsigned int i) const
+    const Geometry& CityObject::getGeometry(unsigned int i) const
     {
-        return m_geometries[i];
-    }
-
-    const Composite* CityObject::getComposite(unsigned int i) const
-    {
-        return m_composites[i];
+        return *m_geometries[i];
     }
 
     unsigned int CityObject::getImplicitGeometryCount() const
@@ -90,96 +90,73 @@ namespace citygml {
         return m_implicitGeometries.size();
     }
 
-    const ImplicitGeometry*CityObject::getImplicitGeometry(unsigned int i) const
+    const ImplicitGeometry& CityObject::getImplicitGeometry(unsigned int i) const
     {
-        return m_implicitGeometries[i];
+        return *m_implicitGeometries[i];
     }
 
-    unsigned int CityObject::getChildCount() const
+    unsigned int CityObject::getChildCityObjecsCount() const
     {
         return m_children.size();
     }
 
-    const CityObject*CityObject::getChild(unsigned int i) const
+    const CityObject& CityObject::getChildCityObject(unsigned int i) const
     {
-        return ( i < getChildCount() ) ? m_children[i] : 0;
+        return *m_children[i];
     }
 
-    CityObject*CityObject::getChild(unsigned int i)
+    CityObject& CityObject::getChildCityObject(unsigned int i)
     {
-        return ( i < getChildCount() ) ? m_children[i] : 0;
+        return *m_children[i];
     }
 
-    const std::vector<CityObject*>& CityObject::getChildren() const
-    {
-        return m_children;
-    }
-
-    std::vector<CityObject*>&CityObject::getChildren()
-    {
-        return m_children;
-    }
-
-    void CityObject::finish( AppearanceManager &appearanceManager, const ParserParams& params )
+    void CityObject::finish(bool tesselate, Tesselator& tesselator , bool mergeGeometries)
     {
 
-        std::shared_ptr<Appearance> myappearance = appearanceManager.getAppearanceForTarget( getId() );
+        if (mergeGeometries) {
 
-        std::vector< Geometry* >::const_iterator itGeom = m_geometries.begin();
-        for ( ; itGeom != m_geometries.end(); ++itGeom ) {
-            if ( !( (*itGeom)->getComposite() ) ) {
-                (*itGeom)->finish( appearanceManager, myappearance ? myappearance : 0, params );
-            } else {
-                Composite* geomComposite = (*itGeom)->getComposite();
-                myappearance = appearanceManager.getAppearanceForTarget( geomComposite->getId() );
-                (*itGeom)->finish( appearanceManager, myappearance ? myappearance : 0, params );
+            // Try merge Geometries pairwise from left to right
+            int mergeTargetIndex = 0;
+            while (mergeTargetIndex < m_geometries.size()) {
+
+                int mergeSourceIndex = mergeTargetIndex + 1;
+
+                while (mergeSourceIndex < m_geometries.size()) {
+
+                    if (m_geometries[mergeTargetIndex]->merge(m_geometries[mergeSourceIndex])) {
+                        m_geometries.erase(m_geometries.begin() + mergeSourceIndex);
+                    } else {
+                        mergeSourceIndex++;
+                    }
+
+                }
+
+                mergeTargetIndex++;
+
+            }
+
+        }
+
+        for (std::unique_ptr<Geometry> geom : m_geometries) {
+            geom->addAppearancesOf(*this);
+            geom->finish(tesselate, tesselator, mergeGeometries);
+        }
+
+        for (std::unique_ptr<ImplicitGeometry> implictGeom : m_implicitGeometries) {
+            for (int i = 0; i < implictGeom->getGeometriesCount(); i++) {
+                implictGeom[i]->addAppearancesOf(*this);
+                implictGeom[i]->finish(tesselate, tesselator, mergeGeometries);
             }
         }
 
-        std::vector< ImplicitGeometry* >::const_iterator itImplGeom = m_implicitGeometries.begin();
-        for( ; itImplGeom != m_implicitGeometries.end(); ++itImplGeom) {
-            for(std::vector< Geometry* >::const_iterator it = (*itImplGeom)->_geometries.begin(); it != (*itImplGeom)->_geometries.end(); ++it) {
-                if ( !( (*it)->getComposite() ) ) {
-                    (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
-                } else {
-                    Composite* geomComposite = (*it)->getComposite();
-                    myappearance = appearanceManager.getAppearanceForTarget( geomComposite->getId() );
-                    (*it)->finish( appearanceManager, myappearance ? myappearance : 0, params );
-                }
-            }
-        }
-
-        bool finish = false;
-        while ( !finish && params.optimize )
-        {
-            finish = true;
-            int len = m_geometries.size();
-            for ( int i = 0; finish && i < len - 2; i++ )
-            {
-                for ( int j = i+1; finish && j < len - 1; j++ )
-                {
-                    if ( !m_geometries[i]->merge( m_geometries[j] ) ) continue;
-                    delete m_geometries[j];
-                    m_geometries.erase( m_geometries.begin() + j );
-                    finish = false;
-                }
-            }
+        for (std::unique_ptr<CityObject> child : m_children) {
+            child->addAppearancesOf(*this);
+            child->finish(tesselate, tesselator, mergeGeometries);
         }
     }
 
     CityObject::~CityObject()
     {
-        std::vector< Composite* >::const_iterator itComp = m_composites.begin();
-        for ( ; itComp != m_composites.end(); ++itComp )
-            delete *itComp;
-
-        std::vector< Geometry* >::const_iterator itGeom = m_geometries.begin();
-        for ( ; itGeom != m_geometries.end(); ++itGeom )
-            delete *itGeom;
-
-        std::vector< ImplicitGeometry* >::const_iterator itImplGeom = m_implicitGeometries.begin();
-        for (; itImplGeom != m_implicitGeometries.end(); ++itImplGeom)
-            delete *itImplGeom;
     }
 
     std::ostream& operator<<( std::ostream& os, const CityObject& o )

@@ -2,7 +2,7 @@
 
 namespace citygml {
 
-    Composite::Composite(const std::string& id, unsigned int lod) : Object( id ), m_lod( lod)
+    Composite::Composite(const std::string& id, unsigned int lod) : AppearanceTarget( id ), m_lod( lod)
     {
 
     }

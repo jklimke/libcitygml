@@ -11,8 +11,11 @@
 
 namespace citygml {
 
+    class CityGMLFactory;
+
     class LIBCITYGML_EXPORT Texture : public Appearance
     {
+        friend class CityGMLFactory;
     public:
         enum class WrapMode
         {
@@ -22,8 +25,6 @@ namespace citygml {
             WM_CLAMP,		// the texture is clamped to its edges
             WM_BORDER		// the resulting color is specified by the borderColor element (RGBA)
         };
-
-        Texture( const std::string& id );
 
         std::string getUrl() const;
 
@@ -39,25 +40,28 @@ namespace citygml {
 
         std::string toString() const;
 
-        virtual bool targets(const Object& obj) const;
+        virtual bool targets(const AppearanceTarget& obj) const;
+        virtual void copyTargetDefinition(const AppearanceTarget& oldTarget, const AppearanceTarget& newTarget);
 
         void addTarget(TextureTarget* target);
-        std::vector<const TextureTarget*> getTextureTargetsFor(const Object& obj) const;
-        std::vector<TextureTarget*> getTextureTargetsFor(const Object& obj);
+        const TextureTarget& getTextureTargetFor(const Object& obj) const;
+        TextureTarget& getTextureTargetFor(const Object& obj);
+        virtual std::vector<std::string> getTargetIDs() const;
 
-        virtual Texture* asTexture() override;
-        virtual const Texture* asTexture() const override;
+        virtual std::shared_ptr<Texture> asTexture() override;
+        virtual std::shared_ptr<const Texture> asTexture() const override;
 
         virtual ~Texture();
 
     protected:
+        Texture( const std::string& id );
         Texture( const std::string& id, const std::string& type );
         std::string m_url;
         bool m_repeat;
         WrapMode m_wrapMode;
         TVec4f m_borderColor;
-        std::unordered_map<std::string, std::vector<TextureTarget*>> m_idTargetMap;
-
+        std::vector<std::unique_ptr<TextureTarget>> m_targets;
+        std::unordered_map<std::string, TextureTarget&> m_idTargetMap;
     };
 
 }

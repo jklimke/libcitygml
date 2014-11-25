@@ -7,6 +7,11 @@ namespace citygml {
 
     }
 
+    std::shared_ptr<GeoreferencedTexture> GeoreferencedTexture::createNewGeoreferencedTexture(const std::string& id)
+    {
+        return std::shared_ptr<GeoreferencedTexture>(new GeoreferencedTexture(id));
+    }
+
     bool GeoreferencedTexture::getPreferWorldFile() const
     {
         return m_preferWorldFile;
@@ -17,24 +22,24 @@ namespace citygml {
         m_preferWorldFile = value;
     }
 
-    Texture* GeoreferencedTexture::asTexture()
+    std::shared_ptr<Texture> GeoreferencedTexture::asTexture()
     {
-        return this;
+        return shared_from_this();
     }
 
-    const Texture* GeoreferencedTexture::asTexture() const
+    std::shared_ptr<const Texture> GeoreferencedTexture::asTexture() const
     {
-        return this;
+        return shared_from_this();
     }
 
-    GeoreferencedTexture* GeoreferencedTexture::asGeoreferencedTexture()
+    std::shared_ptr<GeoreferencedTexture> GeoreferencedTexture::asGeoreferencedTexture()
     {
-        return this;
+        return shared_from_this();
     }
 
-    const GeoreferencedTexture* GeoreferencedTexture::asGeoreferencedTexture() const
+    std::shared_ptr<const GeoreferencedTexture> GeoreferencedTexture::asGeoreferencedTexture() const
     {
-        return this;
+        return shared_from_this();
     }
 
 }

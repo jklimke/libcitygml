@@ -3,7 +3,7 @@
 
 namespace citygml {
 
-    TextureCoordinates::TextureCoordinates(std::string targetID, std::vector<TVec2f> coords)
+    TextureCoordinates::TextureCoordinates(std::string id, std::string targetID, std::vector<TVec2f> coords) : Object(id)
     {
         m_targetID = targetID;
         m_coordlist = coords;

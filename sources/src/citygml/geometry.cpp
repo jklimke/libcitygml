@@ -7,7 +7,7 @@
 
 namespace citygml {
 
-    Geometry::Geometry(const std::string& id, Geometry::GeometryType type, unsigned int lod) : Object( id ), m_finished(false), m_type( type ), m_lod( lod ), m_composite( 0 )
+    Geometry::Geometry(const std::string& id, Geometry::GeometryType type, unsigned int lod) : AppearanceTarget( id ), m_finished(false), m_type( type ), m_lod( lod ), m_composite( 0 )
     {
 
     }
@@ -22,14 +22,14 @@ namespace citygml {
         return m_polygons.size();
     }
 
-    Polygon* Geometry::operator[](unsigned int i)
+    Polygon& Geometry::operator[](unsigned int i)
     {
-        return m_polygons[i];
+        return *m_polygons[i];
     }
 
-    const Polygon*Geometry::operator[](unsigned int i) const
+    const Polygon& Geometry::operator[](unsigned int i) const
     {
-        return m_polygons[i];
+        return *m_polygons[i];
     }
 
     Geometry::GeometryType Geometry::getType() const
@@ -37,60 +37,90 @@ namespace citygml {
         return m_type;
     }
 
-    Composite*Geometry::getComposite() const
+    const Composite* Geometry::getComposite() const
     {
-        return m_composite;
+        return m_composite.get();
+    }
+
+    void Geometry::setComposite(Composite* composite)
+    {
+        m_composite = std::unique_ptr<Composite>(composite);
+    }
+
+    void Geometry::addAppearance(std::shared_ptr<Appearance> appearance)
+    {
+        m_appearances.insert(appearance);
     }
 
     Geometry::~Geometry()
     {
-        std::vector< Polygon* >::const_iterator it = m_polygons.begin();
-        for ( ; it != m_polygons.end(); ++it ) delete *it;
     }
+    unsigned int Geometry::lod() const
+    {
+        return m_lod;
+    }
+
+    void Geometry::setLod(unsigned int lod)
+    {
+        m_lod = lod;
+    }
+
 
     void Geometry::addPolygon( Polygon* p )
     {
-        p->m_geometry = this;
-        m_polygons.push_back( p );
+        m_polygons.push_back( std::unique_ptr<Polygon>(p) );
     }
 
-    void Geometry::finish( AppearanceManager& appearanceManager, std::shared_ptr<Appearance> defAppearance,  const ParserParams& params )
+    void Geometry::finish(bool tesselate, Tesselator& tesselator, bool mergePolygons)
     {
         // only need to finish geometry once
-        if (m_finished)
-            return;
-
-        std::shared_ptr<Appearance> myappearance = appearanceManager.getAppearanceForTarget( getId() );
-        std::vector< Polygon* >::const_iterator it = m_polygons.begin();
-        for ( ; it != m_polygons.end(); ++it ) (*it)->finish( appearanceManager, myappearance ? myappearance : defAppearance, params.tesselate );
-
-        bool finish = false;
-        while ( !finish && params.optimize )
-        {
-            finish = true;
-            int len = (int)m_polygons.size();
-            for ( int i = 0; finish && i < len - 1; i++ )
-            {
-                for ( int j = i+1; finish && j < len - 1; j++ )
-                {
-                    if ( !m_polygons[i]->merge( m_polygons[j] ) ) continue;
-                    delete m_polygons[j];
-                    m_polygons.erase( m_polygons.begin() + j );
-                    finish = false;
-                }
-            }
+        if (m_finished) {
+            throw std::runtime_error("Called Geometry::finish on already finished Geometry.");
         }
+
         m_finished = true;
+
+        if (mergePolygons && m_polygons.size() > 1) {
+
+            // Try merge Polygons from left to right
+            for (int i = 1; i < m_polygons.size(); i++) {
+
+                m_polygons[0]->merge(m_polygons[i]);
+
+            }
+
+            m_polygons.resize(1);
+        }
+
+        for (std::unique_ptr<Polygon>& polygon : m_polygons) {
+            // Add own appearances and that of the composite to the polygon
+            // Note that the order is important. If there are multiple appearance objects that target the same
+            // LinearRing then an appearance objects that target the polygon
+            // have a higher priority then thoose that target the geometry which in turn have a higher pripority than thoose that
+            // target the composite. The priority is defined by the order in which they are added to the polygon... consequently
+            // the appearances that directly target the polygon must be added first
+            polygon->addAppearancesOf(*this);
+
+            if (m_composite != nullptr) {
+                polygon->addAppearancesOf(*m_composite);
+            }
+
+            polygon->finish(tesselate, tesselator);
+        }
+
     }
 
     bool Geometry::merge( Geometry* g )
     {
-        if ( !g || g->m_lod != m_lod || g->m_type != m_type ) return false;
+        if (g == nullptr || g->m_finished || this->m_finished) {
+            throw std::runtime_error("Invalid call to Geometry::merge. Source Geometry is nullptr or Source/Target Geometry is already finished.");
+        }
 
-        unsigned int pSize = g->m_polygons.size();
-        for ( unsigned int i = 0; i < pSize; i++ )
-            m_polygons.push_back( g->m_polygons[i] );
+        if ( g->getLOD() != m_lod || g->getType() != m_type ) return false;
 
+        m_polygons.insert(m_polygons.end(),
+                               std::make_move_iterator(g->m_polygons.begin()),
+                               std::make_move_iterator(g->m_polygons.end()));
         g->m_polygons.clear();
 
         m_id += "+" + g->m_id;

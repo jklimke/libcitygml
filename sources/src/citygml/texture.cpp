@@ -12,6 +12,11 @@ namespace citygml {
 
     }
 
+    std::shared_ptr<Texture> Texture::createNewTexture(const std::string& id)
+    {
+        return std::shared_ptr<Texture>(new Texture(id));
+    }
+
     std::string Texture::getUrl() const
     {
         return m_url;
@@ -52,44 +57,63 @@ namespace citygml {
         return Appearance::toString() + " (url: " + m_url + ")";
     }
 
-    bool Texture::targets(const Object& obj) const
+    bool Texture::targets(const AppearanceTarget& obj) const
     {
         return m_idTargetMap.count(obj.getId()) > 0;
     }
 
-    void Texture::addTarget(TextureTarget* target)
+    void Texture::copyTargetDefinition(const AppearanceTarget& oldTarget, const AppearanceTarget& newTarget)
     {
-        m_idTargetMap[target.getTargetID()].push_back(target);
+        std::unordered_map<std::string, TextureTarget&>::iterator it = m_idTargetMap.find(oldTarget.getId());
+        if (it != m_idTargetMap.end()) {
+            TextureTarget& texTarget = it->second;
+            m_idTargetMap[newTarget.getTargetID()] = texTarget;
+        }
     }
 
-    const std::vector<TextureTarget> emptyTargets;
+    void Texture::addTarget(TextureTarget* target)
+    {
+        m_targets.push_back(std::unique_ptr<TextureTarget>(target));
+        m_idTargetMap[m_targets.back()->getTargetID()].push_back(*m_targets.back());
+    }
 
-    std::vector<const TextureTarget*> Texture::getTextureTargetsFor(const Object& obj) const
+    const TextureTarget invalidTarget;
+
+    const TextureTarget& Texture::getTextureTargetFor(const Object& obj) const
     {
         const auto it = m_idTargetMap.find(obj.getId());
         if (it != m_idTargetMap.end()) {
             return *it;
         }
-        return emptyTargets;
+        return invalidTarget;
     }
 
-    std::vector<TextureTarget*> Texture::getTextureTargetsFor(const Object& obj)
+    TextureTarget& Texture::getTextureTargetFor(const Object& obj)
     {
         auto it = m_idTargetMap.find(obj.getId());
         if (it != m_idTargetMap.end()) {
-            return (*it).get();
+            return *it;
         }
-        return emptyTargets;
+        return invalidTarget;
     }
 
-    Texture* Texture::asTexture()
+    std::vector<std::string> Texture::getTargetIDs() const
     {
-        return this;
+        std::vector<std::string> targetIDs;
+        for (const auto& pair : m_idTargetMap) {
+            targetIDs.push_back(pair.first);
+        }
+        return targetIDs;
     }
 
-    const Texture* Texture::asTexture() const
+    std::shared_ptr<Texture> Texture::asTexture()
     {
-        return this;
+        return shared_from_this();
+    }
+
+    std::shared_ptr<const Texture> Texture::asTexture() const
+    {
+        return shared_from_this();
     }
 
     Texture::~Texture()

@@ -1,16 +1,19 @@
 #pragma once
 
-#include <citygml/object.h>
+#include <citygml/appearancetarget.h>
 
 namespace citygml {
-    class Composite : public Object
-    {
-    public:
-        Composite( const std::string& id, unsigned int lod = 0 );
+    class CityGMLFactory;
 
+    class Composite : public AppearanceTarget
+    {
+        friend class CityGMLFactory;
+    public:
         inline unsigned int getLOD() const;
 
     protected:
+        Composite( const std::string& id, unsigned int lod = 0 );
+
         unsigned int m_lod;
     };
 }

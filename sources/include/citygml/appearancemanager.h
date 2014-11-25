@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_set>
+#include <unordered_map>
 
 #include <citygml/object.h>
 #include <citygml/vecs.hpp>
@@ -12,6 +14,7 @@ namespace citygml {
 
     class CityGMLLogger;
     class Appearance;
+    class AppearanceTarget;
     class Material;
     class Texture;
 
@@ -23,31 +26,31 @@ namespace citygml {
 
         ~AppearanceManager();
 
-        enum class ForSide
-        {
-            FS_ANY,	    // appearance for any side
-            FS_FRONT,	// appearance for front side
-            FS_BACK		// appearance for back side
-        };
-
         /**
          * @brief returns the appearance with the given id
          * @return the Appearance object or nullptr if not found
          */
         std::shared_ptr<Appearance> getAppearanceByID( const std::string& id ) const;
 
+        /**
+         * @brief all themes found in the parsed citygml file
+         * @return a list of theme identifiers
+         */
+        std::vector<std::string> getAllThemes();
 
-        Tesselator& getTesselator();
+        void addTheme(const std::string& theme);
 
-        void finish();
+        void addAppearanceTarget(AppearanceTarget& target);
+
+        void addAppearance(std::shared_ptr<Appearance> appearance);
+
+        void assignAppearancesToTargets();
+
 
     protected:
-        std::string m_lastId;
-
-        std::vector< std::shared_ptr<Appearance> > m_appearances;
-
-
-        Tesselator m_tesselator;
+        std::unordered_map<std::string, std::shared_ptr<Appearance>> m_appearancesMap;
+        std::unordered_set<std::string> m_themes;
+        std::unordered_map<std::string, AppearanceTarget&> m_appearanceTargetsMap;
         std::shared_ptr<CityGMLLogger> m_logger;
     };
 

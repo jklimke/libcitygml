@@ -27,32 +27,32 @@ namespace citygml {
         return m_typeString + " " + m_id;
     }
 
-    Material* Appearance::asMaterial()
+    std::shared_ptr<Material> Appearance::asMaterial()
     {
         return nullptr;
     }
 
-    const Material* Appearance::asMaterial() const
+    std::shared_ptr<const Material> Appearance::asMaterial() const
     {
         return nullptr;
     }
 
-    Texture* Appearance::asTexture()
+    std::shared_ptr<Texture> Appearance::asTexture()
     {
         return nullptr;
     }
 
-    const Texture*Appearance::asTexture() const
+    std::shared_ptr<const Texture> Appearance::asTexture() const
     {
         return nullptr;
     }
 
-    GeoreferencedTexture* Appearance::asGeoreferencedTexture()
+    std::shared_ptr<GeoreferencedTexture> Appearance::asGeoreferencedTexture()
     {
         return nullptr;
     }
 
-    const GeoreferencedTexture* Appearance::asGeoreferencedTexture() const
+    std::shared_ptr<const GeoreferencedTexture> Appearance::asGeoreferencedTexture() const
     {
         return nullptr;
     }

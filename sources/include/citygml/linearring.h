@@ -27,7 +27,7 @@ namespace citygml {
 
         inline std::vector<TVec3d>& getVertices();
 
-        void removeDuplicateVertices(const std::vector<TextureTarget*>& targets );
+        void removeDuplicateVertices(const std::vector<TextureTarget&>& targets );
 
         void forgetVertices();
 

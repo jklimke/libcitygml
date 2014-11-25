@@ -1,10 +1,11 @@
 #pragma once
 
+#include <memory>
 #include <vector>
-#include <unordered_map>
+#include <unordered_set>
 
 #include <citygml/citygml_api.h>
-#include <citygml/object.h>
+#include <citygml/appearancetarget.h>
 #include <citygml/vecs.hpp>
 #include <citygml/linearring.h>
 #include <citygml/geometry.h>
@@ -15,16 +16,19 @@ class Tesselator;
 namespace citygml {
 
     class TextureCoordinates;
+    class CityGMLFactory;
 
-    class LIBCITYGML_EXPORT Polygon : public Object
+    /**
+     * @brief The Polygon class implements the functionality of gml::Polygon and gml::SurfacePatch (gml::Rectangle, gml::Triangle) objects
+     */
+    class LIBCITYGML_EXPORT Polygon : public AppearanceTarget
     {
+        friend class CityGMLFactory;
     public:
         enum class AppearanceSide {
             FRONT,
             BACK
         };
-
-        Polygon( const std::string& id );
 
         // Get the vertices
         const std::vector<TVec3d>& getVertices() const;
@@ -36,17 +40,21 @@ namespace citygml {
         const std::vector<TVec3f>& getNormals() const;
 
         // Get texture coordinates
-        const std::vector<TVec2f>& getTexCoordsForTheme(const std::string& theme) const;
+        const std::vector<TVec2f> getTexCoordsForTheme(const std::string& theme) const;
 
-        const std::vector<std::shared_ptr<Appearance>> getAppearancesForTheme(const std::string& theme) const;
-
-        // NOTE: appearances for m_geometry also target this polygon in the old implementation (only if the polygon has no appearance itself)
-        void addAppearance(std::shared_ptr<Appearance> appearance);
+        /**
+         * @brief merges Polygon p into this Polygon. Both Polygons must be unfinished.
+         * @note p won't contain any geometry data after this operation and should not be used again.
+         */
+        void merge( Polygon* p);
 
         virtual ~Polygon();
 
     protected:
+        Polygon( const std::string& id, std::shared_ptr<CityGMLLogger> logger );
+
         void finish(bool doTesselate, Tesselator& tesselator );
+        const std::shared_ptr<Texture> getTextureForTheme(const std::string& theme) const;
 
         void addRing( LinearRing* );
 
@@ -55,20 +63,16 @@ namespace citygml {
 
         TVec3d computeNormal();
 
-        bool merge( Polygon* );
-
         std::vector<TVec3d> m_vertices;
         std::vector<TVec3f> m_normals;
         std::vector<unsigned int> m_indices;
-        std::unordered_map<std::string,std::vector<TVec2f>> m_themeTexCoordsMap;
 
-        LinearRing* m_exteriorRing;
-        std::vector<LinearRing*> m_interiorRings;
-
-        std::vector<std::shared_ptr<Appearance>> m_appearances;
+        std::vector<std::unique_ptr<LinearRing>> m_exteriorRings;
+        std::vector<std::unique_ptr<LinearRing>> m_interiorRings;
 
         bool m_negNormal;
+        bool m_finished;
 
-        Geometry *m_geometry;
+        std::shared_ptr<CityGMLLogger> m_logger;
     };
 }

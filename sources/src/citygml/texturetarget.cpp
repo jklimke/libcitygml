@@ -6,28 +6,33 @@ namespace citygml {
     TextureTarget::TextureTarget(std::string targetID) : Object()
     {
         m_targetID = targetID;
-        m_coordinates = nullptr;
+        m_coordinatesList = nullptr;
+        m_valid = true;
     }
 
-    const TextureCoordinates& TextureTarget::getTexCoordinates() const
+    TextureTarget::TextureTarget()
     {
-        return m_coordinates;
+        m_valid = false;
     }
 
-    TextureCoordinates& TextureTarget::getTexCoordinates() const
+    const std::vector<TextureCoordinates>& TextureTarget::getTexCoordinatesList() const
     {
-        return m_coordinates;
+        return m_coordinatesList;
     }
 
-    void TextureTarget::setTexCoordinates(TextureCoordinates texCoords)
+    void TextureTarget::addTexCoordinates(TextureCoordinates texCoords)
     {
-        m_coordinates = texCoords;
+        m_coordinatesList.push_back(texCoords);
+    }
+
+    bool TextureTarget::valid() const
+    {
+        return m_valid;
     }
 
     std::string TextureTarget::getTargetID() const
     {
         return m_targetID;
     }
-
 
 }

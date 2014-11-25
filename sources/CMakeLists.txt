@@ -34,6 +34,8 @@ SET(SOURCES
   src/citygml/transformmatrix.cpp
   src/citygml/texturetarget.cpp
   src/citygml/texturecoordinates.cpp
+  src/citygml/appearancetarget.cpp
+  src/citygml/citygmlfactory.cpp
 
   src/parser/parser.cpp
   src/parser/parserxercesc.cpp
@@ -65,6 +67,8 @@ SET(PUBLIC_HEADER
   include/citygml/texturetarget.h
   include/citygml/texturecoordinates.h
   include/citygml/cityobjectdeclerations.hpp
+  include/citygml/appearancetarget.h
+  include/citygml/citygmlfactory.h
 )
 
 SET(HEADERS

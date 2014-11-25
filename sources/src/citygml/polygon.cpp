@@ -1,15 +1,17 @@
 #include "citygml/polygon.h"
 #include "citygml/appearance.h"
 #include "citygml/texture.h"
+#include "citygml/texturecoordinates.h"
 #include "citygml/tesselator.h"
+#include "citygml/citygmllogger.h"
 
 #include <assert.h>
 
 namespace citygml {
 
-    Polygon::Polygon(const std::string& id)  : Object( id ), m_exteriorRing( nullptr ), m_negNormal( false ), m_geometry( nullptr )
+    Polygon::Polygon(const std::string& id, std::shared_ptr<CityGMLLogger> logger)  : Object( id ), m_exteriorRing( nullptr ), m_negNormal( false )
     {
-
+        m_logger = logger;
     }
 
     const std::vector<TVec3d>&Polygon::getVertices() const
@@ -27,19 +29,73 @@ namespace citygml {
         return m_normals;
     }
 
-    const std::vector<TVec2f>& Polygon::getTexCoordsForTheme(const std::string& theme) const
+    const std::vector<TVec2f> Polygon::getTexCoordsForTheme(const std::string& theme) const
     {
+        // Lazy generation of texCoords
+        std::vector<TVec2f> texCoords;
 
+        std::shared_ptr<Texture> texture = getTextureForTheme(theme);
+        if (texture == nullptr) {
+            CITYGML_LOG_WARN(m_logger, "Polygon with id '" << this->getId() << "'' contains no texture for theme '" << theme << "'");
+            return texCoords;
+        }
+
+        std::vector<std::string> orderedRingIDs;
+        if (m_exteriorRing) {
+            orderedRingIDs.push_back(m_exteriorRing->getId());
+        }
+
+        for ( const auto& ring : m_interiorRings )
+        {
+            orderedRingIDs.push_back(ring->getId());
+        }
+
+        const TextureTarget& target = texture->getTextureTargetFor(*this);
+
+        assert(target.valid());
+
+        if (target.getTexCoordinatesList().size() != orderedRingIDs.size()) {
+            CITYGML_LOG_WARN(m_logger, "Texture with id '" << texture->getId() << "'' targets Polygon with id '" << this->getId() << "'"
+                             << " but the number of TextureCoordinates objects (gml::textureCoordinates) is not equal with the number of LinearRing objects (gml:LinearRing)."
+                             << " (Ring objects: " << orderedRingIDs.size() << " TextureCoordinates objects: " << target.getTexCoordinatesList().size());
+        }
+
+        for (const std::string& ringId : orderedRingIDs) {
+            bool found = false;
+            for (const TextureCoordinates& coordinates : target.getTexCoordinatesList()) {
+                if (coordinates.targets(ringId)) {
+                    texCoords.insert(texCoords.end(), coordinates.getCoords().begin(), coordinates.getCoords().end());
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                CITYGML_LOG_WARN(m_logger, "Texture with id '" << texture->getId() << "'' targets Polygon with id '" << this->getId() << "'"
+                                 << " but does not contain a TextureCoordinates object (gml::textureCoordinates) for LinearRing object (gml:LinearRing) with id '" << ringId << "'");
+            }
+        }
     }
 
-    const std::vector<std::shared_ptr<Appearance> > Polygon::getAppearancesForTheme(const std::string& theme) const
+    const std::shared_ptr<Texture> Polygon::getTextureForTheme(const std::string& theme) const
     {
+        for (std::shared_ptr<Appearance> appearance : m_appearances) {
 
+            std::shared_ptr<Texture> tex = appearance->asTexture();
+
+            if (tex == nullptr) continue;
+
+            if (!tex->inTheme(theme)) continue;
+
+            return tex;
+        }
+
+        return nullptr;
     }
 
     void Polygon::addAppearance(std::shared_ptr<Appearance> appearance)
     {
-        m_appearances = appearance;
+        m_appearances.insert(appearance);
     }
 
     TVec3d Polygon::computeNormal()
@@ -79,14 +135,15 @@ namespace citygml {
 
     void Polygon::mergeRings()
     {
+
         // We will modify the vertices (delete duplicates) therefore we have to modify the corresponding texture coordinates
-        std::vector<TextureTarget*> targets;
+        std::vector<TextureTarget&> targets;
         for (std::shared_ptr<Appearance> appearance : m_appearances) {
             if (appearance->asTexture() == nullptr) continue;
 
-            std::vector<TextureTarget*> current = appearance->asTexture()->getTextureTargetsFor(*this);
-
-            targets.insert(targets.end(), current.begin(), current.end());
+            TextureTarget& current = appearance->asTexture()->getTextureTargetFor(*this);
+            assert(current.valid());
+            targets.push_back(current);
         }
 
         m_exteriorRing->removeDuplicateVertices( targets );
@@ -102,25 +159,37 @@ namespace citygml {
         }
     }
 
-    // Merge polygon p into the current polygon
-    bool Polygon::merge( Polygon* p )
+    void Polygon::merge( Polygon* p )
     {
-        if ( !p ) return false;
-        if ( p->getVertices().size() == 0 ) return true;
+        if (!p || m_finished || p->m_finished) {
+            throw std::runtime_error("Invalid call to Polygon::merge. Source Polygon is nullptr or Source/Target Polygon is already finished.");
+        }
 
         // merge vertices
-        m_indices.insert(m_vertices.end(), p->m_vertices.begin(), p->m_vertices.end());
-        m_indices.insert(m_indices.end(), p->m_indices.begin(), p->m_indices.end());
-        m_normals.insert(m_normals.end(), p->m_normals.begin(), p->m_normals.end());
-        m_appearances.insert(m_appearances.end(), p->m_appearances.begin(), p->m_appearances.end());
+        m_exteriorRings.insert(m_exteriorRings.end(),
+                               std::make_move_iterator(p->m_exteriorRings.begin()),
+                               std::make_move_iterator(p->m_exteriorRings.end()));
+        p->m_exteriorRings.clear();
+
+        m_interiorRings.insert(m_interiorRings.end(),
+                               std::make_move_iterator(p->m_interiorRings.begin()),
+                               std::make_move_iterator(p->m_interiorRings.end()));
+        p->m_interiorRings.clear();
+
+        m_appearances.insert(p->m_appearances.begin(), p->m_appearances.end());
+        p->m_appearances.clear();
+
         // merge ids
         m_id += "+" + p->m_id;
-
-        return true;
     }
 
     void Polygon::finish(bool doTesselate , Tesselator& tesselator)
     {
+        if (m_finished) {
+            throw std::runtime_error("Called Polygon::finish on already finished polygon");
+        }
+
+        m_finished = true;
         mergeRings();
         TVec3d normal = computeNormal();
         computeIndices(normal, doTesselate, tesselator);
@@ -133,15 +202,27 @@ namespace citygml {
 
     void Polygon::addRing( LinearRing* ring )
     {
-        if ( ring->isExterior() ) m_exteriorRing = ring;
-        else m_interiorRings.push_back( ring );
+        if (m_finished) {
+            throw std::runtime_error("Can't add LinearRing to finished Polygon.");
+        }
+
+        if (ring->isExterior() && !m_exteriorRings.empty()) {
+            CITYGML_LOG_WARN(m_logger, "Duplicate definition of exterior LinearRing for Polygon with id '" << this->getId() << "'."
+                             << " Using exterior LinearRing with id '" << m_exteriorRings.front()->getId() << "' and ignore LinearRing with id '" << ring->getId() << "'");
+            delete ring;
+            return;
+        }
+
+        if ( ring->isExterior() ) {
+            m_exteriorRings.push_back(std::unique_ptr<LinearRing>(ring));
+        }
+        else {
+            m_interiorRings.push_back( std::unique_ptr<LinearRing>(ring) );
+        }
     }
 
     Polygon::~Polygon()
     {
-        delete m_exteriorRing;
-        std::vector< LinearRing* >::const_iterator it = m_interiorRings.begin();
-        for ( ; it != m_interiorRings.end(); ++it ) delete *it;
     }
 
 }

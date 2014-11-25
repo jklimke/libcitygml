@@ -5,12 +5,16 @@
 
 namespace citygml {
 
+    class CityGMLFactory;
+
 #define DECLARE_SIMPLE_OBJECT_CLASS( _name_, _defcolor_ ) \
     class LIBCITYGML_EXPORT _name_ : public CityObject \
     {\
+    friend class CityGMLFactory;\
     public:\
-    _name_( const std::string& id ) : CityObject( id, COT_ ## _name_ ) {}\
     inline TVec4f getDefaultColor(()) const { return _defcolor_; }\
+    protected:\
+    _name_( const std::string& id ) : CityObject( id, COT_ ## _name_ ) {}\
     }
 
 

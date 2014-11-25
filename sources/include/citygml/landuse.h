@@ -5,12 +5,16 @@
 
 namespace citygml {
 
+    class CityGMLFactory;
+
     class LandUse : public CityObject
     {
+        friend class CityGMLFactory;
     public:
-        LandUse( const std::string& id );
-
         TVec4f getDefaultColor() const;
+
+    protected:
+        LandUse( const std::string& id );
     };
 
 }
