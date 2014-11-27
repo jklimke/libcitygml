@@ -200,7 +200,7 @@ if(BUILD_DEBIAN_PACKAGE)
     set(CPACK_DEBIAN_PACKAGE_SECTION        "Development")
     set(CPACK_DEBIAN_PACKAGE_PRIORITY       "optional")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libgdal1h (>= 1.10.1), libxerces-c3.1 (>= 3.1.1-5)")
-    set(CPACK_DEBIAN_PACKAGE_CONFLICTS      "libcitygml0 libcitygml0-dev")
+    set(CPACK_DEBIAN_PACKAGE_CONFLICTS      "libcitygml0, libcitygml0-dev")
     set(CPACK_DEBIAN_PACKAGE_HOMEPAGE       "${META_AUTHOR_DOMAIN}")
     set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA  "")
         
