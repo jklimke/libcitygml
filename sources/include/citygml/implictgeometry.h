@@ -22,7 +22,7 @@ namespace citygml {
         void setReferencePoint(const TVec3d& referencePoint);
         TVec3d getReferencePoint() const;
 
-        void addGeometry(Geometry* geom);
+        void addGeometry(std::shared_ptr<Geometry> geom);
 
         // Get the number of geometries contains in the object
         unsigned int getGeometriesCount() const;
@@ -38,7 +38,7 @@ namespace citygml {
 
         TransformationMatrix     m_matrix;
         TVec3d                   m_referencePoint;
-        std::vector<std::unique_ptr<Geometry>>   m_geometries;
+        std::vector<std::shared_ptr<Geometry>>   m_geometries;
         std::string              m_srsName;
     };
 }

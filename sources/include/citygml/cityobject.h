@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include <citygml/appearancetarget.h>
+#include <citygml/object.h>
 #include <citygml/vecs.hpp>
 #include <citygml/envelope.h>
 
@@ -20,7 +20,7 @@ namespace citygml {
     class Composite;
     class AppearanceManager;
 
-    class CityObject : public AppearanceTarget
+    class CityObject : public Object
     {
     public:
 
@@ -65,8 +65,6 @@ namespace citygml {
         // Get the object type
         CityObjectsType getType() const;
 
-        std::string getTypeAsString() const;
-
         // Return the envelope (ie. the bounding box) of the object
         const Envelope& getEnvelope() const;
 
@@ -81,11 +79,15 @@ namespace citygml {
         // Access the geometries
         const Geometry& getGeometry( unsigned int i ) const;
 
+        void addGeometry(Geometry* geom);
+
         // Get the number of implicit geometries contains in the object
         unsigned int getImplicitGeometryCount() const;
 
         // Access the implicit geometries
         const ImplicitGeometry& getImplicitGeometry( unsigned int i ) const;
+
+        void addImplictGeometry(ImplicitGeometry* implictGeom);
 
         // Access the children
         unsigned int getChildCityObjecsCount() const;
@@ -94,7 +96,9 @@ namespace citygml {
 
         CityObject& getChildCityObject( unsigned int i );
 
-        void finish( bool tesselate, Tesselator& tesselator, bool mergePolygons );
+        void addChildCityObject(CityObject* cityObj);
+
+        void finish(bool tesselate, Tesselator& tesselator);
 
         virtual ~CityObject();
 
@@ -107,9 +111,6 @@ namespace citygml {
         std::vector<std::unique_ptr<ImplicitGeometry>> m_implicitGeometries;
         std::vector<std::unique_ptr<CityObject>> m_children;
     };
-
-    typedef unsigned int CityObjectsTypeMask;
-    CityObjectsTypeMask getCityObjectsTypeMaskFromString( const std::string& stringMask );
 
     std::ostream& operator<<( std::ostream& os, const CityObject& o );
 }

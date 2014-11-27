@@ -1,29 +1,33 @@
 #include "citygml/citygmlfactory.h"
 #include "citygml/appearancemanager.h"
-#include "citygml/composite.h"
 #include "citygml/cityobject.h"
 #include "citygml/appearancetarget.h"
 #include "citygml/polygon.h"
 #include "citygml/implictgeometry.h"
+#include "citygml/texture.h"
+#include "citygml/georeferencedtexture.h"
+#include "citygml/material.h"
+#include "citygml/materialtargetdefinition.h"
+#include "citygml/texturetargetdefinition.h"
+#include "citygml/citymodel.h"
+#include "citygml/implictgeometry.h"
 
 namespace citygml {
 
-    CityGMLFactory::CityGMLFactory(AppearanceManager& appearanceManager, std::shared_ptr<CityGMLLogger> logger)
+    CityGMLFactory::CityGMLFactory(AppearanceManager* appearanceManager, std::shared_ptr<CityGMLLogger> logger)
     {
         m_appearanceManager = appearanceManager;
         m_logger = logger;
     }
 
-    Geometry* CityGMLFactory::createGeometry(const std::string& id, GeometryType type, unsigned int lod)
+    CityModel* CityGMLFactory::createCityModel(const std::string& id)
     {
-        Geometry* geom = new Geometry(id, type, lod);
-        appearanceTargetCreated(geom);
-        return geom;
+        return new CityModel(id);
     }
 
-    ImplictGeometry* CityGMLFactory::createImplictGeometry(const std::string& id)
+    Geometry* CityGMLFactory::createGeometry(const std::string& id, Geometry::GeometryType type, unsigned int lod)
     {
-        ImplicitGeometry* geom = new ImplicitGeometry(id);
+        Geometry* geom = new Geometry(id, type, lod);
         appearanceTargetCreated(geom);
         return geom;
     }
@@ -42,11 +46,43 @@ namespace citygml {
         return poly;
     }
 
+    ImplicitGeometry *CityGMLFactory::createImplictGeometry(const std::string& id)
+    {
+        return new ImplicitGeometry(id);
+    }
+
     std::shared_ptr<Texture> CityGMLFactory::createTexture(const std::string& id)
     {
         std::shared_ptr<Texture> tex = std::shared_ptr<Texture>(new Texture(id));
-        m_appearanceManager.addAppearance(tex);
+        m_appearanceManager->addAppearance(tex);
         return tex;
     }
 
+    std::shared_ptr<Material> CityGMLFactory::createMaterial(const std::string& id)
+    {
+        std::shared_ptr<Material> mat = std::shared_ptr<Material>(new Material(id));
+        m_appearanceManager->addAppearance(mat);
+        return mat;
+    }
+
+    std::shared_ptr<GeoreferencedTexture> CityGMLFactory::createGeoReferencedTexture(const std::string& id)
+    {
+        std::shared_ptr<GeoreferencedTexture> tex = std::shared_ptr<GeoreferencedTexture>(new GeoreferencedTexture(id));
+        m_appearanceManager->addAppearance(tex);
+        return tex;
+    }
+
+    std::shared_ptr<MaterialTargetDefinition> CityGMLFactory::createMaterialTargetDefinition(const std::string& targetID, std::shared_ptr<Material> appearance, const std::string& id)
+    {
+        std::shared_ptr<MaterialTargetDefinition> targetDef = std::shared_ptr<MaterialTargetDefinition>(new MaterialTargetDefinition(targetID, appearance, id));
+        m_appearanceManager->addMaterialTargetDefinition(targetDef);
+        return targetDef;
+    }
+
+    std::shared_ptr<TextureTargetDefinition> CityGMLFactory::createTextureTargetDefinition(const std::string& targetID, std::shared_ptr<Texture> appearance, const std::string& id)
+    {
+        std::shared_ptr<TextureTargetDefinition> targetDef = std::shared_ptr<TextureTargetDefinition>(new TextureTargetDefinition(targetID, appearance, id));
+        m_appearanceManager->addTextureTargetDefinition(targetDef);
+        return targetDef;
+    }
 }

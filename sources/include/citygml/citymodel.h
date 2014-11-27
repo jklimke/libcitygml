@@ -14,13 +14,15 @@ namespace citygml {
     class AppearanceTarget;
     class CityGMLLogger;
     class CityObject;
+    class CityGMLFactory;
 
     typedef std::vector<std::unique_ptr<CityObject>> CityObjects;
-    typedef std::vector<std::unique_ptr<const CityObject>> ConstCityObjects;
-    typedef std::map< CityObject::CityObjectsType, std::vector<const CityObject&> > CityObjectsMap;
+    typedef std::vector<const CityObject*> ConstCityObjects;
+    typedef std::map< CityObject::CityObjectsType, std::vector<const CityObject*> > CityObjectsMap;
 
     class LIBCITYGML_EXPORT CityModel : public Object
     {
+        friend class CityGMLFactory;
     public:
 
         // Return the envelope (ie. the bounding box) of the model
@@ -31,9 +33,9 @@ namespace citygml {
         /**
         * @brief Return the roots elements of the model.
         */
-        const ConstCityObjects& getRootCityObjects() const;
+        const ConstCityObjects getRootCityObjects() const;
 
-        const ConstCityObjects& getAllCityObjectsOfType( CityObject::CityObjectsType type ) const;
+        const ConstCityObjects getAllCityObjectsOfType( CityObject::CityObjectsType type ) const;
 
         const std::string& getSRSName() const;
 
@@ -45,6 +47,8 @@ namespace citygml {
 
         void finish(bool tesselate, Tesselator& tesselator, bool mergePolygons);
 
+        std::vector<std::string> themes() const;
+        void setThemes(const std::vector<std::string>& themes);
 
         ~CityModel();
 
@@ -52,7 +56,7 @@ namespace citygml {
 
         CityModel( const std::string& id = "CityModel");
 
-        void addToCityObjectsMapRecursive(const CityObject& cityObj);
+        void addToCityObjectsMapRecursive(const CityObject* cityObj);
 
         Envelope m_envelope;
 
@@ -61,6 +65,8 @@ namespace citygml {
         CityObjectsMap m_cityObjectsMap;
 
         std::string m_srsName;
+
+        std::vector<std::string> m_themes;
 
         TVec3d m_translation;
     };

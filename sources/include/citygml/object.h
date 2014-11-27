@@ -28,7 +28,7 @@ namespace citygml {
 
         virtual ~Object() {}
 
-       setAttribute( const std::string& name, const std::string& value, bool forceOnExist = true );
+        void setAttribute( const std::string& name, const std::string& value, bool forceOnExist = true );
 
     protected:
 

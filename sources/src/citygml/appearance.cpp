@@ -1,5 +1,7 @@
 #include "citygml/appearance.h"
 
+#include <algorithm>
+
 namespace citygml {
 
     Appearance::Appearance(const std::string& id, const std::string& typeString) : Object( id ), m_typeString( typeString ), m_isFront(true)
@@ -59,12 +61,17 @@ namespace citygml {
 
     bool Appearance::inTheme(const std::string& themeName) const
     {
-        return m_themes.count(themeName) > 0;
+        return std::find(m_themes.begin(), m_themes.end(), themeName) != m_themes.end();
     }
 
-    bool Appearance::addToTheme(std::string themeName)
+    void Appearance::addToTheme(std::string themeName)
     {
-        m_themes.insert(themeName);
+        m_themes.push_back(themeName);
+    }
+
+    const std::vector<std::string>& Appearance::getThemes() const
+    {
+        return m_themes;
     }
 
 }

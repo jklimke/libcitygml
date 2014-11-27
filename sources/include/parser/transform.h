@@ -17,7 +17,9 @@
 #ifndef __TRANSFORM_H__
 #define __TRANSFORM_H__
 
-#include "citygml/citygml.h"
+#include <citygml/citygml.h>
+#include <citygml/citygmllogger.h>
+
 #ifdef USE_GDAL
 #	include "ogrsf_frmts.h"
 #endif

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <unordered_set>
+#include <vector>
 #include <memory>
 
 #include <citygml/citygml_api.h>
@@ -24,20 +24,6 @@ namespace citygml {
 
         virtual std::string toString() const;
 
-        /**
-         * @brief returns if the appearance targets the citygml object
-         */
-        virtual bool targets(const AppearanceTarget& obj) const = 0;
-
-        virtual std::vector<std::string> getTargetIDs() const = 0;
-
-        /**
-         * @brief lets the appearance target newTarget with the same settings as oldTarget
-         * @param oldTarget
-         * @param newTarget
-         */
-        virtual void copyTargetDefinition(const AppearanceTarget& oldTarget, const AppearanceTarget& newTarget) = 0;
-
         virtual std::shared_ptr<Material> asMaterial();
         virtual std::shared_ptr<const Material> asMaterial() const;
 
@@ -48,14 +34,15 @@ namespace citygml {
         virtual std::shared_ptr<const GeoreferencedTexture> asGeoreferencedTexture() const;
 
         bool inTheme(const std::string& themeName) const;
-        bool addToTheme(std::string themeName);
+        void addToTheme(std::string themeName);
+        const std::vector<std::string>& getThemes() const;
 
         virtual ~Appearance() {}
 
     protected:
         Appearance( const std::string& id, const std::string& typeString );
         std::string m_typeString;
-        std::unordered_set<std::string> m_themes;
+        std::vector<std::string> m_themes;
         bool m_isFront;
     };
 

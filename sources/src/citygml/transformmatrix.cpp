@@ -4,10 +4,12 @@ namespace citygml {
 
     TransformationMatrix::TransformationMatrix() : Object("")
     {
-       m_matrix = m_transposedMatrix = { 1.0, 0.0, 0.0, 0.0,
-                                       0.0, 1.0, 0.0, 0.0,
-                                       0.0, 0.0, 1.0, 0.0,
-               0.0, 0.0, 0.0, 1.0};
+       for (int i = 0; i < 4; i++) {
+           for (int j = 0; j < 4; j++) {
+               m_matrix[i + j * 4] = i == j;
+               m_transposedMatrix[i + j * 4] = i == j;
+           }
+       }
     }
 
     TransformationMatrix::TransformationMatrix(double* matrix) : Object("")
@@ -31,6 +33,11 @@ namespace citygml {
     double*TransformationMatrix::getTransposedMatrix()
     {
         return m_transposedMatrix;
+    }
+
+    TransformationMatrix::~TransformationMatrix()
+    {
+
     }
 
 }

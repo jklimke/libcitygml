@@ -19,6 +19,7 @@ namespace citygml {
     public:
         TextureCoordinates(std::string id, std::string targetID, std::vector<TVec2f> coords);
         bool targets(const LinearRing& ring) const;
+        std::string getTargetLinearRingID() const;
         const std::vector<TVec2f>& getCoords() const;
         bool eraseCoordinate(unsigned int i);
 

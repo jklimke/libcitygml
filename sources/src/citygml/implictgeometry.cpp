@@ -1,4 +1,5 @@
 #include "citygml/implictgeometry.h"
+#include "citygml/geometry.h"
 
 namespace citygml {
 
@@ -27,9 +28,9 @@ namespace citygml {
         return m_referencePoint;
     }
 
-    void ImplicitGeometry::addGeometry(Geometry* geom)
+    void ImplicitGeometry::addGeometry(std::shared_ptr<Geometry> geom)
     {
-        m_geometries.push_back(std::unique_ptr<Geometry>(geom));
+        m_geometries.push_back(geom);
     }
 
     unsigned int ImplicitGeometry::getGeometriesCount() const

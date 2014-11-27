@@ -31,7 +31,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/vecs.hpp>
-#include <citygml/object.h>
+#include <citygml/cityobject.h>
 #include <citygml/envelope.h>
 
 
@@ -46,15 +46,15 @@ namespace citygml
     class Material;
     class AppearanceManager;
 
+    typedef unsigned int CityObjectsTypeMask;
 
 
     ///////////////////////////////////////////////////////////////////////////////
     // Parsing routines
 
     // Parameters:
-    // objectsMask: a string describing the objects types that must or must not be parsed
-    //    examples: "All&~LandUse&~TINRelief" to parse everything but landuses and TIN reliefs
-    //              "Road&Railway" to parse only roads & railways
+    // objectsMask: a bit mask that defines which CityObjectsTypes are parsed
+    //    examples: CityObject::CityObjectsType::COT_Building | CityObject::CityObjectsType::COT_Room <- parses only Building and Room objects"
     // minLOD: the minimal LOD that will be parsed
     // maxLOD: the maximal LOD that will be parsed
     // optimize: merge geometries & polygons that share the same appearance in the same object in order to reduce the global hierarchy
@@ -66,7 +66,7 @@ namespace citygml
     {
     public:
         ParserParams()
-            : objectsMask( "All" )
+            : objectsMask( CityObject::CityObjectsType::COT_All )
             , minLOD( 0 )
             , maxLOD( 4 )
             , optimize( false )
@@ -77,7 +77,7 @@ namespace citygml
         { }
 
     public:
-        std::string objectsMask;
+        CityObjectsTypeMask objectsMask;
         unsigned int minLOD;
         unsigned int maxLOD;
         bool optimize;

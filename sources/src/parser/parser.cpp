@@ -22,6 +22,13 @@
 #include "parser/parser.h"
 #include "parser/transform.h"
 #include "citygml/utils.h"
+#include "citygml/citymodel.h"
+#include "citygml/citygmlfactory.h"
+#include "citygml/cityobjectdeclerations.hpp"
+#include "citygml/landuse.h"
+#include "citygml/implictgeometry.h"
+#include "citygml/appearancemanager.h"
+#include "citygml/appearance.h"
 
 #ifndef MSVC
     #include <typeinfo>
@@ -33,14 +40,14 @@ std::map<std::string, CityGMLNodeType> CityGMLHandler::s_cityGMLNodeTypeMap;
 std::vector< std::string > CityGMLHandler::s_knownNamespace;
 
 CityGMLHandler::CityGMLHandler( const ParserParams& params, std::shared_ptr<CityGMLLogger> logger)
-: _params( params ), _model( 0 ), _currentCityObject( 0 ), _currentObject( 0 ),
-  _currentGeometry( 0 ), _currentComposite( 0 ), _currentImplicitGeometry(0),
-  _currentPolygon( 0 ), _currentRing( 0 ),  _currentGeometryType( GT_Unknown ),
-_currentAppearance( 0 ), _currentLOD( params.minLOD ), _currentTheme(""),
-_filterNodeType( false ), _filterDepth( 0 ), _exterior( true ), _geoTransform( 0 ),
-  _referencePoint( false ), _logger(logger)
+: _params( params ), _model( nullptr ), _currentCityObject( nullptr ), _currentObject( nullptr ),
+  _currentGeometry( nullptr ), _currentComposite( nullptr ), _currentImplicitGeometry(nullptr),
+  _currentPolygon( nullptr ), _currentRing( nullptr ),  _currentGeometryType( Geometry::GeometryType::GT_Unknown ),
+_currentAppearance( nullptr ), _currentLOD( params.minLOD ), _currentTheme(""),
+_filterNodeType( false ), _filterDepth( 0 ), _exterior( true ), _geoTransform( nullptr ),
+  _referencePoint( false ), _logger(logger), _isRelativeGeometry(false)
 {
-    _objectsMask = getCityObjectsTypeMaskFromString( _params.objectsMask );
+    _objectsMask = _params.objectsMask;
     initNodes();
 
     if (_logger == nullptr) {
@@ -48,16 +55,7 @@ _filterNodeType( false ), _filterDepth( 0 ), _exterior( true ), _geoTransform( 0
     }
 }
 
-CityGMLHandler::~CityGMLHandler(())
-{
-    for ( std::set<Geometry*>::iterator it = _geometries.begin(); it != _geometries.end(); it++ )
-        delete *it;
-    if(_geoTransform){
-      delete  _geoTransform;
-    }
-}
-
-void CityGMLHandler::initNodes(())
+void CityGMLHandler::initNodes()
 {
     if ( s_cityGMLNodeTypeMap.size() != 0 ) return;
 
@@ -280,12 +278,12 @@ CityGMLNodeType CityGMLHandler::getNodeTypeFromName( const std::string& name )
 ///////////////////////////////////////////////////////////////////////////////
 // Helpers
 
-template<class T> inline()parseValue( std::stringstream &s, T &v, std::shared_ptr<CityGMLLogger>)
+template<class T> void parseValue( std::stringstream &s, T &v, std::shared_ptr<CityGMLLogger>)
 {
     if ( !s.eof() ) s >> v;
 }
 
-inline()parseMatrixValue( std::stringstream &s , double* m)
+void parseMatrixValue( std::stringstream &s , double* m)
 {
     for (size_t i = 0; i < 16; ++i)
     {
@@ -296,7 +294,7 @@ inline()parseMatrixValue( std::stringstream &s , double* m)
     }
 }
 
-template<> inline()parseValue( std::stringstream &s, bool &v, std::shared_ptr<CityGMLLogger> logger )
+template<> void parseValue( std::stringstream &s, bool &v, std::shared_ptr<CityGMLLogger> logger )
 {
     // parsing a bool is special because "true" and "1" are true while "false" and "0" are false
     std::string value = s.str();
@@ -308,7 +306,7 @@ template<> inline()parseValue( std::stringstream &s, bool &v, std::shared_ptr<Ci
         CITYGML_LOG_ERROR(logger, "Boolean expected, got " << value);
 }
 
-template<class T> inline()parseValue( std::stringstream &s, T &v, GeoTransform* transform, const TVec3d &translate, std::shared_ptr<CityGMLLogger> logger )
+template<class T> void parseValue( std::stringstream &s, T &v, GeoTransform* transform, const TVec3d &translate, std::shared_ptr<CityGMLLogger> logger )
 {
     parseValue( s, v, logger );
 
@@ -320,7 +318,7 @@ template<class T> inline()parseValue( std::stringstream &s, T &v, GeoTransform* 
     v[2] -= translate[2];
 }
 
-template<class T> inline()parseVecList( std::stringstream &s, std::vector<T> &vec, std::shared_ptr<CityGMLLogger> logger )
+template<class T> void parseVecList( std::stringstream &s, std::vector<T> &vec, std::shared_ptr<CityGMLLogger> logger )
 {
     T v;
     unsigned int oldSize( vec.size() );
@@ -333,7 +331,7 @@ template<class T> inline()parseVecList( std::stringstream &s, std::vector<T> &ve
     }
 }
 
-template<class T> inline()parseVecList( std::stringstream &s, std::vector<T> &vec, GeoTransform* transform, const TVec3d &translate, std::shared_ptr<CityGMLLogger> logger)
+template<class T> void parseVecList( std::stringstream &s, std::vector<T> &vec, GeoTransform* transform, const TVec3d &translate, std::shared_ptr<CityGMLLogger> logger)
 {
     T v;
     unsigned int oldSize( vec.size() );
@@ -381,7 +379,9 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 
     CityGMLNodeType nodeType = getNodeTypeFromName( localname );
 
-    _cityGMLidStack.push_back(getGmlIdAttribute(attributes));
+    std::string currentGMLID = getGmlIdAttribute(attributes);
+
+    _cityGMLidStack.push_back(currentGMLID);
 
 
     // get the LOD level if node name starts with 'lod'
@@ -399,16 +399,22 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
     switch ( nodeType )
     {
     case NODETYPE( CityModel ):
-        _model = new CityModel();
+        _model = _citygmlFactory->createCityModel(currentGMLID);
         pushObject( _model );
         break;
 
         // City objects management
 #define MANAGE_OBJECT( _t_ )\
     case CG_ ## _t_ :\
-    if ( _objectsMask & COT_ ## _t_ )\
-        { pushCityObject( new _t_( getGmlIdAttribute( attributes ) ) ); pushObject( _currentCityObject ); }\
-    else { pushCityObject( 0 ); _filterNodeType = true; _filterDepth = getPathDepth(); }\
+        if ( _objectsMask & CityObject::COT_ ## _t_ ) { \
+             pushCityObject( _citygmlFactory->createCityObject<_t_>( currentGMLID ) ); \
+             pushObject( _currentCityObject ); \
+        }\
+        else {\
+            pushCityObject( 0 ); \
+            _filterNodeType = true; \
+            _filterDepth = getPathDepth();\
+        }\
     break;
 
         MANAGE_OBJECT( GenericCityObject );
@@ -437,11 +443,19 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
 #undef MANAGE_OBJECT
 
         // BoundarySurfaceType
-#define MANAGE_SURFACETYPE( _t_ ) case CG_ ## _t_ ## Surface : _currentGeometryType = GT_ ## _t_;\
-                                    if ( _objectsMask & COT_ ## _t_ ## Surface )\
-        { pushCityObject( new _t_ ## Surface( getGmlIdAttribute( attributes ) ) ); pushObject( _currentCityObject ); }\
-    else { pushCityObject( 0 ); _filterNodeType = true; _filterDepth = getPathDepth(); }\
+#define MANAGE_SURFACETYPE( _t_ ) \
+    case CG_ ## _t_ ## Surface : \
+        _currentGeometryType = Geometry::GeometryType::GT_ ## _t_;\
+        if ( _objectsMask & CityObject::CityObjectsType::COT_ ## _t_ ## Surface ) {\
+            pushCityObject( _citygmlFactory->createCityObject<_t_ ## Surface >( currentGMLID ) ); \
+            pushObject( _currentCityObject ); }\
+        else { \
+            pushCityObject( 0 );\
+            _filterNodeType = true;\
+            _filterDepth = getPathDepth();\
+        }\
     break;
+
         MANAGE_SURFACETYPE( Wall );
         MANAGE_SURFACETYPE( Roof );
         MANAGE_SURFACETYPE( Ground );
@@ -453,9 +467,7 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
         // Geometry management
 
     case NODETYPE( ImplicitGeometry ):
-        _currentImplicitGeometry = new ImplicitGeometry("");
-        pushObject( _currentImplicitGeometry );
-
+        _currentImplicitGeometry = _citygmlFactory->createImplictGeometry(currentGMLID);
         break;
 
     case NODETYPE( referencePoint ):
@@ -464,26 +476,44 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
     case NODETYPE( TexturedSurface ):
     case NODETYPE( OrientableSurface ):
         _orientation = getAttribute( attributes, "orientation", "+" )[0];
-        break;
-
+        // Fall through intended
     case NODETYPE( MultiSurface ):
-        if (_currentImplicitGeometry)
-        {
-            _currentImplicitGeometry->m_id = getGmlIdAttribute( attributes);
+    case NODETYPE( CompositeSurface ):
+    case NODETYPE( TriangulatedSurface ):
+        Geometry* parentGeometry = _currentGeometry;
+        _currentGeometry = _citygmlFactory->createGeometry(currentGMLID, _currentGeometryType, _currentLOD );
+
+        if (parent != nullptr) {
+           parentGeometry->addGeometry(_currentGeometry);
+        } else if (_isRelativeGeometry) {
+            if (_currentImplicitGeometry != nullptr) {
+                std::shared_ptr<Geometry> sharedGeometry = std::make_shared<Geometry>(_currentGeometry);
+                _relativeGeometries[_currentGeometry->getId()] = sharedGeometry;
+                _currentImplicitGeometry->addGeometry(sharedGeometry);
+            } else {
+                CITYGML_LOG_WARN(_logger, "Found relative Geometry with id '" << _currentGeometry->getId() << "' outside of an ImpilicitGeometry... possible memory leak");
+            }
         }
+
+        _geometryStack.push(_currentGeometry);
+        pushObject( _currentGeometry );
+
         break;
     case NODETYPE( surfaceDataMember ):
     {
+        // Surface Data Members are the children of app::Appearance objects and contain appearance surfacedata (e.g.  app::ParameterizedTexture)
         std::string relativeID = getAttribute(attributes, "xlink:href", "");
         if (relativeID != "") {
+
+            // The surface data member references a surfacedata object that was defined in another app::Appearance object
 
             if ( relativeID[0] == '#' ) {
                 relativeID = relativeID.substr( 1 );
             }
 
-            std::shared_ptr<Appearance> appearance = _model->findAppearanceInAllThemes(relativeID);
+            std::shared_ptr<Appearance> appearance = _appearanceManager->getAppearanceByID(relativeID);
             if (appearance != nullptr) {
-                getApperanceManagerForCurrentTheme().addAppearance( appearance );
+                appearance->addToTheme(_currentTheme);
             } else {
                 CITYGML_LOG_WARN(_logger, "surfaceDataMember with invalid xlink reference to non existing object with id " << relativeID);
             }
@@ -491,42 +521,23 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
         break;
     }
     case NODETYPE( surfaceMember ):
-    case NODETYPE( TriangulatedSurface ):
         LOD_FILTER();
-        //_orientation = getAttribute( attributes, "orientation", "+" )[0];
         _orientation = '+';
-        _currentGeometry = new Geometry( getGmlIdAttribute( attributes ), _currentGeometryType, _currentLOD );
-        _geometries.insert( _currentGeometry );
-        pushObject( _currentGeometry );
         break;
 
-    case NODETYPE( CompositeSurface ):
-        LOD_FILTER();
-        _currentComposite = new Composite( getGmlIdAttribute( attributes ), _currentLOD );
-        _composites.insert( _currentComposite );
-        pushObject( _currentComposite );
-        break;
     case NODETYPE( relativeGMLGeometry ):
         {
+            _isRelativeGeometry = true;
             std::string id = getAttribute(attributes, "xlink:href", "");
-            if (_currentImplicitGeometry && id != "")
-            {
-                id = id.substr(1);  // cut of # at the beginning
-                std::map<std::string, ImplicitGeometry*>::iterator it = _implicitGeometries.find(id);
+            if (_currentImplicitGeometry && id != "") {
+                auto it = _relativeGeometries.find(id);
 
-                if (it != _implicitGeometries.end())
-                {
-                    // copy geometry from other implicite geometry
-
-                    ImplicitGeometry* implGeometry = it->second;
-                    for (size_t i = 0; i < implGeometry->size(); ++i)
-                    {
-                        _currentImplicitGeometry->_geometries.push_back(implGeometry->getGeometry(i));
-                    }
-
-                    // copy reference system
-                    _currentImplicitGeometry->_srsName = implGeometry->_srsName;
+                if (it != _relativeGeometries.end()) {
+                    _currentImplicitGeometry->addGeometry(it->second);
+                } else {
+                    CITYGML_LOG_WARN(_logger, "Relative Geometry with id '" << id << "' not found.")
                 }
+
             }
         }
         break;
@@ -831,6 +842,7 @@ void CityGMLHandler::endElement( const std::string& name )
         // Geometry management
 
     case NODETYPE( ImplicitGeometry ):
+        _insideImplicitGeometry = false; // This is save because ImplicitGeometries can not be nested
         if ( _currentCityObject && _currentImplicitGeometry )
         {
             _currentCityObject->_implicitGeometries.push_back( _currentImplicitGeometry );
@@ -840,6 +852,11 @@ void CityGMLHandler::endElement( const std::string& name )
         _currentImplicitGeometry = 0;
         popObject();
         break;
+
+    case NODETYPE( relativeGMLGeometry ):
+        _isRelativeGeometry = false;
+        break;
+
     case NODETYPE( surfaceMember ):
     case NODETYPE( TriangulatedSurface ):
         if ( _currentCityObject && _currentGeometry )
@@ -1102,4 +1119,17 @@ std::shared_ptr<Texture> CityGMLHandler::currentAppearanceAsTexture() {
 
 std::shared_ptr<GeoreferencedTexture> CityGMLHandler::currentAppearanceAsGeoreferencedTexture() {
     return std::dynamic_pointer_cast<GeoreferencedTexture>( _currentAppearance );
+}
+
+void CityGMLHandler::pushCityObject(CityObject *object) {
+    if ( _currentCityObject && object ) _currentCityObject->addChildCityObject(object);
+    _cityObjectStack.push( _currentCityObject );
+    _currentCityObject = object;
+}
+
+void CityGMLHandler::popCityObject() {
+    _currentObject = 0;
+    if ( _objectStack.empty() ) return;
+    _objectStack.pop();
+    _currentObject = _objectStack.empty() ? 0 : _objectStack.top();
 }

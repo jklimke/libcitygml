@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include <citygml/citygml_api.h>
 #include <citygml/object.h>
@@ -8,7 +9,7 @@
 
 namespace citygml {
 
-    class TextureTarget;
+    class TextureTargetDefinition;
 
     class LIBCITYGML_EXPORT LinearRing : public Object
     {
@@ -20,14 +21,13 @@ namespace citygml {
         unsigned int size() const;
 
         const std::vector<TVec3d>& getVertices() const;
+        std::vector<TVec3d>& getVertices();
 
         void addVertex( const TVec3d& v );
 
         TVec3d computeNormal() const;
 
-        inline std::vector<TVec3d>& getVertices();
-
-        void removeDuplicateVertices(const std::vector<TextureTarget&>& targets );
+        void removeDuplicateVertices(const std::vector<TextureTargetDefinition*>& targets );
 
         void forgetVertices();
 

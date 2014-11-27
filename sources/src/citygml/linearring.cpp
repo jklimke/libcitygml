@@ -1,6 +1,7 @@
 #include "citygml/linearring.h"
 #include "citygml/texturecoordinates.h"
 #include "citygml/texture.h"
+#include "citygml/texturetargetdefinition.h"
 #include <float.h>
 #include <assert.h>
 
@@ -19,11 +20,6 @@ namespace citygml {
     unsigned int LinearRing::size() const
     {
         return m_vertices.size();
-    }
-
-    const std::vector<TVec3d>&LinearRing::getVertices() const
-    {
-        return m_vertices;
     }
 
     void LinearRing::addVertex(const TVec3d& v)
@@ -50,20 +46,28 @@ namespace citygml {
         return n.normal();
     }
 
-    std::vector<TVec3d>&LinearRing::getVertices()
+    std::vector<TVec3d>& LinearRing::getVertices()
     {
         return m_vertices;
     }
 
-    void LinearRing::removeDuplicateVertices(const std::vector<TextureTarget&>& targets )
+    const std::vector<TVec3d>& LinearRing::getVertices() const
     {
-        std::vector<TextureCoordinates&> coordinatesList;
+        return m_vertices;
+    }
 
-        for (TextureTarget& texTarget : targets) {
+    void LinearRing::removeDuplicateVertices(const std::vector<TextureTargetDefinition*>& targets )
+    {
+        std::vector<TextureCoordinates*> coordinatesList;
 
-            if (!texTarget.getTexCoordinatesList().targets(*this)) continue;
+        for (auto& texTarget : targets) {
 
-            coordinatesList.push_back(texTarget.getTexCoordinatesList());
+            for (unsigned int i = 0; i < texTarget->getTextureCoordinatesCount(); i++) {
+                TextureCoordinates* texCoords = texTarget->getTextureCoordinates(i);
+                if (!texCoords->targets(*this)) continue;
+
+                coordinatesList.push_back(texCoords);
+            }
 
         }
 
@@ -77,8 +81,8 @@ namespace citygml {
             if ( ( m_vertices[i] - m_vertices[ ( i + 1 ) % m_vertices.size() ] ).sqrLength() <= DBL_EPSILON )
             {
                 m_vertices.erase( m_vertices.begin() + i );
-                for (TextureCoordinates& coordinates : coordinatesList) {
-                    coordinates.eraseCoordinate(i);
+                for (TextureCoordinates* coordinates : coordinatesList) {
+                    coordinates->eraseCoordinate(i);
                 }
             } else {
                 i++;

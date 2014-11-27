@@ -9,7 +9,7 @@ namespace citygml {
 
     class CityGMLFactory;
 
-    class LIBCITYGML_EXPORT Material : virtual public Appearance
+    class LIBCITYGML_EXPORT Material : public Appearance
     {
         friend class CityGMLFactory;
     public:
@@ -32,11 +32,6 @@ namespace citygml {
         float getTransparency() const;
         void setTransparency(float transparancy);
 
-        void addTargetID(std::string id);
-        virtual bool targets(const AppearanceTarget& obj) const;
-        virtual void copyTargetDefinition(const AppearanceTarget& oldTarget, const AppearanceTarget& newTarget);
-        virtual std::vector<std::string> getTargetIDs() const;
-
         virtual std::shared_ptr<Material> asMaterial() override;
         virtual std::shared_ptr<const Material> asMaterial() const override;
 
@@ -49,7 +44,6 @@ namespace citygml {
         float m_ambientIntensity;
         float m_shininess;
         float m_transparency;
-        std::unordered_set<std::string> m_targetIDs;
     };
 
 }

@@ -25,14 +25,14 @@ SET(SOURCES
   src/citygml/envelope.cpp
   src/citygml/appearancemanager.cpp
   src/citygml/cityobject.cpp
-  src/citygml/composite.cpp
   src/citygml/geometry.cpp
   src/citygml/implictgeometry.cpp
   src/citygml/landuse.cpp
   src/citygml/linearring.cpp
   src/citygml/polygon.cpp
   src/citygml/transformmatrix.cpp
-  src/citygml/texturetarget.cpp
+  src/citygml/texturetargetdefinition.cpp
+  src/citygml/materialtargetdefinition.cpp
   src/citygml/texturecoordinates.cpp
   src/citygml/appearancetarget.cpp
   src/citygml/citygmlfactory.cpp
@@ -57,14 +57,15 @@ SET(PUBLIC_HEADER
   include/citygml/appearance.h
   include/citygml/vecs.hpp
   include/citygml/citymodel.h
-  include/citygml/composite.h
   include/citygml/linearring.h
   include/citygml/citygml.h
   include/citygml/transformmatrix.h
   include/citygml/implictgeometry.h
   include/citygml/tesselator.h
   include/citygml/texture.h
-  include/citygml/texturetarget.h
+  include/citygml/appearancetargetdefinition.h
+  include/citygml/texturetargetdefinition.h
+  include/citygml/materialtargetdefinition.h
   include/citygml/texturecoordinates.h
   include/citygml/cityobjectdeclerations.hpp
   include/citygml/appearancetarget.h

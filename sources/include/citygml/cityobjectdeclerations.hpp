@@ -2,21 +2,21 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/cityobject.h>
-
-namespace citygml {
-
-    class CityGMLFactory;
+#include <citygml/vecs.hpp>
 
 #define DECLARE_SIMPLE_OBJECT_CLASS( _name_, _defcolor_ ) \
     class LIBCITYGML_EXPORT _name_ : public CityObject \
     {\
     friend class CityGMLFactory;\
     public:\
-    inline TVec4f getDefaultColor(()) const { return _defcolor_; }\
+    TVec4f getDefaultColor() const { return _defcolor_; }\
     protected:\
     _name_( const std::string& id ) : CityObject( id, COT_ ## _name_ ) {}\
     }
 
+namespace citygml {
+
+    class CityGMLFactory;
 
     DECLARE_SIMPLE_OBJECT_CLASS( Building, MAKE_RGB( 186, 184, 135 ) );
 

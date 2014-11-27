@@ -14,6 +14,11 @@ namespace citygml {
         return m_targetID == ring.getId();
     }
 
+    std::string TextureCoordinates::getTargetLinearRingID() const
+    {
+        return m_targetID;
+    }
+
     bool TextureCoordinates::eraseCoordinate(unsigned int i)
     {
         if (i < m_coordlist.size()) {

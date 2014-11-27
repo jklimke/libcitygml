@@ -1,6 +1,7 @@
 #pragma once
 
 #include <citygml/object.h>
+#include <memory>
 
 namespace citygml {
     class TransformationMatrix : public Object
@@ -14,6 +15,8 @@ namespace citygml {
 
         double* getMatrix();
         double* getTransposedMatrix();
+
+        ~TransformationMatrix();
 
 
     protected:

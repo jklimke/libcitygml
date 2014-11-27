@@ -42,19 +42,14 @@ namespace citygml {
         // Get texture coordinates
         const std::vector<TVec2f> getTexCoordsForTheme(const std::string& theme) const;
 
-        /**
-         * @brief merges Polygon p into this Polygon. Both Polygons must be unfinished.
-         * @note p won't contain any geometry data after this operation and should not be used again.
-         */
-        void merge( Polygon* p);
+        void finish(bool doTesselate, Tesselator& tesselator );
 
         virtual ~Polygon();
 
     protected:
         Polygon( const std::string& id, std::shared_ptr<CityGMLLogger> logger );
 
-        void finish(bool doTesselate, Tesselator& tesselator );
-        const std::shared_ptr<Texture> getTextureForTheme(const std::string& theme) const;
+        std::shared_ptr<const Texture> getTextureForTheme(const std::string& theme) const;
 
         void addRing( LinearRing* );
 

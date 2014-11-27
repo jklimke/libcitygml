@@ -1,12 +1,9 @@
 #pragma once
 
-#include <unordered_map>
 #include <string>
-#include <vector>
 
 #include <citygml/citygml_api.h>
 #include <citygml/appearance.h>
-#include <citygml/texturetarget.h>
 #include <citygml/vecs.hpp>
 
 namespace citygml {
@@ -40,14 +37,6 @@ namespace citygml {
 
         std::string toString() const;
 
-        virtual bool targets(const AppearanceTarget& obj) const;
-        virtual void copyTargetDefinition(const AppearanceTarget& oldTarget, const AppearanceTarget& newTarget);
-
-        void addTarget(TextureTarget* target);
-        const TextureTarget& getTextureTargetFor(const Object& obj) const;
-        TextureTarget& getTextureTargetFor(const Object& obj);
-        virtual std::vector<std::string> getTargetIDs() const;
-
         virtual std::shared_ptr<Texture> asTexture() override;
         virtual std::shared_ptr<const Texture> asTexture() const override;
 
@@ -60,8 +49,6 @@ namespace citygml {
         bool m_repeat;
         WrapMode m_wrapMode;
         TVec4f m_borderColor;
-        std::vector<std::unique_ptr<TextureTarget>> m_targets;
-        std::unordered_map<std::string, TextureTarget&> m_idTargetMap;
     };
 
 }

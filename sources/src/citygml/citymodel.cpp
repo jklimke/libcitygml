@@ -24,6 +24,7 @@
 
 #include <float.h>
 #include <string.h>
+#include <algorithm>
 
 #include <iterator>
 #include <set>
@@ -41,21 +42,31 @@ namespace citygml
 
     }
 
-    void CityModel::addToCityObjectsMapRecursive(const CityObject& cityObj)
+    void CityModel::addToCityObjectsMapRecursive(const CityObject* cityObj)
     {
 
-        auto it = m_cityObjectsMap.find(cityObj.getType());
+        CityObjectsMap::iterator it = m_cityObjectsMap.find(cityObj->getType());
 
         if (it == m_cityObjectsMap.end()) {
-            m_cityObjectsMap[cityObj.getType()] = std::vector<const CityObject&> {cityObj};
+            m_cityObjectsMap[cityObj->getType()] = std::vector<const CityObject*>({cityObj});
         } else {
             it->second.push_back(cityObj);
         }
 
-        for (int i = 0; i < cityObj.getChildCityObjecsCount(); i++) {
-            addToCityObjectsMapRecursive(cityObj.getChildCityObject(i));
+        for (int i = 0; i < cityObj->getChildCityObjecsCount(); i++) {
+            addToCityObjectsMapRecursive(&cityObj->getChildCityObject(i));
         }
     }
+    std::vector<std::string> CityModel::themes() const
+    {
+        return m_themes;
+    }
+
+    void CityModel::setThemes(const std::vector<std::string>& themes)
+    {
+        m_themes = themes;
+    }
+
 
     CityModel::~CityModel()
     {
@@ -81,28 +92,20 @@ namespace citygml
         m_translation = param;
     }
 
-    unsigned int CityModel::size() const
-    {
-        unsigned int count = 0;
-        CityObjectsMap::const_iterator it = m_cityObjectsMap.begin();
-        for ( ; it != m_cityObjectsMap.end(); ++it ) count += it->second.size();
-        return count;
-    }
 
-    const CityObjectsMap& CityModel::getCityObjectsMap() const
-    {
-        return m_cityObjectsMap;
-    }
-
-    const ConstCityObjects& CityModel::getAllCityObjectsOfType( CityObject::CityObjectsType type) const
+    const ConstCityObjects CityModel::getAllCityObjectsOfType( CityObject::CityObjectsType type ) const
     {
         CityObjectsMap::const_iterator it = m_cityObjectsMap.find( type );
-        return ( it != m_cityObjectsMap.end() ) ? &it->second : 0;
+        return it->second;
     }
 
-    const ConstCityObjects& CityModel::getRootCityObjects() const
+    const ConstCityObjects CityModel::getRootCityObjects() const
     {
-        return m_roots;
+        ConstCityObjects list;
+        std::transform(m_roots.begin(), m_roots.end(), list.begin(), [](const std::unique_ptr<CityObject>& cityObj) {
+            return cityObj.get();
+        });
+        return list;
     }
 
     const std::string& CityModel::getSRSName() const
@@ -118,23 +121,18 @@ namespace citygml
         // Finish all cityobjcts
 
         // Build city objects map
-        for (std::unique_ptr<CityObject> obj : m_roots) {
-            addToCityObjectsMapRecursive(*obj);
+        for (std::unique_ptr<CityObject>& obj : m_roots) {
+            addToCityObjectsMapRecursive(obj.get());
         }
     }
 
     std::ostream& operator<<( std::ostream& out, const CityModel& model )
     {
-        const CityObjectsMap& cityObjectsMap = model.getCityObjectsMap();
-
-        CityObjectsMap::const_iterator it = cityObjectsMap.begin();
-
-        for ( ; it != cityObjectsMap.end(); ++it )
-
-            for ( unsigned int i = 0; i < it->second.size(); i++ ) out << *(it->second[i]);
-
-        out << model.size() << " city objects." << std::endl;
-
+        out << "Root CityObjects: " << std::endl;
+        ConstCityObjects rootObjcts = model.getRootCityObjects();
+        for (const CityObject* cityObj : rootObjcts) {
+            out << cityObj << std::endl;
+        }
         return out;
     }
 

@@ -15,7 +15,6 @@ namespace citygml {
     class AppearanceManager;
     class Appearance;
     class ParserParams;
-    class Composite;
     class CityGMLFactory;
 
     class LIBCITYGML_EXPORT Geometry : public AppearanceTarget
@@ -38,21 +37,20 @@ namespace citygml {
         unsigned int getLOD() const;
 
         // Get the polygons
-        unsigned int size() const;
-        Polygon& operator[]( unsigned int i );
-        const Polygon& operator[]( unsigned int i ) const;
+        unsigned int getPolygonsCount() const;
+        Polygon& getPolygon( unsigned int i );
+        const Polygon& getPolygon( unsigned int i ) const;
+
+        unsigned int getGeometriesCount() const;
+        const Geometry& getGeometry( unsigned int i ) const;
+        void addGeometry(Geometry* geom);
 
         GeometryType getType() const;
-
-        const Composite* getComposite() const;
-        void setComposite(Composite* composite);
 
         unsigned int lod() const;
         void setLod(unsigned int lod);
 
         void addPolygon( Polygon* );
-
-        bool merge( Geometry* );
 
         /**
          * @brief finishes the geometry by finishing its child polygons after broadcasting its appearances to all child polygons
@@ -60,7 +58,7 @@ namespace citygml {
          * @param tesselator the tesselator to be used for tesselation
          * @param mergePolygons determines wether all polygons are merged into one
          */
-        void finish(bool tesselate, Tesselator& tesselator, bool mergePolygons);
+        void finish(bool tesselate, Tesselator& tesselator);
 
         ~Geometry();
 
@@ -74,9 +72,9 @@ namespace citygml {
 
         unsigned int m_lod;
 
-        std::vector<std::unique_ptr<Polygon>> m_polygons;
+        std::vector<std::unique_ptr<Geometry>> m_childGeometries;
 
-        std::unique_ptr<Composite> m_composite;
+        std::vector<std::unique_ptr<Polygon>> m_polygons;
     };
 
     std::ostream& operator<<( std::ostream& os, const citygml::Geometry& s );

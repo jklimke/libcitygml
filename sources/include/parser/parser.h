@@ -18,12 +18,7 @@
 // See schemas at:
 //  http://www.citygml.org/citygml/1/0/0/CityGML.xsd
 //  http://www.citygml.org/fileadmin/citygml/docs/CityGML_1_0_0_UML_diagrams.pdf
-
-
-#ifndef __PARSER_H__
-#define __PARSER_H__
-
-#include "citygml/citygml.h"
+#pragma once
 
 #include <string>
 #include <algorithm>
@@ -31,19 +26,36 @@
 #include <vector>
 #include <fstream>
 #include <set>
+#include <memory>
 
-#include <citygml/appearance.h>
-#include <citygml/texture.h>
-#include <citygml/material.h>
-#include <citygml/appearancemanager.h>
-#include <citygml/georeferencedtexture.h>
-#include <citygml/citygmllogger.h>
+#include <citygml/citygml.h>
+#include <citygml/cityobject.h>
+#include <citygml/geometry.h>
 
 
 class GeoTransform;
 
 namespace citygml
 {
+
+    class AppearanceManager;
+    class CityGMLLogger;
+    class CityGMLFactory;
+
+    class AppearanceTarget;
+    class ImplictGeometry;
+    class Polygon;
+    class LinearRing;
+
+    class Texture;
+    class GeoreferencedTexture;
+    class Material;
+
+    class MaterialTargetDefinition;
+    class TextureTargetDefinition;
+
+
+
     #define NODETYPE(_t_) CG_ ## _t_
 
     // CityGML node types
@@ -240,8 +252,6 @@ namespace citygml
 
         CityGMLHandler( const ParserParams& params, std::shared_ptr<CityGMLLogger> logger );
 
-        ~CityGMLHandler();
-
         virtual void startDocument() {}
 
         virtual void endDocument() {}
@@ -277,12 +287,7 @@ namespace citygml
 
         void clearBuffer() { _buff.str(""); _buff.clear(); }
 
-        void pushCityObject( CityObject* object )
-        {
-            if ( _currentCityObject && object ) _currentCityObject->getChildren().push_back( object );
-            _cityObjectStack.push( _currentCityObject );
-            _currentCityObject = object;
-        }
+        void pushCityObject( CityObject* object );
 
         void popCityObject()
         {
@@ -298,13 +303,7 @@ namespace citygml
             _currentObject = object;
         }
 
-        void popObject()
-        {
-            _currentObject = 0;
-            if ( _objectStack.empty() ) return;
-            _objectStack.pop();
-            _currentObject = _objectStack.empty() ? 0 : _objectStack.top();
-        }
+        void popObject();
 
         virtual std::string getAttribute( void* attributes, const std::string& attname, const std::string& defvalue = "" ) = 0;
 
@@ -323,8 +322,6 @@ namespace citygml
         std::shared_ptr<Material> currentAppearanceAsMaterial();
         std::shared_ptr<Texture> currentAppearanceAsTexture();
         std::shared_ptr<GeoreferencedTexture> currentAppearanceAsGeoreferencedTexture();
-
-    protected:
 
         static std::map< std::string, CityGMLNodeType > s_cityGMLNodeTypeMap;
         static std::vector< std::string > s_knownNamespace;
@@ -349,12 +346,11 @@ namespace citygml
 
         Geometry* _currentGeometry;
         std::set<Geometry*> _geometries;
-
-        Composite* _currentComposite;
-        std::set<Composite*> _composites;
+        std::stack<Geometry*> _geometryStack;
 
         ImplicitGeometry*           _currentImplicitGeometry;
-        std::map<std::string, ImplicitGeometry*> _implicitGeometries;
+        std::map<std::string, std::shared_ptr<Geometry>> _relativeGeometries;
+        bool _isRelativeGeometry;
 
         Polygon* _currentPolygon;
 
@@ -385,12 +381,12 @@ namespace citygml
 
         bool _referencePoint;
 
-        GeometryType _currentGeometryType;
+        Geometry::GeometryType _currentGeometryType;
 
         GeoTransform* _geoTransform;
 
         std::shared_ptr<CityGMLLogger> _logger;
+        CityGMLFactory* _citygmlFactory;
+        AppearanceManager* _appearanceManager;
     };
 }
-
-#endif
