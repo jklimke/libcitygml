@@ -51,6 +51,11 @@ namespace citygml {
         return m_vertices;
     }
 
+    void LinearRing::setVertices(std::vector<TVec3d> vertices)
+    {
+        m_vertices = vertices;
+    }
+
     const std::vector<TVec3d>& LinearRing::getVertices() const
     {
         return m_vertices;

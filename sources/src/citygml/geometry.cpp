@@ -6,7 +6,7 @@
 
 namespace citygml {
 
-    Geometry::Geometry(const std::string& id, Geometry::GeometryType type, unsigned int lod) : AppearanceTarget( id ), m_finished(false), m_type( type ), m_lod( lod ), m_composite( nullptr )
+    Geometry::Geometry(const std::string& id, Geometry::GeometryType type, unsigned int lod) : AppearanceTarget( id ), m_finished(false), m_type( type ), m_lod( lod )
     {
 
     }

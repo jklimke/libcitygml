@@ -1,6 +1,4 @@
-#ifndef _VECS_H_
-#define _VECS_H_
-
+#pragma once
 #include <sstream>
 #include <iostream>
 #include <math.h>
@@ -274,18 +272,28 @@ template< class T >	inline TVec3<T> operator*( const T& val, const TVec3<T>& vec
     return TVec3<T>( vec.x * val, vec.y * val, vec.z * val );
 }
 
-template<class T> inline std::ostream& operator<<(std::ostream & os, TVec3<T> const & v)
+template<class T> inline std::ostream& operator<<(std::ostream & os, const TVec3<T> & v)
 {
     return os << std::fixed << v.x << " " << std::fixed << v.y << " " << std::fixed << v.z;
 }
 
-template<class T> inline std::istream& operator>>(std::istream & is, TVec3<T> & v)
-{
+template<class T> inline std::istream& operator>>(std::istream & is, TVec3<T> & v) {
     return is >> v.x >> v.y >> v.z;
 }
 
 typedef TVec3< float >			TVec3f;
 typedef TVec3< double >			TVec3d;
+
+
+//std::istream& operator>>(std::istream & is, TVec3d & v)
+//{
+//    return is >> v.x >> v.y >> v.z;
+//}
+
+//std::istream& operator>>(std::istream & is, TVec3f & v)
+//{
+//    return is >> v.x >> v.y >> v.z;
+//}
 
 
 // 4D vector class.
@@ -328,4 +336,3 @@ template<class T> inline std::istream& operator>>( std::istream & is, TVec4<T> &
 typedef TVec4< float >			TVec4f;
 typedef TVec4< double >			TVec4d;
 
-#endif

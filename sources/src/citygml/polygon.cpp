@@ -99,6 +99,17 @@ namespace citygml {
         return m_negNormal ? -normal : normal;
     }
 
+    bool Polygon::negNormal() const
+    {
+        return m_negNormal;
+    }
+
+    void Polygon::setNegNormal(bool negNormal)
+    {
+        m_negNormal = negNormal;
+    }
+
+
     void Polygon::computeIndices(const TVec3d& normal, bool tesselate, Tesselator& tesselator )
     {
         m_indices.clear();

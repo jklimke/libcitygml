@@ -32,6 +32,13 @@ namespace citygml {
         WrapMode getWrapMode() const;
         void setWrapMode(WrapMode mode);
 
+        /**
+         * @brief tries to interpret the string as a WrapMode. Does nothing on failure.
+         * @param wrapMode the string e.g. ("WM_NONE")
+         * @return true if the string could be interpreted as a WrapMode, false otherwise
+         */
+        bool setWrapModeFromString(std::string wrapMode);
+
         TVec4f getBorderColor() const;
         void setBorderColor(TVec4f color);
 

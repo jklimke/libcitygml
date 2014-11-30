@@ -252,17 +252,45 @@ namespace citygml
 
         CityGMLHandler( const ParserParams& params, std::shared_ptr<CityGMLLogger> logger );
 
-        virtual void startDocument() {}
+        CityModel* getModel() { return _model; }
 
-        virtual void endDocument() {}
 
-        virtual void startElement( const std::string&, void* );
+        // Parser interface (the template methods that must be implemented or called by subclasses)
 
-        virtual void endElement( const std::string& );
-
-        inline CityModel* getModel() { return _model; }
+        /**
+         * @brief the current location in the document
+         * @return
+         */
+        virtual int getDocumentLocation() const = 0;
 
     protected:
+
+        /**
+         * @brief get the value of an attribute
+         * @param attributes the attribute data (@see startElement)
+         * @param attname the name of the attribute
+         * @param defvalue the default value
+         * @return the value of the attribute or defvalue if no such attribute exists
+         */
+        virtual std::string getAttribute( void* attributes, const std::string& attname, const std::string& defvalue = "" ) = 0;
+
+        /**
+         * @brief must be called for each xml element start tag
+         * @param name the name of the xml element
+         * @param attributes the attribut data of the xml element
+         */
+        void startElement( const std::string& name, void* attributes);
+
+        /**
+         * @brief must be called for each xml element end tag
+         * @param name the name of the xml element
+         * @param characters the character data of the element or empty string if it contains no charcter data
+         */
+        void endElement( const std::string& name, const std::string& characters );
+
+
+
+    private:
 
         inline int searchInNodePath( const std::string& name ) const
         {
@@ -305,8 +333,6 @@ namespace citygml
 
         void popObject();
 
-        virtual std::string getAttribute( void* attributes, const std::string& attname, const std::string& defvalue = "" ) = 0;
-
         inline std::string getGmlIdAttribute( void* attributes ) { return getAttribute( attributes, "gml:id", "" ); }
 
         void createGeoTransform( std::string );
@@ -328,7 +354,7 @@ namespace citygml
 
         std::vector< std::string > _nodePath;
 
-        std::stringstream _buff;
+        std::stringstream _characterBuffer;
 
         ParserParams _params;
 
@@ -370,8 +396,6 @@ namespace citygml
         unsigned int _filterDepth;
 
         std::vector<TVec3d> _points;
-
-        int _srsDimension;
 
         char _orientation;
 

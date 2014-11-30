@@ -3,12 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include <citygml/object.h>
-#include <citygml/vecs.hpp>
-#include <citygml/envelope.h>
-
-#define MAKE_RGBA( _r_, _g_, _b_, _a_ ) TVec4f( _r_/255.f, _g_/255.f, _b_/255.f, _a_/255.f )
-#define MAKE_RGB( _r_, _g_, _b_ ) MAKE_RGBA( _r_, _g_, _b_, 255 )
+#include <citygml/featureobject.h>
 
 class Tesselator;
 
@@ -20,7 +15,7 @@ namespace citygml {
     class Composite;
     class AppearanceManager;
 
-    class CityObject : public Object
+    class CityObject : public FeatureObject
     {
     public:
 
@@ -65,14 +60,6 @@ namespace citygml {
         // Get the object type
         CityObjectsType getType() const;
 
-        // Return the envelope (ie. the bounding box) of the object
-        const Envelope& getEnvelope() const;
-
-        void setEnvelope(Envelope envelope);
-
-        // Get the default diffuse color of this object class
-        virtual TVec4f getDefaultColor() const = 0;
-
         // Get the number of geometries contains in the object
         unsigned int getGeometriesCount() const;
 
@@ -104,8 +91,6 @@ namespace citygml {
 
     protected:
         CityObjectsType m_type;
-
-        Envelope m_envelope;
 
         std::vector<std::unique_ptr<Geometry>> m_geometries;
         std::vector<std::unique_ptr<ImplicitGeometry>> m_implicitGeometries;

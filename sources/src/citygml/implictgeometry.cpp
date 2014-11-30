@@ -8,12 +8,12 @@ namespace citygml {
 
     }
 
-    void ImplicitGeometry::setMatrix(const TransformationMatrix& matrix)
+    void ImplicitGeometry::setTransformMatrix(const TransformationMatrix matrix)
     {
         m_matrix = matrix;
     }
 
-    TransformationMatrix ImplicitGeometry::getMatrix() const
+    const TransformationMatrix& ImplicitGeometry::getTransformMatrix() const
     {
         return m_matrix;
     }
@@ -46,6 +46,11 @@ namespace citygml {
     std::string ImplicitGeometry::getSRSName() const
     {
         return m_srsName;
+    }
+
+    void ImplicitGeometry::setSRSName(const std::string& srsName)
+    {
+        m_srsName = srsName;
     }
 
 }

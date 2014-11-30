@@ -24,8 +24,6 @@
 #include "citygml/utils.h"
 #include "citygml/citymodel.h"
 #include "citygml/citygmlfactory.h"
-#include "citygml/cityobjectdeclerations.hpp"
-#include "citygml/landuse.h"
 #include "citygml/implictgeometry.h"
 #include "citygml/appearancemanager.h"
 #include "citygml/appearance.h"
@@ -403,7 +401,9 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
         pushObject( _model );
         break;
 
-        // City objects management
+        /*
+         * City Objects handling
+         */
 #define MANAGE_OBJECT( _t_ )\
     case CG_ ## _t_ :\
         if ( _objectsMask & CityObject::COT_ ## _t_ ) { \
@@ -442,7 +442,6 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
         MANAGE_OBJECT( BridgePart );
 #undef MANAGE_OBJECT
 
-        // BoundarySurfaceType
 #define MANAGE_SURFACETYPE( _t_ ) \
     case CG_ ## _t_ ## Surface : \
         _currentGeometryType = Geometry::GeometryType::GT_ ## _t_;\
@@ -464,15 +463,35 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
         MANAGE_SURFACETYPE( InteriorWall );
         MANAGE_SURFACETYPE( Ceiling );
 #undef MANAGE_SURFACETYPE
-        // Geometry management
 
+    /*
+     * Implicit Geometry handling
+     */
     case NODETYPE( ImplicitGeometry ):
         _currentImplicitGeometry = _citygmlFactory->createImplictGeometry(currentGMLID);
         break;
 
     case NODETYPE( referencePoint ):
         _referencePoint = true;
+        if (!_currentImplicitGeometry) {
+            CITYGML_LOG_WARN(_logger, "Found referencePoint outside Implicit Geometry at " << this->getDocumentLocation());
+        }
         break;
+
+    case NODETYPE( Point ):
+        if (_referencePoint) {
+            if (_currentImplicitGeometry) {
+                _currentImplicitGeometry->setSRSName(getAttribute( attributes, "srsName", "" ));
+            }
+        } else {
+            CITYGML_LOG_WARN(_logger, "Found gml:Point outside referencePoint... ignore at " << this->getDocumentLocation());
+        }
+        break;
+
+
+    /*
+     * Geometry handling
+     */
     case NODETYPE( TexturedSurface ):
     case NODETYPE( OrientableSurface ):
         _orientation = getAttribute( attributes, "orientation", "+" )[0];
@@ -491,14 +510,75 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
                 _relativeGeometries[_currentGeometry->getId()] = sharedGeometry;
                 _currentImplicitGeometry->addGeometry(sharedGeometry);
             } else {
-                CITYGML_LOG_WARN(_logger, "Found relative Geometry with id '" << _currentGeometry->getId() << "' outside of an ImpilicitGeometry... possible memory leak");
+                CITYGML_LOG_WARN(_logger, "Found relative Geometry with id '" << _currentGeometry->getId() << "' outside of an ImpilicitGeometry at " << this->getDocumentLocation() << ". Possible memory leak");
             }
         }
-
         _geometryStack.push(_currentGeometry);
         pushObject( _currentGeometry );
 
         break;
+
+    case NODETYPE( surfaceMember ):
+        LOD_FILTER();
+        _orientation = '+';
+        break;
+
+    case NODETYPE( relativeGMLGeometry ):
+        {
+            _isRelativeGeometry = true;
+            std::string id = getAttribute(attributes, "xlink:href", "");
+            if (_currentImplicitGeometry && id != "") {
+                auto it = _relativeGeometries.find(id);
+
+                if (it != _relativeGeometries.end()) {
+                    _currentImplicitGeometry->addGeometry(it->second);
+                } else {
+                    CITYGML_LOG_WARN(_logger, "Relative Geometry with id '" << id << "' not found (" << this->getDocumentLocation() << ")")
+                }
+
+            }
+        }
+        break;
+
+
+    /*
+     * Polygon handling
+     */
+    case NODETYPE( Triangle ):
+    case NODETYPE( Polygon ):
+        LOD_FILTER();
+        _currentPolygon = new Polygon( getGmlIdAttribute( attributes ) );
+
+        pushObject( _currentPolygon );
+        break;
+
+    case NODETYPE( interior ): _exterior = false;
+        break;
+
+    case NODETYPE( exterior ): _exterior = true;
+        break;
+
+    case NODETYPE( LinearRing ):
+        LOD_FILTER();
+        _currentRing = new LinearRing( getGmlIdAttribute( attributes ), _exterior );
+        pushObject( _currentRing );
+        break;
+
+    case NODETYPE( posList ):
+        LOD_FILTER();
+        int dimensions = atoi( getAttribute( attributes, "srsDimension", "3" ).c_str() );
+        if ( dimensions != 3 )
+            CITYGML_LOG_WARN(_logger, "srsDimension of gml:posList not set to 3 at " << this->getDocumentLocation());
+
+        createGeoTransform( getAttribute( attributes, "srsName", "" ) );
+        if (_currentImplicitGeometry)
+            _currentImplicitGeometry->_srsName = _geoTransform->getSourceURN();
+
+        break;
+
+    /*
+     * Appearance handling
+     */
     case NODETYPE( surfaceDataMember ):
     {
         // Surface Data Members are the children of app::Appearance objects and contain appearance surfacedata (e.g.  app::ParameterizedTexture)
@@ -515,66 +595,34 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
             if (appearance != nullptr) {
                 appearance->addToTheme(_currentTheme);
             } else {
-                CITYGML_LOG_WARN(_logger, "surfaceDataMember with invalid xlink reference to non existing object with id " << relativeID);
+                CITYGML_LOG_WARN(_logger, "surfaceDataMember with invalid xlink reference to non existing surfaceData with id " << relativeID << " (" << this->getDocumentLocation() << ")");
             }
         }
         break;
     }
-    case NODETYPE( surfaceMember ):
-        LOD_FILTER();
-        _orientation = '+';
+
+    case NODETYPE( SimpleTexture ):
+    case NODETYPE( ParameterizedTexture ):
+        _currentAppearance = std::make_shared<Texture>( getGmlIdAttribute( attributes ) );
+        getApperanceManagerForCurrentTheme().addAppearance( _currentAppearance );
+        _appearanceAssigned = false;
+        pushObject( _currentAppearance.get() );
         break;
 
-    case NODETYPE( relativeGMLGeometry ):
-        {
-            _isRelativeGeometry = true;
-            std::string id = getAttribute(attributes, "xlink:href", "");
-            if (_currentImplicitGeometry && id != "") {
-                auto it = _relativeGeometries.find(id);
-
-                if (it != _relativeGeometries.end()) {
-                    _currentImplicitGeometry->addGeometry(it->second);
-                } else {
-                    CITYGML_LOG_WARN(_logger, "Relative Geometry with id '" << id << "' not found.")
-                }
-
-            }
-        }
-        break;
-    case NODETYPE( Triangle ):
-    case NODETYPE( Polygon ):
-        LOD_FILTER();
-        _currentPolygon = new Polygon( getGmlIdAttribute( attributes ) );
-
-        pushObject( _currentPolygon );
+    case NODETYPE( GeoreferencedTexture ):
+        _currentAppearance = std::make_shared<GeoreferencedTexture>( getGmlIdAttribute( attributes ) );
+        getApperanceManagerForCurrentTheme().addAppearance( _currentAppearance );
+        _appearanceAssigned = false;
+        pushObject( _currentAppearance.get() );
         break;
 
-    case NODETYPE( Envelope ):
-        createGeoTransform( getAttribute( attributes, "srsName", "" ) );
+    case NODETYPE( Material ):
+    case NODETYPE( X3DMaterial ):
+        _currentAppearance = std::make_shared<Material>( getGmlIdAttribute( attributes ) );
+        getApperanceManagerForCurrentTheme().addAppearance( _currentAppearance );
+        _appearanceAssigned = false;
+        pushObject( _currentAppearance.get() );
         break;
-
-    case NODETYPE( posList ):
-        LOD_FILTER();
-        _srsDimension = atoi( getAttribute( attributes, "srsDimension", "3" ).c_str() );
-        if ( _srsDimension != 3 )
-            CITYGML_LOG_WARN(_logger, "srsDimension of gml:posList not set to 3!");
-
-        createGeoTransform( getAttribute( attributes, "srsName", "" ) );
-        if (_currentImplicitGeometry)
-            _currentImplicitGeometry->_srsName = _geoTransform->getSourceURN();
-
-        break;
-
-    case NODETYPE( interior ): _exterior = false; break;
-    case NODETYPE( exterior ): _exterior = true;  break;
-
-    case NODETYPE( LinearRing ):
-        LOD_FILTER();
-        _currentRing = new LinearRing( getGmlIdAttribute( attributes ), _exterior );
-        pushObject( _currentRing );
-        break;
-
-        // Material management
 
     case NODETYPE( target ):
         if ( _currentAppearance )
@@ -602,27 +650,11 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
         }
         break;
 
-    case NODETYPE( SimpleTexture ):
-    case NODETYPE( ParameterizedTexture ):
-        _currentAppearance = std::make_shared<Texture>( getGmlIdAttribute( attributes ) );
-        getApperanceManagerForCurrentTheme().addAppearance( _currentAppearance );
-        _appearanceAssigned = false;
-        pushObject( _currentAppearance.get() );
-        break;
-
-    case NODETYPE( GeoreferencedTexture ):
-        _currentAppearance = std::make_shared<GeoreferencedTexture>( getGmlIdAttribute( attributes ) );
-        getApperanceManagerForCurrentTheme().addAppearance( _currentAppearance );
-        _appearanceAssigned = false;
-        pushObject( _currentAppearance.get() );
-        break;
-
-    case NODETYPE( Material ):
-    case NODETYPE( X3DMaterial ):
-        _currentAppearance = std::make_shared<Material>( getGmlIdAttribute( attributes ) );
-        getApperanceManagerForCurrentTheme().addAppearance( _currentAppearance );
-        _appearanceAssigned = false;
-        pushObject( _currentAppearance.get() );
+    /*
+     * Envelope handling
+     */
+    case NODETYPE( Envelope ):
+        createGeoTransform( getAttribute( attributes, "srsName", "" ) );
         break;
 
     case NODETYPE( stringAttribute ):
@@ -638,7 +670,7 @@ void CityGMLHandler::startElement( const std::string& name, void* attributes )
     };
 }
 
-void CityGMLHandler::endElement( const std::string& name )
+void CityGMLHandler::endElement( const std::string& name, const std::string& characters )
 {
     std::string localname = getNodeName( name );
 
@@ -656,9 +688,9 @@ void CityGMLHandler::endElement( const std::string& name )
     }
 
     // Trim the char buffer
-    std::string valueStr = trim(_buff.str());
+    std::string valueStr = trim(characters);
     std::stringstream buffer;
-    buffer << trim( _buff.str() );
+    buffer << trim( valueStr );
 
     // set the LOD level if node name starts with 'lod'
     if ( localname.find( "lod" ) == 0 ) _currentLOD = _params.minLOD;
@@ -666,40 +698,9 @@ void CityGMLHandler::endElement( const std::string& name )
     switch ( nodeType )
     {
 
-    // core:transformationMatrix
-    case NODETYPE( transformationMatrix ):
-        if (_currentImplicitGeometry)
-        {
-            double elements[16];
-            parseMatrixValue( buffer, elements );
-            _currentImplicitGeometry->setMatrix(TransformationMatrix(elements));
-        }
-        break;
-    case NODETYPE( referencePoint ):
-        _referencePoint = false;
-        break;
-    case NODETYPE( CityModel ):
-        MODEL_FILTER();
-        _model->finish( _params, _logger );
-        if ( _geoTransform )
-        {
-            CITYGML_LOG_INFO(_logger, "The coordinates were transformed from " << _model->_srsName << " to " << _geoTransform->getDestURN());
-            _model->_srsName = _geoTransform->getDestURN();
-        }
-        if ( _model->_srsName == "" )
-        {
-            _model->_srsName = _params.destSRS;
-            CITYGML_LOG_WARN(_logger, "No SRS was set in the file. The model SRS has been set without transformation to " << _params.destSRS);
-        }
-
-        _model->_translation = _translate;
-        CITYGML_LOG_INFO(_logger, std::fixed << "The model coordinates were translated by x:" << _translate.x << " y:" << _translate.y << " z:" << _translate.z);
-
-        popObject();
-        break;
-
-        // City objects management
-
+    /*
+     * City objects handling
+     */
     case NODETYPE( GenericCityObject ):
     case NODETYPE( Building ):
     case NODETYPE( BuildingPart ):
@@ -731,8 +732,11 @@ void CityGMLHandler::endElement( const std::string& name )
     case NODETYPE( InteriorWallSurface ):
     case NODETYPE( CeilingSurface ):
         MODEL_FILTER();
-        if ( _currentCityObject && ( _currentCityObject->size() > 0 || _currentCityObject->getChildCount() > 0 || !_params.pruneEmptyObjects ) )
-        {	// Prune empty objects
+        if ( _currentCityObject && (   !_params.pruneEmptyObjects
+                                     || _currentCityObject->getChildCityObjecsCount() > 0
+                                     || _currentCityObject->getGeometriesCount() > 0
+                                     || _currentCityObject->getImplicitGeometryCount() > 0))
+        {
             _model->addCityObject( _currentCityObject );
             if ( _cityObjectStack.size() == 1 ) _model->addCityObjectAsRoot( _currentCityObject );
         }
@@ -743,6 +747,10 @@ void CityGMLHandler::endElement( const std::string& name )
         _currentGeometryType = GT_Unknown;
         break;
 
+
+    /*
+     * Envelope handling
+     */
     case NODETYPE( Envelope ):
         MODEL_FILTER();
         if ( _points.size() >= 2 )
@@ -798,6 +806,49 @@ void CityGMLHandler::endElement( const std::string& name )
                 _points.push_back( p );
         }
         break;
+
+
+    /*
+     * Implicit Geometry handling
+     */
+    case NODETYPE( transformationMatrix ):
+        if (_currentImplicitGeometry)
+        {
+            double elements[16];
+            parseMatrixValue( buffer, elements );
+            _currentImplicitGeometry->setMatrix(TransformationMatrix(elements));
+        } else {
+            CITYGML_LOG_WARN(_logger, "Found transformMatrix element outside ImplicitGeometry object at " << this->getDocumentLocation())
+        }
+        break;
+    case NODETYPE( referencePoint ):
+        _referencePoint = false;
+        break;
+
+    case NODETYPE( CityModel ):
+        MODEL_FILTER();
+        _model->finish( _params, _logger );
+        if ( _geoTransform )
+        {
+            CITYGML_LOG_INFO(_logger, "The coordinates were transformed from " << _model->_srsName << " to " << _geoTransform->getDestURN());
+            _model->_srsName = _geoTransform->getDestURN();
+        }
+        if ( _model->_srsName == "" )
+        {
+            _model->_srsName = _params.destSRS;
+            CITYGML_LOG_WARN(_logger, "No SRS was set in the file. The model SRS has been set without transformation to " << _params.destSRS);
+        }
+
+        _model->_translation = _translate;
+        CITYGML_LOG_INFO(_logger, std::fixed << "The model coordinates were translated by x:" << _translate.x << " y:" << _translate.y << " z:" << _translate.z);
+
+        popObject();
+        break;
+
+
+
+
+
 
     case NODETYPE( lod ):
         parseValue( buffer, _currentLOD, _logger );

@@ -1,4 +1,5 @@
 #include "citygml/texture.h"
+#include "citygml/utils.h"
 
 namespace citygml {
 
@@ -35,6 +36,30 @@ namespace citygml {
     void Texture::setWrapMode(Texture::WrapMode mode)
     {
         m_wrapMode = mode;
+    }
+
+    bool Texture::setWrapModeFromString(std::string wrapMode)
+    {
+        if ( ci_string_compare( wrapMode, "wrap" ) ) {
+            this->setWrapMode(Texture::WrapMode::WM_WRAP);
+        }
+        else if ( ci_string_compare( wrapMode, "mirror" ) ) {
+            this->setWrapMode(Texture::WrapMode::WM_MIRROR);
+        }
+        else if ( ci_string_compare( wrapMode, "clamp" ) ) {
+            this->setWrapMode(Texture::WrapMode::WM_CLAMP);
+        }
+        else if ( ci_string_compare( wrapMode, "border" ) ) {
+            this->setWrapMode(Texture::WrapMode::WM_BORDER);
+        }
+        else if ( ci_string_compare( wrapMode, "none" ) ) {
+            this->setWrapMode(Texture::WrapMode::WM_NONE);
+        }
+        else {
+            return false;
+        }
+
+        return true;
     }
 
     TVec4f Texture::getBorderColor() const

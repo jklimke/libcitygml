@@ -18,7 +18,9 @@
 
 #ifdef USE_XERCESC
 
-#include "parser/parser.h"
+#include <fstream>
+
+#include "citygml/citygml.h"
 #include "citygml/citygmllogger.h"
 
 #include <xercesc/util/XMLString.hpp>
@@ -29,33 +31,7 @@
 
 using namespace citygml;
 
-// CityGML Xerces-c SAX parsing handler
-class CityGMLHandlerXerces : public CityGMLHandler, public xercesc::HandlerBase
-{
-public:
-    CityGMLHandlerXerces( const ParserParams& params, std::shared_ptr<CityGMLLogger> logger) : CityGMLHandler( params, logger ) {}
-
-    void startElement( const XMLCh* const name, xercesc::AttributeList& attr )
-    {
-        CityGMLHandler::startElement( wstos( name ), &attr );
-    }
-
-    void endElement( const XMLCh* const name )
-    {
-        CityGMLHandler::endElement( wstos( name ) );
-    }
-
-    void characters( const XMLCh* const chars, const XMLSize_t length )
-    {
-        for ( unsigned int i = 0; i < length; i++ ) _buff << (char)chars[i];
-    }
-
-    void fatalError( const xercesc::SAXParseException& e )
-    {
-        CITYGML_LOG_ERROR(_logger, "Fatal..." << wstos( e.getMessage() ) );
-    }
-
-    static inline std::string wstos( const XMLCh* const wstr )
+std::string wstos( const XMLCh* const wstr )
     {
 #ifdef MSVC
         std::wstring w( (const wchar_t*)wstr );
@@ -66,9 +42,36 @@ public:
         xercesc::XMLString::release(&tmp);
         return str;
 #endif
-    }
+}
+
+// CityGML Xerces-c SAX parsing handler
+class CityGMLHandlerXerces : public xercesc::HandlerBase
+{
+public:
+    CityGMLHandlerXerces( const ParserParams& params, std::shared_ptr<CityGMLLogger> logger) {}
 
 protected:
+    void startElement( const XMLCh* const name, xercesc::AttributeList& attr )
+    {
+//        CityGMLHandler::startElement( wstos( name ), &attr );
+//        m_characterData = "";
+    }
+
+    void endElement( const XMLCh* const name )
+    {
+//        CityGMLHandler::endElement( wstos( name ), m_characterData );
+    }
+
+    void characters( const XMLCh* const chars, const XMLSize_t length )
+    {
+        m_characterData = std::string((const char*) chars, length);
+    }
+
+    void fatalError( const xercesc::SAXParseException& e )
+    {
+//        CITYGML_LOG_ERROR(_logger, "Fatal..." << wstos( e.getMessage() ) );
+    }
+
     std::string getAttribute( void* attributes, const std::string& attname, const std::string& defvalue = "" )
     {
         if (!attributes) return defvalue;
@@ -76,6 +79,8 @@ protected:
         const XMLCh* att = attrs->getValue( attname.c_str() );
         return att ? wstos( att ) : defvalue;
     }
+
+    std::string m_characterData;
 };
 
 class StdBinInputStream : public xercesc::BinInputStream
@@ -173,7 +178,7 @@ namespace citygml
         }
         catch ( const xercesc::XMLException& e )
         {
-            CITYGML_LOG_ERROR(logger, "XML Exception occures during initialization!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
+//            CITYGML_LOG_ERROR(logger, "XML Exception occures during initialization!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
             return nullptr;
         }
 
@@ -186,27 +191,27 @@ namespace citygml
 
         CityModel* model = 0;
 
-        try
-        {
-            StdBinInputSource input( stream );
-            parser->parse( input );
-            model = handler->getModel();
-        }
-        catch ( const xercesc::XMLException& e )
-        {
-            CITYGML_LOG_ERROR(logger, "XML Exception occured!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
-            delete handler->getModel();
-        }
-        catch ( const xercesc::SAXParseException& e )
-        {
-            CITYGML_LOG_ERROR(logger, "SAXParser Exception occured!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
-            delete handler->getModel();
-        }
-        catch ( ... )
-        {
-            CITYGML_LOG_ERROR(logger, "Unexpected Exception occured!");
-            delete handler->getModel();
-        }
+//        try
+//        {
+//            StdBinInputSource input( stream );
+//            parser->parse( input );
+//            model = handler->getModel();
+//        }
+//        catch ( const xercesc::XMLException& e )
+//        {
+//            CITYGML_LOG_ERROR(logger, "XML Exception occured!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
+//            delete handler->getModel();
+//        }
+//        catch ( const xercesc::SAXParseException& e )
+//        {
+//            CITYGML_LOG_ERROR(logger, "SAXParser Exception occured!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
+//            delete handler->getModel();
+//        }
+//        catch ( ... )
+//        {
+//            CITYGML_LOG_ERROR(logger, "Unexpected Exception occured!");
+//            delete handler->getModel();
+//        }
 
         delete parser;
         delete handler;

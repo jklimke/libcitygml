@@ -35,12 +35,11 @@ namespace citygml {
         return m_attributes;
     }
 
-    void Object::setAttribute(const std::string& name, const std::string& value, bool forceOnExist)
+    void Object::setAttribute(const std::string& name, const std::string& value, bool overwrite)
     {
-        if ( !forceOnExist )
+        if ( !overwrite )
         {
-            std::map< std::string, std::string >::const_iterator elt = m_attributes.find( name );
-            if ( elt != m_attributes.end() ) return;
+            if ( m_attributes.count(name) > 1 ) return;
         }
         m_attributes[ name ] = value;
     }

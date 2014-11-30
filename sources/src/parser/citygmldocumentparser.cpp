@@ -1,0 +1,99 @@
+#include "parser/citygmldocumentparser.h"
+#include "parser/documentlocation.h"
+#include "parser/nodetypes.h"
+#include "parser/elementparser.h"
+#include "parser/citymodelelementparser.h"
+
+#include "citygml/citygmllogger.h"
+#include "citygml/citygmlfactory.h"
+#include "citygml/citymodel.h"
+#include "citygml/tesselator.h"
+
+namespace citygml {
+
+    CityGMLDocumentParser::CityGMLDocumentParser(const ParserParams& params, std::shared_ptr<CityGMLLogger> logger)
+    {
+        m_logger = logger;
+        m_factory = std::unique_ptr<CityGMLFactory>(new CityGMLFactory(logger));
+        m_parserParams = params;
+        m_activeParser = nullptr;
+    }
+
+    const CityModel& CityGMLDocumentParser::getModel()
+    {
+        return *m_rootModel;
+    }
+
+    void CityGMLDocumentParser::setCurrentElementParser(ElementParser* parser)
+    {
+        m_parserStack.push(std::shared_ptr<ElementParser>(parser));
+    }
+
+    void CityGMLDocumentParser::removeCurrentElementParser(const ElementParser* caller)
+    {
+        if (m_parserStack.top().get() != caller) {
+            throw std::runtime_error("A CityGMLElementParser object tries to remove another CityGMLElementParser object from the control flow which is not allowed.");
+        }
+        m_parserStack.pop();
+    }
+
+    void CityGMLDocumentParser::startElement(const std::string& name, Attributes& attributes)
+    {
+
+        const NodeType::XMLNode& node = NodeType::getXMLNodeFor(name);
+
+        if (!node.valid()) {
+            CITYGML_LOG_ERROR(m_logger, "Found start tag of invalid node <" << name << "> at " << getDocumentLocation());
+            throw std::runtime_error("Invalid node.");
+        }
+
+        if (m_parserStack.empty()) {
+            m_parserStack.push(std::unique_ptr<CityModelElementParser>(new CityModelElementParser(*this, *m_factory, m_logger, [this](CityModel* cityModel) {
+                this->m_rootModel = std::unique_ptr<CityModel>(cityModel);
+            })));
+        }
+
+        m_activeParser = m_parserStack.top();
+        if (!m_parserStack.top()->startElement(node, attributes)) {
+            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected start tag <" << node << "> at " << getDocumentLocation());
+        }
+    }
+
+    void CityGMLDocumentParser::endElement(const std::string& name, const std::string& characters)
+    {
+        const NodeType::XMLNode& node = NodeType::getXMLNodeFor(name);
+
+        if (!node.valid()) {
+            CITYGML_LOG_ERROR(m_logger, "Found end tag of invalid node <" << name << "> at " << getDocumentLocation());
+            throw std::runtime_error("Invalid node.");
+        }
+
+        if (m_parserStack.empty()) {
+            CITYGML_LOG_ERROR(m_logger, "Found element end tag at" << getDocumentLocation() << "but parser stack is empty (either a bug or corrupted xml document)");
+            throw std::runtime_error("Unexpected element end.");
+        }
+
+        m_activeParser = m_parserStack.top();
+        if (!m_parserStack.top()->endElement(node, characters)) {
+            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected end tag <" << node << "> at " << getDocumentLocation());
+        }
+
+    }
+
+    void CityGMLDocumentParser::endDocument()
+    {
+        if (!m_parserStack.empty()) {
+            CITYGML_LOG_WARN(m_logger, "Reached end of document but the parser stack is not empty (either a bug or corrupted xml document)");
+        }
+
+        m_factory->closeFactory();
+
+        if (m_rootModel != nullptr) {
+            Tesselator tesselator(m_logger);
+            m_rootModel->finish(m_parserParams.tesselate, tesselator);
+        } else {
+            CITYGML_LOG_WARN(m_logger, "Reached end of document but no CityModel was parsed.");
+        }
+    }
+
+}

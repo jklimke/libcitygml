@@ -19,8 +19,13 @@
 #include <time.h>
 #include <algorithm>
 #include <citygml/citygml.h>
+#include <citygml/cityobject.h>
+#include <citygml/citymodel.h>
+#include <citygml/geometry.h>
 #include <citygml/material.h>
 #include <citygml/texture.h>
+#include <citygml/geometry.h>
+#include <citygml/polygon.h>
 
 // VRML97 Helper class to produce a hierarchy of VRML nodes with attributes
 class VRML97Printer
@@ -31,38 +36,38 @@ public:
     bool save( const std::string& outFilename );
 
 private:
-    void dumpCityObject( const citygml::CityObject* );
+    void dumpCityObject(const citygml::CityObject& );
 
-    void dumpGeometry( const citygml::CityObject*, const citygml::Geometry* );
+    void dumpGeometry(const citygml::CityObject&, const citygml::Geometry& );
 
-    void dumpPolygon( const citygml::CityObject*, const citygml::Geometry*, const citygml::Polygon* );
+    void dumpPolygon(const citygml::CityObject&, const citygml::Geometry&, const citygml::Polygon& );
 
 protected:
-    inline addHeader() { _out << "#VRML V2.0 utf8" << std::endl; }
+    void addHeader() { _out << "#VRML V2.0 utf8" << std::endl; }
 
-    inline printIndent() { for ( int i = 0; i < _indentCount; i++ ) _out << "\t"; }
+    void printIndent() { for ( int i = 0; i < _indentCount; i++ ) _out << "\t"; }
 
-    inline addComment(const std::string& cmt) {  printIndent(); _out << "# " << cmt << std::endl; }
+    void addComment(const std::string& cmt) {  printIndent(); _out << "# " << cmt << std::endl; }
 
-    inline beginNode( const std::string &node ) { printIndent(); _out << node << " {" << std::endl; _indentCount++; }
+    void beginNode( const std::string &node ) { printIndent(); _out << node << " {" << std::endl; _indentCount++; }
 
-    inline endNode() { _indentCount--; printIndent(); _out << "}" << std::endl; }
+    void endNode() { _indentCount--; printIndent(); _out << "}" << std::endl; }
 
-    inline addAttribute( const std::string &attr ) { printIndent(); _out << attr << " "; }
+    void addAttribute( const std::string &attr ) { printIndent(); _out << attr << " "; }
 
-    template<class T> inline addAttributeValue( const std::string &attr, T val ) { printIndent(); _out << attr << " " << val << std::endl; }
+    template<class T> void addAttributeValue( const std::string &attr, T val ) { printIndent(); _out << attr << " " << val << std::endl; }
 
-    inline addAttributeValue( const std::string &attr, const char* val ) { printIndent(); _out << attr << " " << val << std::endl; }
+    void addAttributeValue( const std::string &attr, const char* val ) { printIndent(); _out << attr << " " << val << std::endl; }
 
-    inline beginAttributeNode( const std::string &attr, const std::string &node ) { printIndent(); _out << attr << " " << node << " {" << std::endl; _indentCount++; }
+    void beginAttributeNode( const std::string &attr, const std::string &node ) { printIndent(); _out << attr << " " << node << " {" << std::endl; _indentCount++; }
 
-    inline beginAttributeArray( const std::string &attr ) { addAttribute( attr ); _out << " [" << std::endl; _indentCount++; }
+    void beginAttributeArray( const std::string &attr ) { addAttribute( attr ); _out << " [" << std::endl; _indentCount++; }
 
-    inline endAttributeArray() { _indentCount--; printIndent(); _out << "]" << std::endl; }
+    void endAttributeArray() { _indentCount--; printIndent(); _out << "]" << std::endl; }
 
-    inline beginGroup() { beginNode("Group"); beginAttributeArray( "children" ); }
+    void beginGroup() { beginNode("Group"); beginAttributeArray( "children" ); }
 
-    inline endGroup() { endAttributeArray(); endNode(); }
+    void endGroup() { endAttributeArray(); endNode(); }
 
 private:
     citygml::CityModel* _cityModel;
@@ -118,7 +123,6 @@ int main( int argc, char **argv )
         if ( param == "-optimize" ) { params.optimize = true; fargc = i+1; }
         if ( param == "-comments" ) { g_comments = true; fargc = i+1; }
         if ( param == "-center" ) { g_center = true; fargc = i+1; }
-        if ( param == "-filter" ) { if ( i == argc - 1 ) usage(); params.objectsMask = argv[i+1]; i++; fargc = i+1; }
         if ( param == "-minlod" ) { if ( i == argc - 1 ) usage(); params.minLOD = atoi( argv[i+1] ); i++; fargc = i+1; }
         if ( param == "-maxlod" ) { if ( i == argc - 1 ) usage(); params.maxLOD = atoi( argv[i+1] ); i++; fargc = i+1; }
         if ( param == "-destsrs" ) { if ( i == argc - 1 ) usage(); params.destSRS = argv[i+1]; i++; fargc = i+1; }
@@ -138,10 +142,9 @@ int main( int argc, char **argv )
 
     if ( !city ) return EXIT_FAILURE;
 
-    std::cout << "Done in " << difftime( end, start ) << " seconds." << std::endl << city->size() << " city objects read." << std::endl;
+    std::cout << "Done in " << difftime( end, start ) << " seconds." << std::endl;
 
-    std::cout << city->getCityObjectsRoots().size() << " root nodes" << std::endl;
-    if ( city->getSRSName() != "" ) std::cout << "The actual model SRS is " << city->getSRSName() << std::endl;
+    std::cout << city->getRootCityObjects().size() << " root nodes" << std::endl;
 
     std::string outfile;
     if ( argc - fargc == 1 )
@@ -197,9 +200,9 @@ bool VRML97Printer::save( const std::string& outFilename )
         endGroup();
     }
 #else
-    const citygml::CityObjects& roots = _cityModel->getCityObjectsRoots();
+    citygml::ConstCityObjects roots = _cityModel->getRootCityObjects();
 
-    for ( unsigned int i = 0; i < roots.size(); i++ ) dumpCityObject( roots[i] );
+    for ( unsigned int i = 0; i < roots.size(); i++ ) dumpCityObject( *roots[i] );
 #endif
 
     _out.close();
@@ -207,44 +210,42 @@ bool VRML97Printer::save( const std::string& outFilename )
     return true;
 }
 
-void VRML97Printer::dumpCityObject( const citygml::CityObject* object )
+void VRML97Printer::dumpCityObject( const citygml::CityObject& object )
 {
-    if ( !object ) return;
 
-    if ( g_comments ) addComment(  object->getTypeAsString() + ": " + object->getId() );
+    if ( g_comments ) addComment(  object.getType() + ": " + object.getId() );
 
     beginGroup();
 
-    for ( unsigned int i = 0; i < object->size(); i++ ) dumpGeometry( object, object->getGeometry( i ) );
+    for ( unsigned int i = 0; i < object.getGeometriesCount(); i++ ) dumpGeometry( object, object.getGeometry( i ) );
 
 #ifdef RECURSIVE_DUMP
-    for ( unsigned int i = 0; i < object->getChildCount(); i++ ) dumpCityObject( object->getChild( i ) );
+    for ( unsigned int i = 0; i < object.getChildCityObjecsCount(); i++ ) dumpCityObject( object.getChildCityObject(i) );
 #endif
 
     endGroup();
 }
 
-void VRML97Printer::dumpGeometry( const citygml::CityObject* object, const citygml::Geometry* g )
+void VRML97Printer::dumpGeometry( const citygml::CityObject& object, const citygml::Geometry& g )
 {
-    if ( !g ) return;
 
-    if ( g_comments ) addComment( "Geometry: " + g->getId() );
+    if ( g_comments ) addComment( "Geometry: " + g.getId() );
 
-    for ( unsigned int i = 0; i < g->size(); i++ ) dumpPolygon( object, g, (*g)[i] );
+    for ( unsigned int i = 0; i < g.getPolygonsCount(); i++ ) dumpPolygon( object, g, g.getPolygon(i) );
 }
 
-void VRML97Printer::dumpPolygon( const citygml::CityObject* object, const citygml::Geometry* g, const citygml::Polygon* p )
+void VRML97Printer::dumpPolygon( const citygml::CityObject& object, const citygml::Geometry& g, const citygml::Polygon& p )
 {
     static bool s_isFirstVert = true;
     static TVec3d s_firstVert;
 
-    if ( !p || p->getIndices().size() == 0 ) return;
+    if ( p.getIndices().size() == 0 ) return;
 
     if ( g_comments )
     {
         std::stringstream ss;
-        ss << "  " << p->getVertices().size() << " points, " << p->getIndices().size()/3 << " triangles, " << p->getNormals().size() << " normals, " << p->getTexCoords().size() << " texCoords";
-        addComment( "Polygon: " + p->getId() + ss.str() );
+        ss << "  " << p.getVertices().size() << " points, " << p.getIndices().size()/3 << " triangles, " << p.getNormals().size() << " normals, " << p.getTexCoords().size() << " texCoords";
+        addComment( "Polygon: " + p.getId() + ss.str() );
     }
 
     beginNode( "Shape" );
@@ -253,7 +254,7 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject* object, const citygm
     beginAttributeNode( "geometry", "IndexedFaceSet" );
 
     {
-        const std::vector<TVec3d>& vertices = p->getVertices();
+        const std::vector<TVec3d>& vertices = p.getVertices();
         beginAttributeNode( "coord", "Coordinate" );
         beginAttributeArray( "point" );
         printIndent();
@@ -273,7 +274,7 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject* object, const citygm
     }
 
     {
-        const std::vector<unsigned int>& indices = p->getIndices();
+        const std::vector<unsigned int>& indices = p.getIndices();
         beginAttributeArray( "coordIndex" );
         printIndent();
         for ( unsigned int k = 0 ; k < indices.size() / 3; k++ )
@@ -283,9 +284,9 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject* object, const citygm
     }
 
     // Normal management
-    if ( p->getNormals().size() > 0 )
+    if ( p.getNormals().size() > 0 )
     {
-        const std::vector<TVec3f>& normals = p->getNormals();
+        const std::vector<TVec3f>& normals = p.getNormals();
         beginAttributeNode( "normal", "Normal" );
         beginAttributeArray( "vector" );
         printIndent();
@@ -299,9 +300,9 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject* object, const citygm
     addAttributeValue( "solid", "FALSE" ); //draw both sides of faces
 
     // Texture coordinates
-    if ( std::dynamic_pointer_cast<const citygml::Texture>( p->getAppearance() ) && p->getTexCoords().size() > 0 )
+    if ( std::dynamic_pointer_cast<const citygml::Texture>( p.getAppearance() ) && p.getTexCoords().size() > 0 )
     {
-        const citygml::TexCoords& texCoords = p->getTexCoords();
+        const citygml::TexCoords& texCoords = p.getTexCoords();
         beginAttributeNode( "texCoord", "TextureCoordinate" );
 
         beginAttributeArray( "point" );
@@ -321,7 +322,7 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject* object, const citygm
 
         bool colorset = false;
 
-        std::shared_ptr<const citygml::Appearance> mat = p->getAppearance();
+        std::shared_ptr<const citygml::Appearance> mat = p.getAppearance();
 
         if ( auto m = std::dynamic_pointer_cast<const citygml::Material>( mat ) )
         {
@@ -350,8 +351,7 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject* object, const citygm
         {
             beginAttributeNode( "material", "Material" );
 
-            TVec4f color( object->getDefaultColor().rgba );
-            if ( g->getType() == citygml::GT_Roof ) color = TVec4f( 0.9f, 0.1f, 0.1f, 1.f );
+            TVec4f color = TVec4f( 0.9f, 0.1f, 0.1f, 1.f );
             TVec3f crgb( color.r, color.g, color.b );
             addAttributeValue( "diffuseColor", crgb );
             if ( color.a != 1.f  ) addAttributeValue( "transparency", 1.f - color.a );

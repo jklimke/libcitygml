@@ -7,6 +7,27 @@
 
 namespace citygml {
 
+    AppearanceManager::AppearanceManager(std::shared_ptr<CityGMLLogger> logger)
+    {
+        m_logger = logger;
+    }
+
+    AppearanceManager::~AppearanceManager()
+    {
+
+    }
+
+    std::shared_ptr<Appearance> AppearanceManager::getAppearanceByID(const std::string& id) const
+    {
+        auto it = m_appearancesMap.find(id);
+
+        if (it == m_appearancesMap.end()) {
+            return nullptr;
+        }
+
+        return it->second;
+    }
+
     void AppearanceManager::addTheme(const std::string& theme)
     {
         m_themes.insert(theme);

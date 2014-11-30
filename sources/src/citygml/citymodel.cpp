@@ -37,7 +37,7 @@
 
 namespace citygml
 {
-    CityModel::CityModel(const std::string& id) : Object( id )
+    CityModel::CityModel(const std::string& id) : FeatureObject( id )
     {
 
     }
@@ -72,27 +72,6 @@ namespace citygml
     {
     }
 
-    const Envelope& CityModel::getEnvelope() const
-    {
-        return m_envelope;
-    }
-
-    void CityModel::setEnvelope(Envelope e)
-    {
-        m_envelope = e;
-    }
-
-    const TVec3d& CityModel::getTranslationParameters() const
-    {
-        return m_translation;
-    }
-
-    void CityModel::setTranslationParameters(const TVec3d& param)
-    {
-        m_translation = param;
-    }
-
-
     const ConstCityObjects CityModel::getAllCityObjectsOfType( CityObject::CityObjectsType type ) const
     {
         CityObjectsMap::const_iterator it = m_cityObjectsMap.find( type );
@@ -108,17 +87,23 @@ namespace citygml
         return list;
     }
 
+    void CityModel::addRootObject(CityObject* obj)
+    {
+        m_roots.push_back(std::unique_ptr<CityObject>(obj));
+    }
+
     const std::string& CityModel::getSRSName() const
     {
         return m_srsName;
     }
 
 
-    void CityModel::finish(bool tesselate, Tesselator& tesselator, bool mergePolygons )
+    void CityModel::finish(bool tesselate, Tesselator& tesselator)
     {
-        // Apply appearances to targets
-
         // Finish all cityobjcts
+        for (auto& cityObj : m_roots) {
+            cityObj->finish(tesselate, tesselator);
+        }
 
         // Build city objects map
         for (std::unique_ptr<CityObject>& obj : m_roots) {

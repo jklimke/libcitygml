@@ -22,6 +22,7 @@ namespace citygml {
 
         const std::vector<TVec3d>& getVertices() const;
         std::vector<TVec3d>& getVertices();
+        void setVertices(std::vector<TVec3d> vertices);
 
         void addVertex( const TVec3d& v );
 

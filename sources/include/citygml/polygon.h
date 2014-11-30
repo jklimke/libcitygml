@@ -42,6 +42,11 @@ namespace citygml {
         // Get texture coordinates
         const std::vector<TVec2f> getTexCoordsForTheme(const std::string& theme) const;
 
+        bool negNormal() const;
+        void setNegNormal(bool negNormal);
+
+        void addRing( LinearRing* );
+
         void finish(bool doTesselate, Tesselator& tesselator );
 
         virtual ~Polygon();
@@ -50,8 +55,6 @@ namespace citygml {
         Polygon( const std::string& id, std::shared_ptr<CityGMLLogger> logger );
 
         std::shared_ptr<const Texture> getTextureForTheme(const std::string& theme) const;
-
-        void addRing( LinearRing* );
 
         void computeIndices(const TVec3d& normal, bool tesselate, Tesselator& tesselator);
         void mergeRings();

@@ -14,12 +14,12 @@
 * GNU Lesser General Public License for more details.
 */
 
-#ifndef __UTILS_H__
-#define __UTILS_H__
+#pragma once
 
 #include <string>
 #include <vector>
 #include <algorithm>
+
 
 // Helpers
 
@@ -48,6 +48,12 @@ inline bool ci_string_compare( const std::string& str1, const std::string& str2 
     return s1 == s2;
 }
 
+inline std::string toLower(const std::string& s) {
+    std::string lower = s;
+    std::transform( lower.begin(), lower.end(), lower.begin(), ::tolower );
+    return lower;
+}
+
 inline std::string trim_left( const std::string& s, const std::string& t = " \t\r\n" )
 {
     std::string d( s );
@@ -66,4 +72,3 @@ inline std::string trim( const std::string& s, const std::string& t = " \t\r\n" 
     return trim_left( trim_right( s, t ), t );
 }
 
-#endif // __UTILS_H__

@@ -1,11 +1,18 @@
 #include "citygml/envelope.h"
 
+#include <numeric>
+
 namespace citygml {
 
-    Envelope::Envelope(const TVec3d& lowerBound, const TVec3d& upperBound)
+
+    Envelope::Envelope()
     {
-        m_lowerBound = lowerBound;
-        m_upperBound = upperBound;
+
+    }
+
+    Envelope::Envelope(const std::string& srsName)
+    {
+        m_srsName = srsName;
     }
 
     const TVec3d&Envelope::getLowerBound() const
@@ -13,9 +20,24 @@ namespace citygml {
         return m_lowerBound;
     }
 
+    void Envelope::setLowerBound(const TVec3d& coordinate)
+    {
+        m_lowerBound = coordinate;
+    }
+
     const TVec3d&Envelope::getUpperBound() const
     {
         return m_upperBound;
+    }
+
+    void Envelope::setUpperBound(const TVec3d& coordinate)
+    {
+        m_upperBound = coordinate;
+    }
+
+    const std::string&Envelope::srsName() const
+    {
+        return m_srsName;
     }
 
     std::ostream& operator<<( std::ostream& os, const Envelope& e )

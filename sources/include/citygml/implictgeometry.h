@@ -16,8 +16,8 @@ namespace citygml {
     {
         friend class CityGMLFactory;
     public:
-        void setMatrix(const TransformationMatrix& matrix);
-        TransformationMatrix getMatrix() const;
+        void setTransformMatrix(const TransformationMatrix matrix);
+        const TransformationMatrix& getTransformMatrix() const;
 
         void setReferencePoint(const TVec3d& referencePoint);
         TVec3d getReferencePoint() const;
@@ -32,6 +32,7 @@ namespace citygml {
 
         // Access the srs of the implicit geometry
         std::string getSRSName() const;
+        void setSRSName(const std::string& srsName);
 
     protected:
         ImplicitGeometry(const std::string& id);

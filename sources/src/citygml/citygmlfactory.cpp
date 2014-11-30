@@ -11,12 +11,13 @@
 #include "citygml/texturetargetdefinition.h"
 #include "citygml/citymodel.h"
 #include "citygml/implictgeometry.h"
+#include "citygml/citygmllogger.h"
 
 namespace citygml {
 
-    CityGMLFactory::CityGMLFactory(AppearanceManager* appearanceManager, std::shared_ptr<CityGMLLogger> logger)
+    CityGMLFactory::CityGMLFactory(std::shared_ptr<CityGMLLogger> logger)
     {
-        m_appearanceManager = appearanceManager;
+        m_appearanceManager = std::unique_ptr<AppearanceManager>(new AppearanceManager(logger));
         m_logger = logger;
     }
 
@@ -25,18 +26,17 @@ namespace citygml {
         return new CityModel(id);
     }
 
+    CityObject* CityGMLFactory::createCityObject(const std::string& id, CityObject::CityObjectsType type)
+    {
+        CityObject* cityObject = new CityObject(id, type);
+        return cityObject;
+    }
+
     Geometry* CityGMLFactory::createGeometry(const std::string& id, Geometry::GeometryType type, unsigned int lod)
     {
         Geometry* geom = new Geometry(id, type, lod);
         appearanceTargetCreated(geom);
         return geom;
-    }
-
-    Composite* CityGMLFactory::createComposite(const std::string& id, unsigned int lod)
-    {
-        Composite* comp = new Composite(id, lod);
-        appearanceTargetCreated(comp);
-        return comp;
     }
 
     Polygon* CityGMLFactory::createPolygon(const std::string& id)
@@ -49,6 +49,29 @@ namespace citygml {
     ImplicitGeometry *CityGMLFactory::createImplictGeometry(const std::string& id)
     {
         return new ImplicitGeometry(id);
+    }
+
+    std::shared_ptr<Geometry> CityGMLFactory::shareGeometry(Geometry* geom)
+    {
+        std::shared_ptr<Geometry> shared = getSharedGeometryWithID(geom->getId());
+
+        if (shared == nullptr) {
+            shared = std::shared_ptr<Geometry>(geom);
+        } else if (shared != nullptr && geom != shared.get()) {
+            throw std::runtime_error("CityGMLFactory::sharedGeometry called for two different object with the same gml:id... using first shared geometry, delete other geometry");
+        }
+
+        m_sharedGeometriesMap[geom->getId()] = shared;
+        return shared;
+    }
+
+    std::shared_ptr<Geometry> CityGMLFactory::getSharedGeometryWithID(const std::string& id)
+    {
+        auto it = m_sharedGeometriesMap.find(id);
+        if (it == m_sharedGeometriesMap.end()) {
+            return nullptr;
+        }
+        return it->second;
     }
 
     std::shared_ptr<Texture> CityGMLFactory::createTexture(const std::string& id)
@@ -84,5 +107,25 @@ namespace citygml {
         std::shared_ptr<TextureTargetDefinition> targetDef = std::shared_ptr<TextureTargetDefinition>(new TextureTargetDefinition(targetID, appearance, id));
         m_appearanceManager->addTextureTargetDefinition(targetDef);
         return targetDef;
+    }
+
+    std::shared_ptr<Appearance> CityGMLFactory::getAppearanceWithID(const std::string& id)
+    {
+        return m_appearanceManager->getAppearanceByID(id);
+    }
+
+    void CityGMLFactory::closeFactory()
+    {
+        m_appearanceManager->assignAppearancesToTargets();
+    }
+
+    CityGMLFactory::~CityGMLFactory()
+    {
+
+    }
+
+    void CityGMLFactory::appearanceTargetCreated(AppearanceTarget* obj)
+    {
+        m_appearanceManager->addAppearanceTarget(obj);
     }
 }

@@ -14,10 +14,8 @@
 * GNU Lesser General Public License for more details.
 */
 
-#ifndef __CITYGML_H__
-#define __CITYGML_H__
+#pragma once
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -87,10 +85,13 @@ namespace citygml
         std::string theme;
     };
 
+    class CityGMLParser {
+    public:
+        virtual const CityModel& getModel() = 0;
+    };
+
     LIBCITYGML_EXPORT CityModel* load( std::istream& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);
 
     LIBCITYGML_EXPORT CityModel* load( const std::string& fileName, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);
 
 }
-
-#endif // __CITYGML_H__

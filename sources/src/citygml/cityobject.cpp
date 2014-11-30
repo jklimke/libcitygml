@@ -1,13 +1,12 @@
 #include "citygml/cityobject.h"
 #include "citygml/geometry.h"
 #include "citygml/implictgeometry.h"
-#include "citygml/composite.h"
 #include "citygml/appearancemanager.h"
 #include "citygml/citygml.h"
 
 namespace citygml {
 
-    CityObject::CityObject(const std::string& id, CityObject::CityObjectsType type)  : Object( id ), m_type( type )
+    CityObject::CityObject(const std::string& id, CityObject::CityObjectsType type)  : FeatureObject( id ), m_type( type )
     {
 
     }
@@ -15,16 +14,6 @@ namespace citygml {
     CityObject::CityObjectsType CityObject::getType() const
     {
         return m_type;
-    }
-
-    const Envelope& CityObject::getEnvelope() const
-    {
-        return m_envelope;
-    }
-
-    void CityObject::setEnvelope(Envelope envelope)
-    {
-        m_envelope = envelope;
     }
 
     unsigned int CityObject::getGeometriesCount() const

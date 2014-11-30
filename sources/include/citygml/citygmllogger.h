@@ -2,6 +2,8 @@
 
 #include <citygml/citygml_api.h>
 
+#include <sstream>
+
 namespace citygml {
 
     class LIBCITYGML_EXPORT CityGMLLogger {
