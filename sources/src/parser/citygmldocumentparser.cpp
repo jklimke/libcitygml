@@ -3,6 +3,7 @@
 #include "parser/nodetypes.h"
 #include "parser/elementparser.h"
 #include "parser/citymodelelementparser.h"
+#include "parser/geocoordinatetransformer.h"
 
 #include "citygml/citygmllogger.h"
 #include "citygml/citygmlfactory.h"
@@ -56,7 +57,7 @@ namespace citygml {
         m_activeParser = m_parserStack.top();
         CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::startElement for <" << node << "> at " << getDocumentLocation());
         if (!m_activeParser->startElement(node, attributes)) {
-            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected start tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
+            CITYGML_LOG_INFO(m_logger, "Ignoring unexpected start tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
         }
     }
 
@@ -77,7 +78,7 @@ namespace citygml {
         m_activeParser = m_parserStack.top();
         CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::endElement for <" << node << "> at " << getDocumentLocation());
         if (!m_activeParser->endElement(node, characters)) {
-            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected end tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
+            CITYGML_LOG_INFO(m_logger, "Ignoring unexpected end tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
         }
 
     }
@@ -94,6 +95,16 @@ namespace citygml {
             Tesselator tesselator(m_logger);
             m_rootModel->finish(m_parserParams.tesselate, tesselator);
             m_rootModel->setThemes(m_factory->getAllThemes());
+
+            if (!m_parserParams.destSRS.empty()) {
+                try {
+                    GeoCoordinateTransformer transformer(m_parserParams.destSRS, m_logger);
+                    transformer.transformToDestinationSRS(m_rootModel.get());
+                } catch (const std::runtime_error& e) {
+                    CITYGML_LOG_ERROR(m_logger, "Coordinate transformation aborted: " << e.what());
+                }
+            }
+
         } else {
             CITYGML_LOG_WARN(m_logger, "Reached end of document but no CityModel was parsed.");
         }

@@ -34,12 +34,10 @@ namespace citygml {
 
         // Get the vertices
         const std::vector<TVec3d>& getVertices() const;
+        std::vector<TVec3d>& getVertices();
 
         // Get the indices
         const std::vector<unsigned int>& getIndices() const;
-
-        // Get the normals
-        const std::vector<TVec3f>& getNormals() const;
 
         /**
          * @brief returns the material of this polygon for the given theme and side
@@ -99,7 +97,6 @@ namespace citygml {
         TVec3d computeNormal();
 
         std::vector<TVec3d> m_vertices;
-        std::vector<TVec3f> m_normals;
         std::vector<unsigned int> m_indices;
 
         std::vector<std::unique_ptr<LinearRing>> m_exteriorRings;

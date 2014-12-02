@@ -31,6 +31,10 @@ namespace citygml {
         const ConstCityObjects getRootCityObjects() const;
         void addRootObject(CityObject* obj);
 
+        unsigned int getNumRootCityObjects() const;
+        CityObject& getRootCityObject(int i);
+        const CityObject& getRootCityObject(int i) const;
+
         const ConstCityObjects getAllCityObjectsOfType( CityObject::CityObjectsType type ) const;
 
         const std::string& getSRSName() const;

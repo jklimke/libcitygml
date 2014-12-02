@@ -92,6 +92,21 @@ namespace citygml
         m_roots.push_back(std::unique_ptr<CityObject>(obj));
     }
 
+    unsigned int CityModel::getNumRootCityObjects() const
+    {
+        return m_roots.size();
+    }
+
+    CityObject& CityModel::getRootCityObject(int i)
+    {
+        return *m_roots.at(i);
+    }
+
+    const CityObject& CityModel::getRootCityObject(int i) const
+    {
+        return *m_roots.at(i);
+    }
+
     const std::string& CityModel::getSRSName() const
     {
         return m_srsName;

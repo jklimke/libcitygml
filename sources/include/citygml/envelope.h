@@ -33,6 +33,8 @@ namespace citygml {
          */
         const std::string& srsName() const;
 
+        const bool validBounds() const;
+
     protected:
         TVec3d m_lowerBound;
         TVec3d m_upperBound;

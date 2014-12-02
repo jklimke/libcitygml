@@ -6,6 +6,7 @@
 #include "parser/attributes.h"
 #include "parser/documentlocation.h"
 #include "parser/polygonelementparser.h"
+#include "parser/delayedchoiceelementparser.h"
 
 #include "citygml/geometry.h"
 #include "citygml/citygmlfactory.h"
@@ -121,9 +122,17 @@ namespace citygml {
                 m_factory.requestSharedPolygonForGeometry(m_model, attributes.getXLinkValue());
             } else {
 
-                setParserForNextElement(new PolygonElementParser(m_documentParser, m_factory, m_logger, [this](std::shared_ptr<Polygon> poly) {
-                                            m_model->addPolygon(poly);
-                                        }));
+
+                setParserForNextElement(
+                            new DelayedChoiceElementParser(m_documentParser, m_logger, {
+                                new PolygonElementParser(m_documentParser, m_factory, m_logger, [this](std::shared_ptr<Polygon> poly) {
+                                                m_model->addPolygon(poly);
+                                            }),
+                                new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* child) {
+                                                m_model->addGeometry(child);
+                                            })
+                            })
+                );
             }
             return true;
         }

@@ -66,6 +66,7 @@ namespace citygml {
 
         // Access the geometries
         const Geometry& getGeometry( unsigned int i ) const;
+        Geometry& getGeometry( unsigned int i );
 
         void addGeometry(Geometry* geom);
 
@@ -74,6 +75,7 @@ namespace citygml {
 
         // Access the implicit geometries
         const ImplicitGeometry& getImplicitGeometry( unsigned int i ) const;
+        ImplicitGeometry& getImplicitGeometry( unsigned int i );
 
         void addImplictGeometry(ImplicitGeometry* implictGeom);
 

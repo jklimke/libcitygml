@@ -116,35 +116,11 @@ SET(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
 
 OPTION(LIBCITYGML_STATIC_CRT "Set to ON to link libcitygml with the multithread CRT static library (instead of DLL)." ON)
 
-# xml library
-OPTION(LIBCITYGML_USE_XERCESC "Set to ON to build libcitygml with Xerces-c library." ON)
-OPTION(LIBCITYGML_USE_LIBXML2 "Set to ON to build libcitygml with LibXml2 library." OFF)
-
 # gdal library
-OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library and support coordinates reprojections." ON)
+OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library so that it supports coordinates transformations." ON)
 
-IF ( LIBCITYGML_USE_XERCESC )
-  IF( LIBCITYGML_USE_LIBXML2 )
-    MESSAGE("Error: You cannot build the library with Xerces-c AND LibXml2! Xerces library will be used by default.")
-    UNSET( LIBCITYGML_USE_LIBXML2 )
-  ENDIF( LIBCITYGML_USE_LIBXML2 )
-ENDIF( LIBCITYGML_USE_XERCESC )
 
-IF ( LIBCITYGML_USE_XERCESC )
-  FIND_PACKAGE( Xerces REQUIRED )
-  ADD_DEFINITIONS( -DUSE_XERCESC )
-  SET( LIBXML2_INCLUDE_DIR "" )
-  SET( LIBXML2_LIBRARIES "" )
-ENDIF( LIBCITYGML_USE_XERCESC )
-
-IF( LIBCITYGML_USE_LIBXML2 )
-  FIND_PACKAGE( LibXml2 REQUIRED )
-  FIND_PACKAGE( Iconv REQUIRED )
-  ADD_DEFINITIONS( -DUSE_LIBXML2 )
-  ADD_DEFINITIONS( ${LIBXML2_DEFINITIONS} )
-  SET( XERCESC_INCLUDE "" )
-  SET( XERCESC_LIBRARY "" )
-ENDIF( LIBCITYGML_USE_LIBXML2 )
+FIND_PACKAGE( Xerces REQUIRED )
 
 IF( LIBCITYGML_USE_GDAL )
   FIND_PACKAGE( GDAL REQUIRED )
@@ -181,11 +157,6 @@ OPTION(LIBCITYGML_TESTS "Set to ON to build libcitygml tests programs." ON)
 IF   (LIBCITYGML_TESTS)
   ADD_SUBDIRECTORY( test )
 ENDIF(LIBCITYGML_TESTS)
-
-OPTION(LIBCITYGML_VRML "Set to ON to build citygml2vrml program." ON)
-IF   (LIBCITYGML_VRML)
-  ADD_SUBDIRECTORY( citygml2vrml )
-ENDIF(LIBCITYGML_VRML)
 
 
 #-----------------------------------------------------------------------------

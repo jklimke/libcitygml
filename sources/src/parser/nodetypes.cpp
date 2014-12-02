@@ -210,6 +210,11 @@ namespace citygml {
     DEFINE_NODE( BLDG, InteriorWallSurface )
     DEFINE_NODE( BLDG, CeilingSurface )
     DEFINE_NODE( BLDG, BuildingFurniture )
+    DEFINE_NODE( BLDG, RoofType)
+    DEFINE_NODE( BLDG, ExternalReference)
+    DEFINE_NODE( BLDG, InformationSystem)
+    DEFINE_NODE( BLDG, ExternalObject)
+    DEFINE_NODE( BLDG, Uri)
 
     DEFINE_NODE( BLDG, CityFurniture )
 

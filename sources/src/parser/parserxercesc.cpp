@@ -14,16 +14,13 @@
 * GNU Lesser General Public License for more details.
 */
 
-// This is the implementation file for Xerces-c parser
-
-#ifdef USE_XERCESC
+#include "citygml/citygml.h"
 
 #include <fstream>
 #include <string>
 #include <memory>
 #include <mutex>
 
-#include "citygml/citygml.h"
 #include "citygml/citygmllogger.h"
 #include "parser/citygmldocumentparser.h"
 #include "parser/documentlocation.h"
@@ -328,4 +325,3 @@ namespace citygml
     }
 }
 
-#endif

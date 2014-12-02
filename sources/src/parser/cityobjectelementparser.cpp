@@ -104,6 +104,7 @@ namespace citygml {
         HANDLE_ATTR(BLDG, StoreysBelowGround),
         HANDLE_ATTR(BLDG, MeasuredHeight),
         HANDLE_ATTR(BLDG, Address),
+        HANDLE_ATTR(BLDG, RoofType),
         HANDLE_ATTR(ADDRESS, Administrativearea),
         HANDLE_ATTR(ADDRESS, Country ),
         HANDLE_ATTR(ADDRESS, Code ),
@@ -184,6 +185,11 @@ namespace citygml {
         } else if (node == NodeType::VEG_Lod4ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(4);
+        } else if (node == NodeType::BLDG_ExternalReferenceNode
+                   || node == NodeType::BLDG_InformationSystemNode
+                   || node == NodeType::BLDG_ExternalObjectNode
+                   || node == NodeType::BLDG_UriNode) {
+            return true;
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
         }
@@ -252,7 +258,11 @@ namespace citygml {
                     || node == NodeType::VEG_Lod1ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod2ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod3ImplicitRepresentationNode
-                    || node == NodeType::VEG_Lod4ImplicitRepresentationNode) {
+                    || node == NodeType::VEG_Lod4ImplicitRepresentationNode
+                    || node == NodeType::BLDG_ExternalReferenceNode
+                    || node == NodeType::BLDG_InformationSystemNode
+                    || node == NodeType::BLDG_ExternalObjectNode
+                    || node == NodeType::BLDG_UriNode) {
 
             return true;
         }

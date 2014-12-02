@@ -127,6 +127,11 @@ namespace citygml {
         NODETYPE( BLDG, InteriorFurniture)
         NODETYPE( BLDG, RoomInstallation)
         NODETYPE( BLDG, Opening)
+        NODETYPE( BLDG, RoofType)
+        NODETYPE( BLDG, ExternalReference)
+        NODETYPE( BLDG, InformationSystem)
+        NODETYPE( BLDG, ExternalObject)
+        NODETYPE( BLDG, Uri)
 
         NODETYPE( BLDG, Lod1Solid )
         NODETYPE( BLDG, Lod2Solid )

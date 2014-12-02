@@ -12,7 +12,7 @@ IF( LIBCITYGML_DYNAMIC )
   ADD_DEFINITIONS( -DLIBCITYGML_DYNAMIC )
 ENDIF( LIBCITYGML_DYNAMIC )
 
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include ${XERCESC_INCLUDE} ${LIBXML2_INCLUDE_DIR} ${ICONV_INCLUDE_DIR} ${GLU_INCLUDE_PATH} ${GDAL_INCLUDE_DIR} )
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include ${XERCESC_INCLUDE}  ${ICONV_INCLUDE_DIR} ${GLU_INCLUDE_PATH} ${GDAL_INCLUDE_DIR} )
 
 SET(SOURCES
   src/citygml/citymodel.cpp
@@ -45,7 +45,7 @@ SET(SOURCES
   src/parser/delayedchoiceelementparser.cpp
   src/parser/attributes.cpp
   src/parser/parserxercesc.cpp
-  src/parser/parserlibxml2.cpp
+  src/parser/geocoordinatetransformer.cpp
 
   src/parser/gmlfeaturecollectionparser.cpp
   src/parser/citymodelelementparser.cpp
@@ -98,7 +98,7 @@ SET(HEADERS
   include/parser/delayedchoiceelementparser.h
   include/parser/attributes.h
   include/parser/documentlocation.h
-  include/parser/transform.h
+  include/parser/geocoordinatetransformer.h
   include/parser/parserutils.hpp
   include/citygml/tesselator.h
   include/citygml/utils.h
@@ -120,7 +120,7 @@ SET(HEADERS
 
 ADD_LIBRARY( ${target} ${LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC} ${SOURCES} ${HEADERS} )
 
-TARGET_LINK_LIBRARIES( ${target} ${XERCESC_LIBRARIES} ${LIBXML2_LIBRARIES} ${OPENGL_LIBRARIES} ${GDAL_LIBRARY} )
+TARGET_LINK_LIBRARIES( ${target} ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} ${GDAL_LIBRARY} )
 
 INSTALL(
     TARGETS ${target}

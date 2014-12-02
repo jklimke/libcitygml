@@ -94,6 +94,11 @@ namespace citygml {
         return *m_geometries[i];
     }
 
+    Geometry& CityObject::getGeometry(unsigned int i)
+    {
+        return *m_geometries[i];
+    }
+
     void CityObject::addGeometry(Geometry* geom)
     {
         m_geometries.push_back(std::unique_ptr<Geometry>(geom));
@@ -105,6 +110,11 @@ namespace citygml {
     }
 
     const ImplicitGeometry& CityObject::getImplicitGeometry(unsigned int i) const
+    {
+        return *m_implicitGeometries[i];
+    }
+
+    ImplicitGeometry& CityObject::getImplicitGeometry(unsigned int i)
     {
         return *m_implicitGeometries[i];
     }

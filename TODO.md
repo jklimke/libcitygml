@@ -2,6 +2,10 @@
 
 # Correctness
 * Check if Appearance assigment is correct for shared polygons
+* Check if the normal calculated for tesselation is always correct even if the vertices are in a spherical coordinate system
+  ... if not one should think about removing the tesselation from libcitygml 
+* Check if OrientableSurfaces are supported properbly... may be the vertices must be reverted if the orientation is '-'
+* Check if non implicit geoemtries can be shared
 
 # Features
 * Enable CityObject filering by type mask (ParserParams)

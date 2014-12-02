@@ -24,15 +24,16 @@ namespace citygml {
         return m_vertices;
     }
 
+    std::vector<TVec3d>& Polygon::getVertices()
+    {
+        return m_vertices;
+    }
+
     const std::vector<unsigned int>&Polygon::getIndices() const
     {
         return m_indices;
     }
 
-    const std::vector<TVec3f>&Polygon::getNormals() const
-    {
-        return m_normals;
-    }
 
     const Material* Polygon::getMaterialFor(const std::string& theme, bool front) const
     {
@@ -205,10 +206,6 @@ namespace citygml {
         TVec3d normal = computeNormal();
         computeIndices(normal, doTesselate, tesselator);
 
-        // Create the normal per point field
-        m_normals.resize( m_vertices.size() );
-        for ( unsigned int i = 0; i < m_vertices.size(); i++ )
-            m_normals[i] = TVec3f( (float)normal.x, (float)normal.y, (float)normal.z );
     }
 
     void Polygon::addRing( LinearRing* ring )
