@@ -31,7 +31,7 @@
 class VRML97Printer
 {
 public:
-    VRML97Printer( citygml::CityModel* city ) : _cityModel( city ), _indentCount( 0 ) {}
+    VRML97Printer( std::shared_ptr<const citygml::CityModel> city ) : _cityModel( city ), _indentCount( 0 ) {}
 
     bool save( const std::string& outFilename );
 
@@ -70,7 +70,7 @@ protected:
     void endGroup() { endAttributeArray(); endNode(); }
 
 private:
-    citygml::CityModel* _cityModel;
+    std::shared_ptr<const citygml::CityModel> _cityModel;
     int _indentCount;
     std::ofstream _out;
 };
@@ -135,7 +135,7 @@ int main( int argc, char **argv )
     time_t start;
     time( &start );
 
-    citygml::CityModel *city = citygml::load( argv[fargc], params );
+    std::shared_ptr<const citygml::CityModel> city = citygml::load( argv[fargc], params );
 
     time_t end;
     time( &end );
@@ -220,7 +220,7 @@ void VRML97Printer::dumpCityObject( const citygml::CityObject& object )
     for ( unsigned int i = 0; i < object.getGeometriesCount(); i++ ) dumpGeometry( object, object.getGeometry( i ) );
 
 #ifdef RECURSIVE_DUMP
-    for ( unsigned int i = 0; i < object.getChildCityObjecsCount(); i++ ) dumpCityObject( object.getChildCityObject(i) );
+    for ( unsigned int i = 0; i < object.getChildCityObjectsCount(); i++ ) dumpCityObject( object.getChildCityObject(i) );
 #endif
 
     endGroup();
@@ -244,7 +244,7 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject& object, const citygm
     if ( g_comments )
     {
         std::stringstream ss;
-        ss << "  " << p.getVertices().size() << " points, " << p.getIndices().size()/3 << " triangles, " << p.getNormals().size() << " normals, " << p.getTexCoords().size() << " texCoords";
+        ss << "  " << p.getVertices().size() << " points, " << p.getIndices().size()/3 << " triangles, " << p.getNormals().size() << " normals. ";
         addComment( "Polygon: " + p.getId() + ss.str() );
     }
 
@@ -300,19 +300,19 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject& object, const citygm
     addAttributeValue( "solid", "FALSE" ); //draw both sides of faces
 
     // Texture coordinates
-    if ( std::dynamic_pointer_cast<const citygml::Texture>( p.getAppearance() ) && p.getTexCoords().size() > 0 )
-    {
-        const citygml::TexCoords& texCoords = p.getTexCoords();
-        beginAttributeNode( "texCoord", "TextureCoordinate" );
+//    if ( std::dynamic_pointer_cast<const citygml::Texture>( p.getAppearance() ) && p.getTexCoords().size() > 0 )
+//    {
+//        const citygml::TexCoords& texCoords = p.getTexCoords();
+//        beginAttributeNode( "texCoord", "TextureCoordinate" );
 
-        beginAttributeArray( "point" );
-        printIndent();
-        for ( unsigned int k = 0; k < texCoords.size(); k++ ) _out << texCoords[k] << ", ";
-        _out << std::endl;
-        endAttributeArray();
+//        beginAttributeArray( "point" );
+//        printIndent();
+//        for ( unsigned int k = 0; k < texCoords.size(); k++ ) _out << texCoords[k] << ", ";
+//        _out << std::endl;
+//        endAttributeArray();
 
-        endNode();
-    }
+//        endNode();
+//    }
 
     endNode();
 
@@ -322,30 +322,30 @@ void VRML97Printer::dumpPolygon( const citygml::CityObject& object, const citygm
 
         bool colorset = false;
 
-        std::shared_ptr<const citygml::Appearance> mat = p.getAppearance();
+//        std::shared_ptr<const citygml::Appearance> mat = p.getAppearance();
 
-        if ( auto m = std::dynamic_pointer_cast<const citygml::Material>( mat ) )
-        {
-            beginAttributeNode( "material", "Material" );
+//        if ( auto m = std::dynamic_pointer_cast<const citygml::Material>( mat ) )
+//        {
+//            beginAttributeNode( "material", "Material" );
 
-            addAttributeValue( "diffuseColor", m->getDiffuse() );
-            addAttributeValue( "ambientIntensity", m->getAmbientIntensity() );
-            addAttributeValue( "specularColor", m->getSpecular() );
-            addAttributeValue( "emissiveColor", m->getEmissive() );
-            addAttributeValue( "shininess", m->getShininess() );
-            addAttributeValue( "transparency", m->getTransparency() );
+//            addAttributeValue( "diffuseColor", m->getDiffuse() );
+//            addAttributeValue( "ambientIntensity", m->getAmbientIntensity() );
+//            addAttributeValue( "specularColor", m->getSpecular() );
+//            addAttributeValue( "emissiveColor", m->getEmissive() );
+//            addAttributeValue( "shininess", m->getShininess() );
+//            addAttributeValue( "transparency", m->getTransparency() );
 
-            endNode();
-            colorset = true;
-        }
+//            endNode();
+//            colorset = true;
+//        }
 
-        if ( auto t = std::dynamic_pointer_cast<const citygml::Texture>( mat ) )
-        {
-            beginAttributeNode( "texture", "ImageTexture" );
-            addAttributeValue( "url", "\"" + t->getUrl() + "\"" );
-            endNode();
-            colorset = true;
-        }
+//        if ( auto t = std::dynamic_pointer_cast<const citygml::Texture>( mat ) )
+//        {
+//            beginAttributeNode( "texture", "ImageTexture" );
+//            addAttributeValue( "url", "\"" + t->getUrl() + "\"" );
+//            endNode();
+//            colorset = true;
+//        }
 
         if ( !colorset )
         {

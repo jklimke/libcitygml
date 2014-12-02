@@ -59,6 +59,7 @@ namespace citygml {
 
         // Get the object type
         CityObjectsType getType() const;
+        std::string getTypeAsString() const;
 
         // Get the number of geometries contains in the object
         unsigned int getGeometriesCount() const;
@@ -77,7 +78,7 @@ namespace citygml {
         void addImplictGeometry(ImplicitGeometry* implictGeom);
 
         // Access the children
-        unsigned int getChildCityObjecsCount() const;
+        unsigned int getChildCityObjectsCount() const;
 
         const CityObject& getChildCityObject( unsigned int i ) const;
 

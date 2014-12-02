@@ -5,10 +5,9 @@
 
 #include <citygml/citygml_api.h>
 
-typedef std::map< std::string, std::string > AttributesMap;
-
 namespace citygml {
 
+    typedef std::map< std::string, std::string > AttributesMap;
 
     /**
      * @brief The base object associated with an unique id and a set of attributes (key-value pairs)

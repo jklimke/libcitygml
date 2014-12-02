@@ -36,6 +36,7 @@ SET(SOURCES
   src/citygml/texturecoordinates.cpp
   src/citygml/appearancetarget.cpp
   src/citygml/citygmlfactory.cpp
+  src/citygml/polygonmanager.cpp
 
   src/parser/nodetypes.cpp
   src/parser/citygmldocumentparser.cpp
@@ -65,7 +66,6 @@ SET(PUBLIC_HEADER
   include/citygml/polygon.h
   include/citygml/material.h
   include/citygml/geometry.h
-  include/citygml/appearancemanager.h
   include/citygml/object.h
   include/citygml/featureobject.h
   include/citygml/georeferencedtexture.h
@@ -102,6 +102,8 @@ SET(HEADERS
   include/parser/parserutils.hpp
   include/citygml/tesselator.h
   include/citygml/utils.h
+  include/citygml/appearancemanager.h
+  include/citygml/polygonmanager.h
 
   include/parser/gmlfeaturecollectionparser.h
   include/parser/citymodelelementparser.h

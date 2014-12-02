@@ -21,16 +21,21 @@ namespace citygml {
         m_interior = interior;
     }
 
+    std::string LinearRingElementParser::elementParserName() const
+    {
+        return "LinearRingElementParser";
+    }
+
     bool LinearRingElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        return node == NodeType::GML_LinearRingNode();
+        return node == NodeType::GML_LinearRingNode;
     }
 
     bool LinearRingElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
 
         if (!handlesElement(node)) {
-            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::GML_LinearRingNode() << "> but got <" << node << "> at " << getDocumentLocation());
+            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::GML_LinearRingNode << "> but got <" << node << "> at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
         }
 
@@ -56,7 +61,7 @@ namespace citygml {
             throw std::runtime_error("LinearRingElementParser::parseChildElementStartTag called before LinearRingElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_PosListNode() || node == NodeType::GML_PosNode()) {
+        if (node == NodeType::GML_PosListNode || node == NodeType::GML_PosNode) {
             std::string dimensions = attributes.getAttribute("srsDimension", "3");
             if (dimensions != "3") {
                 CITYGML_LOG_WARN(m_logger, "Attribute srsDimension of element " << node << " contains unsupported value '" << dimensions << "' (only 3 dimensions are support). Trying to parse it anyway...");
@@ -74,7 +79,7 @@ namespace citygml {
             throw std::runtime_error("LinearRingElementParser::parseChildElementEndTag called before LinearRingElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_PosListNode()) {
+        if (node == NodeType::GML_PosListNode) {
             m_model->setVertices(parseVecList<TVec3d>(characters, m_logger, getDocumentLocation()));
             return true;
         } else {

@@ -6,7 +6,8 @@
 
 namespace citygml {
 
-    Geometry::Geometry(const std::string& id, Geometry::GeometryType type, unsigned int lod) : AppearanceTarget( id ), m_finished(false), m_type( type ), m_lod( lod )
+    Geometry::Geometry(const std::string& id, Geometry::GeometryType type, unsigned int lod)
+        : AppearanceTarget( id ), m_finished(false), m_type( type ), m_lod( lod )
     {
 
     }
@@ -66,9 +67,9 @@ namespace citygml {
     }
 
 
-    void Geometry::addPolygon( Polygon* p )
+    void Geometry::addPolygon( std::shared_ptr<Polygon> p )
     {
-        m_polygons.push_back( std::unique_ptr<Polygon>(p) );
+        m_polygons.push_back( p );
     }
 
     void Geometry::finish(bool tesselate, Tesselator& tesselator)
@@ -85,7 +86,7 @@ namespace citygml {
             child->finish(tesselate, tesselator);
         }
 
-        for (std::unique_ptr<Polygon>& polygon : m_polygons) {
+        for (std::shared_ptr<Polygon>& polygon : m_polygons) {
             polygon->addTargetDefinitionsOf(*this);
             polygon->finish(tesselate, tesselator);
         }

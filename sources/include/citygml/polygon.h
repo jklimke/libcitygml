@@ -17,6 +17,8 @@ namespace citygml {
 
     class TextureCoordinates;
     class CityGMLFactory;
+    class Texture;
+    class Material;
 
     /**
      * @brief The Polygon class implements the functionality of gml::Polygon and gml::SurfacePatch (gml::Rectangle, gml::Triangle) objects
@@ -39,8 +41,43 @@ namespace citygml {
         // Get the normals
         const std::vector<TVec3f>& getNormals() const;
 
-        // Get texture coordinates
-        const std::vector<TVec2f> getTexCoordsForTheme(const std::string& theme) const;
+        /**
+         * @brief returns the material of this polygon for the given theme and side
+         * @param theme a name of an appearance theme
+         * @param front determines for which side the material should be returned (true = front side, false = backside)
+         * @return a Material object or nullptr if there is no material for the theme and side
+         */
+        const Material* getMaterialFor(const std::string& theme, bool front) const;
+
+        /**
+         * @brief returns the material of this polygon for the given theme. Prefers front side materials over back side materials
+         * @param theme a name of an appearance theme
+         * @return a Material object or nullptr if there is no material for the theme
+         */
+        const Material* getMaterialFor(const std::string& theme) const;
+
+        /**
+         * @brief returns the texture of this polygon for the given theme and side
+         * @param theme a name of an appearance theme
+         * @param front determines for which side the texture should be returned (true = front side, false = backside)
+         * @return a Texture object or nullptr if there is no texture for the theme and side
+         */
+        const Texture* getTextureFor(const std::string& theme, bool front) const;
+
+        /**
+         * @brief returns the texture of this polygon for the given theme. Prefers front side textures over back side textures
+         * @param theme a name of an appearance theme
+         * @return a Texture object or nullptr if there is no texture for the theme
+         */
+        const Texture* getTextureFor(const std::string& theme) const;
+
+        /**
+         * @brief returns the texture coordinates for the given theme and side
+         * @param theme a name of an appearance theme
+         * @param front determines for which side the texture coordinates should be returned (true = front side, false = backside)
+         * @return the texture coordinates or an empty list if there are no texture coordinates for this theme and side
+         */
+        const std::vector<TVec2f> getTexCoordsForTheme(const std::string& theme, bool front) const;
 
         bool negNormal() const;
         void setNegNormal(bool negNormal);
@@ -54,7 +91,7 @@ namespace citygml {
     protected:
         Polygon( const std::string& id, std::shared_ptr<CityGMLLogger> logger );
 
-        std::shared_ptr<const Texture> getTextureForTheme(const std::string& theme) const;
+        std::shared_ptr<const Texture> getTextureForTheme(const std::string& theme, bool front) const;
 
         void computeIndices(const TVec3d& normal, bool tesselate, Tesselator& tesselator);
         void mergeRings();

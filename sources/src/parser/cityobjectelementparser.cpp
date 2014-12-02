@@ -17,7 +17,7 @@
 
 namespace citygml {
 
-#define HANDLE_TYPE( prefix, elementName ) { NodeType::prefix ## _ ## elementName ## Node().typeID(), CityObject::COT_ ## elementName }
+#define HANDLE_TYPE( prefix, elementName ) { NodeType::prefix ## _ ## elementName ## Node.typeID(), CityObject::COT_ ## elementName }
 
     // The nodes that are valid CityObjects
     const std::unordered_map<int, CityObject::CityObjectsType> typeIDTypeMap = {
@@ -59,6 +59,11 @@ namespace citygml {
         m_callback = callback;
     }
 
+    std::string CityObjectElementParser::elementParserName() const
+    {
+        return "CityObjectElementParser";
+    }
+
     bool CityObjectElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
         return typeIDTypeMap.count(node.typeID()) > 0;
@@ -84,7 +89,7 @@ namespace citygml {
         return true;
     }
 
-#define HANDLE_ATTR(prefix, elementName) NodeType::prefix ## _ ## elementName ## Node().typeID()
+#define HANDLE_ATTR(prefix, elementName) NodeType::prefix ## _ ## elementName ## Node.typeID()
     // The nodes that contain string content which is set as attribute of the CityObject
     const std::unordered_set<int> attributesSet = {
         HANDLE_ATTR(CORE, CreationDate),
@@ -114,76 +119,76 @@ namespace citygml {
             throw std::runtime_error("CityObjectElementParser::parseChildElementStartTag called before CityObjectElementParser::parseElementStartTag");
         }
 
-        if (    node == NodeType::GEN_StringAttributeNode()
-             || node == NodeType::GEN_DoubleAttributeNode()
-             || node == NodeType::GEN_IntAttributeNode()
-             || node == NodeType::GEN_DateAttributeNode()
-             || node == NodeType::GEN_UriAttributeNode()) {
+        if (    node == NodeType::GEN_StringAttributeNode
+             || node == NodeType::GEN_DoubleAttributeNode
+             || node == NodeType::GEN_IntAttributeNode
+             || node == NodeType::GEN_DateAttributeNode
+             || node == NodeType::GEN_UriAttributeNode) {
 
             m_lastAttributeName = attributes.getAttribute("name");
-            return true;
 
-        } else if (attributesSet.count(node.typeID()) > 0 || node == NodeType::GEN_ValueNode()) {
+        } else if (attributesSet.count(node.typeID()) > 0 || node == NodeType::GEN_ValueNode) {
 
             return true;
-        } else if (node == NodeType::BLDG_BoundedByNode()
-                   || node == NodeType::BLDG_OuterBuildingInstallationNode()
-                   || node == NodeType::BLDG_InteriorBuildingInstallationNode()
-                   || node == NodeType::BLDG_InteriorFurnitureNode()
-                   || node == NodeType::BLDG_RoomInstallationNode()
-                   || node == NodeType::BLDG_InteriorRoomNode()
-                   || node == NodeType::BLDG_OpeningNode()) {
+        } else if (node == NodeType::BLDG_BoundedByNode
+                   || node == NodeType::BLDG_OuterBuildingInstallationNode
+                   || node == NodeType::BLDG_InteriorBuildingInstallationNode
+                   || node == NodeType::BLDG_InteriorFurnitureNode
+                   || node == NodeType::BLDG_RoomInstallationNode
+                   || node == NodeType::BLDG_InteriorRoomNode
+                   || node == NodeType::BLDG_OpeningNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
-            return true;
-        } else if (node == NodeType::APP_AppearanceNode()) {
+        } else if (node == NodeType::APP_AppearanceNode // Compatibility with CityGML 1.0 (in CityGML 3 CityObjects can only contain appearanceMember elements)
+                   || node == NodeType::APP_AppearanceMemberNode) {
 
             setParserForNextElement(new AppearanceElementParser(m_documentParser, m_factory, m_logger));
-            return true;
-        } else if (node == NodeType::GML_Lod1GeometryNode()
-                   || node == NodeType::GML_Lod1MultiCurveNode()
-                   || node == NodeType::GML_Lod1MultiSurfaceNode()
-                   || node == NodeType::GML_Lod1SolidNode()
-                   || node == NodeType::GML_Lod1TerrainIntersectionNode()) {
+        } else if (node == NodeType::BLDG_Lod1GeometryNode
+                   || node == NodeType::BLDG_Lod1MultiCurveNode
+                   || node == NodeType::BLDG_Lod1MultiSurfaceNode
+                   || node == NodeType::BLDG_Lod1SolidNode
+                   || node == NodeType::BLDG_Lod1TerrainIntersectionNode) {
 
             parseGeometryForLODLevel(1);
-        } else if (node == NodeType::GML_Lod2GeometryNode()
-                   || node == NodeType::GML_Lod2MultiCurveNode()
-                   || node == NodeType::GML_Lod2MultiSurfaceNode()
-                   || node == NodeType::GML_Lod2SolidNode()
-                   || node == NodeType::GML_Lod2TerrainIntersectionNode()) {
+        } else if (node == NodeType::BLDG_Lod2GeometryNode
+                   || node == NodeType::BLDG_Lod2MultiCurveNode
+                   || node == NodeType::BLDG_Lod2MultiSurfaceNode
+                   || node == NodeType::BLDG_Lod2SolidNode
+                   || node == NodeType::BLDG_Lod2TerrainIntersectionNode) {
 
             parseGeometryForLODLevel(2);
-        } else if (node == NodeType::GML_Lod3GeometryNode()
-                   || node == NodeType::GML_Lod3MultiCurveNode()
-                   || node == NodeType::GML_Lod3MultiSurfaceNode()
-                   || node == NodeType::GML_Lod3SolidNode()
-                   || node == NodeType::GML_Lod3TerrainIntersectionNode()) {
+        } else if (node == NodeType::BLDG_Lod3GeometryNode
+                   || node == NodeType::BLDG_Lod3MultiCurveNode
+                   || node == NodeType::BLDG_Lod3MultiSurfaceNode
+                   || node == NodeType::BLDG_Lod3SolidNode
+                   || node == NodeType::BLDG_Lod3TerrainIntersectionNode) {
 
             parseGeometryForLODLevel(3);
-        } else if (node == NodeType::GML_Lod4GeometryNode()
-                   || node == NodeType::GML_Lod4MultiCurveNode()
-                   || node == NodeType::GML_Lod4MultiSurfaceNode()
-                   || node == NodeType::GML_Lod4SolidNode()
-                   || node == NodeType::GML_Lod4TerrainIntersectionNode()) {
+        } else if (node == NodeType::BLDG_Lod4GeometryNode
+                   || node == NodeType::BLDG_Lod4MultiCurveNode
+                   || node == NodeType::BLDG_Lod4MultiSurfaceNode
+                   || node == NodeType::BLDG_Lod4SolidNode
+                   || node == NodeType::BLDG_Lod4TerrainIntersectionNode) {
 
             parseGeometryForLODLevel(4);
-        } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode()) {
+        } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(1);
-        } else if (node == NodeType::VEG_Lod2ImplicitRepresentationNode()) {
+        } else if (node == NodeType::VEG_Lod2ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(2);
-        } else if (node == NodeType::VEG_Lod3ImplicitRepresentationNode()) {
+        } else if (node == NodeType::VEG_Lod3ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(3);
-        } else if (node == NodeType::VEG_Lod4ImplicitRepresentationNode()) {
+        } else if (node == NodeType::VEG_Lod4ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(4);
+        } else {
+            return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
         }
 
-        return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
+        return true;
 
     }
 
@@ -193,21 +198,21 @@ namespace citygml {
             throw std::runtime_error("CityObjectElementParser::parseChildElementEndTag called before CityObjectElementParser::parseElementStartTag");
         }
 
-        if (    node == NodeType::GEN_StringAttributeNode()
-             || node == NodeType::GEN_DoubleAttributeNode()
-             || node == NodeType::GEN_IntAttributeNode()
-             || node == NodeType::GEN_DateAttributeNode()
-             || node == NodeType::GEN_UriAttributeNode()) {
+        if (    node == NodeType::GEN_StringAttributeNode
+             || node == NodeType::GEN_DoubleAttributeNode
+             || node == NodeType::GEN_IntAttributeNode
+             || node == NodeType::GEN_DateAttributeNode
+             || node == NodeType::GEN_UriAttributeNode) {
 
             m_lastAttributeName = "";
             return true;
 
-        } else if (node == NodeType::GEN_ValueNode()) {
+        } else if (node == NodeType::GEN_ValueNode) {
 
             if (!m_lastAttributeName.empty()) {
                 m_model->setAttribute(m_lastAttributeName, characters);
             } else {
-                CITYGML_LOG_WARN(m_logger, "Found value node (" << NodeType::GEN_ValueNode() << ") outside attribute node... ignore.");
+                CITYGML_LOG_WARN(m_logger, "Found value node (" << NodeType::GEN_ValueNode << ") outside attribute node... ignore.");
             }
 
             return true;
@@ -215,14 +220,39 @@ namespace citygml {
 
             m_model->setAttribute(node.name(), characters);
             return true;
-        } else if (   node == NodeType::BLDG_BoundedByNode()
-                    || node == NodeType::BLDG_OuterBuildingInstallationNode()
-                    || node == NodeType::BLDG_InteriorBuildingInstallationNode()
-                    || node == NodeType::BLDG_InteriorFurnitureNode()
-                    || node == NodeType::BLDG_RoomInstallationNode()
-                    || node == NodeType::BLDG_InteriorRoomNode()
-                    || node == NodeType::BLDG_OpeningNode()
-                    || node == NodeType::APP_AppearanceNode()) {
+        } else if (    node == NodeType::BLDG_BoundedByNode
+                    || node == NodeType::BLDG_OuterBuildingInstallationNode
+                    || node == NodeType::BLDG_InteriorBuildingInstallationNode
+                    || node == NodeType::BLDG_InteriorFurnitureNode
+                    || node == NodeType::BLDG_RoomInstallationNode
+                    || node == NodeType::BLDG_InteriorRoomNode
+                    || node == NodeType::BLDG_OpeningNode
+                    || node == NodeType::APP_AppearanceNode
+                    || node == NodeType::APP_AppearanceMemberNode
+                    || node == NodeType::BLDG_Lod1GeometryNode
+                    || node == NodeType::BLDG_Lod1MultiCurveNode
+                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
+                    || node == NodeType::BLDG_Lod1SolidNode
+                    || node == NodeType::BLDG_Lod1TerrainIntersectionNode
+                    || node == NodeType::BLDG_Lod2GeometryNode
+                    || node == NodeType::BLDG_Lod2MultiCurveNode
+                    || node == NodeType::BLDG_Lod2MultiSurfaceNode
+                    || node == NodeType::BLDG_Lod2SolidNode
+                    || node == NodeType::BLDG_Lod2TerrainIntersectionNode
+                    || node == NodeType::BLDG_Lod3GeometryNode
+                    || node == NodeType::BLDG_Lod3MultiCurveNode
+                    || node == NodeType::BLDG_Lod3MultiSurfaceNode
+                    || node == NodeType::BLDG_Lod3SolidNode
+                    || node == NodeType::BLDG_Lod3TerrainIntersectionNode
+                    || node == NodeType::BLDG_Lod4GeometryNode
+                    || node == NodeType::BLDG_Lod4MultiCurveNode
+                    || node == NodeType::BLDG_Lod4MultiSurfaceNode
+                    || node == NodeType::BLDG_Lod4SolidNode
+                    || node == NodeType::BLDG_Lod4TerrainIntersectionNode
+                    || node == NodeType::VEG_Lod1ImplicitRepresentationNode
+                    || node == NodeType::VEG_Lod2ImplicitRepresentationNode
+                    || node == NodeType::VEG_Lod3ImplicitRepresentationNode
+                    || node == NodeType::VEG_Lod4ImplicitRepresentationNode) {
 
             return true;
         }

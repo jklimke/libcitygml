@@ -27,15 +27,20 @@ namespace citygml {
 
     }
 
+    std::string AppearanceElementParser::elementParserName() const
+    {
+        return "AppearanceElementParser";
+    }
+
     bool AppearanceElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        return node == NodeType::APP_AppearanceNode();
+        return node == NodeType::APP_AppearanceNode;
     }
 
     bool AppearanceElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        if (node != NodeType::APP_AppearanceNode()) {
-            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::APP_AppearanceNode().name() << "> got <" << node << "> at " << getDocumentLocation());
+        if (node != NodeType::APP_AppearanceNode) {
+            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::APP_AppearanceNode.name() << "> got <" << node << "> at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
         }
         return true;
@@ -61,9 +66,9 @@ namespace citygml {
 
     bool AppearanceElementParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        if (node == NodeType::APP_ThemeNode()) {
+        if (node == NodeType::APP_ThemeNode) {
             return true;
-        } else if (node == NodeType::APP_SurfaceDataMemberNode()) {
+        } else if (node == NodeType::APP_SurfaceDataMemberNode) {
 
             if (attributes.hasXLinkAttribute()) {
                 // surfaceDataMemberNode links to an existing surfaceData member
@@ -87,6 +92,7 @@ namespace citygml {
                     new GeoReferencedTextureElementParser(m_documentParser, m_factory, m_logger, callback)
                 }));
             }
+            return true;
 
         }
         return false;
@@ -94,13 +100,13 @@ namespace citygml {
 
     bool AppearanceElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
     {
-        if (node == NodeType::APP_ThemeNode()) {
+        if (node == NodeType::APP_ThemeNode) {
             if (!m_theme.empty()) {
                 CITYGML_LOG_WARN(m_logger, "Duplicate definition of theme in appearance node at " << getDocumentLocation() << ". Overwriting last theme '" << m_theme << "' with '" << characters << "'");
             }
             m_theme = characters;
             return true;
-        } else if (node == NodeType::APP_SurfaceDataMemberNode()) {
+        } else if (node == NodeType::APP_SurfaceDataMemberNode) {
             return true;
         }
         return false;

@@ -16,6 +16,8 @@ namespace citygml {
     public:
         TextureElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Texture>)> callback);
 
+        // ElementParser interface
+        virtual std::string elementParserName() const;
         virtual bool handlesElement(const NodeType::XMLNode &node) const override;
 
     protected:

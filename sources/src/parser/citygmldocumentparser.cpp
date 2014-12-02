@@ -19,9 +19,9 @@ namespace citygml {
         m_activeParser = nullptr;
     }
 
-    const CityModel& CityGMLDocumentParser::getModel()
+    std::shared_ptr<const CityModel> CityGMLDocumentParser::getModel()
     {
-        return *m_rootModel;
+        return m_rootModel;
     }
 
     void CityGMLDocumentParser::setCurrentElementParser(ElementParser* parser)
@@ -43,8 +43,8 @@ namespace citygml {
         const NodeType::XMLNode& node = NodeType::getXMLNodeFor(name);
 
         if (!node.valid()) {
-            CITYGML_LOG_ERROR(m_logger, "Found start tag of invalid node <" << name << "> at " << getDocumentLocation());
-            throw std::runtime_error("Invalid node.");
+            CITYGML_LOG_WARN(m_logger, "Found start tag of unknown node <" << name << "> at " << getDocumentLocation() << ". Skip to child or next element.");
+            return;
         }
 
         if (m_parserStack.empty()) {
@@ -54,8 +54,9 @@ namespace citygml {
         }
 
         m_activeParser = m_parserStack.top();
-        if (!m_parserStack.top()->startElement(node, attributes)) {
-            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected start tag <" << node << "> at " << getDocumentLocation());
+        CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::startElement for <" << node << "> at " << getDocumentLocation());
+        if (!m_activeParser->startElement(node, attributes)) {
+            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected start tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
         }
     }
 
@@ -64,8 +65,8 @@ namespace citygml {
         const NodeType::XMLNode& node = NodeType::getXMLNodeFor(name);
 
         if (!node.valid()) {
-            CITYGML_LOG_ERROR(m_logger, "Found end tag of invalid node <" << name << "> at " << getDocumentLocation());
-            throw std::runtime_error("Invalid node.");
+            CITYGML_LOG_WARN(m_logger, "Found end tag of unknown node <" << name << "> at " << getDocumentLocation());
+            return;
         }
 
         if (m_parserStack.empty()) {
@@ -74,8 +75,9 @@ namespace citygml {
         }
 
         m_activeParser = m_parserStack.top();
-        if (!m_parserStack.top()->endElement(node, characters)) {
-            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected end tag <" << node << "> at " << getDocumentLocation());
+        CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::endElement for <" << node << "> at " << getDocumentLocation());
+        if (!m_activeParser->endElement(node, characters)) {
+            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected end tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
         }
 
     }
@@ -91,9 +93,15 @@ namespace citygml {
         if (m_rootModel != nullptr) {
             Tesselator tesselator(m_logger);
             m_rootModel->finish(m_parserParams.tesselate, tesselator);
+            m_rootModel->setThemes(m_factory->getAllThemes());
         } else {
             CITYGML_LOG_WARN(m_logger, "Reached end of document but no CityModel was parsed.");
         }
+    }
+
+    CityGMLDocumentParser::~CityGMLDocumentParser()
+    {
+
     }
 
 }

@@ -50,7 +50,7 @@ namespace citygml {
         unsigned int lod() const;
         void setLod(unsigned int lod);
 
-        void addPolygon( Polygon* );
+        void addPolygon(std::shared_ptr<Polygon> );
 
         /**
          * @brief finishes the geometry by finishing its child polygons after broadcasting its appearances to all child polygons
@@ -74,7 +74,7 @@ namespace citygml {
 
         std::vector<std::unique_ptr<Geometry>> m_childGeometries;
 
-        std::vector<std::unique_ptr<Polygon>> m_polygons;
+        std::vector<std::shared_ptr<Polygon>> m_polygons;
     };
 
     std::ostream& operator<<( std::ostream& os, const citygml::Geometry& s );

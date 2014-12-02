@@ -5,6 +5,8 @@
 
 #include "citygml/citygmllogger.h"
 
+#include <sstream>
+
 namespace citygml {
 
     DelayedChoiceElementParser::DelayedChoiceElementParser(CityGMLDocumentParser& documentParser, std::shared_ptr<CityGMLLogger> logger, std::vector<ElementParser*> choices)
@@ -49,6 +51,23 @@ namespace citygml {
             }
         }
         return false;
+    }
+
+    std::string DelayedChoiceElementParser::elementParserName() const
+    {
+        std::stringstream ss;
+        ss << "DelayedChoiceElementParser (";
+        for (size_t i = 0; i < m_choices.size(); i++) {
+
+            if (i > 0) {
+                ss << " | ";
+            }
+
+            ss << m_choices[i]->elementParserName();
+        }
+
+        ss << ")";
+        return ss.str();
     }
 
 }

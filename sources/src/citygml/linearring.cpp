@@ -69,9 +69,10 @@ namespace citygml {
 
             for (unsigned int i = 0; i < texTarget->getTextureCoordinatesCount(); i++) {
                 TextureCoordinates* texCoords = texTarget->getTextureCoordinates(i);
-                if (!texCoords->targets(*this)) continue;
 
-                coordinatesList.push_back(texCoords);
+                if (texCoords->targets(*this)) {
+                    coordinatesList.push_back(texCoords);
+                }
             }
 
         }

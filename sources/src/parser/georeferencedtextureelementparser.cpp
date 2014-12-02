@@ -20,15 +20,20 @@ namespace citygml {
         m_callback = callback;
     }
 
+    std::string GeoReferencedTextureElementParser::elementParserName() const
+    {
+        return "GeoReferencedTextureElementParser";
+    }
+
     bool GeoReferencedTextureElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        return node == NodeType::APP_GeoreferencedTextureNode();
+        return node == NodeType::APP_GeoreferencedTextureNode;
     }
 
     bool GeoReferencedTextureElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        if (node != NodeType::APP_GeoreferencedTextureNode()) {
-            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::APP_GeoreferencedTextureNode().name() << "> got " << node << " at " << getDocumentLocation());
+        if (node != NodeType::APP_GeoreferencedTextureNode) {
+            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::APP_GeoreferencedTextureNode.name() << "> got " << node << " at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
         }
         return true;

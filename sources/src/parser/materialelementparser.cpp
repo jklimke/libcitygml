@@ -21,15 +21,20 @@ namespace citygml {
         m_callback = callback;
     }
 
+    std::string MaterialElementParser::elementParserName() const
+    {
+        return "MaterialElementParser";
+    }
+
     bool MaterialElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        return node == NodeType::APP_MaterialNode();
+        return node == NodeType::APP_MaterialNode || node == NodeType::APP_X3DMaterialNode;
     }
 
     bool MaterialElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        if (node != NodeType::APP_MaterialNode()) {
-            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::APP_MaterialNode().name() << "> got " << node << " at " << getDocumentLocation());
+        if (!handlesElement(node)) {
+            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::APP_MaterialNode.name() << "> got " << node << " at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
         }
 
@@ -50,16 +55,16 @@ namespace citygml {
             throw std::runtime_error("MaterialElementParser::parseChildElementStartTag called before MaterialElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode()
-            || node == NodeType::APP_DiffuseColorNode()
-            || node == NodeType::APP_EmissiveColorNode()
-            || node == NodeType::APP_SpecularColorNode()
-            || node == NodeType::APP_ShininessNode()
-            || node == NodeType::APP_TransparencyNode()
-            || node == NodeType::APP_AmbientIntensityNode()
-            || node == NodeType::APP_IsFrontNode()) {
+        if (node == NodeType::GML_NameNode
+            || node == NodeType::APP_DiffuseColorNode
+            || node == NodeType::APP_EmissiveColorNode
+            || node == NodeType::APP_SpecularColorNode
+            || node == NodeType::APP_ShininessNode
+            || node == NodeType::APP_TransparencyNode
+            || node == NodeType::APP_AmbientIntensityNode
+            || node == NodeType::APP_IsFrontNode) {
             return true;
-        } else if (node == NodeType::APP_TargetNode()) {
+        } else if (node == NodeType::APP_TargetNode) {
             m_lastTargetDefinitionID = attributes.getCityGMLIDAttribute();
             return true;
         }
@@ -73,31 +78,31 @@ namespace citygml {
             throw std::runtime_error("MaterialElementParser::parseChildElementEndTag called before MaterialElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode()) {
+        if (node == NodeType::GML_NameNode) {
 
             m_model->setAttribute(node.name(), characters);
-        } else if (node == NodeType::APP_DiffuseColorNode()) {
+        } else if (node == NodeType::APP_DiffuseColorNode) {
 
             m_model->setDiffuse(parseValue<TVec3f>(characters, m_logger, getDocumentLocation()));
-        } else if (node == NodeType::APP_EmissiveColorNode()) {
+        } else if (node == NodeType::APP_EmissiveColorNode) {
 
             m_model->setEmissive(parseValue<TVec3f>(characters, m_logger, getDocumentLocation()));
-        } else if (node == NodeType::APP_SpecularColorNode()) {
+        } else if (node == NodeType::APP_SpecularColorNode) {
 
             m_model->setSpecular(parseValue<TVec3f>(characters, m_logger, getDocumentLocation()));
-        } else if (node == NodeType::APP_ShininessNode()) {
+        } else if (node == NodeType::APP_ShininessNode) {
 
             m_model->setShininess(parseValue<float>(characters, m_logger, getDocumentLocation()));
-        } else if (node == NodeType::APP_TransparencyNode()) {
+        } else if (node == NodeType::APP_TransparencyNode) {
 
             m_model->setTransparency(parseValue<float>(characters, m_logger, getDocumentLocation()));
-        } else if (node == NodeType::APP_AmbientIntensityNode()) {
+        } else if (node == NodeType::APP_AmbientIntensityNode) {
 
             m_model->setAmbientIntensity(parseValue<float>(characters, m_logger, getDocumentLocation()));
-        } else if (node == NodeType::APP_IsFrontNode()) {
+        } else if (node == NodeType::APP_IsFrontNode) {
 
             m_model->setIsFront(parseValue<bool>(characters, m_logger, getDocumentLocation()));
-        } else if (node == NodeType::APP_TargetNode()) {
+        } else if (node == NodeType::APP_TargetNode) {
 
             m_factory.createMaterialTargetDefinition(parseReference(characters, m_logger, getDocumentLocation()), m_model, m_lastTargetDefinitionID);
             m_lastTargetDefinitionID = "";

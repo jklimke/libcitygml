@@ -16,6 +16,74 @@ namespace citygml {
         return m_type;
     }
 
+    std::string CityObject::getTypeAsString() const
+    {
+        switch (m_type) {
+        case COT_GenericCityObject:
+            return "GenericCityObject";
+        case COT_Building:
+            return "Building";
+        case COT_Room:
+            return "Room";
+        case COT_BuildingInstallation:
+            return "BuildingInstallation";
+        case COT_BuildingFurniture:
+            return "BuildingFurniture";
+        case COT_Door:
+            return "Door";
+        case COT_Window:
+            return "Window";
+        case COT_CityFurniture:
+            return "CityFurniture";
+        case COT_Track:
+            return "Track";
+        case COT_Road:
+            return "Road";
+        case COT_Railway:
+            return "Railway";
+        case COT_Square:
+            return "Square";
+        case COT_PlantCover:
+            return "PlantCover";
+        case COT_SolitaryVegetationObject:
+            return "SolitaryVegetationObject";
+        case COT_WaterBody:
+            return "WaterBody";
+        case COT_TINRelief:
+            return "TINRelief";
+        case COT_LandUse:
+            return "LandUse";
+        case COT_Tunnel:
+            return "Tunnel";
+        case COT_Bridge:
+            return "Bridge";
+        case COT_BridgeConstructionElement:
+            return "BridgeConstructionElement";
+        case COT_BridgeInstallation:
+            return "BridgeInstallation";
+        case COT_BridgePart:
+            return "BridgePart";
+        case COT_BuildingPart:
+            return "BuildingPart";
+        case COT_WallSurface:
+            return "WallSurface";
+        case COT_RoofSurface:
+            return "RoofSurface";
+        case COT_GroundSurface:
+            return "GroundSurface";
+        case COT_ClosureSurface:
+            return "ClosureSurface";
+        case COT_FloorSurface:
+            return "FloorSurface";
+        case COT_InteriorWallSurface:
+            return "InteriorWallSurface";
+        case COT_CeilingSurface:
+            return "CeilingSurface";
+        default:
+            return "Unknown";
+        }
+    }
+
     unsigned int CityObject::getGeometriesCount() const
     {
         return m_geometries.size();
@@ -46,7 +114,7 @@ namespace citygml {
         m_implicitGeometries.push_back(std::unique_ptr<ImplicitGeometry>(implictGeom));
     }
 
-    unsigned int CityObject::getChildCityObjecsCount() const
+    unsigned int CityObject::getChildCityObjectsCount() const
     {
         return m_children.size();
     }

@@ -18,13 +18,13 @@ namespace citygml {
 
     // The nodes that are valid Geometry Objects
     const std::unordered_set<int> typeIDSet = {
-        NodeType::GML_CompositeSolidNode().typeID(),
-        NodeType::GML_SolidNode().typeID(),
-        NodeType::GML_MultiSurfaceNode().typeID(),
-        NodeType::GML_CompositeSurfaceNode().typeID(),
-        NodeType::GML_TriangulatedSurfaceNode().typeID(),
-        NodeType::GML_OrientableSurfaceNode().typeID(),
-        NodeType::GML_MultiSolidNode().typeID()
+        NodeType::GML_CompositeSolidNode.typeID(),
+        NodeType::GML_SolidNode.typeID(),
+        NodeType::GML_MultiSurfaceNode.typeID(),
+        NodeType::GML_CompositeSurfaceNode.typeID(),
+        NodeType::GML_TriangulatedSurfaceNode.typeID(),
+        NodeType::GML_OrientableSurfaceNode.typeID(),
+        NodeType::GML_MultiSolidNode.typeID()
     };
 
     GeometryElementParser::GeometryElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger,
@@ -34,6 +34,11 @@ namespace citygml {
         m_callback = callback;
         m_lodLevel = lodLevel;
         m_parentType = parentType;
+    }
+
+    std::string GeometryElementParser::elementParserName() const
+    {
+        return "GeometryElementParser";
     }
 
     bool GeometryElementParser::handlesElement(const NodeType::XMLNode& node) const
@@ -98,22 +103,28 @@ namespace citygml {
             throw std::runtime_error("GeometryElementParser::parseChildElementStartTag called before GeometryElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_InteriorNode()
-         || node == NodeType::GML_ExteriorNode()
-         || node == NodeType::GML_SolidMemberNode()) {
+        if (node == NodeType::GML_InteriorNode
+         || node == NodeType::GML_ExteriorNode
+         || node == NodeType::GML_SolidMemberNode) {
 
             setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* child) {
                                         m_model->addGeometry(child);
                                     }));
             return true;
 
-        } else if (node == NodeType::GML_SurfaceMemberNode()
-                   || node == NodeType::GML_BaseSurfaceNode()
-                   || node == NodeType::GML_PatchesNode()
-                   || node == NodeType::GML_TrianglePatchesNode()) {
-            setParserForNextElement(new PolygonElementParser(m_documentParser, m_factory, m_logger, [this](Polygon* poly) {
-                                        m_model->addPolygon(poly);
-                                    }));
+        } else if (node == NodeType::GML_SurfaceMemberNode
+                   || node == NodeType::GML_BaseSurfaceNode
+                   || node == NodeType::GML_PatchesNode
+                   || node == NodeType::GML_TrianglePatchesNode) {
+
+            if (attributes.hasXLinkAttribute()) {
+                m_factory.requestSharedPolygonForGeometry(m_model, attributes.getXLinkValue());
+            } else {
+
+                setParserForNextElement(new PolygonElementParser(m_documentParser, m_factory, m_logger, [this](std::shared_ptr<Polygon> poly) {
+                                            m_model->addPolygon(poly);
+                                        }));
+            }
             return true;
         }
 
@@ -125,6 +136,16 @@ namespace citygml {
 
         if (m_model == nullptr) {
             throw std::runtime_error("GeometryElementParser::parseChildElementEndTag called before GeometryElementParser::parseElementStartTag");
+        }
+
+        if (node == NodeType::GML_InteriorNode
+         || node == NodeType::GML_ExteriorNode
+         || node == NodeType::GML_SolidMemberNode
+         || node == NodeType::GML_SurfaceMemberNode
+         || node == NodeType::GML_BaseSurfaceNode
+         || node == NodeType::GML_PatchesNode
+         || node == NodeType::GML_TrianglePatchesNode)  {
+            return true;
         }
 
         return false;

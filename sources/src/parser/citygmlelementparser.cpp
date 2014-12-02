@@ -10,7 +10,7 @@
 namespace citygml {
 
     CityGMLElementParser::CityGMLElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger)
-        : ElementParser(documentParser, logger), m_factory(factory), m_boundElement(NodeType::InvalidNode())
+        : ElementParser(documentParser, logger), m_factory(factory), m_boundElement(NodeType::InvalidNode)
     {
     }
 
@@ -32,12 +32,15 @@ namespace citygml {
     bool CityGMLElementParser::endElement(const NodeType::XMLNode& node, const std::string& characters)
     {
         if (!m_boundElement.valid()) {
+            // This might happen if an container element that usally contains a child element links to an exting object using XLink an thus
+            // uses a combined start/end element: e.g.: <surfaceMember xlink:href="#..."/>
+            // For such elements a child parser must only be created if there is no xlink attribute.
             throw std::runtime_error("CityGMLElementParser::endElement called on unbound CityGMLElementParser object.");
         }
 
         if (m_boundElement == node) {
-            return parseElementEndTag(node, characters);
             m_documentParser.removeCurrentElementParser(this);
+            return parseElementEndTag(node, characters);
         } else {
             return parseChildElementEndTag(node, characters);
         }

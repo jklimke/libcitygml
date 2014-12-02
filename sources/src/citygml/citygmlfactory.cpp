@@ -1,5 +1,6 @@
 #include "citygml/citygmlfactory.h"
 #include "citygml/appearancemanager.h"
+#include "citygml/polygonmanager.h"
 #include "citygml/cityobject.h"
 #include "citygml/appearancetarget.h"
 #include "citygml/polygon.h"
@@ -18,6 +19,7 @@ namespace citygml {
     CityGMLFactory::CityGMLFactory(std::shared_ptr<CityGMLLogger> logger)
     {
         m_appearanceManager = std::unique_ptr<AppearanceManager>(new AppearanceManager(logger));
+        m_polygonManager = std::unique_ptr<PolygonManager>(new PolygonManager(logger));
         m_logger = logger;
     }
 
@@ -39,11 +41,20 @@ namespace citygml {
         return geom;
     }
 
-    Polygon* CityGMLFactory::createPolygon(const std::string& id)
+    std::shared_ptr<Polygon> CityGMLFactory::createPolygon(const std::string& id)
     {
         Polygon* poly = new Polygon(id, m_logger);
         appearanceTargetCreated(poly);
-        return poly;
+
+        std::shared_ptr<Polygon> shared = std::shared_ptr<Polygon>(poly);
+        m_polygonManager->addPolygon(shared);
+
+        return shared;
+    }
+
+    void CityGMLFactory::requestSharedPolygonForGeometry(Geometry* geom, const std::string& polygonId)
+    {
+        m_polygonManager->requestSharedPolygonForGeometry(geom, polygonId);
     }
 
     ImplicitGeometry *CityGMLFactory::createImplictGeometry(const std::string& id)
@@ -114,8 +125,14 @@ namespace citygml {
         return m_appearanceManager->getAppearanceByID(id);
     }
 
+    std::vector<std::string> CityGMLFactory::getAllThemes()
+    {
+        return m_appearanceManager->getAllThemes();
+    }
+
     void CityGMLFactory::closeFactory()
     {
+        m_polygonManager->finish();
         m_appearanceManager->assignAppearancesToTargets();
     }
 

@@ -25,12 +25,12 @@ namespace citygml {
         }
     }
 
-    double* TransformationMatrix::getMatrix()
+    const double* TransformationMatrix::getMatrix() const
     {
         return m_matrix;
     }
 
-    double*TransformationMatrix::getTransposedMatrix()
+    const double* TransformationMatrix::getTransposedMatrix() const
     {
         return m_transposedMatrix;
     }

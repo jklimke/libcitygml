@@ -37,10 +37,9 @@ namespace citygml {
         /**
          * @brief all themes found in the parsed citygml file
          * @return a list of theme identifiers
+         * @note should be called after assignAppearancesToTargets (otherwise the list will be empty)
          */
         std::vector<std::string> getAllThemes();
-
-        void addTheme(const std::string& theme);
 
         void addAppearanceTarget(AppearanceTarget* target);
 
@@ -62,6 +61,8 @@ namespace citygml {
         std::unordered_set<std::string> m_themes;
         std::unordered_map<std::string, AppearanceTarget*> m_appearanceTargetsMap;
         std::shared_ptr<CityGMLLogger> m_logger;
+
+        void addThemesFrom(std::shared_ptr<Appearance> surfaceData);
     };
 
 }

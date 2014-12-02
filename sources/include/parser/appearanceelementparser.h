@@ -15,6 +15,8 @@ namespace citygml {
     public:
         AppearanceElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger);
 
+        // ElementParser interface
+        virtual std::string elementParserName() const;
         virtual bool handlesElement(const NodeType::XMLNode &node) const override;
 
     protected:

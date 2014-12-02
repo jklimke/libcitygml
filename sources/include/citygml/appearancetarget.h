@@ -28,11 +28,11 @@ namespace citygml {
 
         void addTargetDefinitionsOf(const AppearanceTarget& other);
 
-        MaterialTargetDefinition* getMaterialTargetDefinitionForTheme(const std::string& theme);
-        const MaterialTargetDefinition* getMaterialTargetDefinitionForTheme(const std::string& theme) const;
+        MaterialTargetDefinition* getMaterialTargetDefinitionForTheme(const std::string& theme, bool front);
+        const MaterialTargetDefinition* getMaterialTargetDefinitionForTheme(const std::string& theme, bool front) const;
 
-        TextureTargetDefinition* getTextureTargetDefinitionForTheme(const std::string& theme);
-        const TextureTargetDefinition* getTextureTargetDefinitionForTheme(const std::string& theme) const;
+        TextureTargetDefinition* getTextureTargetDefinitionForTheme(const std::string& theme, bool front);
+        const TextureTargetDefinition* getTextureTargetDefinitionForTheme(const std::string& theme, bool front) const;
 
         std::vector<TextureTargetDefinition*> getTextureTargetDefinitions();
 
@@ -42,8 +42,11 @@ namespace citygml {
 
 
     private:
-        std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition>> m_themeMatMap;
-        std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition>> m_themeTexMap;
+        std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition>> m_themeMatMapFront;
+        std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition>> m_themeMatMapBack;
+
+        std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition>> m_themeTexMapFront;
+        std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition>> m_themeTexMapBack;
 
     };
 }

@@ -38,7 +38,7 @@ namespace citygml {
         void finish(bool tesselate, Tesselator& tesselator);
 
         std::vector<std::string> themes() const;
-        void setThemes(const std::vector<std::string>& themes);
+        void setThemes(std::vector<std::string> themes);
 
         ~CityModel();
 

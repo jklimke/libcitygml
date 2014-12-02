@@ -9,6 +9,7 @@
 namespace citygml {
 
     class AppearanceManager;
+    class PolygonManager;
     class CityGMLLogger;
 
     class CityModel;
@@ -33,7 +34,15 @@ namespace citygml {
         CityModel* createCityModel(const std::string& id);
         CityObject* createCityObject(const std::string& id, CityObject::CityObjectsType type);
         Geometry* createGeometry(const std::string& id, Geometry::GeometryType type = Geometry::GeometryType::GT_Unknown, unsigned int lod = 0);
-        Polygon* createPolygon(const std::string& id);
+
+        std::shared_ptr<Polygon> createPolygon(const std::string& id);
+
+        /**
+         * @brief requests a polygon for a Geometry object that will be added later
+         * @param geom the Geometry object to which the polygon will be added
+         * @param polygonId the id of the polygon
+         */
+        void requestSharedPolygonForGeometry(Geometry* geom, const std::string& polygonId);
 
         citygml::ImplicitGeometry* createImplictGeometry(const std::string& id);
         std::shared_ptr<Geometry> shareGeometry(Geometry* geom);
@@ -47,6 +56,7 @@ namespace citygml {
         std::shared_ptr<TextureTargetDefinition> createTextureTargetDefinition(const std::string& targetID, std::shared_ptr<Texture> appearance, const std::string& id);
 
         std::shared_ptr<Appearance> getAppearanceWithID(const std::string& id);
+        std::vector<std::string> getAllThemes();
 
         void closeFactory();
 
@@ -57,6 +67,7 @@ namespace citygml {
         std::unordered_map<std::string, std::shared_ptr<Geometry>> m_sharedGeometriesMap;
         std::shared_ptr<CityGMLLogger> m_logger;
         std::unique_ptr<AppearanceManager> m_appearanceManager;
+        std::unique_ptr<PolygonManager> m_polygonManager;
     };
 
 }

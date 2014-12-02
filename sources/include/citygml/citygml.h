@@ -71,7 +71,6 @@ namespace citygml
             , pruneEmptyObjects( false )
             , tesselate( true )
             , destSRS( "" )
-            , theme("")
         { }
 
     public:
@@ -82,16 +81,10 @@ namespace citygml
         bool pruneEmptyObjects;
         bool tesselate;
         std::string destSRS;
-        std::string theme;
     };
 
-    class CityGMLParser {
-    public:
-        virtual const CityModel& getModel() = 0;
-    };
+    LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( std::istream& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);
 
-    LIBCITYGML_EXPORT CityModel* load( std::istream& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);
-
-    LIBCITYGML_EXPORT CityModel* load( const std::string& fileName, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);
+    LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( const std::string& fileName, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);
 
 }

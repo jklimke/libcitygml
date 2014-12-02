@@ -4,24 +4,16 @@
 #include <ostream>
 
 #include <unordered_map>
-#include <citygml/utils.h>
 
 namespace citygml {
 
-
-
-    #define NODETYPE( prefix, elementName ) \
-        static inline const XMLNode& prefix ## _ ## elementName ## Node() {\
-            static const XMLNode node(toLower("#elementName"), toLower("#prefix") ); \
-            return node; \
-        }
 
     class NodeType {
     public:
 
         class XMLNode {
         public:
-            XMLNode(std::string name, std::string prefix);
+            XMLNode(std::string prefix, std::string name);
 
             const std::string& name() const;
             const std::string& prefix() const;
@@ -38,12 +30,11 @@ namespace citygml {
             int m_typeID;
         };
 
-        static inline const XMLNode& InvalidNode() {
-            static const XMLNode node("", "");
-            return node;
-        }
+        static const XMLNode InvalidNode;
 
         static const XMLNode& getXMLNodeFor(const std::string& name);
+
+        #define NODETYPE( prefix, elementName ) static const XMLNode prefix ## _ ## elementName ## Node;
 
         // CORE
         NODETYPE( CORE, CityModel )
@@ -95,27 +86,6 @@ namespace citygml {
         NODETYPE( GML, OrientableSurface )
         NODETYPE( GML, LinearRing )
 
-        NODETYPE( GML, Lod1Solid )
-        NODETYPE( GML, Lod2Solid )
-        NODETYPE( GML, Lod3Solid )
-        NODETYPE( GML, Lod4Solid )
-        NODETYPE( GML, Lod1Geometry )
-        NODETYPE( GML, Lod2Geometry )
-        NODETYPE( GML, Lod3Geometry )
-        NODETYPE( GML, Lod4Geometry )
-        NODETYPE( GML, Lod1MultiCurve )
-        NODETYPE( GML, Lod2MultiCurve )
-        NODETYPE( GML, Lod3MultiCurve )
-        NODETYPE( GML, Lod4MultiCurve )
-        NODETYPE( GML, Lod1MultiSurface )
-        NODETYPE( GML, Lod2MultiSurface )
-        NODETYPE( GML, Lod3MultiSurface )
-        NODETYPE( GML, Lod4MultiSurface )
-        NODETYPE( GML, Lod1TerrainIntersection )
-        NODETYPE( GML, Lod2TerrainIntersection )
-        NODETYPE( GML, Lod3TerrainIntersection )
-        NODETYPE( GML, Lod4TerrainIntersection )
-
         NODETYPE( GML, MultiPoint )
         NODETYPE( GML, MultiCurve )
         NODETYPE( GML, MultiSurface )
@@ -157,6 +127,27 @@ namespace citygml {
         NODETYPE( BLDG, InteriorFurniture)
         NODETYPE( BLDG, RoomInstallation)
         NODETYPE( BLDG, Opening)
+
+        NODETYPE( BLDG, Lod1Solid )
+        NODETYPE( BLDG, Lod2Solid )
+        NODETYPE( BLDG, Lod3Solid )
+        NODETYPE( BLDG, Lod4Solid )
+        NODETYPE( BLDG, Lod1Geometry )
+        NODETYPE( BLDG, Lod2Geometry )
+        NODETYPE( BLDG, Lod3Geometry )
+        NODETYPE( BLDG, Lod4Geometry )
+        NODETYPE( BLDG, Lod1MultiCurve )
+        NODETYPE( BLDG, Lod2MultiCurve )
+        NODETYPE( BLDG, Lod3MultiCurve )
+        NODETYPE( BLDG, Lod4MultiCurve )
+        NODETYPE( BLDG, Lod1MultiSurface )
+        NODETYPE( BLDG, Lod2MultiSurface )
+        NODETYPE( BLDG, Lod3MultiSurface )
+        NODETYPE( BLDG, Lod4MultiSurface )
+        NODETYPE( BLDG, Lod1TerrainIntersection )
+        NODETYPE( BLDG, Lod2TerrainIntersection )
+        NODETYPE( BLDG, Lod3TerrainIntersection )
+        NODETYPE( BLDG, Lod4TerrainIntersection )
 
         // BoundarySurfaceType
         NODETYPE( BLDG, WallSurface )
@@ -216,6 +207,7 @@ namespace citygml {
 
         // APP
         NODETYPE( APP, Appearance )
+        NODETYPE( APP, AppearanceMember )
         NODETYPE( APP, SimpleTexture )
         NODETYPE( APP, ParameterizedTexture )
         NODETYPE( APP, GeoreferencedTexture )
@@ -232,7 +224,6 @@ namespace citygml {
 
         NODETYPE( APP, X3DMaterial )
         NODETYPE( APP, Material )
-        NODETYPE( APP, AppearanceMember )
         NODETYPE( APP, SurfaceDataMember )
         NODETYPE( APP, Shininess )
         NODETYPE( APP, Transparency )
@@ -242,6 +233,7 @@ namespace citygml {
         NODETYPE( APP, AmbientIntensity )
         NODETYPE( APP, IsFront )
         NODETYPE( APP, Theme )
+        NODETYPE( APP, MimeType )
 
     private:
         static int typeCount;

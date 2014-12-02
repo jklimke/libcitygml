@@ -15,6 +15,8 @@ namespace citygml {
         ImplicitGeometryElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger,
                               int lodLevel, CityObject::CityObjectsType parentType, std::function<void(ImplicitGeometry*)> callback);
 
+        // ElementParser interface
+        virtual std::string elementParserName() const;
         virtual bool handlesElement(const NodeType::XMLNode &node) const override;
     protected:
         // CityGMLElementParser interface

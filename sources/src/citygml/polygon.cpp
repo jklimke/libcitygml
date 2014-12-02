@@ -16,6 +16,7 @@ namespace citygml {
     Polygon::Polygon(const std::string& id, std::shared_ptr<CityGMLLogger> logger)  : AppearanceTarget( id ), m_negNormal( false )
     {
         m_logger = logger;
+        m_finished = false;
     }
 
     const std::vector<TVec3d>&Polygon::getVertices() const
@@ -33,14 +34,49 @@ namespace citygml {
         return m_normals;
     }
 
-    const std::vector<TVec2f> Polygon::getTexCoordsForTheme(const std::string& theme) const
+    const Material* Polygon::getMaterialFor(const std::string& theme, bool front) const
+    {
+        const MaterialTargetDefinition* targetDef = getMaterialTargetDefinitionForTheme(theme, front);
+        if (targetDef == nullptr) {
+            return nullptr;
+        }
+        return targetDef->getAppearance().get();
+    }
+
+    const Material* Polygon::getMaterialFor(const std::string& theme) const
+    {
+        const Material* result = getMaterialFor(theme, true);
+        if (result != nullptr) {
+            return result;
+        }
+        return getMaterialFor(theme, false);
+    }
+
+    const Texture* Polygon::getTextureFor(const std::string& theme, bool front) const
+    {
+        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme, front);
+        if (targetDef == nullptr) {
+            return nullptr;
+        }
+        return targetDef->getAppearance().get();
+    }
+
+    const Texture* Polygon::getTextureFor(const std::string& theme) const
+    {
+        const Texture* result = getTextureFor(theme, true);
+        if (result != nullptr) {
+            return result;
+        }
+        return getTextureFor(theme, false);
+    }
+
+    const std::vector<TVec2f> Polygon::getTexCoordsForTheme(const std::string& theme, bool front) const
     {
         // Lazy generation of texCoords
         std::vector<TVec2f> texCoords;
 
-        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme);
+        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme, front);
         if (targetDef == nullptr) {
-            CITYGML_LOG_WARN(m_logger, "Polygon with id '" << this->getId() << "'' contains no texture for theme '" << theme << "'");
             return texCoords;
         }
 
@@ -78,9 +114,9 @@ namespace citygml {
         return texCoords;
     }
 
-    std::shared_ptr<const Texture> Polygon::getTextureForTheme(const std::string& theme) const
+    std::shared_ptr<const Texture> Polygon::getTextureForTheme(const std::string& theme, bool front) const
     {
-        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme);
+        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme, front);
 
         if (targetDef == nullptr) {
             return nullptr;
@@ -160,7 +196,8 @@ namespace citygml {
     void Polygon::finish(bool doTesselate , Tesselator& tesselator)
     {
         if (m_finished) {
-            throw std::runtime_error("Called Polygon::finish on already finished polygon");
+            // This may happen as Polygons can be shared between geometries
+            return;
         }
 
         m_finished = true;

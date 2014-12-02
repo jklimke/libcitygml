@@ -19,68 +19,138 @@
 #ifdef USE_XERCESC
 
 #include <fstream>
+#include <string>
+#include <memory>
+#include <mutex>
 
 #include "citygml/citygml.h"
 #include "citygml/citygmllogger.h"
+#include "parser/citygmldocumentparser.h"
+#include "parser/documentlocation.h"
+#include "parser/attributes.h"
 
+#include <xercesc/sax2/DefaultHandler.hpp>
+#include <xercesc/sax/Locator.hpp>
+#include <xercesc/sax2/Attributes.hpp>
 #include <xercesc/util/XMLString.hpp>
-#include <xercesc/parsers/SAXParser.hpp>
-#include <xercesc/sax/HandlerBase.hpp>
+#include <xercesc/sax2/SAX2XMLReader.hpp>
+#include <xercesc/sax2/XMLReaderFactory.hpp>
 #include <xercesc/sax/InputSource.hpp>
 #include <xercesc/util/BinInputStream.hpp>
+#include <xercesc/framework/LocalFileInputSource.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
 
 using namespace citygml;
 
-std::string wstos( const XMLCh* const wstr )
-    {
-#ifdef MSVC
-        std::wstring w( (const wchar_t*)wstr );
-        return std::string( w.begin(), w.end() );
-#else
-        char* tmp = xercesc::XMLString::transcode(wstr);
-        std::string str(tmp);
-        xercesc::XMLString::release(&tmp);
-        return str;
-#endif
+std::string toStdString( const XMLCh* const wstr )
+{
+    if (wstr == nullptr) {
+        return "";
+    }
+
+    char* tmp = xercesc::XMLString::transcode(wstr);
+    std::string str(tmp);
+    xercesc::XMLString::release(&tmp);
+    return str;
 }
 
-// CityGML Xerces-c SAX parsing handler
-class CityGMLHandlerXerces : public xercesc::HandlerBase
-{
+std::shared_ptr<XMLCh> toXercesString(const std::string& str) {
+
+    XMLCh* conv = xercesc::XMLString::transcode(str.c_str());
+    // Pack xerces string into shared_ptr with custom delete function
+    return std::shared_ptr<XMLCh>(conv, [=](XMLCh* str) {
+        xercesc::XMLString::release(&str);
+    });
+}
+
+class DocumentLocationXercesAdapter : public citygml::DocumentLocation {
 public:
-    CityGMLHandlerXerces( const ParserParams& params, std::shared_ptr<CityGMLLogger> logger) {}
+    DocumentLocationXercesAdapter(const std::string& fileName) {
+        m_locator = nullptr;
+        m_fileName = fileName;
+    }
+
+    void setLocator(const xercesc::Locator* locator) {
+        m_locator = locator;
+    }
+
+    // DocumentLocation interface
+    virtual const std::string& getDocumentFileName() const {
+        return m_fileName;
+    }
+
+    virtual uint64_t getCurrentLine() const {
+        return m_locator != nullptr ? m_locator->getLineNumber() : 0;
+    }
+    virtual uint64_t getCurrentColumn() const {
+        return m_locator != nullptr ? m_locator->getColumnNumber() : 0;
+    }
 
 protected:
-    void startElement( const XMLCh* const name, xercesc::AttributeList& attr )
-    {
-//        CityGMLHandler::startElement( wstos( name ), &attr );
-//        m_characterData = "";
+    const xercesc::Locator* m_locator;
+    std::string m_fileName;
+};
+
+class AttributesXercesAdapter : public citygml::Attributes {
+public:
+    AttributesXercesAdapter(const xercesc::Attributes& attrs, const citygml::DocumentLocation& docLoc, std::shared_ptr<CityGMLLogger> logger)
+     : citygml::Attributes(logger), m_attrs(attrs), m_location(docLoc) {}
+
+    // Attributes interface
+    virtual std::string getAttribute(const std::string& attname, const std::string& defvalue) const {
+        std::shared_ptr<XMLCh> name = toXercesString(attname);
+        std::string value = toStdString(m_attrs.getValue(name.get()));
+        return value.empty() ? defvalue : value;
     }
 
-    void endElement( const XMLCh* const name )
-    {
-//        CityGMLHandler::endElement( wstos( name ), m_characterData );
+    virtual const DocumentLocation& getDocumentLocation() const {
+        return m_location;
     }
 
-    void characters( const XMLCh* const chars, const XMLSize_t length )
-    {
-        m_characterData = std::string((const char*) chars, length);
+protected:
+    const xercesc::Attributes& m_attrs;
+    const citygml::DocumentLocation& m_location;
+};
+
+// CityGML Xerces-c SAX parsing handler
+class CityGMLHandlerXerces : public xercesc::DefaultHandler, public citygml::CityGMLDocumentParser
+{
+public:
+    CityGMLHandlerXerces( const ParserParams& params, const std::string& fileName, std::shared_ptr<CityGMLLogger> logger)
+        : citygml::CityGMLDocumentParser(params, logger), m_documentLocation(DocumentLocationXercesAdapter(fileName)) {}
+
+
+    // ContentHandler interface
+    virtual void startElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname, const xercesc::Attributes& attrs) override {
+        AttributesXercesAdapter attributes(attrs, m_documentLocation, m_logger);
+        CityGMLDocumentParser::startElement(toStdString(qname), attributes);
     }
 
-    void fatalError( const xercesc::SAXParseException& e )
-    {
-//        CITYGML_LOG_ERROR(_logger, "Fatal..." << wstos( e.getMessage() ) );
+    virtual void endElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname) override {
+        CityGMLDocumentParser::endElement(toStdString(qname), m_lastcharacters);
+        m_lastcharacters = "";
     }
 
-    std::string getAttribute( void* attributes, const std::string& attname, const std::string& defvalue = "" )
-    {
-        if (!attributes) return defvalue;
-        xercesc::AttributeList* attrs = (xercesc::AttributeList*)attributes;
-        const XMLCh* att = attrs->getValue( attname.c_str() );
-        return att ? wstos( att ) : defvalue;
+    virtual void characters(const XMLCh* const chars, const XMLSize_t) override {
+        m_lastcharacters = toStdString(chars);
     }
 
-    std::string m_characterData;
+    virtual void endDocument() override {
+        CityGMLDocumentParser::endDocument();
+    }
+
+    virtual void setDocumentLocator(const xercesc::Locator* const locator) {
+        m_documentLocation.setLocator(locator);
+    }
+
+    // CityGMLDocumentParser interface
+    virtual const citygml::DocumentLocation& getDocumentLocation() const {
+        return m_documentLocation;
+    }
+protected:
+    DocumentLocationXercesAdapter m_documentLocation;
+    std::string m_lastcharacters;
+
 };
 
 class StdBinInputStream : public xercesc::BinInputStream
@@ -100,7 +170,7 @@ public:
         return (XMLSize_t)m_stream.gcount();
     }
 
-    virtual const XMLCh* getContentType() const { return 0; }
+    virtual const XMLCh* getContentType() const { return nullptr; }
 
 private:
     std::istream& m_stream;
@@ -114,6 +184,9 @@ public:
     virtual xercesc::BinInputStream* makeStream() const
     {
         return new StdBinInputStream( m_stream );
+    }
+
+    ~StdBinInputSource() {
     }
 
 private:
@@ -165,71 +238,93 @@ namespace citygml
         }
     };
 
-    CityModel* load(std::istream& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger)
-    {
+    std::mutex xerces_init_mutex;
+    bool xerces_initialized;
 
-        if (!logger) {
-            logger = std::make_shared<StdLogger>();
+    bool initXerces(std::shared_ptr<CityGMLLogger> logger) {
+
+        if (xerces_initialized) {
+            return true;
         }
+
+        try {
+            xerces_init_mutex.lock();
+            // Check xerces_initialized again... it could have changed while waiting for the mutex
+            if (!xerces_initialized) {
+                xercesc::XMLPlatformUtils::Initialize();
+                xerces_initialized = true;
+            }
+            xerces_init_mutex.unlock();
+        }
+        catch (const xercesc::XMLException& e) {
+            CITYGML_LOG_ERROR(logger, "Could not initialize xercesc XMLPlatformUtils, a XML Exception occured : " << toStdString(e.getMessage()));
+            return false;
+        }
+
+        return true;
+
+    }
+
+    std::shared_ptr<const CityModel> parse(xercesc::InputSource& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger, std::string filename = "") {
+
+
+
+        CityGMLHandlerXerces handler( params, filename, logger );
+
+        xercesc::SAX2XMLReader* parser = xercesc::XMLReaderFactory::createXMLReader();
+        parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, false);
+        parser->setContentHandler( &handler );
+        parser->setErrorHandler( &handler );
 
         try
         {
-            xercesc::XMLPlatformUtils::Initialize();
+            parser->parse(stream);
         }
         catch ( const xercesc::XMLException& e )
         {
-//            CITYGML_LOG_ERROR(logger, "XML Exception occures during initialization!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
-            return nullptr;
+            CITYGML_LOG_ERROR(logger, "XML Exception occured: " << toStdString(e.getMessage()));
+        }
+        catch ( const xercesc::SAXParseException& e )
+        {
+            CITYGML_LOG_ERROR(logger, "SAXParser Exception occured: " << toStdString(e.getMessage()));
+        }
+        catch ( const std::exception& e )
+        {
+            CITYGML_LOG_ERROR(logger, "Unexpected Exception occured: " << e.what());
         }
 
-        CityGMLHandlerXerces* handler = new CityGMLHandlerXerces( params, logger );
-
-        xercesc::SAXParser* parser = new xercesc::SAXParser();
-        parser->setDoNamespaces( false );
-        parser->setDocumentHandler( handler );
-        parser->setErrorHandler( handler );
-
-        CityModel* model = 0;
-
-//        try
-//        {
-//            StdBinInputSource input( stream );
-//            parser->parse( input );
-//            model = handler->getModel();
-//        }
-//        catch ( const xercesc::XMLException& e )
-//        {
-//            CITYGML_LOG_ERROR(logger, "XML Exception occured!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
-//            delete handler->getModel();
-//        }
-//        catch ( const xercesc::SAXParseException& e )
-//        {
-//            CITYGML_LOG_ERROR(logger, "SAXParser Exception occured!" << std::endl << CityGMLHandlerXerces::wstos( e.getMessage() ));
-//            delete handler->getModel();
-//        }
-//        catch ( ... )
-//        {
-//            CITYGML_LOG_ERROR(logger, "Unexpected Exception occured!");
-//            delete handler->getModel();
-//        }
-
         delete parser;
-        delete handler;
-        return model;
+
+        return handler.getModel();
     }
 
-    CityModel* load( const std::string& fname, const ParserParams& params , std::shared_ptr<CityGMLLogger> logger)
+    std::shared_ptr<const CityModel> load(std::istream& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger)
     {
         if (!logger) {
             logger = std::make_shared<StdLogger>();
         }
 
-        std::ifstream file;
-        file.open( fname.c_str(), std::ifstream::in );
-        if ( file.fail() ) { CITYGML_LOG_ERROR(logger, "CityGML: Unable to open file " << fname << "!"); return 0; }
-        CityModel* model = load( file, params, logger );
-        file.close();
-        return model;
+        if (!initXerces(logger)) {
+            return nullptr;
+        }
+
+        StdBinInputSource streamSource(stream);
+        return parse(streamSource, params, logger);
+    }
+
+    std::shared_ptr<const CityModel> load( const std::string& fname, const ParserParams& params , std::shared_ptr<CityGMLLogger> logger)
+    {
+        if (!logger) {
+            logger = std::make_shared<StdLogger>();
+        }
+
+        if (!initXerces(logger)) {
+            return nullptr;
+        }
+
+        std::shared_ptr<XMLCh> fileName = toXercesString(fname);
+        xercesc::LocalFileInputSource fileSource(fileName.get());
+        return parse(fileSource, params, logger, fname);
     }
 }
 

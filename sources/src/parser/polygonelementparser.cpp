@@ -17,15 +17,20 @@ namespace citygml {
 
     // The nodes that are valid Polygon Objects
     const std::unordered_set<int> typeIDSet = {
-        NodeType::GML_TriangleNode().typeID(),
-        NodeType::GML_RectangleNode().typeID(),
-        NodeType::GML_PolygonNode().typeID()
+        NodeType::GML_TriangleNode.typeID(),
+        NodeType::GML_RectangleNode.typeID(),
+        NodeType::GML_PolygonNode.typeID()
     };
 
-    PolygonElementParser::PolygonElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(Polygon*)> callback)
+    PolygonElementParser::PolygonElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Polygon>)> callback)
         : CityGMLElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
+    }
+
+    std::string PolygonElementParser::elementParserName() const
+    {
+        return "PolygonElementParser";
     }
 
     bool PolygonElementParser::handlesElement(const NodeType::XMLNode& node) const
@@ -60,11 +65,11 @@ namespace citygml {
             throw std::runtime_error("PolygonElementParser::parseChildElementStartTag called before PolygonElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_InteriorNode()) {
+        if (node == NodeType::GML_InteriorNode) {
 
             parseRingElement(true);
             return true;
-        } else if (node == NodeType::GML_ExteriorNode()) {
+        } else if (node == NodeType::GML_ExteriorNode) {
 
             parseRingElement(false);
             return true;
@@ -80,7 +85,7 @@ namespace citygml {
             throw std::runtime_error("PolygonElementParser::parseChildElementEndTag called before PolygonElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_InteriorNode() || node == NodeType::GML_ExteriorNode()) {
+        if (node == NodeType::GML_InteriorNode || node == NodeType::GML_ExteriorNode) {
 
             return true;
         }

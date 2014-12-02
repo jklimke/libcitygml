@@ -13,11 +13,11 @@ namespace citygml {
     class CityGMLFactory;
     class ElementParser;
 
-    class CityGMLDocumentParser : public CityGMLParser {
+    class CityGMLDocumentParser {
     public:
         CityGMLDocumentParser(const ParserParams& params, std::shared_ptr<CityGMLLogger> logger);
 
-        virtual const CityModel& getModel() override;
+        std::shared_ptr<const CityModel> getModel();
 
         // Methods used by CityGMLElementParser
 
@@ -28,6 +28,8 @@ namespace citygml {
          * @brief the current location in the document
          */
         virtual const DocumentLocation& getDocumentLocation() const = 0;
+
+        virtual ~CityGMLDocumentParser();
 
     protected:
 
@@ -50,6 +52,7 @@ namespace citygml {
          */
         void endDocument();
 
+        std::shared_ptr<CityGMLLogger> m_logger;
     private:
         std::stack<std::shared_ptr<ElementParser>> m_parserStack;
 
@@ -61,9 +64,8 @@ namespace citygml {
          */
         std::shared_ptr<ElementParser> m_activeParser;
 
-        std::shared_ptr<CityGMLLogger> m_logger;
         std::unique_ptr<CityGMLFactory> m_factory;
-        std::unique_ptr<CityModel> m_rootModel;
+        std::shared_ptr<CityModel> m_rootModel;
         ParserParams m_parserParams;
     };
 

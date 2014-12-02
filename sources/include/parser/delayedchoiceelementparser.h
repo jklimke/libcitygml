@@ -21,6 +21,7 @@ namespace citygml {
         virtual bool startElement(const NodeType::XMLNode& node, Attributes& attributes);
         virtual bool endElement(const NodeType::XMLNode& node, const std::string& characters);
         virtual bool handlesElement(const NodeType::XMLNode& node) const;
+        virtual std::string elementParserName() const;
 
     private:
         std::vector<ElementParser*> m_choices;

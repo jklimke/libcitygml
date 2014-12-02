@@ -28,9 +28,10 @@ namespace citygml {
         return it->second;
     }
 
-    void AppearanceManager::addTheme(const std::string& theme)
+    std::vector<std::string> AppearanceManager::getAllThemes()
     {
-        m_themes.insert(theme);
+        std::vector<std::string> themes(m_themes.begin(), m_themes.end());
+        return themes;
     }
 
     void AppearanceManager::addAppearanceTarget(AppearanceTarget* target)
@@ -68,11 +69,18 @@ namespace citygml {
     {
         for (std::shared_ptr<MaterialTargetDefinition>& targetDef : m_materialTargetDefinitions ) {
             assignTargetDefinition<MaterialTargetDefinition>(targetDef, m_appearanceTargetsMap, m_logger);
+            addThemesFrom(targetDef->getAppearance());
         }
 
         for (std::shared_ptr<TextureTargetDefinition>& targetDef : m_texTargetDefinitions ) {
             assignTargetDefinition<TextureTargetDefinition>(targetDef, m_appearanceTargetsMap, m_logger);
+            addThemesFrom(targetDef->getAppearance());
         }
+    }
+
+    void AppearanceManager::addThemesFrom(std::shared_ptr<Appearance> surfaceData)
+    {
+        m_themes.insert(surfaceData->getThemes().begin(), surfaceData->getThemes().end());
     }
 
 }

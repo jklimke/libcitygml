@@ -13,8 +13,8 @@ namespace citygml {
         TransformationMatrix(double* matrix);
 
 
-        double* getMatrix();
-        double* getTransposedMatrix();
+        const double* getMatrix() const;
+        const double* getTransposedMatrix() const;
 
         ~TransformationMatrix();
 

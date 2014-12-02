@@ -12,8 +12,11 @@ namespace citygml {
     public:
         CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(CityObject*)> callback);
 
+        // ElementParser interface
+        virtual std::string elementParserName() const;
         virtual bool handlesElement(const NodeType::XMLNode &node) const override;
     protected:
+
         // CityGMLElementParser interface
         virtual bool parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes) override;
         virtual bool parseElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;

@@ -53,7 +53,7 @@ namespace citygml
             it->second.push_back(cityObj);
         }
 
-        for (int i = 0; i < cityObj->getChildCityObjecsCount(); i++) {
+        for (int i = 0; i < cityObj->getChildCityObjectsCount(); i++) {
             addToCityObjectsMapRecursive(&cityObj->getChildCityObject(i));
         }
     }
@@ -62,7 +62,7 @@ namespace citygml
         return m_themes;
     }
 
-    void CityModel::setThemes(const std::vector<std::string>& themes)
+    void CityModel::setThemes(std::vector<std::string> themes)
     {
         m_themes = themes;
     }
@@ -81,9 +81,9 @@ namespace citygml
     const ConstCityObjects CityModel::getRootCityObjects() const
     {
         ConstCityObjects list;
-        std::transform(m_roots.begin(), m_roots.end(), list.begin(), [](const std::unique_ptr<CityObject>& cityObj) {
-            return cityObj.get();
-        });
+        for (const std::unique_ptr<CityObject>& cityObj : m_roots) {
+            list.push_back(cityObj.get());
+        }
         return list;
     }
 

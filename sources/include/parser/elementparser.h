@@ -41,6 +41,8 @@ namespace citygml {
          */
         virtual bool handlesElement(const NodeType::XMLNode& node) const = 0;
 
+        virtual std::string elementParserName() const = 0;
+
         virtual ~ElementParser();
 
     protected:

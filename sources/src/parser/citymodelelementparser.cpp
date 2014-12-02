@@ -22,13 +22,18 @@ namespace citygml {
 
     bool CityModelElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        return node == NodeType::CORE_CityModelNode();
+        return node == NodeType::CORE_CityModelNode;
+    }
+
+    std::string CityModelElementParser::elementParserName() const
+    {
+        return "CityModelElementParser";
     }
 
     bool CityModelElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        if (node != NodeType::CORE_CityModelNode()) {
-            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::CORE_CityModelNode().name() << "> got <" << node.name() << "> at " << getDocumentLocation());
+        if (node != NodeType::CORE_CityModelNode) {
+            CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::CORE_CityModelNode.name() << "> got <" << node.name() << "> at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
         }
 
@@ -38,8 +43,8 @@ namespace citygml {
 
     bool CityModelElementParser::parseElementEndTag(const NodeType::XMLNode& node, const std::string&)
     {
-        if (node != NodeType::CORE_CityModelNode()) {
-            CITYGML_LOG_WARN(m_logger, "Expected end tag <" << NodeType::CORE_CityModelNode().name() << "> got <" << node.name() << "> at " << getDocumentLocation());
+        if (node != NodeType::CORE_CityModelNode) {
+            CITYGML_LOG_WARN(m_logger, "Expected end tag <" << NodeType::CORE_CityModelNode.name() << "> got <" << node.name() << "> at " << getDocumentLocation());
         }
 
         m_callback(m_model);
@@ -53,10 +58,11 @@ namespace citygml {
             throw std::runtime_error("CityModelElementParser::parseChildElementStartTag called before CityModelElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::CORE_CityObjectMemberNode()) {
+        if (node == NodeType::CORE_CityObjectMemberNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         this->m_model->addRootObject(obj);
                                     }));
+            return true;
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
         }
@@ -69,7 +75,7 @@ namespace citygml {
             throw std::runtime_error("CityModelElementParser::parseChildElementEndTag called before CityModelElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::CORE_CityObjectMemberNode()) {
+        if (node == NodeType::CORE_CityObjectMemberNode) {
             return true;
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementEndTag(node, characters);

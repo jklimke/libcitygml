@@ -3,6 +3,7 @@
 #include <parser/citygmlelementparser.h>
 
 #include <functional>
+#include <memory>
 
 namespace citygml {
 
@@ -10,8 +11,10 @@ namespace citygml {
 
     class PolygonElementParser : public CityGMLElementParser {
     public:
-        PolygonElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(Polygon*)> callback);
+        PolygonElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Polygon>)> callback);
 
+        // ElementParser interface
+        virtual std::string elementParserName() const;
         virtual bool handlesElement(const NodeType::XMLNode &node) const override;
     protected:
         // CityGMLElementParser interface
@@ -21,8 +24,8 @@ namespace citygml {
         virtual bool parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;
 
     private:
-        Polygon* m_model;
-        std::function<void(Polygon*)> m_callback;
+        std::shared_ptr<Polygon> m_model;
+        std::function<void(std::shared_ptr<Polygon>)> m_callback;
 
         void parseRingElement(bool interior);
     };
