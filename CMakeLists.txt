@@ -154,3 +154,57 @@ CONFIGURE_FILE(
   IMMEDIATE @ONLY)
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
+# Create debian package
+option(BUILD_DEBIAN_PACKAGE  "Creates a debian package" ON)
+if(BUILD_DEBIAN_PACKAGE)
+    # set project description for packaging
+    set(META_PROJECT_NAME        "libcitygml")
+    set(META_PROJECT_SUMMARY     "Open source C++ library for parsing CityGML files")
+    set(META_PROJECT_DESCRIPTION "libcitygml is a small and easy to use open source C++ library for parsing
+                                  CityGML files in such a way that data can be easily exploited by 3D
+                                  rendering applications (geometry data are tesselated and optimized for
+                                  rendering during parsing). For instance, it can be used to develop readers
+                                  of CityGML files in many 3D based applications (OpenGL, OpenSceneGraph, ...)
+                                  Most metadata are not lost, they are available through a per-node hashmap.
+
+                                  CityGML (City Geography Markup Language) is an XML-based schema for the
+                                  modelling and exchange of georeferenced 3D city and landscape models that
+                                  is quickly being adopted on an international level.")
+    set(META_VERSION_MAJOR       "1")
+    set(META_VERSION_MINOR       "0")
+    set(META_VERSION_PATCH       "0")
+    set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
+    set(META_AUTHOR_ORGANIZATION "3D Content Logistics")
+    set(META_AUTHOR_DOMAIN       "https://github.com/jklimke/libcitygml.git")
+    set(META_AUTHOR_MAINTAINER   "Marcel Pursche <marcel.pursche@3dcontentlogistics.com>")
+
+    # Package information
+    string(TOLOWER ${META_PROJECT_NAME} package_name)          # Package name
+    set(CPACK_PACKAGE_NAME                  "${META_PROJECT_NAME}")
+    set(CPACK_PACKAGE_VENDOR                "${META_AUTHOR_ORGANIZATION}")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "${META_PROJECT_SUMMARY}")
+    set(CPACK_PACKAGE_DESCRIPTION           "${META_PROJECT_DESCRIPTION}")
+    set(CPACK_PACKAGE_VERSION               "${META_VERSION}")
+    set(CPACK_PACKAGE_VERSION_MAJOR         "${META_VERSION_MAJOR}")
+    set(CPACK_PACKAGE_VERSION_MINOR         "${META_VERSION_MINOR}")
+    set(CPACK_PACKAGE_VERSION_PATCH         "${META_VERSION_PATCH}")
+    set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/LICENSE")
+    set(CPACK_PACKAGE_RELOCATABLE           OFF)
+
+    # Debian package information
+    set(CPACK_DEBIAN_PACKAGE_NAME           "${package_name}")
+    set(CPACK_DEBIAN_PACKAGE_VERSION        "${CPACK_PACKAGE_VERSION}")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER     "${META_AUTHOR_MAINTAINER}")
+    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION    "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
+    set(CPACK_DEBIAN_PACKAGE_SECTION        "Development")
+    set(CPACK_DEBIAN_PACKAGE_PRIORITY       "optional")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libgdal1h (>= 1.10.1), libxerces-c3.1 (>= 3.1.1-5)")
+    set(CPACK_DEBIAN_PACKAGE_CONFLICTS      "libcitygml0, libcitygml0-dev")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE       "${META_AUTHOR_DOMAIN}")
+    set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA  "")
+        
+    set(CPACK_GENERATOR "DEB")
+
+    include(CPack)
+endif()
