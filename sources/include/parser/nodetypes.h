@@ -58,6 +58,15 @@ namespace citygml {
         NODETYPE( GEN, UriAttribute )
         NODETYPE( GEN, Value )
 
+        NODETYPE( GEN, Lod1Geometry )
+        NODETYPE( GEN, Lod2Geometry )
+        NODETYPE( GEN, Lod3Geometry )
+        NODETYPE( GEN, Lod4Geometry )
+        NODETYPE( GEN, Lod1TerrainIntersection )
+        NODETYPE( GEN, Lod2TerrainIntersection )
+        NODETYPE( GEN, Lod3TerrainIntersection )
+        NODETYPE( GEN, Lod4TerrainIntersection )
+
         // TEX
         // NODETYPE( GML, TexturedSurface ) // Deprecated
 

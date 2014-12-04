@@ -110,6 +110,15 @@ namespace citygml {
     DEFINE_NODE( GEN, UriAttribute )
     DEFINE_NODE( GEN, Value )
 
+    DEFINE_NODE( GEN, Lod1Geometry )
+    DEFINE_NODE( GEN, Lod2Geometry )
+    DEFINE_NODE( GEN, Lod3Geometry )
+    DEFINE_NODE( GEN, Lod4Geometry )
+    DEFINE_NODE( GEN, Lod1TerrainIntersection )
+    DEFINE_NODE( GEN, Lod2TerrainIntersection )
+    DEFINE_NODE( GEN, Lod3TerrainIntersection )
+    DEFINE_NODE( GEN, Lod4TerrainIntersection )
+
     // TEX
     // DEFINE_NODE( GML, TexturedSurface ) // Deprecated
 

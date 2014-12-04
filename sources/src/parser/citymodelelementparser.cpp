@@ -64,7 +64,7 @@ namespace citygml {
                                         this->m_model->addRootObject(obj);
                                     }));
             return true;
-        } else if (node == NodeType::APP_AppearanceNode // Compatibility with CityGML 1.0 (in CityGML 3 CityObjects can only contain appearanceMember elements)
+        } else if (node == NodeType::APP_AppearanceNode // Compatibility with CityGML 1.0 (in CityGML 2 CityObjects can only contain appearanceMember elements)
                    || node == NodeType::APP_AppearanceMemberNode) {
 
             setParserForNextElement(new AppearanceElementParser(m_documentParser, m_factory, m_logger));
