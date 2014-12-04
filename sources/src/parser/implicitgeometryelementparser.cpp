@@ -82,15 +82,9 @@ namespace citygml {
         } else if (node == NodeType::CORE_RelativeGMLGeometryNode) {
 
             if (attributes.hasXLinkAttribute()) {
+
                 std::string sharedGeomID = attributes.getXLinkValue();
-                std::shared_ptr<Geometry> sharedGeom = m_factory.getSharedGeometryWithID(sharedGeomID);
-
-                if (sharedGeom != nullptr) {
-                    m_model->addGeometry(sharedGeom);
-                } else {
-                    CITYGML_LOG_WARN(m_logger, "RelativeGMLGeometryNode at " << getDocumentLocation() << " links to a geometry with id '" << sharedGeomID << "'' that does not exist or is not shared.");
-                }
-
+                m_factory.requestSharedGeometryWithID(m_model, sharedGeomID);
             } else {
 
                 setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* geom) {

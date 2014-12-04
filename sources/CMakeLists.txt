@@ -37,6 +37,7 @@ SET(SOURCES
   src/citygml/appearancetarget.cpp
   src/citygml/citygmlfactory.cpp
   src/citygml/polygonmanager.cpp
+  src/citygml/geometrymanager.cpp
 
   src/parser/nodetypes.cpp
   src/parser/citygmldocumentparser.cpp
@@ -104,6 +105,7 @@ SET(HEADERS
   include/citygml/utils.h
   include/citygml/appearancemanager.h
   include/citygml/polygonmanager.h
+  include/citygml/geometrymanager.h
 
   include/parser/gmlfeaturecollectionparser.h
   include/parser/citymodelelementparser.h

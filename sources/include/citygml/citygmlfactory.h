@@ -4,12 +4,12 @@
 #include "citygml/cityobject.h"
 
 #include <memory>
-#include <unordered_map>
 
 namespace citygml {
 
     class AppearanceManager;
     class PolygonManager;
+    class GeometryManager;
     class CityGMLLogger;
 
     class CityModel;
@@ -44,9 +44,9 @@ namespace citygml {
          */
         void requestSharedPolygonForGeometry(Geometry* geom, const std::string& polygonId);
 
-        citygml::ImplicitGeometry* createImplictGeometry(const std::string& id);
+        ImplicitGeometry* createImplictGeometry(const std::string& id);
         std::shared_ptr<Geometry> shareGeometry(Geometry* geom);
-        std::shared_ptr<Geometry> getSharedGeometryWithID(const std::string& id);
+        void requestSharedGeometryWithID(ImplicitGeometry* implicitGeom, const std::string& id);
 
         std::shared_ptr<Texture> createTexture(const std::string& id);
         std::shared_ptr<Material> createMaterial(const std::string& id);
@@ -64,10 +64,10 @@ namespace citygml {
     protected:
         void appearanceTargetCreated(AppearanceTarget* obj);
 
-        std::unordered_map<std::string, std::shared_ptr<Geometry>> m_sharedGeometriesMap;
         std::shared_ptr<CityGMLLogger> m_logger;
         std::unique_ptr<AppearanceManager> m_appearanceManager;
         std::unique_ptr<PolygonManager> m_polygonManager;
+        std::unique_ptr<GeometryManager> m_geometryManager;
     };
 
 }

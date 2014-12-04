@@ -219,12 +219,21 @@ namespace citygml {
     DEFINE_NODE( BLDG, CityFurniture )
 
     // ADDRESS
-    DEFINE_NODE( ADDRESS, Administrativearea )
-    DEFINE_NODE( ADDRESS, Country )
-    DEFINE_NODE( ADDRESS, Code )
-    DEFINE_NODE( ADDRESS, Street )
-    DEFINE_NODE( ADDRESS, PostalCode )
-    DEFINE_NODE( ADDRESS, City )
+    DEFINE_NODE( XAL, XalAddress )
+    DEFINE_NODE( XAL, Administrativearea )
+    DEFINE_NODE( XAL, Country )
+    DEFINE_NODE( XAL, CountryName )
+    DEFINE_NODE( XAL, Code )
+    DEFINE_NODE( XAL, Street )
+    DEFINE_NODE( XAL, PostalCode )
+    DEFINE_NODE( XAL, City )
+    DEFINE_NODE( XAL, LocalityName )
+    DEFINE_NODE( XAL, Thoroughfare )
+    DEFINE_NODE( XAL, ThoroughfareNumber )
+    DEFINE_NODE( XAL, ThoroughfareName )
+    DEFINE_NODE( XAL, Locality )
+    DEFINE_NODE( XAL, AddressDetails )
+    DEFINE_NODE( XAL, DependentLocalityName )
     // WTR
     DEFINE_NODE( WTR, WaterBody )
 

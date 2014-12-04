@@ -13,6 +13,7 @@ namespace citygml {
     class Geometry;
     class ImplicitGeometry;
     class Composite;
+    class CityGMLLogger;
     class AppearanceManager;
 
     class CityObject : public FeatureObject
@@ -88,7 +89,7 @@ namespace citygml {
 
         void addChildCityObject(CityObject* cityObj);
 
-        void finish(bool tesselate, Tesselator& tesselator);
+        void finish(bool tesselate, Tesselator& tesselator, bool optimize, std::shared_ptr<citygml::CityGMLLogger> logger);
 
         virtual ~CityObject();
 

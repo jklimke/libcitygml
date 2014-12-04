@@ -108,7 +108,6 @@ namespace citygml {
         NODETYPE( BLDG, Door )
         NODETYPE( BLDG, Window )
         NODETYPE( BLDG, BuildingInstallation )
-        NODETYPE( BLDG, Address )
         NODETYPE( BLDG, MeasuredHeight )
         NODETYPE( BLDG, Class )
         NODETYPE( BLDG, Type )
@@ -166,13 +165,25 @@ namespace citygml {
 
         NODETYPE( BLDG, CityFurniture )
 
+        NODETYPE( BLDG, Address )
+
         // ADDRESS
-        NODETYPE( ADDRESS, Administrativearea )
-        NODETYPE( ADDRESS, Country )
-        NODETYPE( ADDRESS, Code )
-        NODETYPE( ADDRESS, Street )
-        NODETYPE( ADDRESS, PostalCode )
-        NODETYPE( ADDRESS, City )
+        NODETYPE( XAL, XalAddress )
+        NODETYPE( XAL, Administrativearea )
+        NODETYPE( XAL, Country )
+        NODETYPE( XAL, CountryName )
+        NODETYPE( XAL, Code )
+        NODETYPE( XAL, Street )
+        NODETYPE( XAL, PostalCode )
+        NODETYPE( XAL, City )
+        NODETYPE( XAL, LocalityName )
+        NODETYPE( XAL, Thoroughfare )
+        NODETYPE( XAL, ThoroughfareNumber )
+        NODETYPE( XAL, ThoroughfareName )
+        NODETYPE( XAL, Locality )
+        NODETYPE( XAL, AddressDetails )
+        NODETYPE( XAL, DependentLocalityName )
+
         // WTR
         NODETYPE( WTR, WaterBody )
 

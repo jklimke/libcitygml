@@ -57,7 +57,7 @@ namespace citygml {
         m_activeParser = m_parserStack.top();
         CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::startElement for <" << node << "> at " << getDocumentLocation());
         if (!m_activeParser->startElement(node, attributes)) {
-            CITYGML_LOG_INFO(m_logger, "Ignoring unexpected start tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
+            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected start tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
         }
     }
 
@@ -78,9 +78,14 @@ namespace citygml {
         m_activeParser = m_parserStack.top();
         CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::endElement for <" << node << "> at " << getDocumentLocation());
         if (!m_activeParser->endElement(node, characters)) {
-            CITYGML_LOG_INFO(m_logger, "Ignoring unexpected end tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
+            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected end tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
         }
 
+    }
+
+    void CityGMLDocumentParser::startDocument()
+    {
+        CITYGML_LOG_INFO(m_logger, "Start parsing citygml file (" << getDocumentLocation() << ")");
     }
 
     void CityGMLDocumentParser::endDocument()
@@ -89,17 +94,25 @@ namespace citygml {
             CITYGML_LOG_WARN(m_logger, "Reached end of document but the parser stack is not empty (either a bug or corrupted xml document)");
         }
 
+        CITYGML_LOG_INFO(m_logger, "Finished parsing ciytgml file (" << getDocumentLocation() << ")");
+
         m_factory->closeFactory();
 
         if (m_rootModel != nullptr) {
             Tesselator tesselator(m_logger);
-            m_rootModel->finish(m_parserParams.tesselate, tesselator);
+
+            CITYGML_LOG_INFO(m_logger, "Start postprocessing of the citymodel.");
+            m_rootModel->finish(m_parserParams.tesselate, tesselator, m_parserParams.optimize, m_logger);
+            CITYGML_LOG_INFO(m_logger, "Finished postprocessing of the citymodel.");
+
             m_rootModel->setThemes(m_factory->getAllThemes());
 
             if (!m_parserParams.destSRS.empty()) {
                 try {
+                    CITYGML_LOG_INFO(m_logger, "Start coordinates transformation .");
                     GeoCoordinateTransformer transformer(m_parserParams.destSRS, m_logger);
                     transformer.transformToDestinationSRS(m_rootModel.get());
+                    CITYGML_LOG_INFO(m_logger, "Finished coordinates transformation .");
                 } catch (const std::runtime_error& e) {
                     CITYGML_LOG_ERROR(m_logger, "Coordinate transformation aborted: " << e.what());
                 }

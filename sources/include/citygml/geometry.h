@@ -16,6 +16,7 @@ namespace citygml {
     class Appearance;
     class ParserParams;
     class CityGMLFactory;
+    class CityGMLLogger;
 
     class LIBCITYGML_EXPORT Geometry : public AppearanceTarget
     {
@@ -43,6 +44,7 @@ namespace citygml {
 
         unsigned int getGeometriesCount() const;
         const Geometry& getGeometry( unsigned int i ) const;
+        Geometry& getGeometry( unsigned int i );
         void addGeometry(Geometry* geom);
 
         GeometryType getType() const;
@@ -58,7 +60,7 @@ namespace citygml {
          * @param tesselator the tesselator to be used for tesselation
          * @param mergePolygons determines wether all polygons are merged into one
          */
-        void finish(bool tesselate, Tesselator& tesselator);
+        void finish(bool tesselate, Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
         ~Geometry();
 

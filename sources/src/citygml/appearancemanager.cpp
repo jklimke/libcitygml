@@ -67,6 +67,10 @@ namespace citygml {
 
     void AppearanceManager::assignAppearancesToTargets()
     {
+        CITYGML_LOG_INFO(m_logger, "Start assignment of appearances to targets ("
+                         << m_materialTargetDefinitions.size() << " material target definition(s), "
+                         << m_texTargetDefinitions.size() << " texture target definition(s)).");
+
         for (std::shared_ptr<MaterialTargetDefinition>& targetDef : m_materialTargetDefinitions ) {
             assignTargetDefinition<MaterialTargetDefinition>(targetDef, m_appearanceTargetsMap, m_logger);
             addThemesFrom(targetDef->getAppearance());
@@ -76,6 +80,16 @@ namespace citygml {
             assignTargetDefinition<TextureTargetDefinition>(targetDef, m_appearanceTargetsMap, m_logger);
             addThemesFrom(targetDef->getAppearance());
         }
+
+        m_materialTargetDefinitions.clear();
+        m_texTargetDefinitions.clear();
+        m_appearanceTargetsMap.clear();
+        m_appearancesMap.clear();
+
+        CITYGML_LOG_INFO(m_logger, "Finished assignment of appearances to targets ("
+                         << m_materialTargetDefinitions.size() << " material target definition(s), "
+                         << m_texTargetDefinitions.size() << " texture target definition(s)).");
+
     }
 
     void AppearanceManager::addThemesFrom(std::shared_ptr<Appearance> surfaceData)

@@ -132,6 +132,10 @@ public:
         m_lastcharacters = toStdString(chars);
     }
 
+    virtual void startDocument() override {
+        CityGMLDocumentParser::startDocument();
+    }
+
     virtual void endDocument() override {
         CityGMLDocumentParser::endDocument();
     }

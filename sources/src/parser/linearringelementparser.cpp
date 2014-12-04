@@ -82,7 +82,7 @@ namespace citygml {
         if (node == NodeType::GML_PosListNode) {
             m_model->setVertices(parseVecList<TVec3d>(characters, m_logger, getDocumentLocation()));
             return true;
-        } else {
+        } else if (node == NodeType::GML_PosNode) {
             m_model->addVertex(parseValue<TVec3d>(characters, m_logger, getDocumentLocation()));
             return true;
         }

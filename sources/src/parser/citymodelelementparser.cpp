@@ -4,6 +4,7 @@
 #include "parser/attributes.h"
 #include "parser/documentlocation.h"
 #include "parser/cityobjectelementparser.h"
+#include "parser/appearanceelementparser.h"
 
 #include "citygml/citymodel.h"
 #include "citygml/citygmllogger.h"
@@ -63,6 +64,11 @@ namespace citygml {
                                         this->m_model->addRootObject(obj);
                                     }));
             return true;
+        } else if (node == NodeType::APP_AppearanceNode // Compatibility with CityGML 1.0 (in CityGML 3 CityObjects can only contain appearanceMember elements)
+                   || node == NodeType::APP_AppearanceMemberNode) {
+
+            setParserForNextElement(new AppearanceElementParser(m_documentParser, m_factory, m_logger));
+            return true;
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
         }
@@ -75,7 +81,9 @@ namespace citygml {
             throw std::runtime_error("CityModelElementParser::parseChildElementEndTag called before CityModelElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::CORE_CityObjectMemberNode) {
+        if (node == NodeType::CORE_CityObjectMemberNode
+         || node == NodeType::APP_AppearanceNode
+         || node == NodeType::APP_AppearanceMemberNode) {
             return true;
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementEndTag(node, characters);

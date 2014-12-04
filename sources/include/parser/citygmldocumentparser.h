@@ -48,9 +48,15 @@ namespace citygml {
         void endElement( const std::string& name, const std::string& characters );
 
         /**
+         * @brief must be called at the start of the document
+         */
+        void startDocument();
+
+        /**
          * @brief must be called at the end of the document
          */
         void endDocument();
+
 
         std::shared_ptr<CityGMLLogger> m_logger;
     private:

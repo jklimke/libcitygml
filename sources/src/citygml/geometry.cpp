@@ -3,6 +3,7 @@
 #include <citygml/polygon.h>
 #include <citygml/appearancemanager.h>
 #include <citygml/appearance.h>
+#include <citygml/citygmllogger.h>
 
 namespace citygml {
 
@@ -42,6 +43,11 @@ namespace citygml {
         return *m_childGeometries.at(i);
     }
 
+    Geometry& Geometry::getGeometry(unsigned int i)
+    {
+        return *m_childGeometries.at(i);
+    }
+
     void Geometry::addGeometry(Geometry* geom)
     {
         m_childGeometries.push_back(std::unique_ptr<Geometry>(geom));
@@ -72,23 +78,23 @@ namespace citygml {
         m_polygons.push_back( p );
     }
 
-    void Geometry::finish(bool tesselate, Tesselator& tesselator)
+    void Geometry::finish(bool tesselate, Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         // only need to finish geometry once
         if (m_finished) {
-            throw std::runtime_error("Called Geometry::finish on already finished Geometry.");
+            return;
         }
 
         m_finished = true;
 
         for (std::unique_ptr<Geometry>&  child : m_childGeometries) {
             child->addTargetDefinitionsOf(*this);
-            child->finish(tesselate, tesselator);
+            child->finish(tesselate, tesselator, optimize, logger);
         }
 
         for (std::shared_ptr<Polygon>& polygon : m_polygons) {
             polygon->addTargetDefinitionsOf(*this);
-            polygon->finish(tesselate, tesselator);
+            polygon->finish(tesselate, tesselator, optimize, logger);
         }
 
     }

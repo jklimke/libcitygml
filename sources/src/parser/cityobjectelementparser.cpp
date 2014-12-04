@@ -105,12 +105,21 @@ namespace citygml {
         HANDLE_ATTR(BLDG, MeasuredHeight),
         HANDLE_ATTR(BLDG, Address),
         HANDLE_ATTR(BLDG, RoofType),
-        HANDLE_ATTR(ADDRESS, Administrativearea),
-        HANDLE_ATTR(ADDRESS, Country ),
-        HANDLE_ATTR(ADDRESS, Code ),
-        HANDLE_ATTR(ADDRESS, Street ),
-        HANDLE_ATTR(ADDRESS, PostalCode ),
-        HANDLE_ATTR(ADDRESS, City )
+        HANDLE_ATTR(XAL, XalAddress),
+        HANDLE_ATTR(XAL, Administrativearea),
+        HANDLE_ATTR(XAL, Country),
+        HANDLE_ATTR(XAL, CountryName),
+        HANDLE_ATTR(XAL, Code),
+        HANDLE_ATTR(XAL, Street),
+        HANDLE_ATTR(XAL, PostalCode),
+        HANDLE_ATTR(XAL, City),
+        HANDLE_ATTR(XAL, LocalityName),
+        HANDLE_ATTR(XAL, Thoroughfare),
+        HANDLE_ATTR(XAL, ThoroughfareNumber),
+        HANDLE_ATTR(XAL, ThoroughfareName),
+        HANDLE_ATTR(XAL, Locality),
+        HANDLE_ATTR(XAL, AddressDetails),
+        HANDLE_ATTR(XAL, DependentLocalityName)
     };
 
     bool CityObjectElementParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
@@ -223,8 +232,9 @@ namespace citygml {
 
             return true;
         } else if (attributesSet.count(node.typeID()) > 0) {
-
-            m_model->setAttribute(node.name(), characters);
+            if (!characters.empty()) {
+                m_model->setAttribute(node.name(), characters);
+            }
             return true;
         } else if (    node == NodeType::BLDG_BoundedByNode
                     || node == NodeType::BLDG_OuterBuildingInstallationNode

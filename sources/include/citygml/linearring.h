@@ -10,6 +10,7 @@
 namespace citygml {
 
     class TextureTargetDefinition;
+    class CityGMLLogger;
 
     class LIBCITYGML_EXPORT LinearRing : public Object
     {
@@ -28,7 +29,7 @@ namespace citygml {
 
         TVec3d computeNormal() const;
 
-        void removeDuplicateVertices(const std::vector<TextureTargetDefinition*>& targets );
+        void removeDuplicateVertices(const std::vector<TextureTargetDefinition*>& targets , std::shared_ptr<CityGMLLogger> logger);
 
         void forgetVertices();
 

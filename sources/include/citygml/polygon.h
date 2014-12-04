@@ -82,7 +82,7 @@ namespace citygml {
 
         void addRing( LinearRing* );
 
-        void finish(bool doTesselate, Tesselator& tesselator );
+        void finish(bool doTesselate, Tesselator& tesselator , bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
         virtual ~Polygon();
 
@@ -91,8 +91,8 @@ namespace citygml {
 
         std::shared_ptr<const Texture> getTextureForTheme(const std::string& theme, bool front) const;
 
-        void computeIndices(const TVec3d& normal, bool tesselate, Tesselator& tesselator);
-        void mergeRings();
+        void computeIndices(const TVec3d& normal, bool tesselate, Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
+        void mergeRings(bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
         TVec3d computeNormal();
 

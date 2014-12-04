@@ -212,9 +212,12 @@ namespace citygml {
             CITYGML_LOG_WARN(m_logger, "No valid spatial reference system is given for ImplicitGeometry with id '" << obj.getId() << "'. Reference Point is not transformed.");
         }
 
-        for (unsigned int i = 0; i < obj.getGeometriesCount(); i++) {
-            transform(obj.getGeometry(i), transformation);
-        }
+        // Do not transform the geometry of an ImplicitGeometry object. Implicit Geometries share Geometry objects but each implicit geometry
+        // defines its own transformation on the vertices of the shared geometry. Hence those vertices are in a local coordinate system. Read
+        // the citygml documentation for more details.
+        //for (unsigned int i = 0; i < obj.getGeometriesCount(); i++) {
+        //  transform(obj.getGeometry(i), transformation);
+        //}
     }
 
     void GeoCoordinateTransformer::transform(Geometry& obj, GeoTransform& transformation) {
@@ -222,6 +225,7 @@ namespace citygml {
         if (!transformation.valid()) {
             CITYGML_LOG_WARN(m_logger, "No valid spatial reference system is given for Geometry with id '" << obj.getId() << "'. Child Polygons are not transformed"
                                        << "(unless they are shared with another geometry for which a spatial reference system is defined)");
+            return;
         }
 
         for (unsigned int i = 0; i < obj.getPolygonsCount(); i++) {
@@ -243,6 +247,10 @@ namespace citygml {
                                  << ". But the spatial reference system of Geometry object with id '" << obj.getId() << "' that also contains the polygon is different "
                                  << "(" << transformation.sourceURN() << "). Ignoring new source SRS.");
             }
+        }
+
+        for (unsigned int i = 0; i < obj.getGeometriesCount(); i++) {
+            transform(obj.getGeometry(i), transformation);
         }
     }
 }

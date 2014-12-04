@@ -27,6 +27,7 @@ namespace citygml {
 
     void PolygonManager::finish()
     {
+        CITYGML_LOG_INFO(m_logger, "Start processing polygon requests (" << m_polygonRequests.size() << ").");
         for (const PolygonRequest& request : m_polygonRequests) {
 
             auto it = m_sharedPolygons.find(request.polygonID);
@@ -42,6 +43,8 @@ namespace citygml {
 
         m_sharedPolygons.clear();
         m_polygonRequests.clear();
+
+        CITYGML_LOG_INFO(m_logger, "Finished processing polygon requests.");
     }
 
     PolygonManager::~PolygonManager()

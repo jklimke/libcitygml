@@ -1,6 +1,7 @@
 #include "citygml/citygmlfactory.h"
 #include "citygml/appearancemanager.h"
 #include "citygml/polygonmanager.h"
+#include "citygml/geometrymanager.h"
 #include "citygml/cityobject.h"
 #include "citygml/appearancetarget.h"
 #include "citygml/polygon.h"
@@ -20,6 +21,7 @@ namespace citygml {
     {
         m_appearanceManager = std::unique_ptr<AppearanceManager>(new AppearanceManager(logger));
         m_polygonManager = std::unique_ptr<PolygonManager>(new PolygonManager(logger));
+        m_geometryManager = std::unique_ptr<GeometryManager>(new GeometryManager(logger));
         m_logger = logger;
     }
 
@@ -64,25 +66,16 @@ namespace citygml {
 
     std::shared_ptr<Geometry> CityGMLFactory::shareGeometry(Geometry* geom)
     {
-        std::shared_ptr<Geometry> shared = getSharedGeometryWithID(geom->getId());
+        std::shared_ptr<Geometry> shared = std::shared_ptr<Geometry>(geom);
 
-        if (shared == nullptr) {
-            shared = std::shared_ptr<Geometry>(geom);
-        } else if (shared != nullptr && geom != shared.get()) {
-            throw std::runtime_error("CityGMLFactory::sharedGeometry called for two different object with the same gml:id... using first shared geometry, delete other geometry");
-        }
+        m_geometryManager->addSharedGeometry(shared);
 
-        m_sharedGeometriesMap[geom->getId()] = shared;
         return shared;
     }
 
-    std::shared_ptr<Geometry> CityGMLFactory::getSharedGeometryWithID(const std::string& id)
+    void CityGMLFactory::requestSharedGeometryWithID(ImplicitGeometry* implicitGeom, const std::string& id)
     {
-        auto it = m_sharedGeometriesMap.find(id);
-        if (it == m_sharedGeometriesMap.end()) {
-            return nullptr;
-        }
-        return it->second;
+        m_geometryManager->requestSharedGeometryForImplicitGeometry(implicitGeom, id);
     }
 
     std::shared_ptr<Texture> CityGMLFactory::createTexture(const std::string& id)
@@ -133,6 +126,7 @@ namespace citygml {
     void CityGMLFactory::closeFactory()
     {
         m_polygonManager->finish();
+        m_geometryManager->finish();
         m_appearanceManager->assignAppearancesToTargets();
     }
 

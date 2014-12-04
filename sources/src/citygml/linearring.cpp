@@ -2,6 +2,7 @@
 #include "citygml/texturecoordinates.h"
 #include "citygml/texture.h"
 #include "citygml/texturetargetdefinition.h"
+#include "citygml/citygmllogger.h"
 #include <float.h>
 #include <assert.h>
 
@@ -61,9 +62,11 @@ namespace citygml {
         return m_vertices;
     }
 
-    void LinearRing::removeDuplicateVertices(const std::vector<TextureTargetDefinition*>& targets )
+    void LinearRing::removeDuplicateVertices(const std::vector<TextureTargetDefinition*>& targets, std::shared_ptr<CityGMLLogger> logger )
     {
         std::vector<TextureCoordinates*> coordinatesList;
+
+        bool textureCoordinatesVerticesMismatch = false;
 
         for (auto& texTarget : targets) {
 
@@ -72,6 +75,13 @@ namespace citygml {
 
                 if (texCoords->targets(*this)) {
                     coordinatesList.push_back(texCoords);
+
+                    if (m_vertices.size() != texCoords->getCoords().size()) {
+                        CITYGML_LOG_WARN(logger, "Number of vertices in LinearRing with id '" << this->getId() << "' (" <<
+                                         m_vertices.size() << ") does not match with number of texture coordinates in coordinates list "
+                                         << " with id '" << texCoords->getId() << "' (" << texCoords->getCoords().size() << ")");
+                        textureCoordinatesVerticesMismatch = true;
+                    }
                 }
             }
 
@@ -82,7 +92,7 @@ namespace citygml {
         if ( len < 2 ) return;
 
         unsigned int i = 0;
-        while ( i < m_vertices.size() )
+        while ( i < m_vertices.size() && m_vertices.size() > 2 )
         {
             if ( ( m_vertices[i] - m_vertices[ ( i + 1 ) % m_vertices.size() ] ).sqrLength() <= DBL_EPSILON )
             {
@@ -94,6 +104,21 @@ namespace citygml {
                 i++;
             }
         }
+
+#ifndef NDEBUG
+        // Check integrity after duplicate removel... no need when the input was already corrupted
+        if (textureCoordinatesVerticesMismatch) {
+            return;
+        }
+
+        for (TextureCoordinates* coordinates : coordinatesList) {
+            if (coordinates->getCoords().size() != m_vertices.size()) {
+                CITYGML_LOG_ERROR(logger, "Broken implementation. Duplicate vertex removal in LinearRing with id '" << this->getId()
+                                  << "' caused a mismatch of texture coordinates in coordinates list  with id '" << coordinates->getId()
+                                  << "' (" << m_vertices.size() << " != " <<coordinates->getCoords().size() << ")");
+            }
+        }
+#endif
     }
 
     void LinearRing::forgetVertices()
