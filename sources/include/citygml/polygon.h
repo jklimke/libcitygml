@@ -9,7 +9,6 @@
 #include <citygml/vecs.hpp>
 #include <citygml/linearring.h>
 #include <citygml/geometry.h>
-#include <citygml/appearancemanager.h>
 
 class Tesselator;
 
