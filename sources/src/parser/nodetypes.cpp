@@ -209,6 +209,7 @@ namespace citygml {
     DEFINE_NODE( BLDG, InteriorFurniture)
     DEFINE_NODE( BLDG, RoomInstallation)
     DEFINE_NODE( BLDG, Opening)
+    DEFINE_NODE( BLDG, ConsistsOfBuildingPart )
 
     // BoundarySurfaceType
     DEFINE_NODE( BLDG, WallSurface )

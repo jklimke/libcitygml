@@ -60,6 +60,10 @@ namespace citygml {
 
         std::shared_ptr<CityGMLLogger> m_logger;
     private:
+        void skipUnknownOrUnexpectedElement(const std::string& name);
+        bool checkCurrentElementUnownOrUnexpected_start(const std::string& name);
+        bool checkCurrentElementUnownOrUnexpected_end(const std::string& name);
+
         std::stack<std::shared_ptr<ElementParser>> m_parserStack;
 
         /**
@@ -73,6 +77,10 @@ namespace citygml {
         std::unique_ptr<CityGMLFactory> m_factory;
         std::shared_ptr<CityModel> m_rootModel;
         ParserParams m_parserParams;
+
+        bool m_currentElementUnknownOrUnexpected;
+        int m_unknownElementOrUnexpectedElementDepth;
+        std::string m_unknownElementOrUnexpectedElementName;
     };
 
 }

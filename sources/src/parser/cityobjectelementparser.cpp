@@ -86,6 +86,7 @@ namespace citygml {
     bool CityObjectElementParser::parseElementEndTag(const NodeType::XMLNode&, const std::string&)
     {
         m_callback(m_model);
+        m_model = nullptr;
         return true;
     }
 
@@ -146,7 +147,8 @@ namespace citygml {
                    || node == NodeType::BLDG_InteriorFurnitureNode
                    || node == NodeType::BLDG_RoomInstallationNode
                    || node == NodeType::BLDG_InteriorRoomNode
-                   || node == NodeType::BLDG_OpeningNode) {
+                   || node == NodeType::BLDG_OpeningNode
+                   || node == NodeType::BLDG_ConsistsOfBuildingPartNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -288,7 +290,8 @@ namespace citygml {
                     || node == NodeType::BLDG_ExternalReferenceNode
                     || node == NodeType::BLDG_InformationSystemNode
                     || node == NodeType::BLDG_ExternalObjectNode
-                    || node == NodeType::BLDG_UriNode) {
+                    || node == NodeType::BLDG_UriNode
+                    || node == NodeType::BLDG_ConsistsOfBuildingPartNode) {
 
             return true;
         }

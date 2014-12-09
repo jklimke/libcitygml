@@ -18,6 +18,9 @@ namespace citygml {
         m_factory = std::unique_ptr<CityGMLFactory>(new CityGMLFactory(logger));
         m_parserParams = params;
         m_activeParser = nullptr;
+        m_currentElementUnknownOrUnexpected = false;
+        m_unknownElementOrUnexpectedElementDepth = 0;
+        m_unknownElementOrUnexpectedElementName = "";
     }
 
     std::shared_ptr<const CityModel> CityGMLDocumentParser::getModel()
@@ -40,11 +43,16 @@ namespace citygml {
 
     void CityGMLDocumentParser::startElement(const std::string& name, Attributes& attributes)
     {
+        if (checkCurrentElementUnownOrUnexpected_start(name)) {
+            CITYGML_LOG_DEBUG(m_logger, "Skipping element <" << name << "> at " << getDocumentLocation());
+            return;
+        }
 
         const NodeType::XMLNode& node = NodeType::getXMLNodeFor(name);
 
         if (!node.valid()) {
-            CITYGML_LOG_WARN(m_logger, "Found start tag of unknown node <" << name << "> at " << getDocumentLocation() << ". Skip to child or next element.");
+            CITYGML_LOG_WARN(m_logger, "Found start tag of unknown node <" << name << "> at " << getDocumentLocation() << ". Skip to next element.");
+            skipUnknownOrUnexpectedElement(name);
             return;
         }
 
@@ -57,12 +65,18 @@ namespace citygml {
         m_activeParser = m_parserStack.top();
         CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::startElement for <" << node << "> at " << getDocumentLocation());
         if (!m_activeParser->startElement(node, attributes)) {
-            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected start tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
+            CITYGML_LOG_WARN(m_logger, "Skipping element with unexpected start tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
+            skipUnknownOrUnexpectedElement(name);
         }
     }
 
     void CityGMLDocumentParser::endElement(const std::string& name, const std::string& characters)
     {
+        if (checkCurrentElementUnownOrUnexpected_end(name)) {
+            CITYGML_LOG_DEBUG(m_logger, "Skipped element <" << name << "> at " << getDocumentLocation());
+            return;
+        }
+
         const NodeType::XMLNode& node = NodeType::getXMLNodeFor(name);
 
         if (!node.valid()) {
@@ -78,7 +92,9 @@ namespace citygml {
         m_activeParser = m_parserStack.top();
         CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::endElement for <" << node << "> at " << getDocumentLocation());
         if (!m_activeParser->endElement(node, characters)) {
-            CITYGML_LOG_WARN(m_logger, "Ignoring unexpected end tag <" << node << "> at " << getDocumentLocation() << " (active parser " << m_activeParser->elementParserName() << ")");
+            CITYGML_LOG_ERROR(m_logger, "Active parser " << m_activeParser->elementParserName() << " reports end tag <" << node << "> at " << getDocumentLocation() << " as "
+                              << "unknown, but it seems as if the corresponding start tag was not reported as unknown. Please check the parser implementation."
+                              << "Ignoring end tag and continue parsing.");
         }
 
     }
@@ -121,6 +137,44 @@ namespace citygml {
         } else {
             CITYGML_LOG_WARN(m_logger, "Reached end of document but no CityModel was parsed.");
         }
+    }
+
+    void CityGMLDocumentParser::skipUnknownOrUnexpectedElement(const std::string& name)
+    {
+        m_unknownElementOrUnexpectedElementName = name;
+        m_unknownElementOrUnexpectedElementDepth = 0;
+        m_currentElementUnknownOrUnexpected = true;
+    }
+
+    bool CityGMLDocumentParser::checkCurrentElementUnownOrUnexpected_start(const std::string& name)
+    {
+        if (!m_currentElementUnknownOrUnexpected) {
+            return false;
+        }
+
+        if (m_unknownElementOrUnexpectedElementName == name) {
+            m_unknownElementOrUnexpectedElementDepth++;
+        }
+
+        return true;
+    }
+
+    bool CityGMLDocumentParser::checkCurrentElementUnownOrUnexpected_end(const std::string& name)
+    {
+        if (!m_currentElementUnknownOrUnexpected) {
+            return false;
+        }
+
+        if (m_unknownElementOrUnexpectedElementName == name) {
+            if (m_unknownElementOrUnexpectedElementDepth == 0) {
+                // End tag of initial unknown element reached...
+                m_unknownElementOrUnexpectedElementName = "";
+                m_currentElementUnknownOrUnexpected = false;
+            }
+            m_unknownElementOrUnexpectedElementDepth--;
+        }
+
+        return true;
     }
 
     CityGMLDocumentParser::~CityGMLDocumentParser()
