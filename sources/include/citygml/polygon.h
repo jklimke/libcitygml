@@ -91,15 +91,22 @@ namespace citygml {
 
         std::shared_ptr<const Texture> getTextureForTheme(const std::string& theme, bool front) const;
 
-        void computeIndices(const TVec3d& normal, bool tesselate, Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
-        void mergeRings(bool optimize, std::shared_ptr<CityGMLLogger> logger);
+        /**
+         * @brief fill the vertex array and creates a corresponding index array
+         * @param tesselate if true the tesselator will be used to tesselate the linear rings
+         * @param tesselator the Tesselator object
+         */
+        void computeIndices(bool tesselate, Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
+        void createSimpleIndices(std::shared_ptr<CityGMLLogger> logger);
+        void createIndicesWithTesselation(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
+        void removeDuplicateVerticesInRings(std::shared_ptr<CityGMLLogger> logger);
 
         TVec3d computeNormal();
 
         std::vector<TVec3d> m_vertices;
         std::vector<unsigned int> m_indices;
 
-        std::vector<std::unique_ptr<LinearRing>> m_exteriorRings;
+        std::unique_ptr<LinearRing> m_exteriorRing;
         std::vector<std::unique_ptr<LinearRing>> m_interiorRings;
 
         bool m_negNormal;

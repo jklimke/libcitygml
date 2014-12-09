@@ -83,9 +83,9 @@ namespace citygml {
 
         std::vector<std::string> orderedRingIDs;
 
-        for ( const auto& ring : m_exteriorRings )
+        if ( m_exteriorRing != nullptr )
         {
-            orderedRingIDs.push_back(ring->getId());
+            orderedRingIDs.push_back(m_exteriorRing->getId());
         }
 
         for ( const auto& ring : m_interiorRings )
@@ -138,9 +138,9 @@ namespace citygml {
 
     TVec3d Polygon::computeNormal()
     {
-        if ( m_exteriorRings.empty() ) return TVec3d();
+        if ( m_exteriorRing == nullptr ) return TVec3d();
 
-        TVec3d normal = m_exteriorRings.front()->computeNormal();
+        TVec3d normal = m_exteriorRing->computeNormal();
 
         return m_negNormal ? -normal : normal;
     }
@@ -155,62 +155,95 @@ namespace citygml {
         m_negNormal = negNormal;
     }
 
+    void Polygon::removeDuplicateVerticesInRings(std::shared_ptr<CityGMLLogger> logger) {
+        std::vector<TextureTargetDefinition*> texTargetDefinitions = this->getTextureTargetDefinitions();
 
-    void Polygon::computeIndices(const TVec3d& normal, bool tesselate, Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger )
-    {
-        m_indices.clear();
-
-        if ( m_vertices.size() < 3 ) return;
-
-
-        if (!tesselate) {
-            // Create triangles' indices
-            int indicesSize = 3 * ( m_vertices.size() - 2 );
-            if ( indicesSize < 3 ) return;
-            m_indices.resize( indicesSize );
-            for ( int i = 0, p = 0; p < indicesSize - 2; i++, p += 3 )
-                for ( unsigned int j = 0; j < 3; j++ )
-                    m_indices[ p + j ] = i + j;
-            return;
+        // mergeRings should be done before merging polygons... hence m_exteriorRings should only contain one object
+        if ( m_exteriorRing != nullptr )
+        {
+            m_exteriorRing->removeDuplicateVertices( texTargetDefinitions, logger );
         }
 
-        size_t sizeBefore = m_vertices.size();
-        tesselator.init(m_vertices.size(), normal);
+        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
+        {
+            ring->removeDuplicateVertices( texTargetDefinitions, logger );
+        }
+    }
+
+    void Polygon::createSimpleIndices(std::shared_ptr<CityGMLLogger> logger)
+    {
+        if ( m_exteriorRing != nullptr )
+        {
+            m_vertices.insert(m_vertices.end(), m_exteriorRing->getVertices().begin(), m_exteriorRing->getVertices().end());
+            m_exteriorRing->forgetVertices();
+        }
+
+        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
+        {
+            m_vertices.insert(m_vertices.end(), ring->getVertices().begin(), ring->getVertices().end());
+            ring->forgetVertices();
+        }
+
+        // Create triangles' indices
+        int indicesSize = 3 * ( m_vertices.size() - 2 );
+        if ( indicesSize < 3 ) return;
+        m_indices.resize( indicesSize );
+        for ( int i = 0, p = 0; p < indicesSize - 2; i++, p += 3 )
+            for ( unsigned int j = 0; j < 3; j++ )
+                m_indices[ p + j ] = i + j;
+    }
+
+    void Polygon::createIndicesWithTesselation(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger)
+    {
+        TVec3d normal = computeNormal();
+
+        size_t numVertices = 0;
+        if (m_exteriorRing != nullptr) {
+            numVertices += m_exteriorRing->getVertices().size();
+        }
+
+        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
+        {
+            numVertices += ring->getVertices().size();
+        }
+
+        tesselator.init(numVertices, normal);
+
+        if (m_exteriorRing != nullptr) {
+            tesselator.addContour( m_exteriorRing->getVertices() );
+            m_exteriorRing->forgetVertices();
+        }
+
+        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
+        {
+            tesselator.addContour( ring->getVertices() );
+            ring->forgetVertices();
+        }
 
         tesselator.addContour( m_vertices );
         tesselator.compute();
         m_vertices = tesselator.getVertices();
         m_indices = tesselator.getIndices();
 
-        if (sizeBefore != m_vertices.size()) {
+        if (numVertices != m_vertices.size()) {
             CITYGML_LOG_ERROR(logger, "Tesselation of Polygon with id '" << this->getId() << "' has changed the number of Polygons, "
                                << "causing a mismatch of texture coordinates and vertices.");
         }
-
     }
 
-    void Polygon::mergeRings(bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    void Polygon::computeIndices(bool tesselate, Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger )
     {
+        m_indices.clear();
+        m_vertices.clear();
 
-        std::vector<TextureTargetDefinition*> texTargetDefinitions = this->getTextureTargetDefinitions();
-
-        // mergeRings should be done before merging polygons... hence m_exteriorRings should only contain one object
-        for ( std::unique_ptr<LinearRing>& ring : m_exteriorRings )
-        {
-            if (optimize) {
-                ring->removeDuplicateVertices( texTargetDefinitions, logger );
-            }
-            m_vertices.insert(m_vertices.end(), ring->getVertices().begin(), ring->getVertices().end());
-            ring->forgetVertices();
+        if (!tesselate) {
+            createSimpleIndices(logger);
+        } else {
+            createIndicesWithTesselation(tesselator, logger);
         }
 
-        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
-        {
-            if (optimize) {
-                ring->removeDuplicateVertices( texTargetDefinitions, logger );
-            }
-            m_vertices.insert(m_vertices.end(), ring->getVertices().begin(), ring->getVertices().end());
-            ring->forgetVertices();
+        if ( m_vertices.size() < 3 ) {
+            CITYGML_LOG_WARN(logger, "Polygon with id " << this->getId() << " has less than 3 vertices.");
         }
     }
 
@@ -222,9 +255,12 @@ namespace citygml {
         }
 
         m_finished = true;
-        mergeRings(optimize, logger);
-        TVec3d normal = computeNormal();
-        computeIndices(normal, doTesselate, tesselator, logger);
+
+        if (optimize) {
+            removeDuplicateVerticesInRings(logger);
+        }
+
+        computeIndices(doTesselate, tesselator, logger);
 
     }
 
@@ -234,15 +270,15 @@ namespace citygml {
             throw std::runtime_error("Can't add LinearRing to finished Polygon.");
         }
 
-        if (ring->isExterior() && !m_exteriorRings.empty()) {
+        if (ring->isExterior() && m_exteriorRing != nullptr) {
             CITYGML_LOG_WARN(m_logger, "Duplicate definition of exterior LinearRing for Polygon with id '" << this->getId() << "'."
-                             << " Using exterior LinearRing with id '" << m_exteriorRings.front()->getId() << "' and ignore LinearRing with id '" << ring->getId() << "'");
+                             << " Keeping exterior LinearRing with id '" << m_exteriorRing->getId() << "' and ignore LinearRing with id '" << ring->getId() << "'");
             delete ring;
             return;
         }
 
         if ( ring->isExterior() ) {
-            m_exteriorRings.push_back(std::unique_ptr<LinearRing>(ring));
+            m_exteriorRing = std::unique_ptr<LinearRing>(ring);
         }
         else {
             m_interiorRings.push_back( std::unique_ptr<LinearRing>(ring) );

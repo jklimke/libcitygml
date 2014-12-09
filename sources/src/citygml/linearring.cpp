@@ -92,7 +92,7 @@ namespace citygml {
         if ( len < 2 ) return;
 
         unsigned int i = 0;
-        while ( i < m_vertices.size() && m_vertices.size() > 2 )
+        while ( i < m_vertices.size() && m_vertices.size() >= 2 )
         {
             if ( ( m_vertices[i] - m_vertices[ ( i + 1 ) % m_vertices.size() ] ).sqrLength() <= DBL_EPSILON )
             {
