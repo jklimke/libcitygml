@@ -13,6 +13,7 @@
 #include "citygml/citygmllogger.h"
 #include "citygml/polygon.h"
 
+#include <stdexcept>
 
 namespace citygml {
 

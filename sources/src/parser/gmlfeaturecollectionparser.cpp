@@ -10,6 +10,9 @@
 #include "citygml/vecs.hpp"
 #include "citygml/featureobject.h"
 
+
+#include <stdexcept>
+
 namespace citygml {
 
     GMLFeatureCollectionElementParser::GMLFeatureCollectionElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger)

@@ -11,6 +11,7 @@
 #include "citygml/citygmlfactory.h"
 #include "citygml/cityobject.h"
 
+#include <stdexcept>
 
 namespace citygml {
 

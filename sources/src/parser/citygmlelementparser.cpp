@@ -7,6 +7,8 @@
 #include "parser/documentlocation.h"
 #include "parser/nodetypes.h"
 
+#include <stdexcept>
+
 namespace citygml {
 
     CityGMLElementParser::CityGMLElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger)

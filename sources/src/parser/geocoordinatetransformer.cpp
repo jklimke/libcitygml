@@ -12,6 +12,8 @@
 #ifdef USE_GDAL
 #include "ogrsf_frmts.h"
 
+#include <stdexcept>
+
 class GeoTransform
 {
 public:

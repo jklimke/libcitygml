@@ -6,6 +6,7 @@
 #include "citygml/citygmllogger.h"
 
 #include <sstream>
+#include <stdexcept>
 
 namespace citygml {
 

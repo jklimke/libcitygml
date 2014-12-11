@@ -18,6 +18,7 @@
 #include "citygml/citygmlfactory.h"
 #include "citygml/citygmllogger.h"
 
+#include <stdexcept>
 
 namespace citygml {
 

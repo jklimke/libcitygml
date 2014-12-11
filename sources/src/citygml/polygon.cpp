@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #include <assert.h>
+#include <stdexcept>
 
 namespace citygml {
 
