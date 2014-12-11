@@ -14,6 +14,7 @@
 #include "citygml/texturetargetdefinition.h"
 #include "citygml/texturecoordinates.h"
 
+#include <stdexcept>
 
 namespace citygml {
 
