@@ -78,16 +78,16 @@ if(UNIX)
 endif(UNIX)
 
 IF(MSVC_IDE)
-	# From CMake 2.8.2, new way to manage output generation dirs !
+  # From CMake 2.8.2, new way to manage output generation dirs !
     # SET_TARGET_PROPERTIES(${LIB_NAME} PROPERTIES PREFIX "../")
     SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/bin)
     SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/bin)
-    
+
     SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/lib)
     SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/lib)
-    
+
     SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/bin)
-    SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/bin) 
+    SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/bin)
 ENDIF(MSVC_IDE)
 
 SET(CMAKE_DEBUG_POSTFIX  "d")
@@ -116,33 +116,47 @@ SET(LIBRARY_OUTPUT_PATH ${OUTPUT_LIBDIR})
 
 OPTION(LIBCITYGML_STATIC_CRT "Set to ON to link libcitygml with the multithread CRT static library (instead of DLL)." ON)
 
-# xml library
-OPTION(LIBCITYGML_USE_XERCESC "Set to ON to build libcitygml with Xerces-c library." ON)
-OPTION(LIBCITYGML_USE_LIBXML2 "Set to ON to build libcitygml with LibXml2 library." OFF)
-
 # gdal library
-OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library and support coordinates reprojections." ON)
+OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library so that it supports coordinates transformations." ON)
 
-IF ( LIBCITYGML_USE_XERCESC )
-	IF( LIBCITYGML_USE_LIBXML2 )
-		MESSAGE("Error: You cannot build the library with Xerces-c AND LibXml2! Xerces library will be used by default.")
-		UNSET( LIBCITYGML_USE_LIBXML2 )
-	ENDIF( LIBCITYGML_USE_LIBXML2 )
-ENDIF( LIBCITYGML_USE_XERCESC )
+
+FIND_PACKAGE( Xerces REQUIRED )
+
+IF( LIBCITYGML_USE_GDAL )
+  FIND_PACKAGE( GDAL REQUIRED )
+  ADD_DEFINITIONS( -DUSE_GDAL )
+ELSE( LIBCITYGML_USE_GDAL )
+  SET( GDAL_INCLUDE_DIR "" )
+  SET( GDAL_LIBRARY "" )
+ENDIF( LIBCITYGML_USE_GDAL )
+
+FIND_PACKAGE( OpenGL REQUIRED )
+#FIND_PACKAGE( GLU REQUIRED ) # deprecated, GLU is now found with FindOpenGL
+
+IF( COMMAND cmake_policy )
+  cmake_policy( SET CMP0003 NEW )
+ENDIF( COMMAND cmake_policy )
+
+IF( MSVC AND LIBCITYGML_STATIC_CRT )
+  #We statically link to reduce dependancies
+  FOREACH( flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO )
+    IF( ${flag_var} MATCHES "/MD" )
+      string( REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}" )
+    ENDIF( ${flag_var} MATCHES "/MD" )
+    IF( ${flag_var} MATCHES "/MDd" )
+      string( REGEX REPLACE "/MDd" "/MTd" ${flag_var} "${${flag_var}}" )
+    ENDIF( ${flag_var} MATCHES "/MDd" )
+  ENDFOREACH( flag_var )
+ENDIF( MSVC AND LIBCITYGML_STATIC_CRT )
 
 # core
-ADD_SUBDIRECTORY( src )
+ADD_SUBDIRECTORY( sources )
 
 # test
 OPTION(LIBCITYGML_TESTS "Set to ON to build libcitygml tests programs." ON)
 IF   (LIBCITYGML_TESTS)
-	ADD_SUBDIRECTORY( test )
+  ADD_SUBDIRECTORY( test )
 ENDIF(LIBCITYGML_TESTS)
-
-OPTION(LIBCITYGML_VRML "Set to ON to build citygml2vrml program." ON)
-IF   (LIBCITYGML_VRML)
-	ADD_SUBDIRECTORY( test/citygml2vrml )
-ENDIF(LIBCITYGML_VRML)
 
 
 #-----------------------------------------------------------------------------
@@ -154,3 +168,57 @@ CONFIGURE_FILE(
   IMMEDIATE @ONLY)
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+
+# Create debian package
+option(BUILD_DEBIAN_PACKAGE  "Creates a debian package" ON)
+if(BUILD_DEBIAN_PACKAGE)
+    # set project description for packaging
+    set(META_PROJECT_NAME        "libcitygml")
+    set(META_PROJECT_SUMMARY     "Open source C++ library for parsing CityGML files")
+    set(META_PROJECT_DESCRIPTION "libcitygml is a small and easy to use open source C++ library for parsing
+                                  CityGML files in such a way that data can be easily exploited by 3D
+                                  rendering applications (geometry data are tesselated and optimized for
+                                  rendering during parsing). For instance, it can be used to develop readers
+                                  of CityGML files in many 3D based applications (OpenGL, OpenSceneGraph, ...)
+                                  Most metadata are not lost, they are available through a per-node hashmap.
+
+                                  CityGML (City Geography Markup Language) is an XML-based schema for the
+                                  modelling and exchange of georeferenced 3D city and landscape models that
+                                  is quickly being adopted on an international level.")
+    set(META_VERSION_MAJOR       "1")
+    set(META_VERSION_MINOR       "0")
+    set(META_VERSION_PATCH       "0")
+    set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
+    set(META_AUTHOR_ORGANIZATION "3D Content Logistics")
+    set(META_AUTHOR_DOMAIN       "https://github.com/jklimke/libcitygml.git")
+    set(META_AUTHOR_MAINTAINER   "Marcel Pursche <marcel.pursche@3dcontentlogistics.com>")
+
+    # Package information
+    string(TOLOWER ${META_PROJECT_NAME} package_name)          # Package name
+    set(CPACK_PACKAGE_NAME                  "${META_PROJECT_NAME}")
+    set(CPACK_PACKAGE_VENDOR                "${META_AUTHOR_ORGANIZATION}")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "${META_PROJECT_SUMMARY}")
+    set(CPACK_PACKAGE_DESCRIPTION           "${META_PROJECT_DESCRIPTION}")
+    set(CPACK_PACKAGE_VERSION               "${META_VERSION}")
+    set(CPACK_PACKAGE_VERSION_MAJOR         "${META_VERSION_MAJOR}")
+    set(CPACK_PACKAGE_VERSION_MINOR         "${META_VERSION_MINOR}")
+    set(CPACK_PACKAGE_VERSION_PATCH         "${META_VERSION_PATCH}")
+    set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/LICENSE")
+    set(CPACK_PACKAGE_RELOCATABLE           OFF)
+
+    # Debian package information
+    set(CPACK_DEBIAN_PACKAGE_NAME           "${package_name}")
+    set(CPACK_DEBIAN_PACKAGE_VERSION        "${CPACK_PACKAGE_VERSION}")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER     "${META_AUTHOR_MAINTAINER}")
+    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION    "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
+    set(CPACK_DEBIAN_PACKAGE_SECTION        "Development")
+    set(CPACK_DEBIAN_PACKAGE_PRIORITY       "optional")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libgdal1h (>= 1.10.1), libxerces-c3.1 (>= 3.1.1-5)")
+    set(CPACK_DEBIAN_PACKAGE_CONFLICTS      "libcitygml0, libcitygml0-dev")
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE       "${META_AUTHOR_DOMAIN}")
+    set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA  "")
+        
+    set(CPACK_GENERATOR "DEB")
+
+    include(CPack)
+endif()
