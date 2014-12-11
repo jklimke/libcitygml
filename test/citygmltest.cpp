@@ -16,117 +16,118 @@
 
 #include <iostream>
 #include <fstream>
-#include <time.h> 
+#include <time.h>
 #include <algorithm>
-#include "citygml.h"
+#include <citygml/citygml.h>
+#include <citygml/citymodel.h>
+#include <citygml/cityobject.h>
 
 void analyzeObject( const citygml::CityObject*, unsigned int );
 
-void usage() 
+void usage()
 {
-	std::cout << "Usage: citygmltest [-options...] <filename>" << std::endl;
-	std::cout << " Options:" << std::endl;
-	std::cout << "  -log            Print some informations during parsing" << std::endl;
-	std::cout << "  -filter <mask>  CityGML objects to parse (default:All)" << std::endl
-		<< "                  The mask is composed of:" << std::endl
-		<< "                   GenericCityObject, Building, Room," << std::endl
-		<< "                   BuildingInstallation, BuildingFurniture, Door, Window, " << std::endl
-		<< "                   CityFurniture, Track, Road, Railway, Square, PlantCover," << std::endl
-		<< "                   SolitaryVegetationObject, WaterBody, TINRelief, LandUse," << std::endl
-		<< "                   Tunnel, Bridge, BridgeConstructionElement," << std::endl
-		<< "                   BridgeInstallation, BridgePart, All" << std::endl
-		<< "                  and seperators |,&,~." << std::endl
-		<< "                  Examples:" << std::endl
-		<< "                  \"All&~Track&~Room\" to parse everything but tracks & rooms" << std::endl
-		<< "                  \"Road&Railway\" to parse only roads & railways" << std::endl;
-	std::cout << "  -destSRS <srs> Destination SRS (default: no transform)" << std::endl;
-	exit( EXIT_FAILURE );
+    std::cout << "Usage: citygmltest [-options...] <filename>" << std::endl;
+    std::cout << " Options:" << std::endl;
+    std::cout << "  -log            Print some informations during parsing" << std::endl;
+    std::cout << "  -filter <mask>  CityGML objects to parse (default:All)" << std::endl
+        << "                  The mask is composed of:" << std::endl
+        << "                   GenericCityObject, Building, Room," << std::endl
+        << "                   BuildingInstallation, BuildingFurniture, Door, Window, " << std::endl
+        << "                   CityFurniture, Track, Road, Railway, Square, PlantCover," << std::endl
+        << "                   SolitaryVegetationObject, WaterBody, TINRelief, LandUse," << std::endl
+        << "                   Tunnel, Bridge, BridgeConstructionElement," << std::endl
+        << "                   BridgeInstallation, BridgePart, All" << std::endl
+        << "                  and seperators |,&,~." << std::endl
+        << "                  Examples:" << std::endl
+        << "                  \"All&~Track&~Room\" to parse everything but tracks & rooms" << std::endl
+        << "                  \"Road&Railway\" to parse only roads & railways" << std::endl;
+    std::cout << "  -destSRS <srs> Destination SRS (default: no transform)" << std::endl;
+    exit( EXIT_FAILURE );
 }
 
 int main( int argc, char **argv )
 {
-	if ( argc < 2 ) usage();
+    if ( argc < 2 ) usage();
 
-	int fargc = 1;
+    int fargc = 1;
 
-	bool log = false;
+    bool log = false;
 
-	citygml::ParserParams params;
+    citygml::ParserParams params;
 
-	for ( int i = 1; i < argc; i++ ) 
-	{
-		std::string param = std::string( argv[i] );
-		std::transform( param.begin(), param.end(), param.begin(), tolower );
-		if ( param == "-log" ) { log = true; fargc = i+1; }
-		if ( param == "-filter" ) { if ( i == argc - 1 ) usage(); params.objectsMask = argv[i+1]; i++; fargc = i+1; }
-		if ( param == "-destsrs" ) { if ( i == argc - 1 ) usage(); params.destSRS = argv[i+1]; i++; fargc = i+1; }
-	}
+    for ( int i = 1; i < argc; i++ )
+    {
+        std::string param = std::string( argv[i] );
+        std::transform( param.begin(), param.end(), param.begin(), tolower );
+        if ( param == "-log" ) { log = true; fargc = i+1; }
+        //if ( param == "-filter" ) { if ( i == argc - 1 ) usage(); params.objectsMask = argv[i+1]; i++; fargc = i+1; }
+        if ( param == "-destsrs" ) { if ( i == argc - 1 ) usage(); params.destSRS = argv[i+1]; i++; fargc = i+1; }
+    }
 
-	if ( argc - fargc < 1 ) usage();
+    if ( argc - fargc < 1 ) usage();
 
-	std::cout << "Parsing CityGML file " << argv[fargc] << " using libcitygml v." << LIBCITYGML_VERSIONSTR << "..." << std::endl;
+    std::cout << "Parsing CityGML file " << argv[fargc] << " using libcitygml v." << LIBCITYGML_VERSIONSTR << "..." << std::endl;
 
-	time_t start;
-	time( &start );
+    time_t start;
+    time( &start );
 
 #if 0
-	std::ifstream file;
-	file.open( argv[fargc], std::ifstream::in );
-	citygml::CityModel *city = citygml::load( file, params );
+    std::ifstream file;
+    file.open( argv[fargc], std::ifstream::in );
+     std::shared_ptr<const citygml::CityModel> city = citygml::load( file, params );
 #else
-	citygml::CityModel *city = citygml::load( argv[fargc], params );
+    std::shared_ptr<const citygml::CityModel> city = citygml::load( argv[fargc], params );
 #endif
 
-	time_t end;
-	time( &end );
+    time_t end;
+    time( &end );
 
-	if ( !city ) return EXIT_FAILURE;
+    if ( !city ) return EXIT_FAILURE;
 
-	std::cout << "Done in " << difftime( end, start ) << " seconds." << std::endl << city->size() << " city objects read." << std::endl;
+    std::cout << "Done in " << difftime( end, start ) << " seconds." << std::endl;
 
-	std::cout << "Analyzing the city objects..." << std::endl;
+    /*
+    std::cout << "Analyzing the city objects..." << std::endl;
 
+    citygml::CityObjectsMap::const_iterator it = cityObjectsMap.begin();
 
-	const citygml::CityObjectsMap& cityObjectsMap = city->getCityObjectsMap();
+    for ( ; it != cityObjectsMap.end(); ++it )
+    {
+        const citygml::CityObjects& v = it->second;
 
-	citygml::CityObjectsMap::const_iterator it = cityObjectsMap.begin();
+        std::cout << ( log ? " Analyzing " : " Found " ) << v.size() << " " << citygml::getCityObjectsClassName( it->first ) << ( ( v.size() > 1 ) ? "s" : "" ) << "..." << std::endl;
 
-	for ( ; it != cityObjectsMap.end(); ++it )
-	{
-		const citygml::CityObjects& v = it->second;
+        if ( log )
+        {
+            for ( unsigned int i = 0; i < v.size(); i++ )
+            {
+                std::cout << "  + found object " << v[i]->getId();
+                if ( v[i]->getChildCount() > 0 ) std::cout << " with " << v[i]->getChildCount() << " children";
+                std::cout << " with " << v[i]->size() << " geometr" << ( ( v[i]->size() > 1 ) ? "ies" : "y" );
+                std::cout << std::endl;
+            }
+        }
+    }
+    */
 
-		std::cout << ( log ? " Analyzing " : " Found " ) << v.size() << " " << citygml::getCityObjectsClassName( it->first ) << ( ( v.size() > 1 ) ? "s" : "" ) << "..." << std::endl;
+    if ( log )
+    {
+        std::cout << std::endl << "Objects hierarchy:" << std::endl;
+        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
 
-		if ( log ) 
-		{
-			for ( unsigned int i = 0; i < v.size(); i++ )
-			{
-				std::cout << "  + found object " << v[i]->getId();
-				if ( v[i]->getChildCount() > 0 ) std::cout << " with " << v[i]->getChildCount() << " children";
-				std::cout << " with " << v[i]->size() << " geometr" << ( ( v[i]->size() > 1 ) ? "ies" : "y" );
-				std::cout << std::endl;
-			}
-		}
-	}
+//        for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( roots[ i ], 2 );
+    }
 
-	if ( log ) 
-	{
-		std::cout << std::endl << "Objects hierarchy:" << std::endl;
-		const citygml::CityObjects& roots = city->getCityObjectsRoots();
+    std::cout << "Done." << std::endl;
 
-		for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( roots[ i ], 2 );
-	}
-
-	std::cout << "Done." << std::endl;
-
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
 void analyzeObject( const citygml::CityObject* object, unsigned int indent )
 {
-	for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
-		std::cout << "Object " << citygml::getCityObjectsClassName( object->getType() ) << ": " << object->getId() << std::endl;
+//    for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
+//        std::cout << "Object " << citygml::getCityObjectsClassName( object->getType() ) << ": " << object->getId() << std::endl;
 
-	for ( unsigned int i = 0; i < object->getChildCount(); i++ )
-		analyzeObject( object->getChild(i), indent+1 );
+//    for ( unsigned int i = 0; i < object->getChildCount(); i++ )
+//        analyzeObject( object->getChild(i), indent+1 );
 }
