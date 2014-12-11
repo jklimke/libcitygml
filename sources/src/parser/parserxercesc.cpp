@@ -324,8 +324,17 @@ namespace citygml
         }
 
         std::shared_ptr<XMLCh> fileName = toXercesString(fname);
-        xercesc::LocalFileInputSource fileSource(fileName.get());
-        return parse(fileSource, params, logger, fname);
+
+        try {
+
+            xercesc::LocalFileInputSource fileSource(fileName.get());
+            return parse(fileSource, params, logger, fname);
+
+        } catch (xercesc::XMLException& e) {
+            CITYGML_LOG_ERROR(logger, "Error parsing file " << fname << ": " << e.getMessage());
+            return nullptr;
+        }
+
     }
 }
 

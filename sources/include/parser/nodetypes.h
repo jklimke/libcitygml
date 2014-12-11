@@ -58,6 +58,15 @@ namespace citygml {
         NODETYPE( GEN, UriAttribute )
         NODETYPE( GEN, Value )
 
+        NODETYPE( GEN, Lod1Geometry )
+        NODETYPE( GEN, Lod2Geometry )
+        NODETYPE( GEN, Lod3Geometry )
+        NODETYPE( GEN, Lod4Geometry )
+        NODETYPE( GEN, Lod1TerrainIntersection )
+        NODETYPE( GEN, Lod2TerrainIntersection )
+        NODETYPE( GEN, Lod3TerrainIntersection )
+        NODETYPE( GEN, Lod4TerrainIntersection )
+
         // TEX
         // NODETYPE( GML, TexturedSurface ) // Deprecated
 
@@ -152,6 +161,7 @@ namespace citygml {
         NODETYPE( BLDG, Lod2TerrainIntersection )
         NODETYPE( BLDG, Lod3TerrainIntersection )
         NODETYPE( BLDG, Lod4TerrainIntersection )
+        NODETYPE( BLDG, ConsistsOfBuildingPart )
 
         // BoundarySurfaceType
         NODETYPE( BLDG, WallSurface )
@@ -166,6 +176,21 @@ namespace citygml {
         NODETYPE( BLDG, CityFurniture )
 
         NODETYPE( BLDG, Address )
+
+        // CityFurniture
+        NODETYPE( FRN, CityFurniture )
+        NODETYPE( FRN, Lod1Geometry )
+        NODETYPE( FRN, Lod2Geometry )
+        NODETYPE( FRN, Lod3Geometry )
+        NODETYPE( FRN, Lod4Geometry )
+        NODETYPE( FRN, Lod1TerrainIntersection )
+        NODETYPE( FRN, Lod2TerrainIntersection )
+        NODETYPE( FRN, Lod3TerrainIntersection )
+        NODETYPE( FRN, Lod4TerrainIntersection )
+        NODETYPE( FRN, Lod1ImplicitRepresentation )
+        NODETYPE( FRN, Lod2ImplicitRepresentation )
+        NODETYPE( FRN, Lod3ImplicitRepresentation )
+        NODETYPE( FRN, Lod4ImplicitRepresentation )
 
         // ADDRESS
         NODETYPE( XAL, XalAddress )

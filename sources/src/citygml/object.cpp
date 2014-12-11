@@ -1,6 +1,7 @@
 #include "citygml/object.h"
 
 #include <sstream>
+#include <iostream>
 
 namespace citygml {
 

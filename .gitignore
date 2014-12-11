@@ -14,7 +14,7 @@
 
 build
 build_debug
-CMakeLists.txt.user
+CMakeLists.txt.user*
 install
 build/
 buildRelease/

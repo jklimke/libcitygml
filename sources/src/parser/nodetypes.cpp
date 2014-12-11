@@ -110,6 +110,15 @@ namespace citygml {
     DEFINE_NODE( GEN, UriAttribute )
     DEFINE_NODE( GEN, Value )
 
+    DEFINE_NODE( GEN, Lod1Geometry )
+    DEFINE_NODE( GEN, Lod2Geometry )
+    DEFINE_NODE( GEN, Lod3Geometry )
+    DEFINE_NODE( GEN, Lod4Geometry )
+    DEFINE_NODE( GEN, Lod1TerrainIntersection )
+    DEFINE_NODE( GEN, Lod2TerrainIntersection )
+    DEFINE_NODE( GEN, Lod3TerrainIntersection )
+    DEFINE_NODE( GEN, Lod4TerrainIntersection )
+
     // TEX
     // DEFINE_NODE( GML, TexturedSurface ) // Deprecated
 
@@ -200,6 +209,22 @@ namespace citygml {
     DEFINE_NODE( BLDG, InteriorFurniture)
     DEFINE_NODE( BLDG, RoomInstallation)
     DEFINE_NODE( BLDG, Opening)
+    DEFINE_NODE( BLDG, ConsistsOfBuildingPart )
+
+    // CityFurniture
+    DEFINE_NODE( FRN, CityFurniture )
+    DEFINE_NODE( FRN, Lod1Geometry )
+    DEFINE_NODE( FRN, Lod2Geometry )
+    DEFINE_NODE( FRN, Lod3Geometry )
+    DEFINE_NODE( FRN, Lod4Geometry )
+    DEFINE_NODE( FRN, Lod1TerrainIntersection )
+    DEFINE_NODE( FRN, Lod2TerrainIntersection )
+    DEFINE_NODE( FRN, Lod3TerrainIntersection )
+    DEFINE_NODE( FRN, Lod4TerrainIntersection )
+    DEFINE_NODE( FRN, Lod1ImplicitRepresentation )
+    DEFINE_NODE( FRN, Lod2ImplicitRepresentation )
+    DEFINE_NODE( FRN, Lod3ImplicitRepresentation )
+    DEFINE_NODE( FRN, Lod4ImplicitRepresentation )
 
     // BoundarySurfaceType
     DEFINE_NODE( BLDG, WallSurface )
