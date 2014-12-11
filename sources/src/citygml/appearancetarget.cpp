@@ -4,6 +4,7 @@
 #include "citygml/appearancetargetdefinition.h"
 #include "citygml/appearance.h"
 
+#include <unordered_set>
 #include <algorithm>
 
 namespace citygml {
@@ -97,14 +98,14 @@ namespace citygml {
 
     std::vector<TextureTargetDefinition*> AppearanceTarget::getTextureTargetDefinitions()
     {
-        std::vector<TextureTargetDefinition*> texTargetDefs;
+        std::unordered_set<TextureTargetDefinition*> texTargetDefs;
         for (auto& pair : m_themeTexMapFront) {
-            texTargetDefs.push_back(pair.second.get());
+            texTargetDefs.insert(pair.second.get());
         }
         for (auto& pair : m_themeTexMapBack) {
-            texTargetDefs.push_back(pair.second.get());
+            texTargetDefs.insert(pair.second.get());
         }
-        return texTargetDefs;
+        return std::vector<TextureTargetDefinition*>(texTargetDefs.begin(), texTargetDefs.end());
     }
 
 

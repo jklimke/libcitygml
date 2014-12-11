@@ -177,6 +177,21 @@ namespace citygml {
 
         NODETYPE( BLDG, Address )
 
+        // CityFurniture
+        NODETYPE( FRN, CityFurniture )
+        NODETYPE( FRN, Lod1Geometry )
+        NODETYPE( FRN, Lod2Geometry )
+        NODETYPE( FRN, Lod3Geometry )
+        NODETYPE( FRN, Lod4Geometry )
+        NODETYPE( FRN, Lod1TerrainIntersection )
+        NODETYPE( FRN, Lod2TerrainIntersection )
+        NODETYPE( FRN, Lod3TerrainIntersection )
+        NODETYPE( FRN, Lod4TerrainIntersection )
+        NODETYPE( FRN, Lod1ImplicitRepresentation )
+        NODETYPE( FRN, Lod2ImplicitRepresentation )
+        NODETYPE( FRN, Lod3ImplicitRepresentation )
+        NODETYPE( FRN, Lod4ImplicitRepresentation )
+
         // ADDRESS
         NODETYPE( XAL, XalAddress )
         NODETYPE( XAL, Administrativearea )

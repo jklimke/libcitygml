@@ -64,6 +64,8 @@ namespace citygml {
 
     void LinearRing::removeDuplicateVertices(const std::vector<TextureTargetDefinition*>& targets, std::shared_ptr<CityGMLLogger> logger )
     {
+        // Currently TextureCoordinates sharing via xlink is not supported (every TextureTargetDefinition is the
+        // sole owner of its TextureCoordinate objects... if this ever changes use an unordered_set for the texture coordinates
         std::vector<TextureCoordinates*> coordinatesList;
 
         bool textureCoordinatesVerticesMismatch = false;
@@ -74,6 +76,7 @@ namespace citygml {
                 TextureCoordinates* texCoords = texTarget->getTextureCoordinates(i);
 
                 if (texCoords->targets(*this)) {
+
                     coordinatesList.push_back(texCoords);
 
                     if (m_vertices.size() != texCoords->getCoords().size()) {
@@ -92,7 +95,7 @@ namespace citygml {
         if ( len < 2 ) return;
 
         unsigned int i = 0;
-        while ( i < m_vertices.size() && m_vertices.size() >= 2 )
+        while ( i < m_vertices.size() && m_vertices.size() > 2 )
         {
             if ( ( m_vertices[i] - m_vertices[ ( i + 1 ) % m_vertices.size() ] ).sqrLength() <= DBL_EPSILON )
             {
