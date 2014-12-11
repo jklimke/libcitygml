@@ -8,7 +8,7 @@
 #include "citygml/materialtargetdefinition.h"
 
 #include <algorithm>
-
+#include <stdexcept>
 #include <assert.h>
 #include <stdexcept>
 
