@@ -10,6 +10,8 @@
 #include "citygml/citymodel.h"
 #include "citygml/tesselator.h"
 
+#include <stdexcept>
+
 namespace citygml {
 
     CityGMLDocumentParser::CityGMLDocumentParser(const ParserParams& params, std::shared_ptr<CityGMLLogger> logger)
