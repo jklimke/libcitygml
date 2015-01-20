@@ -108,6 +108,16 @@ namespace citygml {
         return std::vector<TextureTargetDefinition*>(texTargetDefs.begin(), texTargetDefs.end());
     }
 
+    std::vector<std::string> AppearanceTarget::getAllTextureThemes(bool front) const
+    {
+        auto& map = front ? m_themeTexMapFront : m_themeTexMapBack;
+        std::vector<std::string> themes;
+        for (const auto& pair : map) {
+            themes.push_back(pair.first);
+        }
+        return themes;
+    }
+
 
 
 }

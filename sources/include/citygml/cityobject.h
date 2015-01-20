@@ -89,7 +89,7 @@ namespace citygml {
 
         void addChildCityObject(CityObject* cityObj);
 
-        void finish(bool tesselate, Tesselator& tesselator, bool optimize, std::shared_ptr<citygml::CityGMLLogger> logger);
+        void finish(Tesselator& tesselator, bool optimize, std::shared_ptr<citygml::CityGMLLogger> logger);
 
         virtual ~CityObject();
 
