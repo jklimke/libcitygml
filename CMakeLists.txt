@@ -152,6 +152,12 @@ ENDIF( MSVC AND LIBCITYGML_STATIC_CRT )
 # core
 ADD_SUBDIRECTORY( sources )
 
+# osg plugin
+OPTION(LIBCITYGML_OSGPLUGIN "Set to ON to build libcitygml osgplugin programs." OFF)
+IF   (LIBCITYGML_OSGPLUGIN)
+  ADD_SUBDIRECTORY( osgplugin )
+ENDIF(LIBCITYGML_OSGPLUGIN)
+
 # test
 OPTION(LIBCITYGML_TESTS "Set to ON to build libcitygml tests programs." ON)
 IF   (LIBCITYGML_TESTS)
