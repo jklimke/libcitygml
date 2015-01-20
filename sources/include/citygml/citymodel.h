@@ -39,7 +39,7 @@ namespace citygml {
 
         const std::string& getSRSName() const;
 
-        void finish(bool tesselate, Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger);
+        void finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
         std::vector<std::string> themes() const;
         void setThemes(std::vector<std::string> themes);

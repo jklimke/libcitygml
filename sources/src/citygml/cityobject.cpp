@@ -145,20 +145,20 @@ namespace citygml {
         m_children.push_back(std::unique_ptr<CityObject>(cityObj));
     }
 
-    void CityObject::finish(bool tesselate, Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    void CityObject::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         for (std::unique_ptr<Geometry>& geom : m_geometries) {
-            geom->finish(tesselate, tesselator, optimize, logger);
+            geom->finish(tesselator, optimize, logger);
         }
 
         for (std::unique_ptr<ImplicitGeometry>& implictGeom : m_implicitGeometries) {
             for (int i = 0; i < implictGeom->getGeometriesCount(); i++) {
-                implictGeom->getGeometry(i).finish(tesselate, tesselator, optimize, logger);
+                implictGeom->getGeometry(i).finish(tesselator, optimize, logger);
             }
         }
 
         for (std::unique_ptr<CityObject>& child : m_children) {
-            child->finish(tesselate, tesselator, optimize, logger);
+            child->finish(tesselator, optimize, logger);
         }
     }
 
