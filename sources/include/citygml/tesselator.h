@@ -32,6 +32,7 @@
 
 #include "citygml/vecs.hpp"
 #include <vector>
+#include <list>
 #include <memory>
 
 namespace citygml {
@@ -45,23 +46,26 @@ public:
     Tesselator( std::shared_ptr<citygml::CityGMLLogger> logger );
     ~Tesselator();
 
-    void init( unsigned int verticesCount, const TVec3d& normal, GLenum winding_rule = GLU_TESS_WINDING_ODD );
+    void init(const TVec3d& normal, GLenum winding_rule = GLU_TESS_WINDING_ODD );
 
-    // Add a new contour - add the exterior ring first, then interiors
-    void addContour(const std::vector<TVec3d>&);
+    /**
+     * @brief Add a new contour - add the exterior ring first, then interiors
+     * @param textureCoordinatesLists a list of texture coordinates lists for the countour. Each list contains one texture coordinate for each vertex.
+     */
+    void addContour(const std::vector<TVec3d>&, std::vector<std::vector<TVec2f> > textureCoordinatesLists);
 
     // Let's tesselate!
     void compute();
 
     // Tesselation result access
-    const std::vector<TVec3d>& getVertices() const { return _vertices; }
-    const std::vector<TVec2f>& getTexCoords() const { return _texCoords; }
-    const std::vector<unsigned int>& getIndices() const { return _indices; }
+    const std::vector<TVec3d> getVertices() const;
+    const std::vector<std::vector<TVec2f>>& getTexCoords() const { return _texCoordsLists; }
+    const std::vector<unsigned int>& getIndices() const;
 
 private:
     typedef void (APIENTRY *GLU_TESS_CALLBACK)();
     static void CALLBACK beginCallback( GLenum, void* );
-    static void CALLBACK vertexCallback( GLvoid*, void* );
+    static void CALLBACK vertexDataCallback( GLvoid*, void* );
     static void CALLBACK combineCallback( GLdouble[3], void* [4], GLfloat [4], void** , void* );
     static void CALLBACK endCallback( void* );
     static void CALLBACK errorCallback(GLenum, void*);
@@ -70,9 +74,10 @@ private:
     GLUtesselator *_tobj;
     GLenum  _curMode;
 
-    std::vector<TVec3d> _vertices;
-    std::vector<TVec2f> _texCoords;
-    std::vector<unsigned int> _indices;
+    std::list<TVec3d> _vertices;
+    std::vector<std::vector<TVec2f>> _texCoordsLists;
+    std::list<unsigned int> _indices;
+    std::vector<unsigned int> _outIndices;
 
     std::vector<unsigned int> _curIndices;
     std::shared_ptr<citygml::CityGMLLogger> _logger;

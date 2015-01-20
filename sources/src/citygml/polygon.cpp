@@ -12,6 +12,8 @@
 #include <assert.h>
 #include <stdexcept>
 
+#include <iostream>
+
 namespace citygml {
 
     Polygon::Polygon(const std::string& id, std::shared_ptr<CityGMLLogger> logger)  : AppearanceTarget( id ), m_negNormal( false )
@@ -20,7 +22,7 @@ namespace citygml {
         m_finished = false;
     }
 
-    const std::vector<TVec3d>&Polygon::getVertices() const
+    const std::vector<TVec3d>& Polygon::getVertices() const
     {
         return m_vertices;
     }
@@ -30,7 +32,7 @@ namespace citygml {
         return m_vertices;
     }
 
-    const std::vector<unsigned int>&Polygon::getIndices() const
+    const std::vector<unsigned int>& Polygon::getIndices() const
     {
         return m_indices;
     }
@@ -74,55 +76,22 @@ namespace citygml {
 
     const std::vector<TVec2f> Polygon::getTexCoordsForTheme(const std::string& theme, bool front) const
     {
-        // Lazy generation of texCoords
-        std::vector<TVec2f> texCoords;
+        auto& map = front ? m_themeToFrontTexCoordsMap : m_themeToBackTexCoordsMap;
+        auto it = map.find(theme);
 
-        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme, front);
-        if (targetDef == nullptr) {
-            return texCoords;
+        if (it == map.end()) {
+            return std::vector<TVec2f>();
         }
 
-        std::vector<std::string> orderedRingIDs;
-
-        if ( m_exteriorRing != nullptr )
-        {
-            orderedRingIDs.push_back(m_exteriorRing->getId());
+        if (it->second.size() != m_vertices.size()) {
+            CITYGML_LOG_ERROR(m_logger, "Number of texture coordinates (" << it->second.size() << ") for theme "
+                             << theme << " in polygon with id " << this->getId() << " does not match number of vertices (" << m_vertices.size()
+                              << ").");
         }
 
-        for ( const auto& ring : m_interiorRings )
-        {
-            orderedRingIDs.push_back(ring->getId());
-        }
+        assert(it->second.size() == m_vertices.size());
 
-        if (targetDef->getTextureCoordinatesCount() != orderedRingIDs.size()) {
-            CITYGML_LOG_WARN(m_logger, "Texture with id '" << targetDef->getAppearance()->getId() << "'' targets Polygon with id '" << this->getId() << "'"
-                             << " but the number of TextureCoordinates objects (gml::textureCoordinates) is not equal with the number of LinearRing objects (gml:LinearRing)."
-                             << " (Ring objects: " << orderedRingIDs.size() << " TextureCoordinates objects: " << targetDef->getTextureCoordinatesCount());
-        }
-
-
-        for (const std::string& ringId : orderedRingIDs) {
-
-            const TextureCoordinates* coordinates = targetDef->getTextureCoordinatesForID(ringId);
-
-            if (!coordinates) {
-                CITYGML_LOG_WARN(m_logger, "Texture with id '" << targetDef->getAppearance()->getId() << "'' targets Polygon with id '" << this->getId() << "'"
-                                 << " but does not contain a TextureCoordinates object (gml::textureCoordinates) for LinearRing object (gml:LinearRing) with id '" << ringId << "'");
-            } else {
-                texCoords.insert(texCoords.end(), coordinates->getCoords().begin(), coordinates->getCoords().end());
-            }
-        }
-
-        // Workaround until vertices removed/added by tesselation are correctly handeld
-        if (texCoords.size() > m_vertices.size()) {
-            texCoords.resize(m_vertices.size());
-        } else if (texCoords.size() < m_vertices.size()) {
-            for (size_t i = texCoords.size(); i < m_vertices.size(); i++) {
-                texCoords.push_back(texCoords.back());
-            }
-        }
-
-        return texCoords;
+        return it->second;
     }
 
     std::shared_ptr<const Texture> Polygon::getTextureForTheme(const std::string& theme, bool front) const
@@ -171,84 +140,92 @@ namespace citygml {
         }
     }
 
-    void Polygon::createSimpleIndices(std::shared_ptr<CityGMLLogger> logger)
-    {
-        if ( m_exteriorRing != nullptr )
-        {
-            m_vertices.insert(m_vertices.end(), m_exteriorRing->getVertices().begin(), m_exteriorRing->getVertices().end());
-            m_exteriorRing->forgetVertices();
+    std::vector<TVec2f> Polygon::getTexCoordsForRingAndTheme(const LinearRing& ring, const std::string& theme, bool front) {
+
+        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme, front);
+
+        if (targetDef == nullptr) {
+            return std::vector<TVec2f>();
         }
 
-        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
-        {
-            m_vertices.insert(m_vertices.end(), ring->getVertices().begin(), ring->getVertices().end());
-            ring->forgetVertices();
+        const TextureCoordinates* coords = targetDef->getTextureCoordinatesForID(ring.getId());
+
+        if (targetDef == nullptr || coords->getCoords().empty()) {
+            return std::vector<TVec2f>();
         }
 
-        // Create triangles' indices
-        int indicesSize = 3 * ( m_vertices.size() - 2 );
-        if ( indicesSize < 3 ) return;
-        m_indices.resize( indicesSize );
-        for ( int i = 0, p = 0; p < indicesSize - 2; i++, p += 3 )
-            for ( unsigned int j = 0; j < 3; j++ )
-                m_indices[ p + j ] = i + j;
+        return coords->getCoords();
+    }
+
+    std::vector<std::vector<TVec2f>> Polygon::getTexCoordListsForRing(const LinearRing& ring, const std::vector<std::string>& themesFront, const std::vector<std::string>& themesBack) {
+        std::vector<std::vector<TVec2f>> texCoordsLists;
+
+        for (const std::string& theme : themesFront) {
+            texCoordsLists.push_back(getTexCoordsForRingAndTheme(ring, theme, true));
+        }
+
+        for (const std::string& theme : themesBack) {
+            texCoordsLists.push_back(getTexCoordsForRingAndTheme(ring, theme, false));
+        }
+
+        return texCoordsLists;
     }
 
     void Polygon::createIndicesWithTesselation(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger)
     {
         TVec3d normal = computeNormal();
 
-        size_t numVertices = 0;
-        if (m_exteriorRing != nullptr) {
-            numVertices += m_exteriorRing->getVertices().size();
-        }
+        std::vector<std::string> themesFront = getAllTextureThemes(true);
+        std::vector<std::string> themesBack = getAllTextureThemes(false);
 
-        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
-        {
-            numVertices += ring->getVertices().size();
-        }
-
-        tesselator.init(numVertices, normal);
+        tesselator.init(normal);
 
         if (m_exteriorRing != nullptr) {
-            tesselator.addContour( m_exteriorRing->getVertices() );
+
+            tesselator.addContour( m_exteriorRing->getVertices(), getTexCoordListsForRing(*m_exteriorRing, themesFront, themesBack));
             m_exteriorRing->forgetVertices();
         }
 
         for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
         {
-            tesselator.addContour( ring->getVertices() );
+            tesselator.addContour( ring->getVertices(), getTexCoordListsForRing(*ring, themesFront, themesBack) );
             ring->forgetVertices();
         }
 
-        tesselator.addContour( m_vertices );
         tesselator.compute();
         m_vertices = tesselator.getVertices();
         m_indices = tesselator.getIndices();
 
-        if (numVertices != m_vertices.size()) {
-            CITYGML_LOG_ERROR(logger, "Tesselation of Polygon with id '" << this->getId() << "' has changed the number of Polygons, "
-                               << "causing a mismatch of texture coordinates and vertices.");
+        if (m_vertices.empty()) {
+            return;
+        }
+
+        const std::vector<std::vector<TVec2f>>& texCoordLists = tesselator.getTexCoords();
+
+        for (size_t i = 0; i < themesFront.size(); i++) {
+            assert(texCoordLists.at(i).size() == m_vertices.size());
+            m_themeToFrontTexCoordsMap[themesFront.at(i)] = texCoordLists.at(i);
+        }
+
+        for (size_t i = 0; i < themesBack.size(); i++) {
+            assert(texCoordLists.at(i + themesFront.size()).size() == m_vertices.size());
+            m_themeToBackTexCoordsMap[themesBack.at(i)] = texCoordLists.at(i + themesFront.size());
         }
     }
 
-    void Polygon::computeIndices(bool tesselate, Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger )
+    void Polygon::computeIndices(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger )
     {
         m_indices.clear();
         m_vertices.clear();
 
-        if (!tesselate) {
-            createSimpleIndices(logger);
-        } else {
-            createIndicesWithTesselation(tesselator, logger);
-        }
+        createIndicesWithTesselation(tesselator, logger);
 
         if ( m_vertices.size() < 3 ) {
             CITYGML_LOG_WARN(logger, "Polygon with id " << this->getId() << " has less than 3 vertices.");
         }
     }
 
-    void Polygon::finish(bool doTesselate , Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    void Polygon::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         if (m_finished) {
             // This may happen as Polygons can be shared between geometries
@@ -261,7 +238,7 @@ namespace citygml {
             removeDuplicateVerticesInRings(logger);
         }
 
-        computeIndices(doTesselate, tesselator, logger);
+        computeIndices(tesselator, logger);
 
     }
 

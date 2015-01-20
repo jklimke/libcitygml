@@ -277,9 +277,12 @@ namespace citygml
         parser->setContentHandler( &handler );
         parser->setErrorHandler( &handler );
 
+#ifdef NDEBUG
         try
         {
+#endif
             parser->parse(stream);
+#ifdef NDEBUG
         }
         catch ( const xercesc::XMLException& e )
         {
@@ -293,6 +296,7 @@ namespace citygml
         {
             CITYGML_LOG_ERROR(logger, "Unexpected Exception occured: " << e.what());
         }
+#endif
 
         delete parser;
 
@@ -325,15 +329,17 @@ namespace citygml
 
         std::shared_ptr<XMLCh> fileName = toXercesString(fname);
 
+#ifdef NDEBUG
         try {
-
+#endif
             xercesc::LocalFileInputSource fileSource(fileName.get());
             return parse(fileSource, params, logger, fname);
-
+#ifdef NDEBUG
         } catch (xercesc::XMLException& e) {
             CITYGML_LOG_ERROR(logger, "Error parsing file " << fname << ": " << e.getMessage());
             return nullptr;
         }
+#endif
 
     }
 }

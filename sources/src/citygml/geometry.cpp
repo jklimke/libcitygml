@@ -78,7 +78,7 @@ namespace citygml {
         m_polygons.push_back( p );
     }
 
-    void Geometry::finish(bool tesselate, Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    void Geometry::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         // only need to finish geometry once
         if (m_finished) {
@@ -89,12 +89,12 @@ namespace citygml {
 
         for (std::unique_ptr<Geometry>&  child : m_childGeometries) {
             child->addTargetDefinitionsOf(*this);
-            child->finish(tesselate, tesselator, optimize, logger);
+            child->finish(tesselator, optimize, logger);
         }
 
         for (std::shared_ptr<Polygon>& polygon : m_polygons) {
             polygon->addTargetDefinitionsOf(*this);
-            polygon->finish(tesselate, tesselator, optimize, logger);
+            polygon->finish(tesselator, optimize, logger);
         }
 
     }

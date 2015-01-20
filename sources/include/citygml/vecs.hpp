@@ -9,13 +9,15 @@
 template< class T > class TVec2
 {
 public:
-    union
-    {
-        T xy[2];
-        struct { T x, y; };
-    };
+    T x;
+    T y;
 
 public:
+    TVec2( const TVec2<T>& o) {
+        this->x = o.x;
+        this->y = o.y;
+    }
+
     TVec2( const T x = (T)0, const T y = (T)0 );
     TVec2( const T vec[] );
 
@@ -29,12 +31,9 @@ public:
 
     bool operator==( const TVec2<T>& v ) const;
     bool operator!=( const TVec2<T>& v ) const;
-
-    inline operator T*() { return xy; }
-    inline operator const T*() const { return xy; }
 };
 
-template< class T >	inline TVec2<T>::TVec2( const T x, const T y )
+template< class T > inline TVec2<T>::TVec2( const T x, const T y )
 {
     this->x = x;
     this->y = y;
@@ -42,7 +41,8 @@ template< class T >	inline TVec2<T>::TVec2( const T x, const T y )
 
 template< class T >	inline TVec2<T>::TVec2( const T vec[] )
 {
-    memcpy( xy, vec, 2 * sizeof(T) );
+    x = vec[0];
+    y = vec[1];
 }
 
 template< class T >	inline TVec2<T> TVec2<T>::operator+( const TVec2<T>& v ) const

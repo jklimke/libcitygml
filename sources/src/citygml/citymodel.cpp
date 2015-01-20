@@ -113,11 +113,11 @@ namespace citygml
     }
 
 
-    void CityModel::finish(bool tesselate, Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    void CityModel::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         // Finish all cityobjcts
         for (auto& cityObj : m_roots) {
-            cityObj->finish(tesselate, tesselator, optimize, logger);
+            cityObj->finish(tesselator, optimize, logger);
         }
 
         // Build city objects map
