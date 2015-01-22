@@ -28,6 +28,10 @@
 #include <osgDB/FileUtils>
 #include <osgDB/FileNameUtils>
 
+#include <osgUtil/SmoothingVisitor>
+
+#include <osg/Notify>
+
 #include <citygml/citygml.h>
 #include <citygml/envelope.h>
 #include <citygml/citymodel.h>
@@ -36,10 +40,86 @@
 #include <citygml/polygon.h>
 #include <citygml/material.h>
 #include <citygml/texture.h>
+#include <citygml/citygmllogger.h>
 
 #include <algorithm>
 #include <cctype>
 
+class CityGMLOSGPluginLogger : public citygml::CityGMLLogger {
+public:
+    virtual void log(LOGLEVEL level, const std::string& message, const char* file, int line) const
+    {
+        std::ostream& stream = getLogStreamFor(level);
+
+        if (file) {
+            stream << " [" << file;
+            if (line > -1) {
+                stream << ":" << line;
+            }
+            stream << "]";
+        }
+
+        stream << " " << message << std::endl;
+    }
+
+    virtual bool isEnabledFor(LOGLEVEL) const
+    {
+        return true;
+    }
+private:
+    std::ostream& getLogStreamFor(LOGLEVEL level) const {
+        switch(level) {
+        case LOGLEVEL::DEBUG:
+            return osg::notify(osg::DEBUG_INFO);
+        case LOGLEVEL::WARNING:
+            return osg::notify(osg::WARN);
+        case LOGLEVEL::TRACE:
+            return osg::notify(osg::DEBUG_FP);
+        case LOGLEVEL::ERROR:
+            return osg::notify(osg::FATAL);
+        case LOGLEVEL::INFO:
+            return osg::notify(osg::INFO);
+        default:
+            return osg::notify(osg::INFO);
+        }
+    }
+};
+
+class CityGMLSettings
+{
+public:
+    CityGMLSettings( void )
+        : _printNames(false)
+        , _useMaxLODOnly(false)
+        , _theme("")
+    {}
+
+    void parseOptions( const osgDB::ReaderWriter::Options* options)
+    {
+        if ( !options ) return;
+        std::istringstream iss( options->getOptionString() );
+        std::string currentOption;
+        while ( iss >> currentOption )
+        {
+            std::transform( currentOption.begin(), currentOption.end(), currentOption.begin(), ::tolower );
+            if ( currentOption == "names" ) _printNames = true;
+            else if ( currentOption == "mask" ) iss >> _params.objectsMask;
+            else if ( currentOption == "minlod" ) iss >> _params.minLOD;
+            else if ( currentOption == "maxlod" ) iss >> _params.maxLOD;
+            else if ( currentOption == "optimize" ) _params.optimize = true;
+            else if ( currentOption == "pruneemptyobjects" ) _params.pruneEmptyObjects = true;
+            else if ( currentOption == "usemaxlodonly" ) _useMaxLODOnly = true;
+            else if ( currentOption == "usetheme" ) iss >> _theme;
+        }
+    }
+
+public:
+    citygml::ParserParams _params;
+    bool _printNames;
+    bool _useMaxLODOnly;
+    std::map< std::string, osg::Texture2D* > _textureMap;
+    std::string _theme;
+};
 
 class ReaderWriterCityGML : public osgDB::ReaderWriter
 {
@@ -58,6 +138,8 @@ public:
         supportsOption( "destSRS", "Transform geometry to given reference system" );
         supportsOption( "useMaxLODonly", "Use the highest available LOD for geometry of one object" );
         supportsOption( "appearanceTheme", "Name of the appearance theme to use" );
+
+        m_logger = std::make_shared<CityGMLOSGPluginLogger>();
     }
 
     virtual const char* className( void ) const { return "CityGML Reader"; }
@@ -66,51 +148,13 @@ public:
     virtual ReadResult readNode( std::istream&, const osgDB::ReaderWriter::Options* ) const;
 
 private:
-    class Settings
-    {
-    public:
-        Settings( void )
-            : _printNames(false)
-            , _first(true)
-            , _origin( 0.f, 0.f, 0.f )
-            , _useMaxLODOnly(false)
-            , _theme("")
-        {}
 
-        void parseOptions( const osgDB::ReaderWriter::Options* options)
-        {
-            if ( !options ) return;
-            std::istringstream iss( options->getOptionString() );
-            std::string currentOption;
-            while ( iss >> currentOption )
-            {
-                std::transform( currentOption.begin(), currentOption.end(), currentOption.begin(), ::tolower );
-                if ( currentOption == "names" ) _printNames = true;
-                else if ( currentOption == "mask" ) iss >> _params.objectsMask;
-                else if ( currentOption == "minlod" ) iss >> _params.minLOD;
-                else if ( currentOption == "maxlod" ) iss >> _params.maxLOD;
-                else if ( currentOption == "optimize" ) _params.optimize = true;
-                else if ( currentOption == "pruneemptyobjects" ) _params.pruneEmptyObjects = true;
-                else if ( currentOption == "usemaxlodonly" ) _useMaxLODOnly = true;
-                else if ( currentOption == "usetheme" ) iss >> _theme;
-            }
-        }
-
-    public:
-        citygml::ParserParams _params;
-        bool _printNames;
-        bool _first;
-        bool _useMaxLODOnly;
-        osg::Vec3 _origin;
-        std::map< std::string, osg::Texture2D* > _textureMap;
-        std::string _theme;
-    };
-
+    std::shared_ptr<citygml::CityGMLLogger> m_logger;
     static unsigned int getHighestLodForObject(const citygml::CityObject& object);
 
 private:
-    ReadResult readCity( std::shared_ptr<const citygml::CityModel>, Settings& ) const;
-    bool createCityObject(const citygml::CityObject&, Settings&, osg::Group*, unsigned int minimumLODToConsider = 0 ) const;
+    ReadResult readCity(std::shared_ptr<const citygml::CityModel>, CityGMLSettings& ) const;
+    bool createCityObject(const citygml::CityObject&, CityGMLSettings&, osg::Group*, unsigned int minimumLODToConsider = 0 ) const;
 
 };
 
@@ -135,7 +179,7 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( const std::string
         if ( fileName.empty() ) return ReadResult::FILE_NOT_FOUND;
     }
 
-    Settings settings;
+    CityGMLSettings settings;
     settings.parseOptions( options );
 
     osgDB::getDataFilePathList().push_front( osgDB::getFilePath( fileName ) );
@@ -146,12 +190,17 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( const std::string
 
     osg::notify(osg::NOTICE) << "Parsing CityGML file " << fileName << "..." << std::endl;
 
-    std::shared_ptr<const citygml::CityModel> city = citygml::load( fileName, settings._params );
+    std::shared_ptr<const citygml::CityModel> city = citygml::load( fileName, settings._params, m_logger );
 
     ReadResult rr = readCity( city, settings );
 
-    if ( rr.status() == ReadResult::FILE_LOADED && rr.getNode() )
+    if ( rr.status() == ReadResult::FILE_LOADED && rr.getNode() ) {
         rr.getNode()->setName( fileName );
+
+        // Let osg calculate the normals
+        osgUtil::SmoothingVisitor sv;
+        rr.getNode()->accept(sv);
+    }
 
     osgDB::getDataFilePathList().pop_front();
 
@@ -164,7 +213,7 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( const std::string
 
 osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( std::istream& fin, const osgDB::ReaderWriter::Options* options ) const
 {
-    Settings settings;
+    CityGMLSettings settings;
     settings.parseOptions( options );
 
     // Redirect both std::cout & std::cerr (used by CityGML parser) to osg::notify stream
@@ -184,7 +233,7 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( std::istream& fin
     return rr;
 }
 
-osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readCity(std::shared_ptr<const citygml::CityModel> city, Settings& settings ) const
+osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readCity(std::shared_ptr<const citygml::CityModel> city, CityGMLSettings& settings ) const
 {
     if ( !city ) return nullptr;
 
@@ -192,52 +241,111 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readCity(std::shared_ptr<co
 
     osg::notify(osg::NOTICE) << "Creation of the OSG city objects' geometry..." << std::endl;
 
-    // Apply translation
-    const TVec3d& t = city->getEnvelope().getLowerBound();
-
-    osg::MatrixTransform *root = new osg::MatrixTransform();
-
+    osg::Group* root = new osg::Group();
     root->setName( city->getId() );
 
     if (settings._theme.empty() && !city->themes().empty()) {
         settings._theme = city->themes().front();
     }
 
-#define RECURSIVE_DUMP
-
-#ifndef RECURSIVE_DUMP
-    const citygml::CityObjectsMap& cityObjectsMap = city->getCityObjectsMap();
-    citygml::CityObjectsMap::const_iterator it = cityObjectsMap.begin();
-
-    for ( ; it != cityObjectsMap.end(); ++it )
-    {
-        const citygml::CityObjects& v = it->second;
-
-        osg::notify(osg::NOTICE) << " Creation of " << v.size() << " " << citygml::getCityObjectsClassName( it->first ) << ( ( v.size() > 1 ) ? "s" : "" ) << "..." << std::endl;
-
-        osg::Group* grp = new osg::Group;
-        grp->setName( citygml::getCityObjectsClassName( it->first ) );
-        root->addChild( grp );
-
-        for ( unsigned int i = 0; i < v.size(); ++i ){
-            createCityObject( v[i], settings, grp);
-        }
-    }
-#else
-
     const citygml::ConstCityObjects& roots = city->getRootCityObjects();
 
     for ( unsigned int i = 0; i < roots.size(); ++i ) createCityObject( *roots[i], settings, root );
-#endif
-
-    root->setMatrix(osg::Matrixd::translate(t.x + settings._origin.x(), t.y + settings._origin.y(), t.z + settings._origin.z()));
 
     osg::notify(osg::NOTICE) << "Done." << std::endl;
 
     return root;
 }
 
-bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Settings& settings, osg::Group* parent, unsigned int minimumLODToConsider ) const
+void setTexture(osg::ref_ptr<osg::StateSet> stateset, osg::Geometry* geom, const citygml::Polygon& polygon, CityGMLSettings& settings) {
+    const citygml::Texture* citygmlTex = polygon.getTextureFor(settings._theme);
+
+    if ( !citygmlTex )
+    {
+        return;
+    }
+    const std::vector<TVec2f>& texCoords = polygon.getTexCoordsForTheme(settings._theme, true);
+
+    if (texCoords.empty()) {
+        osg::notify(osg::WARN) << "Texture coordinates not found for poly " << polygon.getId() << std::endl;
+    }
+
+    osg::Texture2D* texture = nullptr;
+
+    if ( settings._textureMap.find( citygmlTex->getUrl() ) == settings._textureMap.end() ) {
+        std::string fullPath = osgDB::findDataFile(citygmlTex->getUrl());
+
+        if (fullPath.empty()) {
+            osg::notify(osg::NOTICE) << "  Texture file " << citygmlTex->getUrl() << " not found..." << std::endl;
+            return;
+        }
+
+        // Load a new texture
+        osg::notify(osg::NOTICE) << "  Loading texture " << fullPath << "..." << std::endl;
+
+        osg::Image* image = osgDB::readImageFile( citygmlTex->getUrl() );
+
+        if (!image) {
+            osg::notify(osg::NOTICE) << "  Warning: Failed to read Texture " << fullPath << std::endl;
+            return;
+        }
+
+        texture = new osg::Texture2D;
+        texture->setImage( image );
+        texture->setFilter( osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR );
+        texture->setFilter( osg::Texture::MAG_FILTER, osg::Texture::NEAREST );
+        texture->setWrap( osg::Texture::WRAP_S, osg::Texture::REPEAT );
+        texture->setWrap( osg::Texture::WRAP_T, osg::Texture::REPEAT );
+        texture->setWrap( osg::Texture::WRAP_R, osg::Texture::REPEAT );
+
+        settings._textureMap[ citygmlTex->getUrl() ] = texture;
+    }
+    else {
+        texture = settings._textureMap[ citygmlTex->getUrl() ];
+    }
+
+    if ( !texture )
+    {
+        return;
+    }
+
+    osg::ref_ptr<osg::Vec2Array> tex = new osg::Vec2Array;
+
+    tex->reserve( texCoords.size() );
+    for ( unsigned int k = 0; k < texCoords.size(); k++ )
+        tex->push_back( osg::Vec2( texCoords[k].x, texCoords[k].y ) );
+
+    geom->setTexCoordArray( 0, tex );
+
+    stateset->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
+}
+
+void setMaterial(osg::ref_ptr<osg::StateSet> stateset, const citygml::Polygon& polygon, CityGMLSettings& settings) {
+
+    const citygml::Material* citygmlMaterial = polygon.getMaterialFor(settings._theme);
+
+    if (!citygmlMaterial) {
+        return;
+    }
+
+    TVec4f diffuse( citygmlMaterial->getDiffuse(), 0.f );
+    TVec4f emissive( citygmlMaterial->getEmissive(), 0.f );
+    TVec4f specular( citygmlMaterial->getSpecular(), 0.f );
+    float ambient = citygmlMaterial->getAmbientIntensity();
+
+    osg::Material* material = new osg::Material;
+    material->setColorMode( osg::Material::OFF );
+    material->setDiffuse( osg::Material::FRONT_AND_BACK, osg::Vec4(diffuse.r, diffuse.g, diffuse.b, diffuse.a ) );
+    material->setSpecular( osg::Material::FRONT_AND_BACK, osg::Vec4(specular.r, specular.g, specular.b, specular.a ) );
+    material->setEmission( osg::Material::FRONT_AND_BACK, osg::Vec4(emissive.r, emissive.g, emissive.b, emissive.a ) );
+    material->setShininess( osg::Material::FRONT_AND_BACK, citygmlMaterial->getShininess() );
+    material->setAmbient( osg::Material::FRONT_AND_BACK, osg::Vec4( ambient, ambient, ambient, 1.0 ) );
+    material->setTransparency( osg::Material::FRONT_AND_BACK, citygmlMaterial->getTransparency() );
+    stateset->setAttributeAndModes( material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON );
+    stateset->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON );
+}
+
+bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, CityGMLSettings& settings, osg::Group* parent, unsigned int minimumLODToConsider ) const
 {
     // Skip objects without geometry
     if ( !parent ) return false;
@@ -245,15 +353,10 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Se
     osg::ref_ptr<osg::Geode> geode = new osg::Geode;
     geode->setName( object.getId() );
 
-#ifdef RECURSIVE_DUMP
     osg::Group* grp = new osg::Group;
     grp->setName( object.getId() );
     grp->addChild( geode );
     parent->addChild( grp );
-#else
-    parent->addChild( geode );
-#endif
-
 
     osg::ref_ptr<osg::Vec4Array> roof_color = new osg::Vec4Array;
     roof_color->push_back( osg::Vec4( 0.9f, 0.1f, 0.1f, 1.0f ) );
@@ -287,132 +390,23 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Se
             for ( unsigned int k = 0; k < vert.size(); k++ )
             {
                 osg::Vec3d pt( vert[k].x, vert[k].y, vert[k].z );
-                if ( settings._first )
-                {
-                    settings._origin.set( pt );
-                    settings._first = false;
-                }
-                vertices->push_back( pt - settings._origin );
+                vertices->push_back( pt );
             }
 
             geom->setVertexArray( vertices );
 
             // Indices
-            osg::DrawElementsUInt* indices = new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, 0 );
-            const std::vector<unsigned int>& ind = p.getIndices();
-            indices->reserve( ind.size() );
-            for ( unsigned int i = 0 ; i < ind.size() / 3; i++ )
-            {
-                indices->push_back( ind[ i * 3 + 0 ] );
-                indices->push_back( ind[ i * 3 + 1 ] );
-                indices->push_back( ind[ i * 3 + 2 ] );
-            }
-
+            osg::DrawElementsUInt* indices = new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, p.getIndices().begin(), p.getIndices().end());
             geom->addPrimitiveSet( indices );
 
-            // Normals
-            /*
-            osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-            const std::vector<TVec3f>& norm = p.getNormals();
-            normals->reserve( norm.size() );
-            for ( unsigned int k = 0; k < norm.size(); k++ )
-                normals->push_back( osg::Vec3( norm[k].x, norm[k].y, norm[k].z ) );
-
-            geom->setNormalArray( normals.get() );
-            geom->setNormalBinding( osg::Geometry::BIND_PER_VERTEX );
-            */
-
-            // Material management
+            // Appearance
 
             osg::ref_ptr<osg::StateSet> stateset = geom->getOrCreateStateSet();
 
-            bool colorset = false;
+            setMaterial(stateset, p, settings);
+            setTexture(stateset, geom, p, settings);
 
 
-            if ( const citygml::Material* m = p.getMaterialFor(settings._theme) )
-            {
-#define TOVEC4(_t_) osg::Vec4( _t_.r, _t_.g, _t_.b, _t_.a )
-                osg::ref_ptr<osg::Vec4Array> color = new osg::Vec4Array;
-                TVec4f diffuse( m->getDiffuse(), 0.f );
-                TVec4f emissive( m->getEmissive(), 0.f );
-                TVec4f specular( m->getSpecular(), 0.f );
-                float ambient = m->getAmbientIntensity();
-
-                osg::Material* material = new osg::Material;
-                material->setColorMode( osg::Material::OFF );
-                material->setDiffuse( osg::Material::FRONT_AND_BACK, TOVEC4( diffuse ) );
-                material->setSpecular( osg::Material::FRONT_AND_BACK, TOVEC4( specular ) );
-                material->setEmission( osg::Material::FRONT_AND_BACK, TOVEC4( emissive ) );
-                material->setShininess( osg::Material::FRONT_AND_BACK, m->getShininess() );
-                material->setAmbient( osg::Material::FRONT_AND_BACK, osg::Vec4( ambient, ambient, ambient, 1.0 ) );
-                material->setTransparency( osg::Material::FRONT_AND_BACK, m->getTransparency() );
-                stateset->setAttributeAndModes( material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON );
-                stateset->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON );
-
-                colorset = true;
-            }
-
-            if ( const citygml::Texture* t = p.getTextureFor(settings._theme) )
-            {
-                const std::vector<TVec2f>& texCoords = p.getTexCoordsForTheme(settings._theme, true);
-
-                if ( texCoords.size() > 0 )
-                {
-                    osg::Texture2D* texture = 0;
-
-                    if ( settings._textureMap.find( t->getUrl() ) == settings._textureMap.end() )
-                    {
-                        // Load a new texture
-                        osg::notify(osg::NOTICE) << "  Loading texture " << t->getUrl() << "..." << std::endl;
-
-                        if ( osg::Image* image = osgDB::readImageFile( t->getUrl() ) )
-                        {
-                            texture = new osg::Texture2D;
-                            texture->setImage( image );
-                            texture->setFilter( osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR );
-                            texture->setFilter( osg::Texture::MAG_FILTER, osg::Texture::NEAREST );
-                            texture->setWrap( osg::Texture::WRAP_S, osg::Texture::REPEAT );
-                            texture->setWrap( osg::Texture::WRAP_T, osg::Texture::REPEAT );
-                            texture->setWrap( osg::Texture::WRAP_R, osg::Texture::REPEAT );
-                        }
-                        else
-                            osg::notify(osg::NOTICE) << "  Warning: Texture " << t->getUrl() << " not found!" << std::endl;
-
-                        settings._textureMap[ t->getUrl() ] = texture;
-                    }
-                    else
-                        texture = settings._textureMap[ t->getUrl() ];
-
-                    if ( texture )
-                    {
-                        osg::ref_ptr<osg::Vec2Array> tex = new osg::Vec2Array;
-
-                        tex->reserve( texCoords.size() );
-                        for ( unsigned int k = 0; k < texCoords.size(); k++ )
-                            tex->push_back( osg::Vec2( texCoords[k].x, texCoords[k].y ) );
-
-                        geom->setTexCoordArray( 0, tex );
-
-                        stateset->setTextureAttributeAndModes( 0, texture, osg::StateAttribute::ON );
-
-                        colorset = true;
-                    }
-                }
-                else
-                    osg::notify(osg::NOTICE) << "  Warning: Texture coordinates not found for poly " << p.getId() << std::endl;
-            }
-
-            // Color management
-
-            //geom->setColorArray( ( !colorset && geometry.getType() == citygml::Geometry::GeometryType::GT_Roof ) ? roof_color.get() : shared_colors.get() );
-
-            //geom->setColorBinding( osg::Geometry::BIND_OVERALL );
-#if 0
-            // Set lighting model to two sided
-            osg::ref_ptr< osg::LightModel > lightModel = new osg::LightModel;
-            lightModel->setTwoSided( true );
-            stateset->setAttributeAndModes( lightModel.get(), osg::StateAttribute::ON );
-#endif
             // That's it!
             geode->addDrawable( geom );
         }
@@ -454,10 +448,8 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Se
         geodeSS->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
     }
 
-#ifdef RECURSIVE_DUMP
     for ( unsigned int i = 0; i < object.getChildCityObjectsCount(); ++i )
         createCityObject( object.getChildCityObject(i), settings, grp, highestLOD);
-#endif
 
     return true;
 }
@@ -473,7 +465,6 @@ unsigned int ReaderWriterCityGML::getHighestLodForObject( const citygml::CityObj
         }
     }
 
-#ifdef RECURSIVE_DUMP
     //check for the highest LODs of Children
     for (unsigned int i = 0; i < object.getChildCityObjectsCount(); ++i){
         unsigned int tempHighestLOD = ReaderWriterCityGML::getHighestLodForObject(object.getChildCityObject(i));
@@ -481,6 +472,6 @@ unsigned int ReaderWriterCityGML::getHighestLodForObject( const citygml::CityObj
             tempHighestLOD = highestLOD;
         }
     }
-#endif
+
     return highestLOD;
 }
