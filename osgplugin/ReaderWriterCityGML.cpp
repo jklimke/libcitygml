@@ -345,6 +345,50 @@ void setMaterial(osg::ref_ptr<osg::StateSet> stateset, const citygml::Polygon& p
     stateset->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON );
 }
 
+void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, CityGMLSettings& settings, osg::Geode* geometryContainer ) {
+    for ( unsigned int j = 0; j < geometry.getPolygonsCount(); j++ )
+    {
+        const citygml::Polygon& p = geometry.getPolygon(j);
+
+        if ( p.getIndices().size() == 0 ) continue;
+
+        // Geometry management
+
+        osg::Geometry* geom = new osg::Geometry;
+
+        // Vertices
+        osg::Vec3Array* vertices = new osg::Vec3Array;
+        const std::vector<TVec3d>& vert = p.getVertices();
+        vertices->reserve( vert.size() );
+        for ( unsigned int k = 0; k < vert.size(); k++ )
+        {
+            osg::Vec3d pt( vert[k].x, vert[k].y, vert[k].z );
+            vertices->push_back( pt );
+        }
+
+        geom->setVertexArray( vertices );
+
+        // Indices
+        osg::DrawElementsUInt* indices = new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, p.getIndices().begin(), p.getIndices().end());
+        geom->addPrimitiveSet( indices );
+
+        // Appearance
+
+        osg::ref_ptr<osg::StateSet> stateset = geom->getOrCreateStateSet();
+
+        setMaterial(stateset, p, settings);
+        setTexture(stateset, geom, p, settings);
+
+
+        geometryContainer->addDrawable( geom );
+    }
+
+    // Parse child geoemtries
+    for (unsigned int i = 0; i < geometry.getGeometriesCount(); i++) {
+        createOsgGeometryFromCityGMLGeometry(geometry.getGeometry(i), settings, geometryContainer);
+    }
+}
+
 bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, CityGMLSettings& settings, osg::Group* parent, unsigned int minimumLODToConsider ) const
 {
     // Skip objects without geometry
@@ -373,43 +417,7 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Ci
             continue;
         }
 
-        for ( unsigned int j = 0; j < geometry.getPolygonsCount(); j++ )
-        {
-            const citygml::Polygon& p = geometry.getPolygon(j);
-
-            if ( p.getIndices().size() == 0 ) continue;
-
-            // Geometry management
-
-            osg::Geometry* geom = new osg::Geometry;
-
-            // Vertices
-            osg::Vec3Array* vertices = new osg::Vec3Array;
-            const std::vector<TVec3d>& vert = p.getVertices();
-            vertices->reserve( vert.size() );
-            for ( unsigned int k = 0; k < vert.size(); k++ )
-            {
-                osg::Vec3d pt( vert[k].x, vert[k].y, vert[k].z );
-                vertices->push_back( pt );
-            }
-
-            geom->setVertexArray( vertices );
-
-            // Indices
-            osg::DrawElementsUInt* indices = new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, p.getIndices().begin(), p.getIndices().end());
-            geom->addPrimitiveSet( indices );
-
-            // Appearance
-
-            osg::ref_ptr<osg::StateSet> stateset = geom->getOrCreateStateSet();
-
-            setMaterial(stateset, p, settings);
-            setTexture(stateset, geom, p, settings);
-
-
-            // That's it!
-            geode->addDrawable( geom );
-        }
+        createOsgGeometryFromCityGMLGeometry(geometry, settings, geode);
     }
 
     if ( settings._printNames )

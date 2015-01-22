@@ -26,11 +26,11 @@ if (LIBCITYGML_OSG_PLUGIN_INSTALL_DIR)
 endif()
 
 add_definitions(-DPLUGIN_BIN_DIR=\"${CMAKE_BINARY_DIR}/lib\")
-add_executable(citygmlOSGPluginTest PluginTest.cpp)
-target_link_libraries(citygmlOSGPluginTest ${OPENSCENEGRAPH_LIBRARIES} citygml)
+add_executable(citygmlOsgViewer CitygmlOsgViewer.cpp)
+target_link_libraries(citygmlOsgViewer ${OPENSCENEGRAPH_LIBRARIES} citygml)
 
 INSTALL(
-    TARGETS ${target} citygmlOSGPluginTest
+    TARGETS ${target} citygmlOsgViewer
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION ${PLUGIN_INSTALL_PATH}
     ARCHIVE DESTINATION ${PLUGIN_INSTALL_PATH}

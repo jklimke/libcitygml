@@ -21,7 +21,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(argv[1]);
+    osg::ref_ptr<osgDB::Options> options = new osgDB::Options("usemaxlodonly");
+    osg::ref_ptr<osg::Node> node = osgDB::readNodeFile(argv[1], options);
 
     if (node == nullptr) {
         std::cerr << "Failed to load file " << argv[1] << std::endl;
