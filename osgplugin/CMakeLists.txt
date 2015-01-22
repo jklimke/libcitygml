@@ -12,7 +12,9 @@ set( sources ReaderWriterCityGML.cpp )
 
 add_library(${target} SHARED ${sources})
 set_target_properties(${target} PROPERTIES PREFIX "")
-
+if(APPLE)
+    SET(CMAKE_SHARED_LIBRARY_SUFFIX ".so")
+endif(APPLE)
 target_link_libraries(${target} ${OPENSCENEGRAPH_LIBRARIES} citygml)
 
 set(OSG_PLUGINS "osgPlugins-${OPENSCENEGRAPH_VERSION}")
