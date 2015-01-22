@@ -120,7 +120,7 @@ namespace citygml {
             Tesselator tesselator(m_logger);
 
             CITYGML_LOG_INFO(m_logger, "Start postprocessing of the citymodel.");
-            m_rootModel->finish(m_parserParams.tesselate, tesselator, m_parserParams.optimize, m_logger);
+            m_rootModel->finish(tesselator, m_parserParams.optimize, m_logger);
             CITYGML_LOG_INFO(m_logger, "Finished postprocessing of the citymodel.");
 
             m_rootModel->setThemes(m_factory->getAllThemes());

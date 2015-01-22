@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 
 #include <citygml/citygml_api.h>
 #include <citygml/appearancetarget.h>
@@ -81,7 +82,7 @@ namespace citygml {
 
         void addRing( LinearRing* );
 
-        void finish(bool doTesselate, Tesselator& tesselator , bool optimize, std::shared_ptr<CityGMLLogger> logger);
+        void finish(Tesselator& tesselator , bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
         virtual ~Polygon();
 
@@ -95,14 +96,18 @@ namespace citygml {
          * @param tesselate if true the tesselator will be used to tesselate the linear rings
          * @param tesselator the Tesselator object
          */
-        void computeIndices(bool tesselate, Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
+        void computeIndices(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
         void createSimpleIndices(std::shared_ptr<CityGMLLogger> logger);
         void createIndicesWithTesselation(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
         void removeDuplicateVerticesInRings(std::shared_ptr<CityGMLLogger> logger);
+        std::vector<TVec2f> getTexCoordsForRingAndTheme(const LinearRing& ring, const std::string& theme, bool front);
+        std::vector<std::vector<TVec2f> > getTexCoordListsForRing(const LinearRing& ring, const std::vector<std::string>& themesFront, const std::vector<std::string>& themesBack);
 
         TVec3d computeNormal();
 
         std::vector<TVec3d> m_vertices;
+        std::unordered_map<std::string, std::vector<TVec2f>> m_themeToFrontTexCoordsMap;
+        std::unordered_map<std::string, std::vector<TVec2f>> m_themeToBackTexCoordsMap;
         std::vector<unsigned int> m_indices;
 
         std::unique_ptr<LinearRing> m_exteriorRing;
