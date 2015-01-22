@@ -1,5 +1,6 @@
 libcitygml
 ==========
+[![Build Status](https://travis-ci.org/jklimke/libcitygml.svg?branch=master)](https://travis-ci.org/jklimke/libcitygml)
 
 [CityGML](http://www.citygml.org/) (City Geography Markup Language) is an XML-based schema for the modelling and exchange of georeferenced 3D city and landscape models that is quickly being adopted on an international level.
 
