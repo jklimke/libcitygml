@@ -7,7 +7,7 @@
   #define NAN std::numeric_limits<double>::quiet_NaN()
 #endif
 
-#ifndef std::isnan
+#ifdef WIN32
   #define ISNAN _isnan
 #else
   #define ISNAN std::isnan

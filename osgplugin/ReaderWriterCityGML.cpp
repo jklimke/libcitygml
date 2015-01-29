@@ -18,6 +18,7 @@
 #include <osg/TexMat>
 #include <osg/Depth>
 #include <osg/LightModel>
+#include <osg/ValueObject>
 
 #include <osgText/Font>
 #include <osgText/Text>
@@ -355,6 +356,8 @@ void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, Cit
         // Geometry management
 
         osg::Geometry* geom = new osg::Geometry;
+        geom->setName( p.getId() );
+        geom->setUserValue("cot_type", geometry.getTypeAsString());
 
         // Vertices
         osg::Vec3Array* vertices = new osg::Vec3Array;
@@ -399,6 +402,7 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Ci
 
     osg::Group* grp = new osg::Group;
     grp->setName( object.getId() );
+    grp->setUserValue("cot_type", object.getTypeAsString());
     grp->addChild( geode );
     parent->addChild( grp );
 

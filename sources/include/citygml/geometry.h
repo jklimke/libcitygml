@@ -24,14 +24,14 @@ namespace citygml {
     public:
         enum class GeometryType
         {
-            GT_Unknown,
-            GT_Roof,
-            GT_Wall,
-            GT_Ground,
-            GT_Closure,
-            GT_Floor,
-            GT_InteriorWall,
-            GT_Ceiling,
+            GT_Unknown          = 1 << 0,
+            GT_Roof             = 1 << 1,
+            GT_Wall             = 1 << 2,
+            GT_Ground           = 1 << 3,
+            GT_Closure          = 1 << 4,
+            GT_Floor            = 1 << 5,
+            GT_InteriorWall     = 1 << 6,
+            GT_Ceiling          = 1 << 7
         };
 
         // Get the geometry LOD
@@ -48,6 +48,9 @@ namespace citygml {
         void addGeometry(Geometry* geom);
 
         GeometryType getType() const;
+
+        std::string getTypeAsString() const;
+        //std::string getTypeAsString( void ) const { return getGeometryClassName( _type ); }
 
         unsigned int lod() const;
         void setLod(unsigned int lod);

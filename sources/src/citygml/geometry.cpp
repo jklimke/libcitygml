@@ -58,6 +58,30 @@ namespace citygml {
         return m_type;
     }
 
+    std::string Geometry::getTypeAsString() const
+    {
+        switch (m_type) {
+        case GeometryType::GT_Unknown:
+            return "Unknown";
+        case GeometryType::GT_Roof:
+            return "Roof";
+        case GeometryType::GT_Wall:
+            return "Wall";
+        case GeometryType::GT_Ground:
+            return "Ground";
+        case GeometryType::GT_Closure:
+            return "Closure";
+        case GeometryType::GT_Floor:
+            return "Floor";
+        case GeometryType::GT_InteriorWall:
+            return "InteriorWall";
+        case GeometryType::GT_Ceiling:
+            return "Ceiling";
+        default:
+            return "Unknown";
+        }
+    }
+
     Geometry::~Geometry()
     {
     }
