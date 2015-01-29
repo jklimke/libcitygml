@@ -19,15 +19,8 @@ namespace citygml {
 
 
     // The nodes that are valid Geometry Objects
-    const std::unordered_set<int> typeIDSet = {
-        NodeType::GML_CompositeSolidNode.typeID(),
-        NodeType::GML_SolidNode.typeID(),
-        NodeType::GML_MultiSurfaceNode.typeID(),
-        NodeType::GML_CompositeSurfaceNode.typeID(),
-        NodeType::GML_TriangulatedSurfaceNode.typeID(),
-        NodeType::GML_OrientableSurfaceNode.typeID(),
-        NodeType::GML_MultiSolidNode.typeID()
-    };
+    std::unordered_set<int> geometryTypeIDSet;
+    bool geometryTypeIDSetInitialized = false;
 
     GeometryElementParser::GeometryElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger,
                                                  int lodLevel, CityObject::CityObjectsType parentType,  std::function<void(Geometry*)> callback)
@@ -45,7 +38,19 @@ namespace citygml {
 
     bool GeometryElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        return typeIDSet.count(node.typeID()) > 0;
+        if(!geometryTypeIDSetInitialized) {
+            geometryTypeIDSet.insert(NodeType::GML_CompositeSolidNode.typeID());
+            geometryTypeIDSet.insert(NodeType::GML_SolidNode.typeID());
+            geometryTypeIDSet.insert(NodeType::GML_MultiSurfaceNode.typeID());
+            geometryTypeIDSet.insert(NodeType::GML_CompositeSurfaceNode.typeID());
+            geometryTypeIDSet.insert(NodeType::GML_TriangulatedSurfaceNode.typeID());
+            geometryTypeIDSet.insert(NodeType::GML_OrientableSurfaceNode.typeID());
+            geometryTypeIDSet.insert(NodeType::GML_MultiSolidNode.typeID());
+            geometryTypeIDSet.insert(NodeType::GML_CompositeSolidNode.typeID());
+            geometryTypeIDSetInitialized = true;
+        }
+
+        return geometryTypeIDSet.count(node.typeID()) > 0;
     }
 
     Geometry::GeometryType mapCityObjectsTypeToGeometryType(const CityObject::CityObjectsType& cityObjType) {
@@ -122,18 +127,15 @@ namespace citygml {
             if (attributes.hasXLinkAttribute()) {
                 m_factory.requestSharedPolygonForGeometry(m_model, attributes.getXLinkValue());
             } else {
+                std::vector<ElementParser*> parsers;
 
+                std::function<void(std::shared_ptr<Polygon>)> callback1 = [this](std::shared_ptr<Polygon> poly) {m_model->addPolygon(poly);};
+                std::function<void(Geometry*)>                callback2 = [this](Geometry* child) {m_model->addGeometry(child);};
 
-                setParserForNextElement(
-                            new DelayedChoiceElementParser(m_documentParser, m_logger, {
-                                new PolygonElementParser(m_documentParser, m_factory, m_logger, [this](std::shared_ptr<Polygon> poly) {
-                                                m_model->addPolygon(poly);
-                                            }),
-                                new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* child) {
-                                                m_model->addGeometry(child);
-                                            })
-                            })
-                );
+                parsers.push_back(new PolygonElementParser(m_documentParser, m_factory, m_logger, callback1));
+                parsers.push_back(new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, callback2));
+
+                setParserForNextElement(new DelayedChoiceElementParser(m_documentParser, m_logger, parsers));
             }
             return true;
         }

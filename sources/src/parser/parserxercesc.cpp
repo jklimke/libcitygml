@@ -202,22 +202,22 @@ namespace citygml
     public:
         virtual void log(LOGLEVEL level, const std::string& message, const char* file, int line) const
         {
-            std::ostream& stream = level == LOGLEVEL::ERROR ? std::cerr : std::cout;
+            std::ostream& stream = level == LOGLEVEL::LL_ERROR ? std::cerr : std::cout;
 
             switch(level) {
-            case LOGLEVEL::DEBUG:
+            case LOGLEVEL::LL_DEBUG:
                 stream << "DEBUG";
                 break;
-            case LOGLEVEL::WARNING:
+            case LOGLEVEL::LL_WARNING:
                 stream << "WARNING";
                 break;
-            case LOGLEVEL::TRACE:
+            case LOGLEVEL::LL_TRACE:
                 stream << "TRACE";
                 break;
-            case LOGLEVEL::ERROR:
+            case LOGLEVEL::LL_ERROR:
                 stream << "ERROR";
                 break;
-            case LOGLEVEL::INFO:
+            case LOGLEVEL::LL_INFO:
                 stream << "INFO";
                 break;
             }

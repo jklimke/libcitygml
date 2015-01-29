@@ -74,7 +74,7 @@ namespace citygml {
 
         unsigned int m_lod;
 
-        std::vector<std::unique_ptr<Geometry>> m_childGeometries;
+        std::vector<std::shared_ptr<Geometry>> m_childGeometries;
 
         std::vector<std::shared_ptr<Polygon>> m_polygons;
     };

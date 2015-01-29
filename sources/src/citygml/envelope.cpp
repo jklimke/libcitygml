@@ -3,13 +3,23 @@
 #include <numeric>
 #include <cmath>
 
+#ifndef NAN
+  #define NAN std::numeric_limits<double>::quiet_NaN()
+#endif
+
+#ifndef std::isnan
+  #define ISNAN _isnan
+#else
+  #define ISNAN std::isnan
+#endif
+
 namespace citygml {
 
 
     Envelope::Envelope()
     {
-        m_lowerBound = TVec3d(std::nan(""),std::nan(""),std::nan(""));
-        m_upperBound = TVec3d(std::nan(""),std::nan(""),std::nan(""));
+        m_lowerBound = TVec3d(NAN,NAN,NAN);
+        m_upperBound = TVec3d(NAN,NAN,NAN);
     }
 
     Envelope::Envelope(const std::string& srsName)
@@ -44,8 +54,8 @@ namespace citygml {
 
     const bool Envelope::validBounds() const
     {
-        return !(std::isnan(m_lowerBound[0]) ||  std::isnan(m_lowerBound[1]) || std::isnan(m_lowerBound[2])
-                || std::isnan(m_upperBound[0]) ||  std::isnan(m_upperBound[1]) || std::isnan(m_upperBound[2]));
+        return !(ISNAN(m_lowerBound[0]) ||  ISNAN(m_lowerBound[1]) || ISNAN(m_lowerBound[2])
+                || ISNAN(m_upperBound[0]) ||  ISNAN(m_upperBound[1]) || ISNAN(m_upperBound[2]));
     }
 
     std::ostream& operator<<( std::ostream& os, const Envelope& e )

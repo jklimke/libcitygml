@@ -30,7 +30,14 @@ add_executable(citygmlOsgViewer CitygmlOsgViewer.cpp)
 target_link_libraries(citygmlOsgViewer ${OPENSCENEGRAPH_LIBRARIES} citygml)
 
 INSTALL(
-    TARGETS ${target} citygmlOsgViewer
+    TARGETS ${target}
+    RUNTIME DESTINATION ${PLUGIN_INSTALL_PATH}
+    LIBRARY DESTINATION ${PLUGIN_INSTALL_PATH}
+    ARCHIVE DESTINATION ${PLUGIN_INSTALL_PATH}
+)
+
+INSTALL(
+    TARGETS citygmlOsgViewer
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION ${PLUGIN_INSTALL_PATH}
     ARCHIVE DESTINATION ${PLUGIN_INSTALL_PATH}

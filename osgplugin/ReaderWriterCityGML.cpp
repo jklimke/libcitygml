@@ -69,15 +69,15 @@ public:
 private:
     std::ostream& getLogStreamFor(LOGLEVEL level) const {
         switch(level) {
-        case LOGLEVEL::DEBUG:
+        case LOGLEVEL::LL_DEBUG:
             return osg::notify(osg::DEBUG_INFO);
-        case LOGLEVEL::WARNING:
+        case LOGLEVEL::LL_WARNING:
             return osg::notify(osg::WARN);
-        case LOGLEVEL::TRACE:
+        case LOGLEVEL::LL_TRACE:
             return osg::notify(osg::DEBUG_FP);
-        case LOGLEVEL::ERROR:
+        case LOGLEVEL::LL_ERROR:
             return osg::notify(osg::FATAL);
-        case LOGLEVEL::INFO:
+        case LOGLEVEL::LL_INFO:
             return osg::notify(osg::INFO);
         default:
             return osg::notify(osg::INFO);

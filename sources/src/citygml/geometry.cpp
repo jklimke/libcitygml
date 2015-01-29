@@ -87,7 +87,7 @@ namespace citygml {
 
         m_finished = true;
 
-        for (std::unique_ptr<Geometry>&  child : m_childGeometries) {
+        for (std::shared_ptr<Geometry>&  child : m_childGeometries) {
             child->addTargetDefinitionsOf(*this);
             child->finish(tesselator, optimize, logger);
         }

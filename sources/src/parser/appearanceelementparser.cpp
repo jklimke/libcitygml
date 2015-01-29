@@ -87,11 +87,12 @@ namespace citygml {
                     this->m_surfaceDataList.push_back(surfacedata);
                 };
 
-                setParserForNextElement(new DelayedChoiceElementParser(m_documentParser, m_logger, {
-                    new MaterialElementParser(m_documentParser, m_factory, m_logger, callback),
-                    new TextureElementParser(m_documentParser, m_factory, m_logger, callback),
-                    new GeoReferencedTextureElementParser(m_documentParser, m_factory, m_logger, callback)
-                }));
+                std::vector<ElementParser*> choices;
+                choices.push_back(new MaterialElementParser(m_documentParser, m_factory, m_logger, callback));
+                choices.push_back(new TextureElementParser(m_documentParser, m_factory, m_logger, callback));
+                choices.push_back(new GeoReferencedTextureElementParser(m_documentParser, m_factory, m_logger, callback));
+
+                setParserForNextElement(new DelayedChoiceElementParser(m_documentParser, m_logger, choices));
             }
             return true;
 
