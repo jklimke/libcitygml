@@ -5,6 +5,9 @@
 #include "citygml/citygml.h"
 #include "citygml/citygmllogger.h"
 
+#include <unordered_map>
+#include <algorithm>
+
 namespace citygml {
 
     CityObject::CityObject(const std::string& id, CityObject::CityObjectsType type)  : FeatureObject( id ), m_type( type )
@@ -19,70 +22,7 @@ namespace citygml {
 
     std::string CityObject::getTypeAsString() const
     {
-        switch (m_type) {
-        case COT_GenericCityObject:
-            return "GenericCityObject";
-        case COT_Building:
-            return "Building";
-        case COT_Room:
-            return "Room";
-        case COT_BuildingInstallation:
-            return "BuildingInstallation";
-        case COT_BuildingFurniture:
-            return "BuildingFurniture";
-        case COT_Door:
-            return "Door";
-        case COT_Window:
-            return "Window";
-        case COT_CityFurniture:
-            return "CityFurniture";
-        case COT_Track:
-            return "Track";
-        case COT_Road:
-            return "Road";
-        case COT_Railway:
-            return "Railway";
-        case COT_Square:
-            return "Square";
-        case COT_PlantCover:
-            return "PlantCover";
-        case COT_SolitaryVegetationObject:
-            return "SolitaryVegetationObject";
-        case COT_WaterBody:
-            return "WaterBody";
-        case COT_TINRelief:
-            return "TINRelief";
-        case COT_LandUse:
-            return "LandUse";
-        case COT_Tunnel:
-            return "Tunnel";
-        case COT_Bridge:
-            return "Bridge";
-        case COT_BridgeConstructionElement:
-            return "BridgeConstructionElement";
-        case COT_BridgeInstallation:
-            return "BridgeInstallation";
-        case COT_BridgePart:
-            return "BridgePart";
-        case COT_BuildingPart:
-            return "BuildingPart";
-        case COT_WallSurface:
-            return "WallSurface";
-        case COT_RoofSurface:
-            return "RoofSurface";
-        case COT_GroundSurface:
-            return "GroundSurface";
-        case COT_ClosureSurface:
-            return "ClosureSurface";
-        case COT_FloorSurface:
-            return "FloorSurface";
-        case COT_InteriorWallSurface:
-            return "InteriorWallSurface";
-        case COT_CeilingSurface:
-            return "CeilingSurface";
-        default:
-            return "Unknown";
-        }
+        return cityObjectsTypeToString(m_type);
     }
 
     unsigned int CityObject::getGeometriesCount() const
@@ -185,6 +125,128 @@ namespace citygml {
         os << "  * " << o.getGeometriesCount() << " geometries." << std::endl;
 
         return os;
+    }
+
+    std::string cityObjectsTypeToString(const CityObject::CityObjectsType& t)
+    {
+        switch (t) {
+        case CityObject::COT_GenericCityObject:
+            return "GenericCityObject";
+        case CityObject::COT_Building:
+            return "Building";
+        case CityObject::COT_Room:
+            return "Room";
+        case CityObject::COT_BuildingInstallation:
+            return "BuildingInstallation";
+        case CityObject::COT_BuildingFurniture:
+            return "BuildingFurniture";
+        case CityObject::COT_Door:
+            return "Door";
+        case CityObject::COT_Window:
+            return "Window";
+        case CityObject::COT_CityFurniture:
+            return "CityFurniture";
+        case CityObject::COT_Track:
+            return "Track";
+        case CityObject::COT_Road:
+            return "Road";
+        case CityObject::COT_Railway:
+            return "Railway";
+        case CityObject::COT_Square:
+            return "Square";
+        case CityObject::COT_PlantCover:
+            return "PlantCover";
+        case CityObject::COT_SolitaryVegetationObject:
+            return "SolitaryVegetationObject";
+        case CityObject::COT_WaterBody:
+            return "WaterBody";
+        case CityObject::COT_TINRelief:
+            return "TINRelief";
+        case CityObject::COT_LandUse:
+            return "LandUse";
+        case CityObject::COT_Tunnel:
+            return "Tunnel";
+        case CityObject::COT_Bridge:
+            return "Bridge";
+        case CityObject::COT_BridgeConstructionElement:
+            return "BridgeConstructionElement";
+        case CityObject::COT_BridgeInstallation:
+            return "BridgeInstallation";
+        case CityObject::COT_BridgePart:
+            return "BridgePart";
+        case CityObject::COT_BuildingPart:
+            return "BuildingPart";
+        case CityObject::COT_WallSurface:
+            return "WallSurface";
+        case CityObject::COT_RoofSurface:
+            return "RoofSurface";
+        case CityObject::COT_GroundSurface:
+            return "GroundSurface";
+        case CityObject::COT_ClosureSurface:
+            return "ClosureSurface";
+        case CityObject::COT_FloorSurface:
+            return "FloorSurface";
+        case CityObject::COT_InteriorWallSurface:
+            return "InteriorWallSurface";
+        case CityObject::COT_CeilingSurface:
+            return "CeilingSurface";
+        default:
+            return "Unknown";
+        }
+    }
+
+    std::string cityObjectsTypeToLowerString(const CityObject::CityObjectsType& t) {
+        std::string str = cityObjectsTypeToString(t);
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+        return str;
+    }
+
+    std::unordered_map<std::string, CityObject::CityObjectsType> stringTypeMap = {
+         {cityObjectsTypeToLowerString(CityObject::COT_GenericCityObject), CityObject::COT_GenericCityObject},
+         {cityObjectsTypeToLowerString(CityObject::COT_Building), CityObject::COT_Building},
+         {cityObjectsTypeToLowerString(CityObject::COT_Room), CityObject::COT_Room},
+         {cityObjectsTypeToLowerString(CityObject::COT_BuildingInstallation), CityObject::COT_BuildingInstallation},
+         {cityObjectsTypeToLowerString(CityObject::COT_BuildingFurniture), CityObject::COT_BuildingFurniture},
+         {cityObjectsTypeToLowerString(CityObject::COT_Door), CityObject::COT_Door},
+         {cityObjectsTypeToLowerString(CityObject::COT_Window), CityObject::COT_Window},
+         {cityObjectsTypeToLowerString(CityObject::COT_CityFurniture), CityObject::COT_CityFurniture},
+         {cityObjectsTypeToLowerString(CityObject::COT_Track), CityObject::COT_Track},
+         {cityObjectsTypeToLowerString(CityObject::COT_Road), CityObject::COT_Road},
+         {cityObjectsTypeToLowerString(CityObject::COT_Railway), CityObject::COT_Railway},
+         {cityObjectsTypeToLowerString(CityObject::COT_Square), CityObject::COT_Square},
+         {cityObjectsTypeToLowerString(CityObject::COT_PlantCover), CityObject::COT_PlantCover},
+         {cityObjectsTypeToLowerString(CityObject::COT_SolitaryVegetationObject), CityObject::COT_SolitaryVegetationObject},
+         {cityObjectsTypeToLowerString(CityObject::COT_WaterBody), CityObject::COT_WaterBody},
+         {cityObjectsTypeToLowerString(CityObject::COT_TINRelief), CityObject::COT_TINRelief},
+         {cityObjectsTypeToLowerString(CityObject::COT_LandUse), CityObject::COT_LandUse},
+         {cityObjectsTypeToLowerString(CityObject::COT_Tunnel), CityObject::COT_Tunnel},
+         {cityObjectsTypeToLowerString(CityObject::COT_Bridge), CityObject::COT_Bridge},
+         {cityObjectsTypeToLowerString(CityObject::COT_BridgeConstructionElement), CityObject::COT_BridgeConstructionElement},
+         {cityObjectsTypeToLowerString(CityObject::COT_BridgeInstallation), CityObject::COT_BridgeInstallation},
+         {cityObjectsTypeToLowerString(CityObject::COT_BridgePart), CityObject::COT_BridgePart},
+         {cityObjectsTypeToLowerString(CityObject::COT_BuildingPart), CityObject::COT_BuildingPart},
+         {cityObjectsTypeToLowerString(CityObject::COT_WallSurface), CityObject::COT_WallSurface},
+         {cityObjectsTypeToLowerString(CityObject::COT_RoofSurface), CityObject::COT_RoofSurface},
+         {cityObjectsTypeToLowerString(CityObject::COT_GroundSurface), CityObject::COT_GroundSurface},
+         {cityObjectsTypeToLowerString(CityObject::COT_ClosureSurface), CityObject::COT_ClosureSurface},
+         {cityObjectsTypeToLowerString(CityObject::COT_FloorSurface), CityObject::COT_FloorSurface},
+         {cityObjectsTypeToLowerString(CityObject::COT_InteriorWallSurface), CityObject::COT_InteriorWallSurface},
+         {cityObjectsTypeToLowerString(CityObject::COT_CeilingSurface), CityObject::COT_CeilingSurface},
+    };
+
+    CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid)
+    {
+        std::string lower_s = s;
+        std::transform(lower_s.begin(), lower_s.end(), lower_s.begin(), ::tolower);
+        auto it = stringTypeMap.find(lower_s);
+
+        valid = it != stringTypeMap.end();
+
+        if (valid) {
+            return it->second;
+        }
+
+        return CityObject::COT_All;
     }
 
 }

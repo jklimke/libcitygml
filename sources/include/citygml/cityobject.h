@@ -102,4 +102,7 @@ namespace citygml {
     };
 
     std::ostream& operator<<( std::ostream& os, const CityObject& o );
+
+    std::string cityObjectsTypeToString(const CityObject::CityObjectsType& t);
+    CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid);
 }
