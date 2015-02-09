@@ -17,11 +17,8 @@ namespace citygml {
 
 
     // The nodes that are valid Polygon Objects
-    const std::unordered_set<int> typeIDSet = {
-        NodeType::GML_TriangleNode.typeID(),
-        NodeType::GML_RectangleNode.typeID(),
-        NodeType::GML_PolygonNode.typeID()
-    };
+    std::unordered_set<int> typeIDSet;
+    bool typeIDSetInitialized = false;
 
     PolygonElementParser::PolygonElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Polygon>)> callback)
         : CityGMLElementParser(documentParser, factory, logger)
@@ -36,6 +33,13 @@ namespace citygml {
 
     bool PolygonElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
+        if(!typeIDSetInitialized) {
+            typeIDSet.insert(NodeType::GML_TriangleNode.typeID());
+            typeIDSet.insert(NodeType::GML_RectangleNode.typeID());
+            typeIDSet.insert(NodeType::GML_PolygonNode.typeID());
+            typeIDSetInitialized = true;
+        }
+
         return typeIDSet.count(node.typeID()) > 0;
     }
 

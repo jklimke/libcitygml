@@ -264,7 +264,7 @@ namespace citygml {
 
 
     void GeoCoordinateTransformer::transformToDestinationSRS(CityModel* model) {
-        CITYGML_LOG_WARN(m_model, "Coordinate transformation to " << m_destinationSRS << " requested, but libcitygml was build without GDAL. The coordinates will not be transformed.");
+        CITYGML_LOG_WARN(m_logger, "Coordinate transformation to " << m_destinationSRS << " requested, but libcitygml was build without GDAL. The coordinates will not be transformed.");
     }
 
     void GeoCoordinateTransformer::transformRecursive(CityObject&, GeoTransform&) {}

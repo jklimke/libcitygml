@@ -13,6 +13,7 @@ namespace citygml {
 
         class XMLNode {
         public:
+            XMLNode();
             XMLNode(std::string prefix, std::string name);
 
             const std::string& name() const;
@@ -34,7 +35,9 @@ namespace citygml {
 
         static const XMLNode& getXMLNodeFor(const std::string& name);
 
-        #define NODETYPE( prefix, elementName ) static const XMLNode prefix ## _ ## elementName ## Node;
+        static bool nodesInitialized;
+
+        #define NODETYPE( prefix, elementName ) static XMLNode prefix ## _ ## elementName ## Node;
 
         // CORE
         NODETYPE( CORE, CityModel )

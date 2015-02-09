@@ -1,8 +1,4 @@
 #include "parser/cityobjectelementparser.h"
-
-#include <unordered_map>
-#include <unordered_set>
-
 #include "parser/nodetypes.h"
 #include "parser/attributes.h"
 #include "parser/documentlocation.h"
@@ -10,7 +6,6 @@
 #include "parser/geometryelementparser.h"
 #include "parser/implicitgeometryelementparser.h"
 
-#include "citygml/cityobject.h"
 #include "citygml/citygmlfactory.h"
 #include "citygml/citygmllogger.h"
 
@@ -18,42 +13,14 @@
 
 namespace citygml {
 
-#define HANDLE_TYPE( prefix, elementName ) { NodeType::prefix ## _ ## elementName ## Node.typeID(), CityObject::COT_ ## elementName }
+    bool CityObjectElementParser::typeIDTypeMapInitialized = false;
+    bool CityObjectElementParser::attributesSetInitialized = false;
 
-    // The nodes that are valid CityObjects
-    const std::unordered_map<int, CityObject::CityObjectsType> typeIDTypeMap = {
-        HANDLE_TYPE( GEN, GenericCityObject ),
-        HANDLE_TYPE( BLDG, Building ),
-        HANDLE_TYPE( BLDG, BuildingPart ),
-        HANDLE_TYPE( BLDG, Room ),
-        HANDLE_TYPE( BLDG, BuildingInstallation ),
-        HANDLE_TYPE( BLDG, BuildingFurniture ),
-        HANDLE_TYPE( BLDG, Door ),
-        HANDLE_TYPE( BLDG, Window ),
-        HANDLE_TYPE( BLDG, CityFurniture ),
-        HANDLE_TYPE( FRN, CityFurniture ),
-        HANDLE_TYPE( TRANS, Track ),
-        HANDLE_TYPE( TRANS, Road ),
-        HANDLE_TYPE( TRANS, Railway ),
-        HANDLE_TYPE( TRANS, Square ),
-        HANDLE_TYPE( VEG, PlantCover ),
-        HANDLE_TYPE( VEG, SolitaryVegetationObject ),
-        HANDLE_TYPE( WTR, WaterBody ),
-        HANDLE_TYPE( LUSE, TINRelief ),
-        HANDLE_TYPE( LUSE, LandUse ),
-        HANDLE_TYPE( SUB, Tunnel ),
-        HANDLE_TYPE( BRID, Bridge ),
-        HANDLE_TYPE( BRID, BridgeConstructionElement ),
-        HANDLE_TYPE( BRID, BridgeInstallation ),
-        HANDLE_TYPE( BRID, BridgePart ),
-        HANDLE_TYPE( BLDG, WallSurface ),
-        HANDLE_TYPE( BLDG, RoofSurface ),
-        HANDLE_TYPE( BLDG, GroundSurface ),
-        HANDLE_TYPE( BLDG, ClosureSurface ),
-        HANDLE_TYPE( BLDG, FloorSurface ),
-        HANDLE_TYPE( BLDG, InteriorWallSurface ),
-        HANDLE_TYPE( BLDG, CeilingSurface )
-    };
+    std::unordered_map<int, CityObject::CityObjectsType> CityObjectElementParser::typeIDTypeMap = std::unordered_map<int, CityObject::CityObjectsType>();
+    std::unordered_set<int> CityObjectElementParser::attributesSet = std::unordered_set<int>();
+
+    #define HANDLE_TYPE( prefix, elementName ) std::pair<int, CityObject::CityObjectsType>(NodeType::prefix ## _ ## elementName ## Node.typeID(), CityObject::COT_ ## elementName)
+    #define HANDLE_ATTR( prefix, elementName ) NodeType::prefix ## _ ## elementName ## Node.typeID()
 
     CityObjectElementParser::CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (CityObject*)> callback)
         : GMLFeatureCollectionElementParser(documentParser, factory, logger)
@@ -66,13 +33,90 @@ namespace citygml {
         return "CityObjectElementParser";
     }
 
+    void CityObjectElementParser::initializeTypeIDTypeMap()
+    {
+        typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericCityObject));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Building));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingPart));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Room));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingInstallation));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingFurniture));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Door));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Window));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CityFurniture));
+        typeIDTypeMap.insert(HANDLE_TYPE(FRN, CityFurniture));
+        typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Track));
+        typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Road));
+        typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Railway));
+        typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Square));
+        typeIDTypeMap.insert(HANDLE_TYPE(VEG, PlantCover));
+        typeIDTypeMap.insert(HANDLE_TYPE(VEG, SolitaryVegetationObject));
+        typeIDTypeMap.insert(HANDLE_TYPE(WTR, WaterBody));
+        typeIDTypeMap.insert(HANDLE_TYPE(LUSE, TINRelief));
+        typeIDTypeMap.insert(HANDLE_TYPE(LUSE, LandUse));
+        typeIDTypeMap.insert(HANDLE_TYPE(SUB, Tunnel));
+        typeIDTypeMap.insert(HANDLE_TYPE(BRID, Bridge));
+        typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeConstructionElement));
+        typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeInstallation));
+        typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgePart));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, WallSurface));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, RoofSurface));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, GroundSurface));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, ClosureSurface));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, FloorSurface));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, InteriorWallSurface));
+        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CeilingSurface));
+
+        typeIDTypeMapInitialized = true;
+    }
+
+    void CityObjectElementParser::initializeAttributesSet()
+    {
+        attributesSet.insert(HANDLE_ATTR(CORE, CreationDate));
+        attributesSet.insert(HANDLE_ATTR(CORE, TerminationDate));
+        attributesSet.insert(HANDLE_ATTR(BLDG, Type));
+        attributesSet.insert(HANDLE_ATTR(BLDG, Class));
+        attributesSet.insert(HANDLE_ATTR(BLDG, Function));
+        attributesSet.insert(HANDLE_ATTR(BLDG, Usage));
+        attributesSet.insert(HANDLE_ATTR(BLDG, YearOfConstruction));
+        attributesSet.insert(HANDLE_ATTR(BLDG, YearOfDemolition));
+        attributesSet.insert(HANDLE_ATTR(BLDG, StoreyHeightsAboveGround));
+        attributesSet.insert(HANDLE_ATTR(BLDG, StoreysBelowGround));
+        attributesSet.insert(HANDLE_ATTR(BLDG, MeasuredHeight));
+        attributesSet.insert(HANDLE_ATTR(BLDG, Address));
+        attributesSet.insert(HANDLE_ATTR(BLDG, RoofType));
+        attributesSet.insert(HANDLE_ATTR(XAL, XalAddress));
+        attributesSet.insert(HANDLE_ATTR(XAL, Administrativearea));
+        attributesSet.insert(HANDLE_ATTR(XAL, Country));
+        attributesSet.insert(HANDLE_ATTR(XAL, CountryName));
+        attributesSet.insert(HANDLE_ATTR(XAL, Code));
+        attributesSet.insert(HANDLE_ATTR(XAL, Street));
+        attributesSet.insert(HANDLE_ATTR(XAL, PostalCode));
+        attributesSet.insert(HANDLE_ATTR(XAL, City));
+        attributesSet.insert(HANDLE_ATTR(XAL, LocalityName));
+        attributesSet.insert(HANDLE_ATTR(XAL, Thoroughfare));
+        attributesSet.insert(HANDLE_ATTR(XAL, ThoroughfareNumber));
+        attributesSet.insert(HANDLE_ATTR(XAL, ThoroughfareName));
+        attributesSet.insert(HANDLE_ATTR(XAL, Locality));
+        attributesSet.insert(HANDLE_ATTR(XAL, AddressDetails));
+        attributesSet.insert(HANDLE_ATTR(XAL, DependentLocalityName));
+
+        attributesSetInitialized = true;
+    }
+
     bool CityObjectElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
+        if(!typeIDTypeMapInitialized) {
+            initializeTypeIDTypeMap();
+        }
         return typeIDTypeMap.count(node.typeID()) > 0;
     }
 
     bool CityObjectElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
+        if(!typeIDTypeMapInitialized) {
+            initializeTypeIDTypeMap();
+        }
         auto it = typeIDTypeMap.find(node.typeID());
 
         if (it == typeIDTypeMap.end()) {
@@ -80,7 +124,7 @@ namespace citygml {
             throw std::runtime_error("Unexpected start tag found.");
         }
 
-        m_model = m_factory.createCityObject(attributes.getCityGMLIDAttribute(), it->second);
+        m_model = m_factory.createCityObject(attributes.getCityGMLIDAttribute(), static_cast<CityObject::CityObjectsType>(it->second));
         return true;
 
     }
@@ -92,41 +136,11 @@ namespace citygml {
         return true;
     }
 
-#define HANDLE_ATTR(prefix, elementName) NodeType::prefix ## _ ## elementName ## Node.typeID()
-    // The nodes that contain string content which is set as attribute of the CityObject
-    const std::unordered_set<int> attributesSet = {
-        HANDLE_ATTR(CORE, CreationDate),
-        HANDLE_ATTR(CORE, TerminationDate),
-        HANDLE_ATTR(BLDG, Type),
-        HANDLE_ATTR(BLDG, Class),
-        HANDLE_ATTR(BLDG, Function),
-        HANDLE_ATTR(BLDG, Usage),
-        HANDLE_ATTR(BLDG, YearOfConstruction),
-        HANDLE_ATTR(BLDG, YearOfDemolition),
-        HANDLE_ATTR(BLDG, StoreyHeightsAboveGround),
-        HANDLE_ATTR(BLDG, StoreysBelowGround),
-        HANDLE_ATTR(BLDG, MeasuredHeight),
-        HANDLE_ATTR(BLDG, Address),
-        HANDLE_ATTR(BLDG, RoofType),
-        HANDLE_ATTR(XAL, XalAddress),
-        HANDLE_ATTR(XAL, Administrativearea),
-        HANDLE_ATTR(XAL, Country),
-        HANDLE_ATTR(XAL, CountryName),
-        HANDLE_ATTR(XAL, Code),
-        HANDLE_ATTR(XAL, Street),
-        HANDLE_ATTR(XAL, PostalCode),
-        HANDLE_ATTR(XAL, City),
-        HANDLE_ATTR(XAL, LocalityName),
-        HANDLE_ATTR(XAL, Thoroughfare),
-        HANDLE_ATTR(XAL, ThoroughfareNumber),
-        HANDLE_ATTR(XAL, ThoroughfareName),
-        HANDLE_ATTR(XAL, Locality),
-        HANDLE_ATTR(XAL, AddressDetails),
-        HANDLE_ATTR(XAL, DependentLocalityName)
-    };
-
     bool CityObjectElementParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
+        if(!attributesSetInitialized) {
+            initializeAttributesSet();
+        }
 
         if (m_model == nullptr) {
             throw std::runtime_error("CityObjectElementParser::parseChildElementStartTag called before CityObjectElementParser::parseElementStartTag");
@@ -235,6 +249,10 @@ namespace citygml {
     {
         if (m_model == nullptr) {
             throw std::runtime_error("CityObjectElementParser::parseChildElementEndTag called before CityObjectElementParser::parseElementStartTag");
+        }
+
+        if(!attributesSetInitialized) {
+            initializeAttributesSet();
         }
 
         if (    node == NodeType::GEN_StringAttributeNode

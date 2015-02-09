@@ -48,7 +48,9 @@ namespace citygml
         CityObjectsMap::iterator it = m_cityObjectsMap.find(cityObj->getType());
 
         if (it == m_cityObjectsMap.end()) {
-            m_cityObjectsMap[cityObj->getType()] = std::vector<const CityObject*>({cityObj});
+            std::vector<const CityObject*> tmp;
+            tmp.push_back(cityObj);
+            m_cityObjectsMap[cityObj->getType()] = std::vector<const CityObject*>(tmp);
         } else {
             it->second.push_back(cityObj);
         }
