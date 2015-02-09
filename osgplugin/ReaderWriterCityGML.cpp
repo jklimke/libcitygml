@@ -18,6 +18,7 @@
 #include <osg/TexMat>
 #include <osg/Depth>
 #include <osg/LightModel>
+#include <osg/ValueObject>
 
 #include <osgText/Font>
 #include <osgText/Text>
@@ -69,15 +70,15 @@ public:
 private:
     std::ostream& getLogStreamFor(LOGLEVEL level) const {
         switch(level) {
-        case LOGLEVEL::DEBUG:
+        case LOGLEVEL::LL_DEBUG:
             return osg::notify(osg::DEBUG_INFO);
-        case LOGLEVEL::WARNING:
+        case LOGLEVEL::LL_WARNING:
             return osg::notify(osg::WARN);
-        case LOGLEVEL::TRACE:
+        case LOGLEVEL::LL_TRACE:
             return osg::notify(osg::DEBUG_FP);
-        case LOGLEVEL::ERROR:
+        case LOGLEVEL::LL_ERROR:
             return osg::notify(osg::FATAL);
-        case LOGLEVEL::INFO:
+        case LOGLEVEL::LL_INFO:
             return osg::notify(osg::INFO);
         default:
             return osg::notify(osg::INFO);
@@ -355,6 +356,8 @@ void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, Cit
         // Geometry management
 
         osg::Geometry* geom = new osg::Geometry;
+        geom->setName( p.getId() );
+        geom->setUserValue("cot_type", geometry.getTypeAsString());
 
         // Vertices
         osg::Vec3Array* vertices = new osg::Vec3Array;
@@ -399,6 +402,7 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Ci
 
     osg::Group* grp = new osg::Group;
     grp->setName( object.getId() );
+    grp->setUserValue("cot_type", object.getTypeAsString());
     grp->addChild( geode );
     parent->addChild( grp );
 

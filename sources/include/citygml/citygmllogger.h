@@ -9,11 +9,11 @@ namespace citygml {
     class LIBCITYGML_EXPORT CityGMLLogger {
     public:
         enum class LOGLEVEL {
-            ERROR,
-            WARNING,
-            INFO,
-            DEBUG,
-            TRACE
+            LL_ERROR,
+            LL_WARNING,
+            LL_INFO,
+            LL_DEBUG,
+            LL_TRACE
         };
 
         /**
@@ -41,9 +41,9 @@ namespace citygml {
         } while (0);
 
 
-    #define CITYGML_LOG_ERROR(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::ERROR, message)
-    #define CITYGML_LOG_WARN(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::WARNING, message)
-    #define CITYGML_LOG_INFO(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::INFO, message)
-    #define CITYGML_LOG_DEBUG(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::DEBUG, message)
-    #define CITYGML_LOG_TRACE(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::TRACE, message)
+    #define CITYGML_LOG_ERROR(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::LL_ERROR, message)
+    #define CITYGML_LOG_WARN(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::LL_WARNING, message)
+    #define CITYGML_LOG_INFO(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::LL_INFO, message)
+    #define CITYGML_LOG_DEBUG(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::LL_DEBUG, message)
+    #define CITYGML_LOG_TRACE(logger, message) CITYGML_LOG(logger, citygml::CityGMLLogger::LOGLEVEL::LL_TRACE, message)
 }

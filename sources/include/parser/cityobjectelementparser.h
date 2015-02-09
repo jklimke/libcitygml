@@ -3,10 +3,12 @@
 #include <parser/gmlfeaturecollectionparser.h>
 
 #include <functional>
+#include <unordered_map>
+#include <unordered_set>
+
+#include "citygml/cityobject.h"
 
 namespace citygml {
-
-    class CityObject;
 
     class CityObjectElementParser : public GMLFeatureCollectionElementParser {
     public:
@@ -27,9 +29,19 @@ namespace citygml {
         virtual FeatureObject* getFeatureObject() override;
 
     private:
+        static void initializeTypeIDTypeMap();
+        static void initializeAttributesSet();
+
         CityObject* m_model;
         std::function<void(CityObject*)> m_callback;
         std::string m_lastAttributeName;
+
+        // The nodes that are valid CityObjects
+        static std::unordered_map<int, CityObject::CityObjectsType> typeIDTypeMap;
+        static bool typeIDTypeMapInitialized;
+
+        static std::unordered_set<int> attributesSet;
+        static bool attributesSetInitialized;
 
         void parseGeometryForLODLevel(int lod);
         void parseImplicitGeometryForLODLevel(int lod);

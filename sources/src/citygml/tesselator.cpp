@@ -17,6 +17,11 @@
 * GNU Lesser General Public License for more details.
 */
 
+#ifdef WIN32
+#define WINDOWS_LEAN_AND_MEAN
+#define NOMINMAX
+#endif
+
 #include "citygml/tesselator.h"
 #ifndef WIN32
 #	include <stdint.h>

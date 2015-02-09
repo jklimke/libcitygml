@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <citygml/featureobject.h>
+#include <citygml/citygml_api.h>
 
 class Tesselator;
 
@@ -16,7 +17,7 @@ namespace citygml {
     class CityGMLLogger;
     class AppearanceManager;
 
-    class CityObject : public FeatureObject
+    class LIBCITYGML_EXPORT CityObject : public FeatureObject
     {
     public:
 
