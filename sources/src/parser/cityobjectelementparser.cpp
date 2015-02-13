@@ -19,6 +19,9 @@ namespace citygml {
     std::unordered_map<int, CityObject::CityObjectsType> CityObjectElementParser::typeIDTypeMap = std::unordered_map<int, CityObject::CityObjectsType>();
     std::unordered_set<int> CityObjectElementParser::attributesSet = std::unordered_set<int>();
 
+    std::mutex CityObjectElementParser::initializedTypeIDMutex;
+    std::mutex CityObjectElementParser::initializedAttributeSetMutex;
+
     #define HANDLE_TYPE( prefix, elementName ) std::pair<int, CityObject::CityObjectsType>(NodeType::prefix ## _ ## elementName ## Node.typeID(), CityObject::COT_ ## elementName)
     #define HANDLE_ATTR( prefix, elementName ) NodeType::prefix ## _ ## elementName ## Node.typeID()
 
@@ -35,88 +38,100 @@ namespace citygml {
 
     void CityObjectElementParser::initializeTypeIDTypeMap()
     {
-        typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericCityObject));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Building));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingPart));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Room));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingInstallation));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingFurniture));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Door));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Window));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CityFurniture));
-        typeIDTypeMap.insert(HANDLE_TYPE(FRN, CityFurniture));
-        typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Track));
-        typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Road));
-        typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Railway));
-        typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Square));
-        typeIDTypeMap.insert(HANDLE_TYPE(VEG, PlantCover));
-        typeIDTypeMap.insert(HANDLE_TYPE(VEG, SolitaryVegetationObject));
-        typeIDTypeMap.insert(HANDLE_TYPE(WTR, WaterBody));
-        typeIDTypeMap.insert(HANDLE_TYPE(LUSE, TINRelief));
-        typeIDTypeMap.insert(HANDLE_TYPE(LUSE, LandUse));
-        typeIDTypeMap.insert(HANDLE_TYPE(SUB, Tunnel));
-        typeIDTypeMap.insert(HANDLE_TYPE(BRID, Bridge));
-        typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeConstructionElement));
-        typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeInstallation));
-        typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgePart));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, WallSurface));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, RoofSurface));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, GroundSurface));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, ClosureSurface));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, FloorSurface));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, InteriorWallSurface));
-        typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CeilingSurface));
+        // double-checked lock
+        if (!typeIDTypeMapInitialized) {
+            std::lock_guard<std::mutex> lock(CityObjectElementParser::initializedTypeIDMutex);
 
-        typeIDTypeMapInitialized = true;
+            if (!typeIDTypeMapInitialized) {
+                typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericCityObject));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Building));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingPart));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Room));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingInstallation));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingFurniture));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Door));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Window));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CityFurniture));
+                typeIDTypeMap.insert(HANDLE_TYPE(FRN, CityFurniture));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Track));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Road));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Railway));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Square));
+                typeIDTypeMap.insert(HANDLE_TYPE(VEG, PlantCover));
+                typeIDTypeMap.insert(HANDLE_TYPE(VEG, SolitaryVegetationObject));
+                typeIDTypeMap.insert(HANDLE_TYPE(WTR, WaterBody));
+                typeIDTypeMap.insert(HANDLE_TYPE(LUSE, TINRelief));
+                typeIDTypeMap.insert(HANDLE_TYPE(LUSE, LandUse));
+                typeIDTypeMap.insert(HANDLE_TYPE(SUB, Tunnel));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, Bridge));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeConstructionElement));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeInstallation));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgePart));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, WallSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, RoofSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, GroundSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, ClosureSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, FloorSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, InteriorWallSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CeilingSurface));
+
+                typeIDTypeMapInitialized = true;
+            }
+        }
     }
 
     void CityObjectElementParser::initializeAttributesSet()
     {
-        attributesSet.insert(HANDLE_ATTR(CORE, CreationDate));
-        attributesSet.insert(HANDLE_ATTR(CORE, TerminationDate));
-        attributesSet.insert(HANDLE_ATTR(BLDG, Type));
-        attributesSet.insert(HANDLE_ATTR(BLDG, Class));
-        attributesSet.insert(HANDLE_ATTR(BLDG, Function));
-        attributesSet.insert(HANDLE_ATTR(BLDG, Usage));
-        attributesSet.insert(HANDLE_ATTR(BLDG, YearOfConstruction));
-        attributesSet.insert(HANDLE_ATTR(BLDG, YearOfDemolition));
-        attributesSet.insert(HANDLE_ATTR(BLDG, StoreyHeightsAboveGround));
-        attributesSet.insert(HANDLE_ATTR(BLDG, StoreysBelowGround));
-        attributesSet.insert(HANDLE_ATTR(BLDG, MeasuredHeight));
-        attributesSet.insert(HANDLE_ATTR(BLDG, Address));
-        attributesSet.insert(HANDLE_ATTR(BLDG, RoofType));
-        attributesSet.insert(HANDLE_ATTR(XAL, XalAddress));
-        attributesSet.insert(HANDLE_ATTR(XAL, Administrativearea));
-        attributesSet.insert(HANDLE_ATTR(XAL, Country));
-        attributesSet.insert(HANDLE_ATTR(XAL, CountryName));
-        attributesSet.insert(HANDLE_ATTR(XAL, Code));
-        attributesSet.insert(HANDLE_ATTR(XAL, Street));
-        attributesSet.insert(HANDLE_ATTR(XAL, PostalCode));
-        attributesSet.insert(HANDLE_ATTR(XAL, City));
-        attributesSet.insert(HANDLE_ATTR(XAL, LocalityName));
-        attributesSet.insert(HANDLE_ATTR(XAL, Thoroughfare));
-        attributesSet.insert(HANDLE_ATTR(XAL, ThoroughfareNumber));
-        attributesSet.insert(HANDLE_ATTR(XAL, ThoroughfareName));
-        attributesSet.insert(HANDLE_ATTR(XAL, Locality));
-        attributesSet.insert(HANDLE_ATTR(XAL, AddressDetails));
-        attributesSet.insert(HANDLE_ATTR(XAL, DependentLocalityName));
+        // double-checked lock
+        if (!attributesSetInitialized) {
+            std::lock_guard<std::mutex> lock(CityObjectElementParser::initializedAttributeSetMutex);
 
-        attributesSetInitialized = true;
+            if (!attributesSetInitialized) {
+                attributesSet.insert(HANDLE_ATTR(CORE, CreationDate));
+                attributesSet.insert(HANDLE_ATTR(CORE, TerminationDate));
+                attributesSet.insert(HANDLE_ATTR(BLDG, Type));
+                attributesSet.insert(HANDLE_ATTR(BLDG, Class));
+                attributesSet.insert(HANDLE_ATTR(BLDG, Function));
+                attributesSet.insert(HANDLE_ATTR(BLDG, Usage));
+                attributesSet.insert(HANDLE_ATTR(BLDG, YearOfConstruction));
+                attributesSet.insert(HANDLE_ATTR(BLDG, YearOfDemolition));
+                attributesSet.insert(HANDLE_ATTR(BLDG, StoreyHeightsAboveGround));
+                attributesSet.insert(HANDLE_ATTR(BLDG, StoreysBelowGround));
+                attributesSet.insert(HANDLE_ATTR(BLDG, MeasuredHeight));
+                attributesSet.insert(HANDLE_ATTR(BLDG, Address));
+                attributesSet.insert(HANDLE_ATTR(BLDG, RoofType));
+                attributesSet.insert(HANDLE_ATTR(XAL, XalAddress));
+                attributesSet.insert(HANDLE_ATTR(XAL, Administrativearea));
+                attributesSet.insert(HANDLE_ATTR(XAL, Country));
+                attributesSet.insert(HANDLE_ATTR(XAL, CountryName));
+                attributesSet.insert(HANDLE_ATTR(XAL, Code));
+                attributesSet.insert(HANDLE_ATTR(XAL, Street));
+                attributesSet.insert(HANDLE_ATTR(XAL, PostalCode));
+                attributesSet.insert(HANDLE_ATTR(XAL, City));
+                attributesSet.insert(HANDLE_ATTR(XAL, LocalityName));
+                attributesSet.insert(HANDLE_ATTR(XAL, Thoroughfare));
+                attributesSet.insert(HANDLE_ATTR(XAL, ThoroughfareNumber));
+                attributesSet.insert(HANDLE_ATTR(XAL, ThoroughfareName));
+                attributesSet.insert(HANDLE_ATTR(XAL, Locality));
+                attributesSet.insert(HANDLE_ATTR(XAL, AddressDetails));
+                attributesSet.insert(HANDLE_ATTR(XAL, DependentLocalityName));
+
+                attributesSetInitialized = true;
+            }
+        }
     }
 
     bool CityObjectElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        if(!typeIDTypeMapInitialized) {
-            initializeTypeIDTypeMap();
-        }
+        initializeTypeIDTypeMap();
+
         return typeIDTypeMap.count(node.typeID()) > 0;
     }
 
     bool CityObjectElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        if(!typeIDTypeMapInitialized) {
-            initializeTypeIDTypeMap();
-        }
+        initializeTypeIDTypeMap();
+
         auto it = typeIDTypeMap.find(node.typeID());
 
         if (it == typeIDTypeMap.end()) {
@@ -138,9 +153,7 @@ namespace citygml {
 
     bool CityObjectElementParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        if(!attributesSetInitialized) {
-            initializeAttributesSet();
-        }
+        initializeAttributesSet();
 
         if (m_model == nullptr) {
             throw std::runtime_error("CityObjectElementParser::parseChildElementStartTag called before CityObjectElementParser::parseElementStartTag");
@@ -251,9 +264,7 @@ namespace citygml {
             throw std::runtime_error("CityObjectElementParser::parseChildElementEndTag called before CityObjectElementParser::parseElementStartTag");
         }
 
-        if(!attributesSetInitialized) {
-            initializeAttributesSet();
-        }
+        initializeAttributesSet();
 
         if (    node == NodeType::GEN_StringAttributeNode
              || node == NodeType::GEN_DoubleAttributeNode

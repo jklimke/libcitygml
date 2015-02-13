@@ -3,11 +3,12 @@
 
 namespace citygml {
 
+    // declare static class members
+    std::mutex NodeType::initializedMutex;
+    bool NodeType::nodesInitialized = false;
     int NodeType::typeCount = -1;
     std::unordered_map<std::string, NodeType::XMLNode*> NodeType::nodeNameTypeMap;
     std::unordered_map<std::string, NodeType::XMLNode*> NodeType::nodeNameWithPrefixTypeMap;
-
-    bool NodeType::nodesInitialized = false;
 
     NodeType::XMLNode::XMLNode()
     {
@@ -54,249 +55,259 @@ namespace citygml {
     NodeType::nodeNameTypeMap[toLower(#elementname)] = &NodeType::prefix ## _ ## elementname ## Node; \
     NodeType::nodeNameWithPrefixTypeMap[toLower(#prefix) + ":" + toLower(#elementname)] = &NodeType::prefix ## _ ## elementname ## Node;
 
+    void NodeType::initializeNodeTypes()
+    {
+        // double-checked locking to prevent synchronisation when the node types are already intialized
+        if(!nodesInitialized) {
+            std::lock_guard<std::mutex> lock(NodeType::initializedMutex);
+
+            if (!nodesInitialized) {
+                nodesInitialized = true;
+
+                // CORE
+                INITIALIZE_NODE( CORE, CityModel )
+                INITIALIZE_NODE( CORE, CityObjectMember )
+                INITIALIZE_NODE( CORE, CreationDate )
+                INITIALIZE_NODE( CORE, TerminationDate )
+                INITIALIZE_NODE( CORE, ImplicitGeometry )
+                INITIALIZE_NODE( CORE, RelativeGMLGeometry )
+                INITIALIZE_NODE( CORE, TransformationMatrix )
+
+                // GRP
+                INITIALIZE_NODE( GRP, CityObjectGroup )
+                INITIALIZE_NODE( GRP, GroupMember )
+
+                // GEN
+                INITIALIZE_NODE( GEN, GenericCityObject )
+                INITIALIZE_NODE( GEN, StringAttribute )
+                INITIALIZE_NODE( GEN, DoubleAttribute )
+                INITIALIZE_NODE( GEN, IntAttribute )
+                INITIALIZE_NODE( GEN, DateAttribute )
+                INITIALIZE_NODE( GEN, UriAttribute )
+                INITIALIZE_NODE( GEN, Value )
+
+                INITIALIZE_NODE( GEN, Lod1Geometry )
+                INITIALIZE_NODE( GEN, Lod2Geometry )
+                INITIALIZE_NODE( GEN, Lod3Geometry )
+                INITIALIZE_NODE( GEN, Lod4Geometry )
+                INITIALIZE_NODE( GEN, Lod1TerrainIntersection )
+                INITIALIZE_NODE( GEN, Lod2TerrainIntersection )
+                INITIALIZE_NODE( GEN, Lod3TerrainIntersection )
+                INITIALIZE_NODE( GEN, Lod4TerrainIntersection )
+
+                // TEX
+                // INITIALIZE_NODE( GML, TexturedSurface ) // Deprecated
+
+                // GML
+                INITIALIZE_NODE( GML, Description )
+                INITIALIZE_NODE( GML, Identifier )
+                INITIALIZE_NODE( GML, Name )
+                INITIALIZE_NODE( GML, DescriptionReference )
+                INITIALIZE_NODE( GML, Coordinates )
+                INITIALIZE_NODE( GML, Pos )
+                INITIALIZE_NODE( GML, BoundedBy )
+                INITIALIZE_NODE( GML, Envelope )
+                INITIALIZE_NODE( GML, LowerCorner )
+                INITIALIZE_NODE( GML, UpperCorner )
+                INITIALIZE_NODE( GML, Solid )
+                INITIALIZE_NODE( GML, SurfaceMember )
+                INITIALIZE_NODE( GML, BaseSurface )
+                INITIALIZE_NODE( GML, Patches )
+                INITIALIZE_NODE( GML, TrianglePatches )
+                INITIALIZE_NODE( GML, SolidMember )
+                INITIALIZE_NODE( GML, TriangulatedSurface )
+                INITIALIZE_NODE( GML, Triangle )
+                INITIALIZE_NODE( GML, Polygon )
+                INITIALIZE_NODE( GML, Rectangle )
+                INITIALIZE_NODE( GML, PosList )
+                INITIALIZE_NODE( GML, OrientableSurface )
+                INITIALIZE_NODE( GML, LinearRing )
+
+                INITIALIZE_NODE( BLDG, Lod1Solid )
+                INITIALIZE_NODE( BLDG, Lod2Solid )
+                INITIALIZE_NODE( BLDG, Lod3Solid )
+                INITIALIZE_NODE( BLDG, Lod4Solid )
+                INITIALIZE_NODE( BLDG, Lod1Geometry )
+                INITIALIZE_NODE( BLDG, Lod2Geometry )
+                INITIALIZE_NODE( BLDG, Lod3Geometry )
+                INITIALIZE_NODE( BLDG, Lod4Geometry )
+                INITIALIZE_NODE( BLDG, Lod1MultiCurve )
+                INITIALIZE_NODE( BLDG, Lod2MultiCurve )
+                INITIALIZE_NODE( BLDG, Lod3MultiCurve )
+                INITIALIZE_NODE( BLDG, Lod4MultiCurve )
+                INITIALIZE_NODE( BLDG, Lod1MultiSurface )
+                INITIALIZE_NODE( BLDG, Lod2MultiSurface )
+                INITIALIZE_NODE( BLDG, Lod3MultiSurface )
+                INITIALIZE_NODE( BLDG, Lod4MultiSurface )
+                INITIALIZE_NODE( BLDG, Lod1TerrainIntersection )
+                INITIALIZE_NODE( BLDG, Lod2TerrainIntersection )
+                INITIALIZE_NODE( BLDG, Lod3TerrainIntersection )
+                INITIALIZE_NODE( BLDG, Lod4TerrainIntersection )
+
+                INITIALIZE_NODE( GML, MultiPoint )
+                INITIALIZE_NODE( GML, MultiCurve )
+                INITIALIZE_NODE( GML, MultiSurface )
+                INITIALIZE_NODE( GML, MultiSolid )
+
+                INITIALIZE_NODE( GML, CompositeCurve )
+                INITIALIZE_NODE( GML, CompositeSurface )
+                INITIALIZE_NODE( GML, CompositeSolid )
+
+                INITIALIZE_NODE( GML, ReferencePoint )
+                INITIALIZE_NODE( GML, Point )
+
+                INITIALIZE_NODE( GML, Interior )
+                INITIALIZE_NODE( GML, Exterior )
+
+                // BLDG
+                INITIALIZE_NODE( BLDG, Building )
+                INITIALIZE_NODE( BLDG, BuildingPart )
+                INITIALIZE_NODE( BLDG, Room )
+                INITIALIZE_NODE( BLDG, Door )
+                INITIALIZE_NODE( BLDG, Window )
+                INITIALIZE_NODE( BLDG, BuildingInstallation )
+                INITIALIZE_NODE( BLDG, Address )
+                INITIALIZE_NODE( BLDG, MeasuredHeight )
+                INITIALIZE_NODE( BLDG, Class )
+                INITIALIZE_NODE( BLDG, Type )
+                INITIALIZE_NODE( BLDG, Function )
+                INITIALIZE_NODE( BLDG, Usage )
+                INITIALIZE_NODE( BLDG, YearOfConstruction )
+                INITIALIZE_NODE( BLDG, YearOfDemolition )
+                INITIALIZE_NODE( BLDG, StoreysAboveGround )
+                INITIALIZE_NODE( BLDG, StoreysBelowGround )
+                INITIALIZE_NODE( BLDG, StoreyHeightsAboveGround )
+                INITIALIZE_NODE( BLDG, StoreyHeightsBelowGround )
+                INITIALIZE_NODE( BLDG, BoundedBy )
+                INITIALIZE_NODE( BLDG, OuterBuildingInstallation)
+                INITIALIZE_NODE( BLDG, InteriorBuildingInstallation)
+                INITIALIZE_NODE( BLDG, InteriorRoom)
+                INITIALIZE_NODE( BLDG, InteriorFurniture)
+                INITIALIZE_NODE( BLDG, RoomInstallation)
+                INITIALIZE_NODE( BLDG, Opening)
+                INITIALIZE_NODE( BLDG, ConsistsOfBuildingPart )
+
+                // CityFurniture
+                INITIALIZE_NODE( FRN, CityFurniture )
+                INITIALIZE_NODE( FRN, Lod1Geometry )
+                INITIALIZE_NODE( FRN, Lod2Geometry )
+                INITIALIZE_NODE( FRN, Lod3Geometry )
+                INITIALIZE_NODE( FRN, Lod4Geometry )
+                INITIALIZE_NODE( FRN, Lod1TerrainIntersection )
+                INITIALIZE_NODE( FRN, Lod2TerrainIntersection )
+                INITIALIZE_NODE( FRN, Lod3TerrainIntersection )
+                INITIALIZE_NODE( FRN, Lod4TerrainIntersection )
+                INITIALIZE_NODE( FRN, Lod1ImplicitRepresentation )
+                INITIALIZE_NODE( FRN, Lod2ImplicitRepresentation )
+                INITIALIZE_NODE( FRN, Lod3ImplicitRepresentation )
+                INITIALIZE_NODE( FRN, Lod4ImplicitRepresentation )
+
+                // BoundarySurfaceType
+                INITIALIZE_NODE( BLDG, WallSurface )
+                INITIALIZE_NODE( BLDG, RoofSurface )
+                INITIALIZE_NODE( BLDG, GroundSurface )
+                INITIALIZE_NODE( BLDG, ClosureSurface )
+                INITIALIZE_NODE( BLDG, FloorSurface )
+                INITIALIZE_NODE( BLDG, InteriorWallSurface )
+                INITIALIZE_NODE( BLDG, CeilingSurface )
+                INITIALIZE_NODE( BLDG, BuildingFurniture )
+                INITIALIZE_NODE( BLDG, RoofType)
+                INITIALIZE_NODE( BLDG, ExternalReference)
+                INITIALIZE_NODE( BLDG, InformationSystem)
+                INITIALIZE_NODE( BLDG, ExternalObject)
+                INITIALIZE_NODE( BLDG, Uri)
+
+                INITIALIZE_NODE( BLDG, CityFurniture )
+
+                // ADDRESS
+                INITIALIZE_NODE( XAL, XalAddress )
+                INITIALIZE_NODE( XAL, Administrativearea )
+                INITIALIZE_NODE( XAL, Country )
+                INITIALIZE_NODE( XAL, CountryName )
+                INITIALIZE_NODE( XAL, Code )
+                INITIALIZE_NODE( XAL, Street )
+                INITIALIZE_NODE( XAL, PostalCode )
+                INITIALIZE_NODE( XAL, City )
+                INITIALIZE_NODE( XAL, LocalityName )
+                INITIALIZE_NODE( XAL, Thoroughfare )
+                INITIALIZE_NODE( XAL, ThoroughfareNumber )
+                INITIALIZE_NODE( XAL, ThoroughfareName )
+                INITIALIZE_NODE( XAL, Locality )
+                INITIALIZE_NODE( XAL, AddressDetails )
+                INITIALIZE_NODE( XAL, DependentLocalityName )
+                // WTR
+                INITIALIZE_NODE( WTR, WaterBody )
+
+                // VEG
+                INITIALIZE_NODE( VEG, PlantCover )
+                INITIALIZE_NODE( VEG, SolitaryVegetationObject )
+                INITIALIZE_NODE( VEG, Species )
+                INITIALIZE_NODE( VEG, Lod1ImplicitRepresentation )
+                INITIALIZE_NODE( VEG, Lod2ImplicitRepresentation )
+                INITIALIZE_NODE( VEG, Lod3ImplicitRepresentation )
+                INITIALIZE_NODE( VEG, Lod4ImplicitRepresentation )
+
+                // TRANS
+                INITIALIZE_NODE( TRANS, TrafficArea )
+                INITIALIZE_NODE( TRANS, AuxiliaryTrafficArea )
+                INITIALIZE_NODE( TRANS, Track )
+                INITIALIZE_NODE( TRANS, Road )
+                INITIALIZE_NODE( TRANS, Railway )
+                INITIALIZE_NODE( TRANS, Square )
+
+                // LUSE
+                INITIALIZE_NODE( LUSE, LandUse )
+
+                // dem
+                INITIALIZE_NODE( LUSE, Lod )
+                INITIALIZE_NODE( LUSE, TINRelief )
+
+                // SUB
+                INITIALIZE_NODE( SUB, Tunnel )
+                INITIALIZE_NODE( SUB, RelativeToTerrain )
+
+                // BRID
+                INITIALIZE_NODE( BRID, Bridge )
+                INITIALIZE_NODE( BRID, BridgeConstructionElement )
+                INITIALIZE_NODE( BRID, BridgeInstallation )
+                INITIALIZE_NODE( BRID, BridgePart )
+
+                // APP
+                INITIALIZE_NODE( APP, Appearance )
+                INITIALIZE_NODE( APP, SimpleTexture )
+                INITIALIZE_NODE( APP, ParameterizedTexture )
+                INITIALIZE_NODE( APP, GeoreferencedTexture )
+                INITIALIZE_NODE( APP, ImageURI )
+                INITIALIZE_NODE( APP, TextureMap )
+                INITIALIZE_NODE( APP, Target )
+                INITIALIZE_NODE( APP, TexCoordList )
+                INITIALIZE_NODE( APP, TextureCoordinates )
+                INITIALIZE_NODE( APP, TextureType )
+                INITIALIZE_NODE( APP, Repeat )
+                INITIALIZE_NODE( APP, WrapMode )
+                INITIALIZE_NODE( APP, BorderColor )
+                INITIALIZE_NODE( APP, PreferWorldFile )
+
+                INITIALIZE_NODE( APP, X3DMaterial )
+                INITIALIZE_NODE( APP, Material )
+                INITIALIZE_NODE( APP, AppearanceMember )
+                INITIALIZE_NODE( APP, SurfaceDataMember )
+                INITIALIZE_NODE( APP, Shininess )
+                INITIALIZE_NODE( APP, Transparency )
+                INITIALIZE_NODE( APP, SpecularColor )
+                INITIALIZE_NODE( APP, DiffuseColor )
+                INITIALIZE_NODE( APP, EmissiveColor )
+                INITIALIZE_NODE( APP, AmbientIntensity )
+                INITIALIZE_NODE( APP, IsFront )
+                INITIALIZE_NODE( APP, Theme )
+                INITIALIZE_NODE( APP, MimeType )
+            }
+        }
+    }
+
     const NodeType::XMLNode&NodeType::getXMLNodeFor(const std::string& name)
     {
-        if(!nodesInitialized) {
-            // CORE
-            INITIALIZE_NODE( CORE, CityModel )
-            INITIALIZE_NODE( CORE, CityObjectMember )
-            INITIALIZE_NODE( CORE, CreationDate )
-            INITIALIZE_NODE( CORE, TerminationDate )
-            INITIALIZE_NODE( CORE, ImplicitGeometry )
-            INITIALIZE_NODE( CORE, RelativeGMLGeometry )
-            INITIALIZE_NODE( CORE, TransformationMatrix )
-
-            // GRP
-            INITIALIZE_NODE( GRP, CityObjectGroup )
-            INITIALIZE_NODE( GRP, GroupMember )
-
-            // GEN
-            INITIALIZE_NODE( GEN, GenericCityObject )
-            INITIALIZE_NODE( GEN, StringAttribute )
-            INITIALIZE_NODE( GEN, DoubleAttribute )
-            INITIALIZE_NODE( GEN, IntAttribute )
-            INITIALIZE_NODE( GEN, DateAttribute )
-            INITIALIZE_NODE( GEN, UriAttribute )
-            INITIALIZE_NODE( GEN, Value )
-
-            INITIALIZE_NODE( GEN, Lod1Geometry )
-            INITIALIZE_NODE( GEN, Lod2Geometry )
-            INITIALIZE_NODE( GEN, Lod3Geometry )
-            INITIALIZE_NODE( GEN, Lod4Geometry )
-            INITIALIZE_NODE( GEN, Lod1TerrainIntersection )
-            INITIALIZE_NODE( GEN, Lod2TerrainIntersection )
-            INITIALIZE_NODE( GEN, Lod3TerrainIntersection )
-            INITIALIZE_NODE( GEN, Lod4TerrainIntersection )
-
-            // TEX
-            // INITIALIZE_NODE( GML, TexturedSurface ) // Deprecated
-
-            // GML
-            INITIALIZE_NODE( GML, Description )
-            INITIALIZE_NODE( GML, Identifier )
-            INITIALIZE_NODE( GML, Name )
-            INITIALIZE_NODE( GML, DescriptionReference )
-            INITIALIZE_NODE( GML, Coordinates )
-            INITIALIZE_NODE( GML, Pos )
-            INITIALIZE_NODE( GML, BoundedBy )
-            INITIALIZE_NODE( GML, Envelope )
-            INITIALIZE_NODE( GML, LowerCorner )
-            INITIALIZE_NODE( GML, UpperCorner )
-            INITIALIZE_NODE( GML, Solid )
-            INITIALIZE_NODE( GML, SurfaceMember )
-            INITIALIZE_NODE( GML, BaseSurface )
-            INITIALIZE_NODE( GML, Patches )
-            INITIALIZE_NODE( GML, TrianglePatches )
-            INITIALIZE_NODE( GML, SolidMember )
-            INITIALIZE_NODE( GML, TriangulatedSurface )
-            INITIALIZE_NODE( GML, Triangle )
-            INITIALIZE_NODE( GML, Polygon )
-            INITIALIZE_NODE( GML, Rectangle )
-            INITIALIZE_NODE( GML, PosList )
-            INITIALIZE_NODE( GML, OrientableSurface )
-            INITIALIZE_NODE( GML, LinearRing )
-
-            INITIALIZE_NODE( BLDG, Lod1Solid )
-            INITIALIZE_NODE( BLDG, Lod2Solid )
-            INITIALIZE_NODE( BLDG, Lod3Solid )
-            INITIALIZE_NODE( BLDG, Lod4Solid )
-            INITIALIZE_NODE( BLDG, Lod1Geometry )
-            INITIALIZE_NODE( BLDG, Lod2Geometry )
-            INITIALIZE_NODE( BLDG, Lod3Geometry )
-            INITIALIZE_NODE( BLDG, Lod4Geometry )
-            INITIALIZE_NODE( BLDG, Lod1MultiCurve )
-            INITIALIZE_NODE( BLDG, Lod2MultiCurve )
-            INITIALIZE_NODE( BLDG, Lod3MultiCurve )
-            INITIALIZE_NODE( BLDG, Lod4MultiCurve )
-            INITIALIZE_NODE( BLDG, Lod1MultiSurface )
-            INITIALIZE_NODE( BLDG, Lod2MultiSurface )
-            INITIALIZE_NODE( BLDG, Lod3MultiSurface )
-            INITIALIZE_NODE( BLDG, Lod4MultiSurface )
-            INITIALIZE_NODE( BLDG, Lod1TerrainIntersection )
-            INITIALIZE_NODE( BLDG, Lod2TerrainIntersection )
-            INITIALIZE_NODE( BLDG, Lod3TerrainIntersection )
-            INITIALIZE_NODE( BLDG, Lod4TerrainIntersection )
-
-            INITIALIZE_NODE( GML, MultiPoint )
-            INITIALIZE_NODE( GML, MultiCurve )
-            INITIALIZE_NODE( GML, MultiSurface )
-            INITIALIZE_NODE( GML, MultiSolid )
-
-            INITIALIZE_NODE( GML, CompositeCurve )
-            INITIALIZE_NODE( GML, CompositeSurface )
-            INITIALIZE_NODE( GML, CompositeSolid )
-
-            INITIALIZE_NODE( GML, ReferencePoint )
-            INITIALIZE_NODE( GML, Point )
-
-            INITIALIZE_NODE( GML, Interior )
-            INITIALIZE_NODE( GML, Exterior )
-
-            // BLDG
-            INITIALIZE_NODE( BLDG, Building )
-            INITIALIZE_NODE( BLDG, BuildingPart )
-            INITIALIZE_NODE( BLDG, Room )
-            INITIALIZE_NODE( BLDG, Door )
-            INITIALIZE_NODE( BLDG, Window )
-            INITIALIZE_NODE( BLDG, BuildingInstallation )
-            INITIALIZE_NODE( BLDG, Address )
-            INITIALIZE_NODE( BLDG, MeasuredHeight )
-            INITIALIZE_NODE( BLDG, Class )
-            INITIALIZE_NODE( BLDG, Type )
-            INITIALIZE_NODE( BLDG, Function )
-            INITIALIZE_NODE( BLDG, Usage )
-            INITIALIZE_NODE( BLDG, YearOfConstruction )
-            INITIALIZE_NODE( BLDG, YearOfDemolition )
-            INITIALIZE_NODE( BLDG, StoreysAboveGround )
-            INITIALIZE_NODE( BLDG, StoreysBelowGround )
-            INITIALIZE_NODE( BLDG, StoreyHeightsAboveGround )
-            INITIALIZE_NODE( BLDG, StoreyHeightsBelowGround )
-            INITIALIZE_NODE( BLDG, BoundedBy )
-            INITIALIZE_NODE( BLDG, OuterBuildingInstallation)
-            INITIALIZE_NODE( BLDG, InteriorBuildingInstallation)
-            INITIALIZE_NODE( BLDG, InteriorRoom)
-            INITIALIZE_NODE( BLDG, InteriorFurniture)
-            INITIALIZE_NODE( BLDG, RoomInstallation)
-            INITIALIZE_NODE( BLDG, Opening)
-            INITIALIZE_NODE( BLDG, ConsistsOfBuildingPart )
-
-            // CityFurniture
-            INITIALIZE_NODE( FRN, CityFurniture )
-            INITIALIZE_NODE( FRN, Lod1Geometry )
-            INITIALIZE_NODE( FRN, Lod2Geometry )
-            INITIALIZE_NODE( FRN, Lod3Geometry )
-            INITIALIZE_NODE( FRN, Lod4Geometry )
-            INITIALIZE_NODE( FRN, Lod1TerrainIntersection )
-            INITIALIZE_NODE( FRN, Lod2TerrainIntersection )
-            INITIALIZE_NODE( FRN, Lod3TerrainIntersection )
-            INITIALIZE_NODE( FRN, Lod4TerrainIntersection )
-            INITIALIZE_NODE( FRN, Lod1ImplicitRepresentation )
-            INITIALIZE_NODE( FRN, Lod2ImplicitRepresentation )
-            INITIALIZE_NODE( FRN, Lod3ImplicitRepresentation )
-            INITIALIZE_NODE( FRN, Lod4ImplicitRepresentation )
-
-            // BoundarySurfaceType
-            INITIALIZE_NODE( BLDG, WallSurface )
-            INITIALIZE_NODE( BLDG, RoofSurface )
-            INITIALIZE_NODE( BLDG, GroundSurface )
-            INITIALIZE_NODE( BLDG, ClosureSurface )
-            INITIALIZE_NODE( BLDG, FloorSurface )
-            INITIALIZE_NODE( BLDG, InteriorWallSurface )
-            INITIALIZE_NODE( BLDG, CeilingSurface )
-            INITIALIZE_NODE( BLDG, BuildingFurniture )
-            INITIALIZE_NODE( BLDG, RoofType)
-            INITIALIZE_NODE( BLDG, ExternalReference)
-            INITIALIZE_NODE( BLDG, InformationSystem)
-            INITIALIZE_NODE( BLDG, ExternalObject)
-            INITIALIZE_NODE( BLDG, Uri)
-
-            INITIALIZE_NODE( BLDG, CityFurniture )
-
-            // ADDRESS
-            INITIALIZE_NODE( XAL, XalAddress )
-            INITIALIZE_NODE( XAL, Administrativearea )
-            INITIALIZE_NODE( XAL, Country )
-            INITIALIZE_NODE( XAL, CountryName )
-            INITIALIZE_NODE( XAL, Code )
-            INITIALIZE_NODE( XAL, Street )
-            INITIALIZE_NODE( XAL, PostalCode )
-            INITIALIZE_NODE( XAL, City )
-            INITIALIZE_NODE( XAL, LocalityName )
-            INITIALIZE_NODE( XAL, Thoroughfare )
-            INITIALIZE_NODE( XAL, ThoroughfareNumber )
-            INITIALIZE_NODE( XAL, ThoroughfareName )
-            INITIALIZE_NODE( XAL, Locality )
-            INITIALIZE_NODE( XAL, AddressDetails )
-            INITIALIZE_NODE( XAL, DependentLocalityName )
-            // WTR
-            INITIALIZE_NODE( WTR, WaterBody )
-
-            // VEG
-            INITIALIZE_NODE( VEG, PlantCover )
-            INITIALIZE_NODE( VEG, SolitaryVegetationObject )
-            INITIALIZE_NODE( VEG, Species )
-            INITIALIZE_NODE( VEG, Lod1ImplicitRepresentation )
-            INITIALIZE_NODE( VEG, Lod2ImplicitRepresentation )
-            INITIALIZE_NODE( VEG, Lod3ImplicitRepresentation )
-            INITIALIZE_NODE( VEG, Lod4ImplicitRepresentation )
-
-            // TRANS
-            INITIALIZE_NODE( TRANS, TrafficArea )
-            INITIALIZE_NODE( TRANS, AuxiliaryTrafficArea )
-            INITIALIZE_NODE( TRANS, Track )
-            INITIALIZE_NODE( TRANS, Road )
-            INITIALIZE_NODE( TRANS, Railway )
-            INITIALIZE_NODE( TRANS, Square )
-
-            // LUSE
-            INITIALIZE_NODE( LUSE, LandUse )
-
-            // dem
-            INITIALIZE_NODE( LUSE, Lod )
-            INITIALIZE_NODE( LUSE, TINRelief )
-
-            // SUB
-            INITIALIZE_NODE( SUB, Tunnel )
-            INITIALIZE_NODE( SUB, RelativeToTerrain )
-
-            // BRID
-            INITIALIZE_NODE( BRID, Bridge )
-            INITIALIZE_NODE( BRID, BridgeConstructionElement )
-            INITIALIZE_NODE( BRID, BridgeInstallation )
-            INITIALIZE_NODE( BRID, BridgePart )
-
-            // APP
-            INITIALIZE_NODE( APP, Appearance )
-            INITIALIZE_NODE( APP, SimpleTexture )
-            INITIALIZE_NODE( APP, ParameterizedTexture )
-            INITIALIZE_NODE( APP, GeoreferencedTexture )
-            INITIALIZE_NODE( APP, ImageURI )
-            INITIALIZE_NODE( APP, TextureMap )
-            INITIALIZE_NODE( APP, Target )
-            INITIALIZE_NODE( APP, TexCoordList )
-            INITIALIZE_NODE( APP, TextureCoordinates )
-            INITIALIZE_NODE( APP, TextureType )
-            INITIALIZE_NODE( APP, Repeat )
-            INITIALIZE_NODE( APP, WrapMode )
-            INITIALIZE_NODE( APP, BorderColor )
-            INITIALIZE_NODE( APP, PreferWorldFile )
-
-            INITIALIZE_NODE( APP, X3DMaterial )
-            INITIALIZE_NODE( APP, Material )
-            INITIALIZE_NODE( APP, AppearanceMember )
-            INITIALIZE_NODE( APP, SurfaceDataMember )
-            INITIALIZE_NODE( APP, Shininess )
-            INITIALIZE_NODE( APP, Transparency )
-            INITIALIZE_NODE( APP, SpecularColor )
-            INITIALIZE_NODE( APP, DiffuseColor )
-            INITIALIZE_NODE( APP, EmissiveColor )
-            INITIALIZE_NODE( APP, AmbientIntensity )
-            INITIALIZE_NODE( APP, IsFront )
-            INITIALIZE_NODE( APP, Theme )
-            INITIALIZE_NODE( APP, MimeType )
-
-            nodesInitialized = true;
-        }
+        initializeNodeTypes();
 
         std::string lowerName = toLower(name);
         {
