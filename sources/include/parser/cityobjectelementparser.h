@@ -5,6 +5,7 @@
 #include <functional>
 #include <unordered_map>
 #include <unordered_set>
+#include <mutex>
 
 #include "citygml/cityobject.h"
 
@@ -37,9 +38,11 @@ namespace citygml {
         std::string m_lastAttributeName;
 
         // The nodes that are valid CityObjects
+        static std::mutex initializedTypeIDMutex;
         static std::unordered_map<int, CityObject::CityObjectsType> typeIDTypeMap;
         static bool typeIDTypeMapInitialized;
 
+        static std::mutex initializedAttributeSetMutex;
         static std::unordered_set<int> attributesSet;
         static bool attributesSetInitialized;
 

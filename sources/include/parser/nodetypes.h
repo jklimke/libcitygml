@@ -2,7 +2,7 @@
 
 #include <string>
 #include <ostream>
-
+#include <mutex>
 #include <unordered_map>
 
 namespace citygml {
@@ -31,11 +31,9 @@ namespace citygml {
             int m_typeID;
         };
 
-        static const XMLNode InvalidNode;
-
         static const XMLNode& getXMLNodeFor(const std::string& name);
 
-        static bool nodesInitialized;
+        static const XMLNode InvalidNode;
 
         #define NODETYPE( prefix, elementName ) static XMLNode prefix ## _ ## elementName ## Node;
 
@@ -278,8 +276,11 @@ namespace citygml {
         NODETYPE( APP, IsFront )
         NODETYPE( APP, Theme )
         NODETYPE( APP, MimeType )
-
     private:
+        static void initializeNodeTypes();
+
+        static std::mutex initializedMutex;
+        static bool nodesInitialized;
         static int typeCount;
         static std::unordered_map<std::string, XMLNode*> nodeNameTypeMap;
         static std::unordered_map<std::string, XMLNode*> nodeNameWithPrefixTypeMap;
