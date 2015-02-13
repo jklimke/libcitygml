@@ -62,8 +62,6 @@ namespace citygml {
             std::lock_guard<std::mutex> lock(NodeType::initializedMutex);
 
             if (!nodesInitialized) {
-                nodesInitialized = true;
-
                 // CORE
                 INITIALIZE_NODE( CORE, CityModel )
                 INITIALIZE_NODE( CORE, CityObjectMember )
@@ -301,6 +299,8 @@ namespace citygml {
                 INITIALIZE_NODE( APP, IsFront )
                 INITIALIZE_NODE( APP, Theme )
                 INITIALIZE_NODE( APP, MimeType )
+
+                nodesInitialized = true;
             }
         }
     }
