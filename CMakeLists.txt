@@ -2,6 +2,11 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.2 FATAL_ERROR)
 
 PROJECT ( libcitygml )
 
+set(META_VERSION_MAJOR       "1")
+set(META_VERSION_MINOR       "2")
+set(META_VERSION_PATCH       "0")
+set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
+
 SET( CMAKE_MODULE_PATH "${libcitygml_SOURCE_DIR}/CMakeModules/;${CMAKE_MODULE_PATH}" )
 
 IF(WIN32)
@@ -174,10 +179,6 @@ if(BUILD_DEBIAN_PACKAGE)
                                   CityGML (City Geography Markup Language) is an XML-based schema for the
                                   modelling and exchange of georeferenced 3D city and landscape models that
                                   is quickly being adopted on an international level.")
-    set(META_VERSION_MAJOR       "1")
-    set(META_VERSION_MINOR       "0")
-    set(META_VERSION_PATCH       "2")
-    set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
     set(META_AUTHOR_ORGANIZATION "3D Content Logistics")
     set(META_AUTHOR_DOMAIN       "https://github.com/jklimke/libcitygml.git")
     set(META_AUTHOR_MAINTAINER   "Marcel Pursche <marcel.pursche@3dcontentlogistics.com>")
