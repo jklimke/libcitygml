@@ -12,7 +12,9 @@ IF( LIBCITYGML_DYNAMIC )
   ADD_DEFINITIONS( -DLIBCITYGML_DYNAMIC )
 ENDIF( LIBCITYGML_DYNAMIC )
 
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include ${XERCESC_INCLUDE}  ${ICONV_INCLUDE_DIR} ${GLU_INCLUDE_PATH} ${GDAL_INCLUDE_DIR} )
+configure_file(include/citygml/citygml_api.h.in ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h)
+
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include ${XERCESC_INCLUDE}  ${ICONV_INCLUDE_DIR} ${GLU_INCLUDE_PATH} ${GDAL_INCLUDE_DIR} ${CMAKE_BINARY_DIR}/include)
 
 SET(SOURCES
   src/citygml/citymodel.cpp
@@ -62,7 +64,7 @@ SET(SOURCES
 )
 
 SET(PUBLIC_HEADER
-  include/citygml/citygml_api.h
+  ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h
   include/citygml/citygmllogger.h
   include/citygml/polygon.h
   include/citygml/material.h
@@ -91,6 +93,8 @@ SET(PUBLIC_HEADER
 
 SET(HEADERS
   ${PUBLIC_HEADER}
+
+  include/citygml/citygml_api.h.in
 
   include/parser/nodetypes.h
   include/parser/citygmldocumentparser.h

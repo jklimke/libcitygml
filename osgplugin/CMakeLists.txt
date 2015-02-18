@@ -6,6 +6,7 @@ find_package( OpenSceneGraph REQUIRED osgDB osgViewer osgGA osgUtil osgText)
 include_directories(
   ${OPENSCENEGRAPH_INCLUDE_DIRS}
   ${CMAKE_SOURCE_DIR}/sources/include
+  ${CMAKE_BINARY_DIR}/include
 )
 
 set( sources ReaderWriterCityGML.cpp )
