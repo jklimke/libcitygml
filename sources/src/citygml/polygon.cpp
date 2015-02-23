@@ -150,7 +150,7 @@ namespace citygml {
 
         const TextureCoordinates* coords = targetDef->getTextureCoordinatesForID(ring.getId());
 
-        if (targetDef == nullptr || coords->getCoords().empty()) {
+        if (coords == nullptr || coords->getCoords().empty()) {
             return std::vector<TVec2f>();
         }
 
