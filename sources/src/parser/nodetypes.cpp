@@ -53,7 +53,7 @@ namespace citygml {
 #define INITIALIZE_NODE( prefix, elementname ) \
     NodeType::prefix ## _ ## elementname ## Node = XMLNode( #prefix , #elementname ); \
     NodeType::nodeNameTypeMap[toLower(#elementname)] = &NodeType::prefix ## _ ## elementname ## Node; \
-    NodeType::nodeNameWithPrefixTypeMap[toLower(#prefix) + ":" + toLower(#elementname)] = &NodeType::prefix ## _ ## elementname ## Node;
+    NodeType::nodeNameWithPrefixTypeMap[toLower(#prefix ":" #elementname)] = &NodeType::prefix ## _ ## elementname ## Node;
 
     void NodeType::initializeNodeTypes()
     {
@@ -62,6 +62,7 @@ namespace citygml {
             std::lock_guard<std::mutex> lock(NodeType::initializedMutex);
 
             if (!nodesInitialized) {
+
                 // CORE
                 INITIALIZE_NODE( CORE, CityModel )
                 INITIALIZE_NODE( CORE, CityObjectMember )
@@ -233,6 +234,8 @@ namespace citygml {
                 INITIALIZE_NODE( XAL, Locality )
                 INITIALIZE_NODE( XAL, AddressDetails )
                 INITIALIZE_NODE( XAL, DependentLocalityName )
+
+
                 // WTR
                 INITIALIZE_NODE( WTR, WaterBody )
 
