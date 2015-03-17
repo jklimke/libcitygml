@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[])
 {
-    osg::setNotifyLevel(osg::INFO);
+    osg::setNotifyLevel(osg::WARN);
 
     std::cout << "Using plugin directory: " << PLUGIN_BIN_DIR << std::endl;
     osgDB::Registry::instance()->getLibraryFilePathList().push_front(PLUGIN_BIN_DIR);

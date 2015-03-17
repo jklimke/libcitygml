@@ -19,7 +19,7 @@
 namespace citygml {
 
     TextureElementParser::TextureElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (std::shared_ptr<Texture>)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
         m_model = nullptr;
@@ -86,7 +86,7 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool TextureElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -143,9 +143,14 @@ namespace citygml {
             m_currentTexTargetDef = nullptr;
         } else if (node == NodeType::APP_MimeTypeNode) {
         } else {
-            return false;
+            return GMLObjectElementParser::parseChildElementEndTag(node, characters);
         }
         return true;
+    }
+
+    Object* TextureElementParser::getObject()
+    {
+        return m_model.get();
     }
 
 

@@ -17,13 +17,14 @@
 #include "citygml/georeferencedtexture.h"
 #include "citygml/citygmlfactory.h"
 #include "citygml/citygmllogger.h"
+#include "citygml/object.h"
 
 #include <stdexcept>
 
 namespace citygml {
 
     AppearanceElementParser::AppearanceElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
 
     }
@@ -44,13 +45,15 @@ namespace citygml {
             CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::APP_AppearanceNode.name() << "> got <" << node << "> at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
         }
+
+        m_appearanceObj = std::make_shared<Object>(attributes.getCityGMLIDAttribute());
         return true;
     }
 
     bool AppearanceElementParser::parseElementEndTag(const NodeType::XMLNode&, const std::string&)
     {
         if (m_theme.empty()) {
-            CITYGML_LOG_ERROR(m_logger, "Appearance node that ends at " << getDocumentLocation() << " has not theme defined. Using empty theme.");
+            CITYGML_LOG_INFO(m_logger, "Appearance node that ends at " << getDocumentLocation() << " has not theme defined. Using empty theme.");
         }
 
         if (m_surfaceDataList.empty()) {
@@ -97,7 +100,7 @@ namespace citygml {
             return true;
 
         }
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool AppearanceElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -111,7 +114,12 @@ namespace citygml {
         } else if (node == NodeType::APP_SurfaceDataMemberNode) {
             return true;
         }
-        return false;
+        return GMLObjectElementParser::parseChildElementEndTag(node, characters);
+    }
+
+    Object* AppearanceElementParser::getObject()
+    {
+        return m_appearanceObj.get();
     }
 
 

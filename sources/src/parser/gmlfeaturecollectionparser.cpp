@@ -16,7 +16,7 @@
 namespace citygml {
 
     GMLFeatureCollectionElementParser::GMLFeatureCollectionElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_bounds = nullptr;
     }
@@ -27,14 +27,9 @@ namespace citygml {
             throw std::runtime_error("Invalid call to GMLFeatureCollectionElementParser::parseChildElementStartTag");
         }
 
-        if (   node == NodeType::GML_DescriptionNode
-            || node == NodeType::GML_IdentifierNode
-            || node == NodeType::GML_NameNode
-            || node == NodeType::GML_DescriptionReferenceNode
-            || node == NodeType::GML_LowerCornerNode
-            || node == NodeType::GML_UpperCornerNode
-            || node == NodeType::GML_BoundedByNode) {
-
+        if (node == NodeType::GML_LowerCornerNode
+                || node == NodeType::GML_UpperCornerNode
+                || node == NodeType::GML_BoundedByNode) {
             return true;
         } else if (node == NodeType::GML_EnvelopeNode) {
 
@@ -46,7 +41,7 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool GMLFeatureCollectionElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -55,14 +50,7 @@ namespace citygml {
             throw std::runtime_error("Invalid call to GMLFeatureCollectionElementParser::parseChildElementEndTag");
         }
 
-        if (   node == NodeType::GML_DescriptionNode
-            || node == NodeType::GML_IdentifierNode
-            || node == NodeType::GML_NameNode
-            || node == NodeType::GML_DescriptionReferenceNode) {
-
-                getFeatureObject()->setAttribute(node.name(), characters);
-                return true;
-        } else if (node == NodeType::GML_LowerCornerNode) {
+        if (node == NodeType::GML_LowerCornerNode) {
 
             if (m_bounds != nullptr) {
                 m_bounds->setLowerBound(parseValue<TVec3d>(characters, m_logger, getDocumentLocation()));
@@ -87,7 +75,12 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementEndTag(node, characters);
+    }
+
+    Object* GMLFeatureCollectionElementParser::getObject()
+    {
+        return getFeatureObject();
     }
 
 

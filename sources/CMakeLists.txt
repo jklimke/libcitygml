@@ -50,6 +50,7 @@ SET(SOURCES
   src/parser/parserxercesc.cpp
   src/parser/geocoordinatetransformer.cpp
 
+  src/parser/gmlobjectparser.cpp
   src/parser/gmlfeaturecollectionparser.cpp
   src/parser/citymodelelementparser.cpp
   src/parser/cityobjectelementparser.cpp
@@ -111,6 +112,7 @@ SET(HEADERS
   include/citygml/polygonmanager.h
   include/citygml/geometrymanager.h
 
+  include/parser/gmlobjectparser.h
   include/parser/gmlfeaturecollectionparser.h
   include/parser/citymodelelementparser.h
   include/parser/cityobjectelementparser.h

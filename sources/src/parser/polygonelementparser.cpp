@@ -21,7 +21,7 @@ namespace citygml {
     bool typeIDSetInitialized = false;
 
     PolygonElementParser::PolygonElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Polygon>)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
     }
@@ -80,7 +80,7 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool PolygonElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -95,8 +95,13 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementEndTag(node, characters);
 
+    }
+
+    Object* PolygonElementParser::getObject()
+    {
+        return m_model.get();
     }
 
     void PolygonElementParser::parseRingElement(bool interior)

@@ -76,6 +76,7 @@ namespace citygml {
         NODETYPE( GML, Identifier )
         NODETYPE( GML, Name )
         NODETYPE( GML, DescriptionReference )
+        NODETYPE( GML, MetaDataProperty )
         NODETYPE( GML, Coordinates )
         NODETYPE( GML, Pos )
         NODETYPE( GML, BoundedBy )
@@ -216,11 +217,18 @@ namespace citygml {
         // VEG
         NODETYPE( VEG, PlantCover )
         NODETYPE( VEG, SolitaryVegetationObject )
-        NODETYPE( VEG, Species )
         NODETYPE( VEG, Lod1ImplicitRepresentation )
         NODETYPE( VEG, Lod2ImplicitRepresentation )
         NODETYPE( VEG, Lod3ImplicitRepresentation )
         NODETYPE( VEG, Lod4ImplicitRepresentation )
+
+        NODETYPE( VEG, Class )
+        NODETYPE( VEG, Function )
+        NODETYPE( VEG, AverageHeight )
+        NODETYPE( VEG, Species )
+        NODETYPE( VEG, Height )
+        NODETYPE( VEG, TrunkDiameter )
+        NODETYPE( VEG, CrownDiameter )
 
         // TRANS
         NODETYPE( TRANS, TrafficArea )

@@ -96,7 +96,9 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(BLDG, YearOfConstruction));
                 attributesSet.insert(HANDLE_ATTR(BLDG, YearOfDemolition));
                 attributesSet.insert(HANDLE_ATTR(BLDG, StoreyHeightsAboveGround));
+                attributesSet.insert(HANDLE_ATTR(BLDG, StoreyHeightsBelowGround));
                 attributesSet.insert(HANDLE_ATTR(BLDG, StoreysBelowGround));
+                attributesSet.insert(HANDLE_ATTR(BLDG, StoreysAboveGround));
                 attributesSet.insert(HANDLE_ATTR(BLDG, MeasuredHeight));
                 attributesSet.insert(HANDLE_ATTR(BLDG, Address));
                 attributesSet.insert(HANDLE_ATTR(BLDG, RoofType));
@@ -115,6 +117,14 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(XAL, Locality));
                 attributesSet.insert(HANDLE_ATTR(XAL, AddressDetails));
                 attributesSet.insert(HANDLE_ATTR(XAL, DependentLocalityName));
+                attributesSet.insert(HANDLE_ATTR(VEG, Class ));
+                attributesSet.insert(HANDLE_ATTR(VEG, Function ));
+                attributesSet.insert(HANDLE_ATTR(VEG, AverageHeight ));
+                attributesSet.insert(HANDLE_ATTR(VEG, Species ));
+                attributesSet.insert(HANDLE_ATTR(VEG, Height ));
+                attributesSet.insert(HANDLE_ATTR(VEG, TrunkDiameter ));
+                attributesSet.insert(HANDLE_ATTR(VEG, CrownDiameter ));
+
 
                 attributesSetInitialized = true;
             }

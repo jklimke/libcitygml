@@ -19,7 +19,7 @@ namespace citygml {
 
     ImplicitGeometryElementParser::ImplicitGeometryElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger,
                                                  int lodLevel, CityObject::CityObjectsType parentType,  std::function<void(ImplicitGeometry*)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
         m_lodLevel = lodLevel;
@@ -96,7 +96,7 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool ImplicitGeometryElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -122,8 +122,13 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementEndTag(node, characters);
 
+    }
+
+    Object* ImplicitGeometryElementParser::getObject()
+    {
+        return m_model;
     }
 
 }

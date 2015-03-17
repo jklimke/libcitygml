@@ -102,6 +102,7 @@ namespace citygml {
                 INITIALIZE_NODE( GML, Identifier )
                 INITIALIZE_NODE( GML, Name )
                 INITIALIZE_NODE( GML, DescriptionReference )
+                INITIALIZE_NODE( GML, MetaDataProperty )
                 INITIALIZE_NODE( GML, Coordinates )
                 INITIALIZE_NODE( GML, Pos )
                 INITIALIZE_NODE( GML, BoundedBy )
@@ -242,11 +243,17 @@ namespace citygml {
                 // VEG
                 INITIALIZE_NODE( VEG, PlantCover )
                 INITIALIZE_NODE( VEG, SolitaryVegetationObject )
-                INITIALIZE_NODE( VEG, Species )
                 INITIALIZE_NODE( VEG, Lod1ImplicitRepresentation )
                 INITIALIZE_NODE( VEG, Lod2ImplicitRepresentation )
                 INITIALIZE_NODE( VEG, Lod3ImplicitRepresentation )
                 INITIALIZE_NODE( VEG, Lod4ImplicitRepresentation )
+                INITIALIZE_NODE( VEG, Class )
+                INITIALIZE_NODE( VEG, Function )
+                INITIALIZE_NODE( VEG, AverageHeight )
+                INITIALIZE_NODE( VEG, Species )
+                INITIALIZE_NODE( VEG, Height )
+                INITIALIZE_NODE( VEG, TrunkDiameter )
+                INITIALIZE_NODE( VEG, CrownDiameter )
 
                 // TRANS
                 INITIALIZE_NODE( TRANS, TrafficArea )
@@ -393,6 +400,7 @@ namespace citygml {
     DEFINE_NODE( GML, Identifier )
     DEFINE_NODE( GML, Name )
     DEFINE_NODE( GML, DescriptionReference )
+    DEFINE_NODE( GML, MetaDataProperty )
     DEFINE_NODE( GML, Coordinates )
     DEFINE_NODE( GML, Pos )
     DEFINE_NODE( GML, BoundedBy )
@@ -531,11 +539,18 @@ namespace citygml {
     // VEG
     DEFINE_NODE( VEG, PlantCover )
     DEFINE_NODE( VEG, SolitaryVegetationObject )
-    DEFINE_NODE( VEG, Species )
     DEFINE_NODE( VEG, Lod1ImplicitRepresentation )
     DEFINE_NODE( VEG, Lod2ImplicitRepresentation )
     DEFINE_NODE( VEG, Lod3ImplicitRepresentation )
     DEFINE_NODE( VEG, Lod4ImplicitRepresentation )
+
+    DEFINE_NODE( VEG, Class )
+    DEFINE_NODE( VEG, Function )
+    DEFINE_NODE( VEG, AverageHeight )
+    DEFINE_NODE( VEG, Species )
+    DEFINE_NODE( VEG, Height )
+    DEFINE_NODE( VEG, TrunkDiameter )
+    DEFINE_NODE( VEG, CrownDiameter )
 
     // TRANS
     DEFINE_NODE( TRANS, TrafficArea )

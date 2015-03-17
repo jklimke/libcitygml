@@ -16,7 +16,7 @@
 namespace citygml {
 
     MaterialElementParser::MaterialElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Material>)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_model = nullptr;
         m_callback = callback;
@@ -70,7 +70,7 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool MaterialElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -108,12 +108,15 @@ namespace citygml {
             m_factory.createMaterialTargetDefinition(parseReference(characters, m_logger, getDocumentLocation()), m_model, m_lastTargetDefinitionID);
             m_lastTargetDefinitionID = "";
         } else {
-            return false;
+            return GMLObjectElementParser::parseChildElementEndTag(node, characters);
         }
         return true;
     }
 
-
+    Object* MaterialElementParser::getObject()
+    {
+        return m_model.get();
+    }
 
 
 }
