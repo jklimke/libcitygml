@@ -201,6 +201,8 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, ConsistsOfBuildingPart )
 
                 // CityFurniture
+                INITIALIZE_NODE( FRN, Class )
+                INITIALIZE_NODE( FRN, Function )
                 INITIALIZE_NODE( FRN, CityFurniture )
                 INITIALIZE_NODE( FRN, Lod1Geometry )
                 INITIALIZE_NODE( FRN, Lod2Geometry )
@@ -343,9 +345,9 @@ namespace citygml {
 
         std::string nodeName = lowerName;
 
-        size_t pos = name.find_first_of( ":" );
+        size_t pos = nodeName.find_first_of( ":" );
         if ( pos != std::string::npos ) {
-            nodeName = name.substr(pos);
+            nodeName = nodeName.substr(pos + 1);
         }
 
         auto it = nodeNameTypeMap.find(nodeName);
@@ -513,6 +515,8 @@ namespace citygml {
     DEFINE_NODE( BLDG, ConsistsOfBuildingPart )
 
     // CityFurniture
+    DEFINE_NODE( FRN, Class )
+    DEFINE_NODE( FRN, Function )
     DEFINE_NODE( FRN, CityFurniture )
     DEFINE_NODE( FRN, Lod1Geometry )
     DEFINE_NODE( FRN, Lod2Geometry )

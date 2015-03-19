@@ -126,6 +126,8 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(VEG, Height ));
                 attributesSet.insert(HANDLE_ATTR(VEG, TrunkDiameter ));
                 attributesSet.insert(HANDLE_ATTR(VEG, CrownDiameter ));
+                attributesSet.insert(HANDLE_ATTR(FRN, Class));
+                attributesSet.insert(HANDLE_ATTR(FRN, Function));
 
 
                 attributesSetInitialized = true;

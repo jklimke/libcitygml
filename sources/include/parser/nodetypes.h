@@ -189,6 +189,8 @@ namespace citygml {
         NODETYPE( BLDG, Address)
 
         // CityFurniture
+        NODETYPE( FRN, Class )
+        NODETYPE( FRN, Function )
         NODETYPE( FRN, CityFurniture )
         NODETYPE( FRN, Lod1Geometry )
         NODETYPE( FRN, Lod2Geometry )
