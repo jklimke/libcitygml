@@ -42,7 +42,6 @@ namespace citygml {
         NODETYPE( CORE, CityObjectMember )
         NODETYPE( CORE, CreationDate )
         NODETYPE( CORE, TerminationDate )
-        NODETYPE( CORE, _GenericApplicationPropertyOfCityObject)
         NODETYPE( CORE, GeneralizesTo)
 
         NODETYPE( CORE, ExternalReference)
@@ -53,7 +52,6 @@ namespace citygml {
         NODETYPE( CORE, Name)
 
         NODETYPE( CORE, Address )
-        NODETYPE( CORE, _GenericApplicationPropertyOfAddress )
 
         NODETYPE( CORE, ImplicitGeometry )
         NODETYPE( CORE, RelativeGMLGeometry )
@@ -300,15 +298,6 @@ namespace citygml {
         NODETYPE( APP, IsFront )
         NODETYPE( APP, Theme )
         NODETYPE( APP, MimeType )
-
-        NODETYPE( APP, _GenericApplicationPropertyOfAppearance )
-        NODETYPE( APP, _GenericApplicationPropertyOfSurfaceData )
-        NODETYPE( APP, _GenericApplicationPropertyOfTexture )
-        NODETYPE( APP, _GenericApplicationPropertyOfParameterizedTexture )
-        NODETYPE( APP, _GenericApplicationPropertyOfGeoreferencedTexture )
-        NODETYPE( APP, _GenericApplicationPropertyOfTexCoordList )
-        NODETYPE( APP, _GenericApplicationPropertyOfTexCoordGen )
-        NODETYPE( APP, _GenericApplicationPropertyOfX3DMaterial )
 
     private:
         static void initializeNodeTypes();

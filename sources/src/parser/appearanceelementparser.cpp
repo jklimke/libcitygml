@@ -100,10 +100,6 @@ namespace citygml {
             }
             return true;
 
-        } else if (node == NodeType::APP__GenericApplicationPropertyOfAppearanceNode) {
-            CITYGML_LOG_INFO(m_logger, "Skipping Appearance child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
-            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
-            return true;
         }
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
@@ -115,9 +111,6 @@ namespace citygml {
                 CITYGML_LOG_WARN(m_logger, "Duplicate definition of theme in appearance node at " << getDocumentLocation() << ". Overwriting last theme '" << m_theme << "' with '" << characters << "'");
             }
             m_theme = characters;
-            return true;
-        } else if (node == NodeType::APP_SurfaceDataMemberNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfAppearanceNode) {
             return true;
         }
         return GMLObjectElementParser::parseChildElementEndTag(node, characters);

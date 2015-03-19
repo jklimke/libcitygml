@@ -85,14 +85,6 @@ namespace citygml {
                 m_currentTexCoords = new TextureCoordinates(attributes.getCityGMLIDAttribute(), parseReference(attributes.getAttribute("ring"), m_logger, getDocumentLocation()));
             }
             return true;
-        } else if (node == NodeType::APP__GenericApplicationPropertyOfSurfaceDataNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfTextureNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfParameterizedTextureNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfTexCoordListNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfTexCoordGenNode) {
-            CITYGML_LOG_INFO(m_logger, "Skipping ParameterizedTexture child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
-            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
-            return true;
         }
 
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
@@ -152,12 +144,6 @@ namespace citygml {
             m_currentTexTargetDef = nullptr;
         } else if (node == NodeType::APP_MimeTypeNode) {
             m_model->setAttribute(node.name(), characters);
-        } else if (node == NodeType::APP__GenericApplicationPropertyOfSurfaceDataNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfTextureNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfParameterizedTextureNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfTexCoordListNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfTexCoordGenNode) {
-
         } else {
             return GMLObjectElementParser::parseChildElementEndTag(node, characters);
         }

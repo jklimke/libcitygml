@@ -258,10 +258,8 @@ namespace citygml {
 
             parseImplicitGeometryForLODLevel(4);
         } else if (node == NodeType::CORE_GeneralizesToNode
-                   || node == NodeType::CORE__GenericApplicationPropertyOfCityObjectNode
                    || node == NodeType::CORE_ExternalReferenceNode
-                   || node == NodeType::GML_MultiPointNode
-                   || node == NodeType::CORE__GenericApplicationPropertyOfAddressNode) {
+                   || node == NodeType::GML_MultiPointNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
@@ -361,9 +359,7 @@ namespace citygml {
                     || node == NodeType::FRN_Lod4TerrainIntersectionNode
                     || node == NodeType::FRN_Lod4ImplicitRepresentationNode
                     || node == NodeType::CORE_GeneralizesToNode
-                    || node == NodeType::CORE__GenericApplicationPropertyOfCityObjectNode
-                    || node == NodeType::GML_MultiPointNode
-                    || node == NodeType::CORE__GenericApplicationPropertyOfAddressNode) {
+                    || node == NodeType::GML_MultiPointNode) {
 
             return true;
         }

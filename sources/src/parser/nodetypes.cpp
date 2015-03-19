@@ -68,7 +68,6 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, CityObjectMember )
                 INITIALIZE_NODE( CORE, CreationDate )
                 INITIALIZE_NODE( CORE, TerminationDate )
-                INITIALIZE_NODE( CORE, _GenericApplicationPropertyOfCityObject)
                 INITIALIZE_NODE( CORE, GeneralizesTo)
 
                 INITIALIZE_NODE( CORE, ExternalReference)
@@ -79,7 +78,6 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, Name)
 
                 INITIALIZE_NODE( CORE, Address )
-                INITIALIZE_NODE( CORE, _GenericApplicationPropertyOfAddress )
 
                 INITIALIZE_NODE( CORE, ImplicitGeometry )
                 INITIALIZE_NODE( CORE, RelativeGMLGeometry )
@@ -326,15 +324,6 @@ namespace citygml {
                 INITIALIZE_NODE( APP, Theme )
                 INITIALIZE_NODE( APP, MimeType )
 
-                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfAppearance )
-                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfSurfaceData )
-                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfTexture )
-                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfParameterizedTexture )
-                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfGeoreferencedTexture )
-                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfTexCoordList )
-                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfTexCoordGen )
-                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfX3DMaterial )
-
                 nodesInitialized = true;
             }
         }
@@ -391,7 +380,6 @@ namespace citygml {
     DEFINE_NODE( CORE, CityObjectMember )
     DEFINE_NODE( CORE, CreationDate )
     DEFINE_NODE( CORE, TerminationDate )
-    DEFINE_NODE( CORE, _GenericApplicationPropertyOfCityObject)
     DEFINE_NODE( CORE, GeneralizesTo)
 
     DEFINE_NODE( CORE, ExternalReference)
@@ -402,7 +390,6 @@ namespace citygml {
     DEFINE_NODE( CORE, Name)
 
     DEFINE_NODE( CORE, Address )
-    DEFINE_NODE( CORE, _GenericApplicationPropertyOfAddress )
 
     DEFINE_NODE( CORE, ImplicitGeometry )
     DEFINE_NODE( CORE, RelativeGMLGeometry )
@@ -647,13 +634,4 @@ namespace citygml {
     DEFINE_NODE( APP, IsFront )
     DEFINE_NODE( APP, Theme )
     DEFINE_NODE( APP, MimeType )
-
-    DEFINE_NODE( APP, _GenericApplicationPropertyOfAppearance )
-    DEFINE_NODE( APP, _GenericApplicationPropertyOfSurfaceData )
-    DEFINE_NODE( APP, _GenericApplicationPropertyOfTexture )
-    DEFINE_NODE( APP, _GenericApplicationPropertyOfParameterizedTexture )
-    DEFINE_NODE( APP, _GenericApplicationPropertyOfGeoreferencedTexture )
-    DEFINE_NODE( APP, _GenericApplicationPropertyOfTexCoordList )
-    DEFINE_NODE( APP, _GenericApplicationPropertyOfTexCoordGen )
-    DEFINE_NODE( APP, _GenericApplicationPropertyOfX3DMaterial )
 }

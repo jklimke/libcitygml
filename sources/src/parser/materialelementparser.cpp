@@ -70,11 +70,6 @@ namespace citygml {
         } else if (node == NodeType::APP_TargetNode) {
             m_lastTargetDefinitionID = attributes.getCityGMLIDAttribute();
             return true;
-        } else if (node == NodeType::APP__GenericApplicationPropertyOfSurfaceDataNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfX3DMaterialNode) {
-            CITYGML_LOG_INFO(m_logger, "Skipping Material child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
-            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
-            return true;
         }
 
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
@@ -117,10 +112,7 @@ namespace citygml {
 
             m_factory.createMaterialTargetDefinition(parseReference(characters, m_logger, getDocumentLocation()), m_model, m_lastTargetDefinitionID);
             m_lastTargetDefinitionID = "";
-        } else if (node == NodeType::APP__GenericApplicationPropertyOfSurfaceDataNode
-                   || node == NodeType::APP__GenericApplicationPropertyOfX3DMaterialNode) {
-
-        } else {
+        }  else {
             return GMLObjectElementParser::parseChildElementEndTag(node, characters);
         }
         return true;
