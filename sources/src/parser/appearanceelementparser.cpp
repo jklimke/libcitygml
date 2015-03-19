@@ -112,6 +112,8 @@ namespace citygml {
             }
             m_theme = characters;
             return true;
+        } else if (node == NodeType::APP_SurfaceDataMemberNode) {
+            return true;
         }
         return GMLObjectElementParser::parseChildElementEndTag(node, characters);
     }
