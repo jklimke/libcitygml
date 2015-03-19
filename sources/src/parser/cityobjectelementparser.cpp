@@ -75,6 +75,7 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, FloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, InteriorWallSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(GRP, CityObjectGroup));
 
                 typeIDTypeMapInitialized = true;
             }
@@ -128,6 +129,9 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(VEG, CrownDiameter ));
                 attributesSet.insert(HANDLE_ATTR(FRN, Class));
                 attributesSet.insert(HANDLE_ATTR(FRN, Function));
+                attributesSet.insert(HANDLE_ATTR(GRP, Class));
+                attributesSet.insert(HANDLE_ATTR(GRP, Function));
+                attributesSet.insert(HANDLE_ATTR(GRP, Usage));
 
 
                 attributesSetInitialized = true;
@@ -191,7 +195,9 @@ namespace citygml {
                    || node == NodeType::BLDG_RoomInstallationNode
                    || node == NodeType::BLDG_InteriorRoomNode
                    || node == NodeType::BLDG_OpeningNode
-                   || node == NodeType::BLDG_ConsistsOfBuildingPartNode) {
+                   || node == NodeType::BLDG_ConsistsOfBuildingPartNode
+                   || node == NodeType::GRP_GroupMemberNode
+                   || node == NodeType::GRP_ParentNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -261,7 +267,8 @@ namespace citygml {
             parseImplicitGeometryForLODLevel(4);
         } else if (node == NodeType::CORE_GeneralizesToNode
                    || node == NodeType::CORE_ExternalReferenceNode
-                   || node == NodeType::GML_MultiPointNode) {
+                   || node == NodeType::GML_MultiPointNode
+                   || node == NodeType::GRP_GeometryNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
@@ -361,7 +368,9 @@ namespace citygml {
                     || node == NodeType::FRN_Lod4TerrainIntersectionNode
                     || node == NodeType::FRN_Lod4ImplicitRepresentationNode
                     || node == NodeType::CORE_GeneralizesToNode
-                    || node == NodeType::GML_MultiPointNode) {
+                    || node == NodeType::GML_MultiPointNode
+                    || node == NodeType::GRP_GroupMemberNode
+                    || node == NodeType::GRP_ParentNode) {
 
             return true;
         }

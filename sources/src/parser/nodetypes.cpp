@@ -20,14 +20,19 @@ namespace citygml {
         m_typeID = NodeType::typeCount++;
     }
 
-    const std::string&NodeType::XMLNode::name() const
+    const std::string NodeType::XMLNode::name() const
     {
-        return m_name;
+        return m_prefix + ":" + m_name;
     }
 
-    const std::string&NodeType::XMLNode::prefix() const
+    const std::string& NodeType::XMLNode::prefix() const
     {
         return m_prefix;
+    }
+
+    const std::string& NodeType::XMLNode::baseName() const
+    {
+        return m_name;
     }
 
     int NodeType::XMLNode::typeID() const
@@ -89,6 +94,11 @@ namespace citygml {
                 // GRP
                 INITIALIZE_NODE( GRP, CityObjectGroup )
                 INITIALIZE_NODE( GRP, GroupMember )
+                INITIALIZE_NODE( GRP, Class )
+                INITIALIZE_NODE( GRP, Function )
+                INITIALIZE_NODE( GRP, Usage )
+                INITIALIZE_NODE( GRP, Parent )
+                INITIALIZE_NODE( GRP, Geometry )
 
                 // GEN
                 INITIALIZE_NODE( GEN, GenericCityObject )
@@ -403,6 +413,11 @@ namespace citygml {
     // GRP
     DEFINE_NODE( GRP, CityObjectGroup )
     DEFINE_NODE( GRP, GroupMember )
+    DEFINE_NODE( GRP, Class )
+    DEFINE_NODE( GRP, Function )
+    DEFINE_NODE( GRP, Usage )
+    DEFINE_NODE( GRP, Parent )
+    DEFINE_NODE( GRP, Geometry )
 
     // GEN
     DEFINE_NODE( GEN, GenericCityObject )

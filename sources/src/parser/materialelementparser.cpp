@@ -57,8 +57,7 @@ namespace citygml {
             throw std::runtime_error("MaterialElementParser::parseChildElementStartTag called before MaterialElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode
-            || node == NodeType::APP_DiffuseColorNode
+        if (node == NodeType::APP_DiffuseColorNode
             || node == NodeType::APP_EmissiveColorNode
             || node == NodeType::APP_SpecularColorNode
             || node == NodeType::APP_ShininessNode
@@ -81,10 +80,7 @@ namespace citygml {
             throw std::runtime_error("MaterialElementParser::parseChildElementEndTag called before MaterialElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode) {
-
-            m_model->setAttribute(node.name(), characters);
-        } else if (node == NodeType::APP_DiffuseColorNode) {
+        if (node == NodeType::APP_DiffuseColorNode) {
 
             m_model->setDiffuse(parseValue<TVec3f>(characters, m_logger, getDocumentLocation()));
         } else if (node == NodeType::APP_EmissiveColorNode) {

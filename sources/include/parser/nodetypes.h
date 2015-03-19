@@ -16,8 +16,9 @@ namespace citygml {
             XMLNode();
             XMLNode(std::string prefix, std::string name);
 
-            const std::string& name() const;
+            const std::string name() const;
             const std::string& prefix() const;
+            const std::string& baseName() const;
             int typeID() const;
 
             bool operator==(const XMLNode& other) const;
@@ -63,6 +64,11 @@ namespace citygml {
         // GRP
         NODETYPE( GRP, CityObjectGroup )
         NODETYPE( GRP, GroupMember )
+        NODETYPE( GRP, Class )
+        NODETYPE( GRP, Function )
+        NODETYPE( GRP, Usage )
+        NODETYPE( GRP, Parent )
+        NODETYPE( GRP, Geometry )
 
         // GEN
         NODETYPE( GEN, GenericCityObject )

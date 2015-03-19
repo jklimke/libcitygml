@@ -60,8 +60,7 @@ namespace citygml {
             throw std::runtime_error("TextureElementParser::parseChildElementStartTag called before TextureElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode
-            || node == NodeType::APP_ImageURINode
+        if (node == NodeType::APP_ImageURINode
             || node == NodeType::APP_TextureTypeNode
             || node == NodeType::APP_WrapModeNode
             || node == NodeType::APP_BorderColorNode
@@ -96,10 +95,7 @@ namespace citygml {
             throw std::runtime_error("TextureElementParser::parseChildElementEndTag called before TextureElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode) {
-
-            m_model->setAttribute(node.name(), characters);
-        } else if (node == NodeType::APP_ImageURINode) {
+        if (node == NodeType::APP_ImageURINode) {
 
             m_model->setUrl(characters);
         } else if (node == NodeType::APP_TextureTypeNode) {
