@@ -10,6 +10,7 @@
 #include "parser/textureelementparser.h"
 #include "parser/materialelementparser.h"
 #include "parser/georeferencedtextureelementparser.h"
+#include "parser/skipelementparser.h"
 
 #include "citygml/appearance.h"
 #include "citygml/texture.h"
@@ -99,6 +100,10 @@ namespace citygml {
             }
             return true;
 
+        } else if (node == NodeType::APP__GenericApplicationPropertyOfAppearanceNode) {
+            CITYGML_LOG_INFO(m_logger, "Skipping Appearance child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
+            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
+            return true;
         }
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
@@ -111,7 +116,8 @@ namespace citygml {
             }
             m_theme = characters;
             return true;
-        } else if (node == NodeType::APP_SurfaceDataMemberNode) {
+        } else if (node == NodeType::APP_SurfaceDataMemberNode
+                   || node == NodeType::APP__GenericApplicationPropertyOfAppearanceNode) {
             return true;
         }
         return GMLObjectElementParser::parseChildElementEndTag(node, characters);

@@ -2,10 +2,21 @@
 
 namespace citygml {
 
-    Material::Material(const std::string& id) : Appearance( id, "Material" ), m_ambientIntensity( 0.f ), m_shininess( 0.f ), m_transparency( 0.f )
+    Material::Material(const std::string& id) : Appearance( id, "Material" ), m_ambientIntensity( 0.f ), m_shininess( 0.f ), m_transparency( 0.f ), m_isSmooth( false )
     {
 
     }
+
+    bool Material::isSmooth() const
+    {
+        return m_isSmooth;
+    }
+
+    void Material::setIsSmooth(bool isSmooth)
+    {
+        m_isSmooth = isSmooth;
+    }
+
 
     TVec3f Material::getDiffuse() const
     {

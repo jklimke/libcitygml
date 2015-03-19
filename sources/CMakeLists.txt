@@ -49,7 +49,7 @@ SET(SOURCES
   src/parser/attributes.cpp
   src/parser/parserxercesc.cpp
   src/parser/geocoordinatetransformer.cpp
-
+  src/parser/skipelementparser.cpp
   src/parser/gmlobjectparser.cpp
   src/parser/gmlfeaturecollectionparser.cpp
   src/parser/citymodelelementparser.cpp
@@ -97,6 +97,12 @@ SET(HEADERS
 
   include/citygml/citygml_api.h.in
 
+  include/citygml/tesselator.h
+  include/citygml/utils.h
+  include/citygml/appearancemanager.h
+  include/citygml/polygonmanager.h
+  include/citygml/geometrymanager.h
+
   include/parser/nodetypes.h
   include/parser/citygmldocumentparser.h
   include/parser/citygmlelementparser.h
@@ -106,12 +112,7 @@ SET(HEADERS
   include/parser/documentlocation.h
   include/parser/geocoordinatetransformer.h
   include/parser/parserutils.hpp
-  include/citygml/tesselator.h
-  include/citygml/utils.h
-  include/citygml/appearancemanager.h
-  include/citygml/polygonmanager.h
-  include/citygml/geometrymanager.h
-
+  include/parser/skipelementparser.h
   include/parser/gmlobjectparser.h
   include/parser/gmlfeaturecollectionparser.h
   include/parser/citymodelelementparser.h

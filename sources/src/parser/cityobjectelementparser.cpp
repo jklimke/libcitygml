@@ -5,6 +5,7 @@
 #include "parser/appearanceelementparser.h"
 #include "parser/geometryelementparser.h"
 #include "parser/implicitgeometryelementparser.h"
+#include "parser/skipelementparser.h"
 
 #include "citygml/citygmlfactory.h"
 #include "citygml/citygmllogger.h"
@@ -100,8 +101,9 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(BLDG, StoreysBelowGround));
                 attributesSet.insert(HANDLE_ATTR(BLDG, StoreysAboveGround));
                 attributesSet.insert(HANDLE_ATTR(BLDG, MeasuredHeight));
-                attributesSet.insert(HANDLE_ATTR(BLDG, Address));
                 attributesSet.insert(HANDLE_ATTR(BLDG, RoofType));
+                attributesSet.insert(HANDLE_ATTR(CORE, Address));
+                attributesSet.insert(HANDLE_ATTR(BLDG, Address));
                 attributesSet.insert(HANDLE_ATTR(XAL, XalAddress));
                 attributesSet.insert(HANDLE_ATTR(XAL, Administrativearea));
                 attributesSet.insert(HANDLE_ATTR(XAL, Country));
@@ -255,11 +257,15 @@ namespace citygml {
                    || node == NodeType::FRN_Lod4ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(4);
-        } else if (node == NodeType::BLDG_ExternalReferenceNode
-                   || node == NodeType::BLDG_InformationSystemNode
-                   || node == NodeType::BLDG_ExternalObjectNode
-                   || node == NodeType::BLDG_UriNode) {
+        } else if (node == NodeType::CORE_GeneralizesToNode
+                   || node == NodeType::CORE__GenericApplicationPropertyOfCityObjectNode
+                   || node == NodeType::CORE_ExternalReferenceNode
+                   || node == NodeType::GML_MultiPointNode
+                   || node == NodeType::CORE__GenericApplicationPropertyOfAddressNode) {
+            CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
+            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
+
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
         }
@@ -340,10 +346,7 @@ namespace citygml {
                     || node == NodeType::VEG_Lod2ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod3ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod4ImplicitRepresentationNode
-                    || node == NodeType::BLDG_ExternalReferenceNode
-                    || node == NodeType::BLDG_InformationSystemNode
-                    || node == NodeType::BLDG_ExternalObjectNode
-                    || node == NodeType::BLDG_UriNode
+                    || node == NodeType::CORE_ExternalReferenceNode
                     || node == NodeType::BLDG_ConsistsOfBuildingPartNode
                     || node == NodeType::FRN_Lod1GeometryNode
                     || node == NodeType::FRN_Lod1TerrainIntersectionNode
@@ -356,7 +359,11 @@ namespace citygml {
                     || node == NodeType::FRN_Lod3ImplicitRepresentationNode
                     || node == NodeType::FRN_Lod4GeometryNode
                     || node == NodeType::FRN_Lod4TerrainIntersectionNode
-                    || node == NodeType::FRN_Lod4ImplicitRepresentationNode) {
+                    || node == NodeType::FRN_Lod4ImplicitRepresentationNode
+                    || node == NodeType::CORE_GeneralizesToNode
+                    || node == NodeType::CORE__GenericApplicationPropertyOfCityObjectNode
+                    || node == NodeType::GML_MultiPointNode
+                    || node == NodeType::CORE__GenericApplicationPropertyOfAddressNode) {
 
             return true;
         }

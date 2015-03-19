@@ -32,9 +32,11 @@ namespace citygml {
         float getTransparency() const;
         void setTransparency(float transparancy);
 
+        bool isSmooth() const;
+        void setIsSmooth(bool isSmooth);
+
         virtual std::shared_ptr<Material> asMaterial() override;
         virtual std::shared_ptr<const Material> asMaterial() const override;
-
 
     protected:
         Material( const std::string& id );
@@ -44,6 +46,7 @@ namespace citygml {
         float m_ambientIntensity;
         float m_shininess;
         float m_transparency;
+        bool m_isSmooth;
     };
 
 }

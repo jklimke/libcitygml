@@ -7,6 +7,7 @@
 #include "parser/documentlocation.h"
 #include "parser/geometryelementparser.h"
 #include "parser/parserutils.hpp"
+#include "parser/skipelementparser.h"
 
 #include "citygml/implictgeometry.h"
 #include "citygml/citygmlfactory.h"
@@ -64,7 +65,9 @@ namespace citygml {
         }
 
         if (   node == NodeType::CORE_TransformationMatrixNode
-            || node == NodeType::GML_ReferencePointNode) {
+            || node == NodeType::CORE_ReferencePointNode
+            || node == NodeType::GML_ReferencePointNode
+            || node == NodeType::CORE_MimeTypeNode) {
 
             return true;
 
@@ -94,6 +97,10 @@ namespace citygml {
                                     }));
             }
             return true;
+        } else if (node == NodeType::CORE_LibraryObjectNode) {
+            CITYGML_LOG_INFO(m_logger, "Skipping ImplicitGeometry child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
+            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
+            return true;
         }
 
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
@@ -117,9 +124,13 @@ namespace citygml {
             return true;
         } else if (   node == NodeType::CORE_RelativeGMLGeometryNode
                    || node == NodeType::GML_PointNode
-                   || node == NodeType::GML_ReferencePointNode) {
+                   || node == NodeType::CORE_ReferencePointNode
+                   || node == NodeType::GML_ReferencePointNode
+                   || node == NodeType::CORE_LibraryObjectNode) {
 
             return true;
+        } else if (node == NodeType::CORE_MimeTypeNode) {
+            m_model->setAttribute(node.name(), characters);
         }
 
         return GMLObjectElementParser::parseChildElementEndTag(node, characters);

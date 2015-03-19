@@ -6,6 +6,7 @@
 #include "parser/attributes.h"
 #include "parser/documentlocation.h"
 #include "parser/parserutils.hpp"
+#include "parser/skipelementparser.h"
 
 #include "citygml/material.h"
 #include "citygml/citygmlfactory.h"
@@ -63,10 +64,16 @@ namespace citygml {
             || node == NodeType::APP_ShininessNode
             || node == NodeType::APP_TransparencyNode
             || node == NodeType::APP_AmbientIntensityNode
-            || node == NodeType::APP_IsFrontNode) {
+            || node == NodeType::APP_IsFrontNode
+            || node == NodeType::APP_isSmoothNode) {
             return true;
         } else if (node == NodeType::APP_TargetNode) {
             m_lastTargetDefinitionID = attributes.getCityGMLIDAttribute();
+            return true;
+        } else if (node == NodeType::APP__GenericApplicationPropertyOfSurfaceDataNode
+                   || node == NodeType::APP__GenericApplicationPropertyOfX3DMaterialNode) {
+            CITYGML_LOG_INFO(m_logger, "Skipping Material child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
+            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
         }
 
@@ -103,10 +110,16 @@ namespace citygml {
         } else if (node == NodeType::APP_IsFrontNode) {
 
             m_model->setIsFront(parseValue<bool>(characters, m_logger, getDocumentLocation()));
+        } else if (node == NodeType::APP_isSmoothNode) {
+
+            m_model->setIsSmooth(parseValue<bool>(characters, m_logger, getDocumentLocation()));
         } else if (node == NodeType::APP_TargetNode) {
 
             m_factory.createMaterialTargetDefinition(parseReference(characters, m_logger, getDocumentLocation()), m_model, m_lastTargetDefinitionID);
             m_lastTargetDefinitionID = "";
+        } else if (node == NodeType::APP__GenericApplicationPropertyOfSurfaceDataNode
+                   || node == NodeType::APP__GenericApplicationPropertyOfX3DMaterialNode) {
+
         } else {
             return GMLObjectElementParser::parseChildElementEndTag(node, characters);
         }

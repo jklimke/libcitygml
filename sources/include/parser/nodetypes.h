@@ -42,9 +42,25 @@ namespace citygml {
         NODETYPE( CORE, CityObjectMember )
         NODETYPE( CORE, CreationDate )
         NODETYPE( CORE, TerminationDate )
+        NODETYPE( CORE, _GenericApplicationPropertyOfCityObject)
+        NODETYPE( CORE, GeneralizesTo)
+
+        NODETYPE( CORE, ExternalReference)
+        NODETYPE( CORE, InformationSystem)
+        NODETYPE( CORE, ExternalObject)
+
+        NODETYPE( CORE, Uri)
+        NODETYPE( CORE, Name)
+
+        NODETYPE( CORE, Address )
+        NODETYPE( CORE, _GenericApplicationPropertyOfAddress )
+
         NODETYPE( CORE, ImplicitGeometry )
         NODETYPE( CORE, RelativeGMLGeometry )
         NODETYPE( CORE, TransformationMatrix )
+        NODETYPE( CORE, ReferencePoint)
+        NODETYPE( CORE, MimeType)
+        NODETYPE( CORE, LibraryObject)
 
         // GRP
         NODETYPE( GRP, CityObjectGroup )
@@ -138,10 +154,6 @@ namespace citygml {
         NODETYPE( BLDG, RoomInstallation)
         NODETYPE( BLDG, Opening)
         NODETYPE( BLDG, RoofType)
-        NODETYPE( BLDG, ExternalReference)
-        NODETYPE( BLDG, InformationSystem)
-        NODETYPE( BLDG, ExternalObject)
-        NODETYPE( BLDG, Uri)
 
         NODETYPE( BLDG, Lod1Solid )
         NODETYPE( BLDG, Lod2Solid )
@@ -176,8 +188,7 @@ namespace citygml {
         NODETYPE( BLDG, BuildingFurniture )
 
         NODETYPE( BLDG, CityFurniture )
-
-        NODETYPE( BLDG, Address )
+        NODETYPE( BLDG, Address)
 
         // CityFurniture
         NODETYPE( FRN, CityFurniture )
@@ -265,12 +276,17 @@ namespace citygml {
         NODETYPE( APP, TextureMap )
         NODETYPE( APP, Target )
         NODETYPE( APP, TexCoordList )
+        NODETYPE( APP, TexCoordGen )
         NODETYPE( APP, TextureCoordinates )
+        NODETYPE( APP, WorldToTexture )
         NODETYPE( APP, TextureType )
         NODETYPE( APP, Repeat )
         NODETYPE( APP, WrapMode )
         NODETYPE( APP, BorderColor )
         NODETYPE( APP, PreferWorldFile )
+        NODETYPE( APP, ReferencePoint)
+        NODETYPE( APP, Orientation)
+        NODETYPE( APP, isSmooth)
 
         NODETYPE( APP, X3DMaterial )
         NODETYPE( APP, Material )
@@ -284,6 +300,16 @@ namespace citygml {
         NODETYPE( APP, IsFront )
         NODETYPE( APP, Theme )
         NODETYPE( APP, MimeType )
+
+        NODETYPE( APP, _GenericApplicationPropertyOfAppearance )
+        NODETYPE( APP, _GenericApplicationPropertyOfSurfaceData )
+        NODETYPE( APP, _GenericApplicationPropertyOfTexture )
+        NODETYPE( APP, _GenericApplicationPropertyOfParameterizedTexture )
+        NODETYPE( APP, _GenericApplicationPropertyOfGeoreferencedTexture )
+        NODETYPE( APP, _GenericApplicationPropertyOfTexCoordList )
+        NODETYPE( APP, _GenericApplicationPropertyOfTexCoordGen )
+        NODETYPE( APP, _GenericApplicationPropertyOfX3DMaterial )
+
     private:
         static void initializeNodeTypes();
 

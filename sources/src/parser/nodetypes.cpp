@@ -68,9 +68,25 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, CityObjectMember )
                 INITIALIZE_NODE( CORE, CreationDate )
                 INITIALIZE_NODE( CORE, TerminationDate )
+                INITIALIZE_NODE( CORE, _GenericApplicationPropertyOfCityObject)
+                INITIALIZE_NODE( CORE, GeneralizesTo)
+
+                INITIALIZE_NODE( CORE, ExternalReference)
+                INITIALIZE_NODE( CORE, InformationSystem)
+                INITIALIZE_NODE( CORE, ExternalObject)
+
+                INITIALIZE_NODE( CORE, Uri)
+                INITIALIZE_NODE( CORE, Name)
+
+                INITIALIZE_NODE( CORE, Address )
+                INITIALIZE_NODE( CORE, _GenericApplicationPropertyOfAddress )
+
                 INITIALIZE_NODE( CORE, ImplicitGeometry )
                 INITIALIZE_NODE( CORE, RelativeGMLGeometry )
                 INITIALIZE_NODE( CORE, TransformationMatrix )
+                INITIALIZE_NODE( CORE, ReferencePoint)
+                INITIALIZE_NODE( CORE, MimeType)
+                INITIALIZE_NODE( CORE, LibraryObject)
 
                 // GRP
                 INITIALIZE_NODE( GRP, CityObjectGroup )
@@ -166,7 +182,6 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, Door )
                 INITIALIZE_NODE( BLDG, Window )
                 INITIALIZE_NODE( BLDG, BuildingInstallation )
-                INITIALIZE_NODE( BLDG, Address )
                 INITIALIZE_NODE( BLDG, MeasuredHeight )
                 INITIALIZE_NODE( BLDG, Class )
                 INITIALIZE_NODE( BLDG, Type )
@@ -212,12 +227,10 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, CeilingSurface )
                 INITIALIZE_NODE( BLDG, BuildingFurniture )
                 INITIALIZE_NODE( BLDG, RoofType)
-                INITIALIZE_NODE( BLDG, ExternalReference)
-                INITIALIZE_NODE( BLDG, InformationSystem)
-                INITIALIZE_NODE( BLDG, ExternalObject)
-                INITIALIZE_NODE( BLDG, Uri)
 
                 INITIALIZE_NODE( BLDG, CityFurniture )
+
+                INITIALIZE_NODE( BLDG, Address)
 
                 // ADDRESS
                 INITIALIZE_NODE( XAL, XalAddress )
@@ -295,6 +308,9 @@ namespace citygml {
                 INITIALIZE_NODE( APP, WrapMode )
                 INITIALIZE_NODE( APP, BorderColor )
                 INITIALIZE_NODE( APP, PreferWorldFile )
+                INITIALIZE_NODE( APP, ReferencePoint)
+                INITIALIZE_NODE( APP, Orientation)
+                INITIALIZE_NODE( APP, isSmooth)
 
                 INITIALIZE_NODE( APP, X3DMaterial )
                 INITIALIZE_NODE( APP, Material )
@@ -309,6 +325,15 @@ namespace citygml {
                 INITIALIZE_NODE( APP, IsFront )
                 INITIALIZE_NODE( APP, Theme )
                 INITIALIZE_NODE( APP, MimeType )
+
+                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfAppearance )
+                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfSurfaceData )
+                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfTexture )
+                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfParameterizedTexture )
+                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfGeoreferencedTexture )
+                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfTexCoordList )
+                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfTexCoordGen )
+                INITIALIZE_NODE( APP, _GenericApplicationPropertyOfX3DMaterial )
 
                 nodesInitialized = true;
             }
@@ -366,9 +391,25 @@ namespace citygml {
     DEFINE_NODE( CORE, CityObjectMember )
     DEFINE_NODE( CORE, CreationDate )
     DEFINE_NODE( CORE, TerminationDate )
+    DEFINE_NODE( CORE, _GenericApplicationPropertyOfCityObject)
+    DEFINE_NODE( CORE, GeneralizesTo)
+
+    DEFINE_NODE( CORE, ExternalReference)
+    DEFINE_NODE( CORE, InformationSystem)
+    DEFINE_NODE( CORE, ExternalObject)
+
+    DEFINE_NODE( CORE, Uri)
+    DEFINE_NODE( CORE, Name)
+
+    DEFINE_NODE( CORE, Address )
+    DEFINE_NODE( CORE, _GenericApplicationPropertyOfAddress )
+
     DEFINE_NODE( CORE, ImplicitGeometry )
     DEFINE_NODE( CORE, RelativeGMLGeometry )
     DEFINE_NODE( CORE, TransformationMatrix )
+    DEFINE_NODE( CORE, ReferencePoint)
+    DEFINE_NODE( CORE, MimeType)
+    DEFINE_NODE( CORE, LibraryObject)
 
     // GRP
     DEFINE_NODE( GRP, CityObjectGroup )
@@ -464,7 +505,6 @@ namespace citygml {
     DEFINE_NODE( BLDG, Door )
     DEFINE_NODE( BLDG, Window )
     DEFINE_NODE( BLDG, BuildingInstallation )
-    DEFINE_NODE( BLDG, Address )
     DEFINE_NODE( BLDG, MeasuredHeight )
     DEFINE_NODE( BLDG, Class )
     DEFINE_NODE( BLDG, Type )
@@ -510,12 +550,10 @@ namespace citygml {
     DEFINE_NODE( BLDG, CeilingSurface )
     DEFINE_NODE( BLDG, BuildingFurniture )
     DEFINE_NODE( BLDG, RoofType)
-    DEFINE_NODE( BLDG, ExternalReference)
-    DEFINE_NODE( BLDG, InformationSystem)
-    DEFINE_NODE( BLDG, ExternalObject)
-    DEFINE_NODE( BLDG, Uri)
 
     DEFINE_NODE( BLDG, CityFurniture )
+
+    DEFINE_NODE( BLDG, Address)
 
     // ADDRESS
     DEFINE_NODE( XAL, XalAddress )
@@ -592,6 +630,9 @@ namespace citygml {
     DEFINE_NODE( APP, WrapMode )
     DEFINE_NODE( APP, BorderColor )
     DEFINE_NODE( APP, PreferWorldFile )
+    DEFINE_NODE( APP, ReferencePoint)
+    DEFINE_NODE( APP, Orientation)
+    DEFINE_NODE( APP, isSmooth)
 
     DEFINE_NODE( APP, X3DMaterial )
     DEFINE_NODE( APP, Material )
@@ -607,4 +648,12 @@ namespace citygml {
     DEFINE_NODE( APP, Theme )
     DEFINE_NODE( APP, MimeType )
 
+    DEFINE_NODE( APP, _GenericApplicationPropertyOfAppearance )
+    DEFINE_NODE( APP, _GenericApplicationPropertyOfSurfaceData )
+    DEFINE_NODE( APP, _GenericApplicationPropertyOfTexture )
+    DEFINE_NODE( APP, _GenericApplicationPropertyOfParameterizedTexture )
+    DEFINE_NODE( APP, _GenericApplicationPropertyOfGeoreferencedTexture )
+    DEFINE_NODE( APP, _GenericApplicationPropertyOfTexCoordList )
+    DEFINE_NODE( APP, _GenericApplicationPropertyOfTexCoordGen )
+    DEFINE_NODE( APP, _GenericApplicationPropertyOfX3DMaterial )
 }
