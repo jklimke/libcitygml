@@ -258,12 +258,24 @@ namespace citygml {
         NODETYPE( VEG, CrownDiameter )
 
         // TRANS
+        NODETYPE( TRANS, TransportationComplex )
         NODETYPE( TRANS, TrafficArea )
         NODETYPE( TRANS, AuxiliaryTrafficArea )
         NODETYPE( TRANS, Track )
         NODETYPE( TRANS, Road )
         NODETYPE( TRANS, Railway )
         NODETYPE( TRANS, Square )
+
+        NODETYPE( TRANS, Usage )
+        NODETYPE( TRANS, Function )
+        NODETYPE( TRANS, SurfaceMaterial )
+
+        NODETYPE( TRANS, Lod0Network )
+        NODETYPE( TRANS, Lod1MultiSurface )
+        NODETYPE( TRANS, Lod2MultiSurface )
+        NODETYPE( TRANS, Lod3MultiSurface )
+        NODETYPE( TRANS, Lod4MultiSurface )
+
 
         // LUSE
         NODETYPE( LUSE, LandUse )

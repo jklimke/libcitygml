@@ -289,12 +289,23 @@ namespace citygml {
                 INITIALIZE_NODE( VEG, CrownDiameter )
 
                 // TRANS
+                INITIALIZE_NODE( TRANS, TransportationComplex )
                 INITIALIZE_NODE( TRANS, TrafficArea )
                 INITIALIZE_NODE( TRANS, AuxiliaryTrafficArea )
                 INITIALIZE_NODE( TRANS, Track )
                 INITIALIZE_NODE( TRANS, Road )
                 INITIALIZE_NODE( TRANS, Railway )
                 INITIALIZE_NODE( TRANS, Square )
+
+                INITIALIZE_NODE( TRANS, Usage )
+                INITIALIZE_NODE( TRANS, Function )
+                INITIALIZE_NODE( TRANS, SurfaceMaterial )
+
+                INITIALIZE_NODE( TRANS, Lod0Network )
+                INITIALIZE_NODE( TRANS, Lod1MultiSurface )
+                INITIALIZE_NODE( TRANS, Lod2MultiSurface )
+                INITIALIZE_NODE( TRANS, Lod3MultiSurface )
+                INITIALIZE_NODE( TRANS, Lod4MultiSurface )
 
                 // LUSE
                 INITIALIZE_NODE( LUSE, LandUse )
@@ -638,12 +649,23 @@ namespace citygml {
     DEFINE_NODE( VEG, CrownDiameter )
 
     // TRANS
+    DEFINE_NODE( TRANS, TransportationComplex )
     DEFINE_NODE( TRANS, TrafficArea )
     DEFINE_NODE( TRANS, AuxiliaryTrafficArea )
     DEFINE_NODE( TRANS, Track )
     DEFINE_NODE( TRANS, Road )
     DEFINE_NODE( TRANS, Railway )
     DEFINE_NODE( TRANS, Square )
+
+    DEFINE_NODE( TRANS, Usage )
+    DEFINE_NODE( TRANS, Function )
+    DEFINE_NODE( TRANS, SurfaceMaterial )
+
+    DEFINE_NODE( TRANS, Lod0Network )
+    DEFINE_NODE( TRANS, Lod1MultiSurface )
+    DEFINE_NODE( TRANS, Lod2MultiSurface )
+    DEFINE_NODE( TRANS, Lod3MultiSurface )
+    DEFINE_NODE( TRANS, Lod4MultiSurface )
 
     // LUSE
     DEFINE_NODE( LUSE, LandUse )

@@ -55,6 +55,10 @@ namespace citygml {
             COT_CeilingSurface              = 1 << 29,
             COT_CityObjectGroup             = 1 << 30,
 
+            // covers all supertypes of tran::_TransportationObject that are not Track, Road, Railway or Square...
+            // there are to many for to few bits to explicitly enumerate them. However Track, Road, Railway or Square should be used most of the time
+            COT_TransportationObject        = 1 << 31,
+
             COT_All                         = 0xFFFFFFFF
         };
 

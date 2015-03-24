@@ -24,6 +24,7 @@ namespace citygml {
     std::mutex CityObjectElementParser::initializedAttributeSetMutex;
 
     #define HANDLE_TYPE( prefix, elementName ) std::pair<int, CityObject::CityObjectsType>(NodeType::prefix ## _ ## elementName ## Node.typeID(), CityObject::COT_ ## elementName)
+    #define HANDLE_GROUP_TYPE( prefix, elementName, enumtype ) std::pair<int, CityObject::CityObjectsType>(NodeType::prefix ## _ ## elementName ## Node.typeID(), enumtype)
     #define HANDLE_ATTR( prefix, elementName ) NodeType::prefix ## _ ## elementName ## Node.typeID()
 
     CityObjectElementParser::CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (CityObject*)> callback)
@@ -58,6 +59,9 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Road));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Railway));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Square));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, TransportationComplex, CityObject::CityObjectsType::COT_TransportationObject));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, TrafficArea, CityObject::CityObjectsType::COT_TransportationObject));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, AuxiliaryTrafficArea, CityObject::CityObjectsType::COT_TransportationObject));
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, PlantCover));
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, SolitaryVegetationObject));
                 typeIDTypeMap.insert(HANDLE_TYPE(WTR, WaterBody));
@@ -139,6 +143,9 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(LUSE, Function));
                 attributesSet.insert(HANDLE_ATTR(LUSE, Usage));
                 attributesSet.insert(HANDLE_ATTR(DEM, Lod));
+                attributesSet.insert(HANDLE_ATTR(TRANS, Usage));
+                attributesSet.insert(HANDLE_ATTR(TRANS, Function));
+                attributesSet.insert(HANDLE_ATTR(TRANS, SurfaceMaterial));
 
                 attributesSetInitialized = true;
             }
@@ -220,7 +227,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod1TerrainIntersectionNode
                    || node == NodeType::FRN_Lod1GeometryNode
                    || node == NodeType::FRN_Lod1TerrainIntersectionNode
-                   || node == NodeType::LUSE_Lod1MultiSurfaceNode) {
+                   || node == NodeType::LUSE_Lod1MultiSurfaceNode
+                   || node == NodeType::TRANS_Lod1MultiSurfaceNode) {
 
             parseGeometryForLODLevel(1);
         } else if (node == NodeType::BLDG_Lod2GeometryNode
@@ -232,7 +240,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod2TerrainIntersectionNode
                    || node == NodeType::FRN_Lod2GeometryNode
                    || node == NodeType::FRN_Lod2TerrainIntersectionNode
-                   || node == NodeType::LUSE_Lod2MultiSurfaceNode) {
+                   || node == NodeType::LUSE_Lod2MultiSurfaceNode
+                   || node == NodeType::TRANS_Lod1MultiSurfaceNode) {
 
             parseGeometryForLODLevel(2);
         } else if (node == NodeType::BLDG_Lod3GeometryNode
@@ -244,7 +253,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod3TerrainIntersectionNode
                    || node == NodeType::FRN_Lod3GeometryNode
                    || node == NodeType::FRN_Lod3TerrainIntersectionNode
-                   || node == NodeType::LUSE_Lod3MultiSurfaceNode) {
+                   || node == NodeType::LUSE_Lod3MultiSurfaceNode
+                   || node == NodeType::TRANS_Lod1MultiSurfaceNode) {
 
             parseGeometryForLODLevel(3);
         } else if (node == NodeType::BLDG_Lod4GeometryNode
@@ -256,7 +266,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod4TerrainIntersectionNode
                    || node == NodeType::FRN_Lod4GeometryNode
                    || node == NodeType::FRN_Lod4TerrainIntersectionNode
-                   || node == NodeType::LUSE_Lod4MultiSurfaceNode) {
+                   || node == NodeType::LUSE_Lod4MultiSurfaceNode
+                   || node == NodeType::TRANS_Lod1MultiSurfaceNode) {
 
             parseGeometryForLODLevel(4);
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
@@ -283,7 +294,11 @@ namespace citygml {
                    || node == NodeType::CORE_ExternalReferenceNode
                    || node == NodeType::GML_MultiPointNode
                    || node == NodeType::GRP_GeometryNode
-                   || node == NodeType::DEM_ReliefComponentNode) {
+                   || node == NodeType::DEM_ReliefComponentNode
+                   || node == NodeType::GEN_Lod0GeometryNode
+                   || node == NodeType::GEN_Lod0ImplicitRepresentationNode
+                   || node == NodeType::GEN_Lod0TerrainIntersectionNode
+                   || node == NodeType::TRANS_Lod0NetworkNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
@@ -364,10 +379,10 @@ namespace citygml {
                     || node == NodeType::GEN_Lod2TerrainIntersectionNode
                     || node == NodeType::GEN_Lod3TerrainIntersectionNode
                     || node == NodeType::GEN_Lod4TerrainIntersectionNode
-                   || node == NodeType::GEN_Lod1ImplicitRepresentationNode
-                   || node == NodeType::GEN_Lod2ImplicitRepresentationNode
-                   || node == NodeType::GEN_Lod3ImplicitRepresentationNode
-                   || node == NodeType::GEN_Lod4ImplicitRepresentationNode
+                    || node == NodeType::GEN_Lod1ImplicitRepresentationNode
+                    || node == NodeType::GEN_Lod2ImplicitRepresentationNode
+                    || node == NodeType::GEN_Lod3ImplicitRepresentationNode
+                    || node == NodeType::GEN_Lod4ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod1ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod2ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod3ImplicitRepresentationNode
@@ -394,7 +409,11 @@ namespace citygml {
                     || node == NodeType::LUSE_Lod2MultiSurfaceNode
                     || node == NodeType::LUSE_Lod3MultiSurfaceNode
                     || node == NodeType::LUSE_Lod4MultiSurfaceNode
-                    || node == NodeType::DEM_ReliefComponentNode) {
+                    || node == NodeType::DEM_ReliefComponentNode
+                    || node == NodeType::GEN_Lod0GeometryNode
+                    || node == NodeType::GEN_Lod0ImplicitRepresentationNode
+                    || node == NodeType::GEN_Lod0TerrainIntersectionNode
+                    || node == NodeType::TRANS_Lod0NetworkNode) {
 
             return true;
         }

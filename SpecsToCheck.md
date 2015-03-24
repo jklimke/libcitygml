@@ -12,7 +12,7 @@ CityObjectGroup			|	http://www.opengis.net/citygml/cityobjectgroup/1.0	|	http://
 Generics				|	http://www.opengis.net/citygml/generics/1.0			|	http://schemas.opengis.net/citygml/generics/1.0/generics.xsd				|	gen 							| ☑
 LandUse					|	http://www.opengis.net/citygml/landuse/1.0			|	http://schemas.opengis.net/citygml/landuse/1.0/landUse.xsd					|	luse 							| ☑
 Relief					|	http://www.opengis.net/citygml/relief/1.0			|	http://schemas.opengis.net/citygml/relief/1.0/relief.xsd					|	dem 							| ☑
-Transportation			|	http://www.opengis.net/citygml/transportation/1.0	|	http://schemas.opengis.net/citygml/transportation/1.0/transportation.xsd	|	tran 							| ☐
+Transportation			|	http://www.opengis.net/citygml/transportation/1.0	|	http://schemas.opengis.net/citygml/transportation/1.0/transportation.xsd	|	tran 							| ☑
 Vegetation				|	http://www.opengis.net/citygml/vegetation/1.0		|	http://schemas.opengis.net/citygml/vegetation/1.0/vegetation.xsd			|	veg 							| ☑
 WaterBody				|	http://www.opengis.net/citygml/waterbody/1.0		|	http://schemas.opengis.net/citygml/waterbody/1.0/waterBody.xsd				|	wtr 							| ☐
 
