@@ -271,6 +271,15 @@ namespace citygml {
         NODETYPE( LUSE, Lod )
         NODETYPE( LUSE, TINRelief )
 
+        NODETYPE( LUSE, Class )
+        NODETYPE( LUSE, Usage )
+        NODETYPE( LUSE, Function )
+
+        NODETYPE( LUSE, Lod1MultiSurface )
+        NODETYPE( LUSE, Lod2MultiSurface )
+        NODETYPE( LUSE, Lod3MultiSurface )
+        NODETYPE( LUSE, Lod4MultiSurface )
+
         // SUB
         NODETYPE( SUB, Tunnel )
         NODETYPE( SUB, RelativeToTerrain )

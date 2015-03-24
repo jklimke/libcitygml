@@ -135,6 +135,9 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(GEN, Class));
                 attributesSet.insert(HANDLE_ATTR(GEN, Function));
                 attributesSet.insert(HANDLE_ATTR(GEN, Usage));
+                attributesSet.insert(HANDLE_ATTR(LUSE, Class));
+                attributesSet.insert(HANDLE_ATTR(LUSE, Function));
+                attributesSet.insert(HANDLE_ATTR(LUSE, Usage));
 
                 attributesSetInitialized = true;
             }
@@ -215,7 +218,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod1GeometryNode
                    || node == NodeType::GEN_Lod1TerrainIntersectionNode
                    || node == NodeType::FRN_Lod1GeometryNode
-                   || node == NodeType::FRN_Lod1TerrainIntersectionNode) {
+                   || node == NodeType::FRN_Lod1TerrainIntersectionNode
+                   || node == NodeType::LUSE_Lod1MultiSurfaceNode) {
 
             parseGeometryForLODLevel(1);
         } else if (node == NodeType::BLDG_Lod2GeometryNode
@@ -226,7 +230,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod2GeometryNode
                    || node == NodeType::GEN_Lod2TerrainIntersectionNode
                    || node == NodeType::FRN_Lod2GeometryNode
-                   || node == NodeType::FRN_Lod2TerrainIntersectionNode) {
+                   || node == NodeType::FRN_Lod2TerrainIntersectionNode
+                   || node == NodeType::LUSE_Lod2MultiSurfaceNode) {
 
             parseGeometryForLODLevel(2);
         } else if (node == NodeType::BLDG_Lod3GeometryNode
@@ -237,7 +242,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod3GeometryNode
                    || node == NodeType::GEN_Lod3TerrainIntersectionNode
                    || node == NodeType::FRN_Lod3GeometryNode
-                   || node == NodeType::FRN_Lod3TerrainIntersectionNode) {
+                   || node == NodeType::FRN_Lod3TerrainIntersectionNode
+                   || node == NodeType::LUSE_Lod3MultiSurfaceNode) {
 
             parseGeometryForLODLevel(3);
         } else if (node == NodeType::BLDG_Lod4GeometryNode
@@ -248,7 +254,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod4GeometryNode
                    || node == NodeType::GEN_Lod4TerrainIntersectionNode
                    || node == NodeType::FRN_Lod4GeometryNode
-                   || node == NodeType::FRN_Lod4TerrainIntersectionNode) {
+                   || node == NodeType::FRN_Lod4TerrainIntersectionNode
+                   || node == NodeType::LUSE_Lod4MultiSurfaceNode) {
 
             parseGeometryForLODLevel(4);
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
@@ -355,6 +362,10 @@ namespace citygml {
                     || node == NodeType::GEN_Lod2TerrainIntersectionNode
                     || node == NodeType::GEN_Lod3TerrainIntersectionNode
                     || node == NodeType::GEN_Lod4TerrainIntersectionNode
+                   || node == NodeType::GEN_Lod1ImplicitRepresentationNode
+                   || node == NodeType::GEN_Lod2ImplicitRepresentationNode
+                   || node == NodeType::GEN_Lod3ImplicitRepresentationNode
+                   || node == NodeType::GEN_Lod4ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod1ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod2ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod3ImplicitRepresentationNode
@@ -376,7 +387,11 @@ namespace citygml {
                     || node == NodeType::CORE_GeneralizesToNode
                     || node == NodeType::GML_MultiPointNode
                     || node == NodeType::GRP_GroupMemberNode
-                    || node == NodeType::GRP_ParentNode) {
+                    || node == NodeType::GRP_ParentNode
+                    || node == NodeType::LUSE_Lod1MultiSurfaceNode
+                    || node == NodeType::LUSE_Lod2MultiSurfaceNode
+                    || node == NodeType::LUSE_Lod3MultiSurfaceNode
+                    || node == NodeType::LUSE_Lod4MultiSurfaceNode) {
 
             return true;
         }

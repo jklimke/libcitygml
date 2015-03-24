@@ -303,6 +303,16 @@ namespace citygml {
                 INITIALIZE_NODE( LUSE, Lod )
                 INITIALIZE_NODE( LUSE, TINRelief )
 
+                INITIALIZE_NODE( LUSE, Class )
+                INITIALIZE_NODE( LUSE, Usage )
+                INITIALIZE_NODE( LUSE, Function )
+
+                INITIALIZE_NODE( LUSE, Lod1MultiSurface )
+                INITIALIZE_NODE( LUSE, Lod2MultiSurface )
+                INITIALIZE_NODE( LUSE, Lod3MultiSurface )
+                INITIALIZE_NODE( LUSE, Lod4MultiSurface )
+
+
                 // SUB
                 INITIALIZE_NODE( SUB, Tunnel )
                 INITIALIZE_NODE( SUB, RelativeToTerrain )
@@ -627,9 +637,17 @@ namespace citygml {
     // LUSE
     DEFINE_NODE( LUSE, LandUse )
 
-    // dem
     DEFINE_NODE( LUSE, Lod )
     DEFINE_NODE( LUSE, TINRelief )
+
+    DEFINE_NODE( LUSE, Class )
+    DEFINE_NODE( LUSE, Usage )
+    DEFINE_NODE( LUSE, Function )
+
+    DEFINE_NODE( LUSE, Lod1MultiSurface )
+    DEFINE_NODE( LUSE, Lod2MultiSurface )
+    DEFINE_NODE( LUSE, Lod3MultiSurface )
+    DEFINE_NODE( LUSE, Lod4MultiSurface )
 
     // SUB
     DEFINE_NODE( SUB, Tunnel )
