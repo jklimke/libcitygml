@@ -190,6 +190,8 @@ namespace citygml {
             return "InteriorWallSurface";
         case CityObject::COT_CeilingSurface:
             return "CeilingSurface";
+        case CityObject::COT_TransportationObject:
+            return "TransportationObject";
         default:
             return "Unknown";
         }
@@ -232,6 +234,7 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::COT_FloorSurface), CityObject::COT_FloorSurface},
          {cityObjectsTypeToLowerString(CityObject::COT_InteriorWallSurface), CityObject::COT_InteriorWallSurface},
          {cityObjectsTypeToLowerString(CityObject::COT_CeilingSurface), CityObject::COT_CeilingSurface},
+         {cityObjectsTypeToLowerString(CityObject::COT_TransportationObject), CityObject::COT_TransportationObject}
     };
 
     CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid)

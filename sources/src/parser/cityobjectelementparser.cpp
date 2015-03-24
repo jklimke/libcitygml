@@ -65,6 +65,9 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, PlantCover));
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, SolitaryVegetationObject));
                 typeIDTypeMap.insert(HANDLE_TYPE(WTR, WaterBody));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterSurface, CityObject::COT_WaterBody));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterGroundSurface, CityObject::COT_WaterBody));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterClosureSurface, CityObject::COT_WaterBody));
                 typeIDTypeMap.insert(HANDLE_TYPE(LUSE, LandUse));
                 typeIDTypeMap.insert(HANDLE_TYPE(SUB, Tunnel));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, Bridge));
@@ -146,6 +149,10 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(TRANS, Usage));
                 attributesSet.insert(HANDLE_ATTR(TRANS, Function));
                 attributesSet.insert(HANDLE_ATTR(TRANS, SurfaceMaterial));
+                attributesSet.insert(HANDLE_ATTR(WTR, Class));
+                attributesSet.insert(HANDLE_ATTR(WTR, Function));
+                attributesSet.insert(HANDLE_ATTR(WTR, Usage));
+                attributesSet.insert(HANDLE_ATTR(WTR, WaterLevel));
 
                 attributesSetInitialized = true;
             }
@@ -210,7 +217,10 @@ namespace citygml {
                    || node == NodeType::BLDG_OpeningNode
                    || node == NodeType::BLDG_ConsistsOfBuildingPartNode
                    || node == NodeType::GRP_GroupMemberNode
-                   || node == NodeType::GRP_ParentNode) {
+                   || node == NodeType::GRP_ParentNode
+                   || node == NodeType::TRANS_TrafficAreaNode
+                   || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
+                   || node == NodeType::WTR_BoundedByNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -228,7 +238,10 @@ namespace citygml {
                    || node == NodeType::FRN_Lod1GeometryNode
                    || node == NodeType::FRN_Lod1TerrainIntersectionNode
                    || node == NodeType::LUSE_Lod1MultiSurfaceNode
-                   || node == NodeType::TRANS_Lod1MultiSurfaceNode) {
+                   || node == NodeType::TRANS_Lod1MultiSurfaceNode
+                   || node == NodeType::WTR_Lod1MultiCurveNode
+                   || node == NodeType::WTR_Lod1MultiSurfaceNode
+                   || node == NodeType::WTR_Lod1SolidNode) {
 
             parseGeometryForLODLevel(1);
         } else if (node == NodeType::BLDG_Lod2GeometryNode
@@ -241,7 +254,9 @@ namespace citygml {
                    || node == NodeType::FRN_Lod2GeometryNode
                    || node == NodeType::FRN_Lod2TerrainIntersectionNode
                    || node == NodeType::LUSE_Lod2MultiSurfaceNode
-                   || node == NodeType::TRANS_Lod1MultiSurfaceNode) {
+                   || node == NodeType::TRANS_Lod2MultiSurfaceNode
+                   || node == NodeType::WTR_Lod2SolidNode
+                   || node == NodeType::WTR_Lod2SurfaceNode) {
 
             parseGeometryForLODLevel(2);
         } else if (node == NodeType::BLDG_Lod3GeometryNode
@@ -254,7 +269,9 @@ namespace citygml {
                    || node == NodeType::FRN_Lod3GeometryNode
                    || node == NodeType::FRN_Lod3TerrainIntersectionNode
                    || node == NodeType::LUSE_Lod3MultiSurfaceNode
-                   || node == NodeType::TRANS_Lod1MultiSurfaceNode) {
+                   || node == NodeType::TRANS_Lod3MultiSurfaceNode
+                   || node == NodeType::WTR_Lod3SolidNode
+                   || node == NodeType::WTR_Lod3SurfaceNode) {
 
             parseGeometryForLODLevel(3);
         } else if (node == NodeType::BLDG_Lod4GeometryNode
@@ -267,7 +284,9 @@ namespace citygml {
                    || node == NodeType::FRN_Lod4GeometryNode
                    || node == NodeType::FRN_Lod4TerrainIntersectionNode
                    || node == NodeType::LUSE_Lod4MultiSurfaceNode
-                   || node == NodeType::TRANS_Lod1MultiSurfaceNode) {
+                   || node == NodeType::TRANS_Lod4MultiSurfaceNode
+                   || node == NodeType::WTR_Lod4SolidNode
+                   || node == NodeType::WTR_Lod4SurfaceNode) {
 
             parseGeometryForLODLevel(4);
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
@@ -298,7 +317,9 @@ namespace citygml {
                    || node == NodeType::GEN_Lod0GeometryNode
                    || node == NodeType::GEN_Lod0ImplicitRepresentationNode
                    || node == NodeType::GEN_Lod0TerrainIntersectionNode
-                   || node == NodeType::TRANS_Lod0NetworkNode) {
+                   || node == NodeType::TRANS_Lod0NetworkNode
+                   || node == NodeType::WTR_Lod0MultiCurveNode
+                   || node == NodeType::WTR_Lod0MultiSurfaceNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
@@ -413,7 +434,25 @@ namespace citygml {
                     || node == NodeType::GEN_Lod0GeometryNode
                     || node == NodeType::GEN_Lod0ImplicitRepresentationNode
                     || node == NodeType::GEN_Lod0TerrainIntersectionNode
-                    || node == NodeType::TRANS_Lod0NetworkNode) {
+                    || node == NodeType::TRANS_Lod0NetworkNode
+                    || node == NodeType::TRANS_TrafficAreaNode
+                    || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
+                    || node == NodeType::TRANS_Lod1MultiSurfaceNode
+                    || node == NodeType::TRANS_Lod2MultiSurfaceNode
+                    || node == NodeType::TRANS_Lod3MultiSurfaceNode
+                    || node == NodeType::TRANS_Lod4MultiSurfaceNode
+                    || node == NodeType::WTR_Lod0MultiCurveNode
+                    || node == NodeType::WTR_Lod0MultiSurfaceNode
+                    || node == NodeType::WTR_Lod1MultiCurveNode
+                    || node == NodeType::WTR_Lod1MultiSurfaceNode
+                    || node == NodeType::WTR_Lod1SolidNode
+                    || node == NodeType::WTR_Lod2SolidNode
+                    || node == NodeType::WTR_Lod3SolidNode
+                    || node == NodeType::WTR_Lod4SolidNode
+                    || node == NodeType::WTR_Lod2SurfaceNode
+                    || node == NodeType::WTR_Lod3SurfaceNode
+                    || node == NodeType::WTR_Lod4SurfaceNode
+                    || node == NodeType::WTR_BoundedByNode) {
 
             return true;
         }

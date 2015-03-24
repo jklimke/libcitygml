@@ -7,7 +7,8 @@
 * Check if Appearance assignment is correct for shared polygons
 * Check if non implicit geoemtries can be shared
 * Ensure that polygons that are children of shared geometries are not also children of non shared geometries (otherwise a coordinate transformation might be applied on the vertices which is not allowed for shared geometries)
-* THe namespace of the different modules may differ from the recommended one... make a namespace mapping based on the uri
+* The namespace of the different modules may differ from the recommended one... make a namespace mapping based on the uri
+* Currently different city object types are grouped under the same enum type (CityObjectType) e.g. WaterSurface, WaterGroundSurface, WaterClosureSurface and WaterBody are of type COT_WaterBody. The reason for this is that every enum type is identified by an individual bit... however there are only 32 bits. Check if the bitmask is actually used... if not remove that constraint and define an individual enum type for every CityObject type
 
 # Completness
 * Implement parsing of CityObject <generalizesTo> member (contains a cityobject or references one that is the generalization of the current one) => requires cityobject sharing

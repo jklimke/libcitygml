@@ -240,6 +240,25 @@ namespace citygml {
 
         // WTR
         NODETYPE( WTR, WaterBody )
+        NODETYPE( WTR, WaterSurface )
+        NODETYPE( WTR, WaterGroundSurface )
+        NODETYPE( WTR, WaterClosureSurface )
+        NODETYPE( WTR, Class )
+        NODETYPE( WTR, Function )
+        NODETYPE( WTR, Usage )
+        NODETYPE( WTR, WaterLevel )
+        NODETYPE( WTR, Lod0MultiCurve )
+        NODETYPE( WTR, Lod0MultiSurface )
+        NODETYPE( WTR, Lod1MultiCurve )
+        NODETYPE( WTR, Lod1MultiSurface )
+        NODETYPE( WTR, Lod1Solid )
+        NODETYPE( WTR, Lod2Solid )
+        NODETYPE( WTR, Lod3Solid )
+        NODETYPE( WTR, Lod4Solid )
+        NODETYPE( WTR, Lod2Surface )
+        NODETYPE( WTR, Lod3Surface )
+        NODETYPE( WTR, Lod4Surface )
+        NODETYPE( WTR, BoundedBy )
 
         // VEG
         NODETYPE( VEG, PlantCover )

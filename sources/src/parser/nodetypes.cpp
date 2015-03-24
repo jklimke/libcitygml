@@ -269,9 +269,27 @@ namespace citygml {
                 INITIALIZE_NODE( XAL, AddressDetails )
                 INITIALIZE_NODE( XAL, DependentLocalityName )
 
-
                 // WTR
                 INITIALIZE_NODE( WTR, WaterBody )
+                INITIALIZE_NODE( WTR, WaterSurface )
+                INITIALIZE_NODE( WTR, WaterGroundSurface )
+                INITIALIZE_NODE( WTR, WaterClosureSurface )
+                INITIALIZE_NODE( WTR, Class )
+                INITIALIZE_NODE( WTR, Function )
+                INITIALIZE_NODE( WTR, Usage )
+                INITIALIZE_NODE( WTR, WaterLevel )
+                INITIALIZE_NODE( WTR, Lod0MultiCurve )
+                INITIALIZE_NODE( WTR, Lod0MultiSurface )
+                INITIALIZE_NODE( WTR, Lod1MultiCurve )
+                INITIALIZE_NODE( WTR, Lod1MultiSurface )
+                INITIALIZE_NODE( WTR, Lod1Solid )
+                INITIALIZE_NODE( WTR, Lod2Solid )
+                INITIALIZE_NODE( WTR, Lod3Solid )
+                INITIALIZE_NODE( WTR, Lod4Solid )
+                INITIALIZE_NODE( WTR, Lod2Surface )
+                INITIALIZE_NODE( WTR, Lod3Surface )
+                INITIALIZE_NODE( WTR, Lod4Surface )
+                INITIALIZE_NODE( WTR, BoundedBy )
 
                 // VEG
                 INITIALIZE_NODE( VEG, PlantCover )
@@ -629,8 +647,28 @@ namespace citygml {
     DEFINE_NODE( XAL, Locality )
     DEFINE_NODE( XAL, AddressDetails )
     DEFINE_NODE( XAL, DependentLocalityName )
+
     // WTR
     DEFINE_NODE( WTR, WaterBody )
+    DEFINE_NODE( WTR, WaterSurface )
+    DEFINE_NODE( WTR, WaterGroundSurface )
+    DEFINE_NODE( WTR, WaterClosureSurface )
+    DEFINE_NODE( WTR, Class )
+    DEFINE_NODE( WTR, Function )
+    DEFINE_NODE( WTR, Usage )
+    DEFINE_NODE( WTR, WaterLevel )
+    DEFINE_NODE( WTR, Lod0MultiCurve )
+    DEFINE_NODE( WTR, Lod0MultiSurface )
+    DEFINE_NODE( WTR, Lod1MultiCurve )
+    DEFINE_NODE( WTR, Lod1MultiSurface )
+    DEFINE_NODE( WTR, Lod1Solid )
+    DEFINE_NODE( WTR, Lod2Solid )
+    DEFINE_NODE( WTR, Lod3Solid )
+    DEFINE_NODE( WTR, Lod4Solid )
+    DEFINE_NODE( WTR, Lod2Surface )
+    DEFINE_NODE( WTR, Lod3Surface )
+    DEFINE_NODE( WTR, Lod4Surface )
+    DEFINE_NODE( WTR, BoundedBy )
 
     // VEG
     DEFINE_NODE( VEG, PlantCover )
