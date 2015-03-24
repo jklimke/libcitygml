@@ -132,7 +132,9 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(GRP, Class));
                 attributesSet.insert(HANDLE_ATTR(GRP, Function));
                 attributesSet.insert(HANDLE_ATTR(GRP, Usage));
-
+                attributesSet.insert(HANDLE_ATTR(GEN, Class));
+                attributesSet.insert(HANDLE_ATTR(GEN, Function));
+                attributesSet.insert(HANDLE_ATTR(GEN, Usage));
 
                 attributesSetInitialized = true;
             }
@@ -250,19 +252,23 @@ namespace citygml {
 
             parseGeometryForLODLevel(4);
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
-                   || node == NodeType::FRN_Lod1ImplicitRepresentationNode) {
+                   || node == NodeType::FRN_Lod1ImplicitRepresentationNode
+                   || node == NodeType::GEN_Lod1ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(1);
         } else if (node == NodeType::VEG_Lod2ImplicitRepresentationNode
-                   || node == NodeType::FRN_Lod2ImplicitRepresentationNode) {
+                   || node == NodeType::FRN_Lod2ImplicitRepresentationNode
+                   || node == NodeType::GEN_Lod2ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(2);
         } else if (node == NodeType::VEG_Lod3ImplicitRepresentationNode
-                   || node == NodeType::FRN_Lod3ImplicitRepresentationNode) {
+                   || node == NodeType::FRN_Lod3ImplicitRepresentationNode
+                   || node == NodeType::GEN_Lod3ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(3);
         } else if (node == NodeType::VEG_Lod4ImplicitRepresentationNode
-                   || node == NodeType::FRN_Lod4ImplicitRepresentationNode) {
+                   || node == NodeType::FRN_Lod4ImplicitRepresentationNode
+                   || node == NodeType::GEN_Lod4ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(4);
         } else if (node == NodeType::CORE_GeneralizesToNode

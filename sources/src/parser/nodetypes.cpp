@@ -101,6 +101,9 @@ namespace citygml {
                 INITIALIZE_NODE( GRP, Geometry )
 
                 // GEN
+                INITIALIZE_NODE( GEN, Class )
+                INITIALIZE_NODE( GEN, Function )
+                INITIALIZE_NODE( GEN, Usage )
                 INITIALIZE_NODE( GEN, GenericCityObject )
                 INITIALIZE_NODE( GEN, StringAttribute )
                 INITIALIZE_NODE( GEN, DoubleAttribute )
@@ -109,14 +112,21 @@ namespace citygml {
                 INITIALIZE_NODE( GEN, UriAttribute )
                 INITIALIZE_NODE( GEN, Value )
 
+                INITIALIZE_NODE( GEN, Lod0Geometry )
                 INITIALIZE_NODE( GEN, Lod1Geometry )
                 INITIALIZE_NODE( GEN, Lod2Geometry )
                 INITIALIZE_NODE( GEN, Lod3Geometry )
                 INITIALIZE_NODE( GEN, Lod4Geometry )
+                INITIALIZE_NODE( GEN, Lod0TerrainIntersection )
                 INITIALIZE_NODE( GEN, Lod1TerrainIntersection )
                 INITIALIZE_NODE( GEN, Lod2TerrainIntersection )
                 INITIALIZE_NODE( GEN, Lod3TerrainIntersection )
                 INITIALIZE_NODE( GEN, Lod4TerrainIntersection )
+                INITIALIZE_NODE( GEN, Lod0ImplicitRepresentation )
+                INITIALIZE_NODE( GEN, Lod1ImplicitRepresentation )
+                INITIALIZE_NODE( GEN, Lod2ImplicitRepresentation )
+                INITIALIZE_NODE( GEN, Lod3ImplicitRepresentation )
+                INITIALIZE_NODE( GEN, Lod4ImplicitRepresentation )
 
                 // TEX
                 // INITIALIZE_NODE( GML, TexturedSurface ) // Deprecated
@@ -420,6 +430,9 @@ namespace citygml {
     DEFINE_NODE( GRP, Geometry )
 
     // GEN
+    DEFINE_NODE( GEN, Class )
+    DEFINE_NODE( GEN, Function )
+    DEFINE_NODE( GEN, Usage )
     DEFINE_NODE( GEN, GenericCityObject )
     DEFINE_NODE( GEN, StringAttribute )
     DEFINE_NODE( GEN, DoubleAttribute )
@@ -428,14 +441,21 @@ namespace citygml {
     DEFINE_NODE( GEN, UriAttribute )
     DEFINE_NODE( GEN, Value )
 
+    DEFINE_NODE( GEN, Lod0Geometry )
     DEFINE_NODE( GEN, Lod1Geometry )
     DEFINE_NODE( GEN, Lod2Geometry )
     DEFINE_NODE( GEN, Lod3Geometry )
     DEFINE_NODE( GEN, Lod4Geometry )
+    DEFINE_NODE( GEN, Lod0TerrainIntersection )
     DEFINE_NODE( GEN, Lod1TerrainIntersection )
     DEFINE_NODE( GEN, Lod2TerrainIntersection )
     DEFINE_NODE( GEN, Lod3TerrainIntersection )
     DEFINE_NODE( GEN, Lod4TerrainIntersection )
+    DEFINE_NODE( GEN, Lod0ImplicitRepresentation )
+    DEFINE_NODE( GEN, Lod1ImplicitRepresentation )
+    DEFINE_NODE( GEN, Lod2ImplicitRepresentation )
+    DEFINE_NODE( GEN, Lod3ImplicitRepresentation )
+    DEFINE_NODE( GEN, Lod4ImplicitRepresentation )
 
     // TEX
     // DEFINE_NODE( GML, TexturedSurface ) // Deprecated

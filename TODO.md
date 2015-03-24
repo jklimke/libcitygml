@@ -17,6 +17,7 @@
 * Implement appearence <TexCoordGen> support
 * Implement <grp:geometry> support (Darunter kann eine beliebige GML Geometrie hängen)
 * Implement full support for <grp:groupMember> and <grp:parent> (requires city object sharing, currently only inline definitions are supported)
+* Implement lod0 parsing
 
 # Refactoring
 * Change the NodeTypes so that typeID is a constant expression -> Use switch-case structures instead of if-then-else in the element parsers

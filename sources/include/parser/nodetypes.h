@@ -71,6 +71,9 @@ namespace citygml {
         NODETYPE( GRP, Geometry )
 
         // GEN
+        NODETYPE( GEN, Class )
+        NODETYPE( GEN, Function )
+        NODETYPE( GEN, Usage )
         NODETYPE( GEN, GenericCityObject )
         NODETYPE( GEN, StringAttribute )
         NODETYPE( GEN, DoubleAttribute )
@@ -79,14 +82,21 @@ namespace citygml {
         NODETYPE( GEN, UriAttribute )
         NODETYPE( GEN, Value )
 
+        NODETYPE( GEN, Lod0Geometry )
         NODETYPE( GEN, Lod1Geometry )
         NODETYPE( GEN, Lod2Geometry )
         NODETYPE( GEN, Lod3Geometry )
         NODETYPE( GEN, Lod4Geometry )
+        NODETYPE( GEN, Lod0TerrainIntersection )
         NODETYPE( GEN, Lod1TerrainIntersection )
         NODETYPE( GEN, Lod2TerrainIntersection )
         NODETYPE( GEN, Lod3TerrainIntersection )
         NODETYPE( GEN, Lod4TerrainIntersection )
+        NODETYPE( GEN, Lod0ImplicitRepresentation )
+        NODETYPE( GEN, Lod1ImplicitRepresentation )
+        NODETYPE( GEN, Lod2ImplicitRepresentation )
+        NODETYPE( GEN, Lod3ImplicitRepresentation )
+        NODETYPE( GEN, Lod4ImplicitRepresentation )
 
         // TEX
         // NODETYPE( GML, TexturedSurface ) // Deprecated
@@ -258,7 +268,6 @@ namespace citygml {
         // LUSE
         NODETYPE( LUSE, LandUse )
 
-        // dem
         NODETYPE( LUSE, Lod )
         NODETYPE( LUSE, TINRelief )
 
