@@ -7,6 +7,7 @@
 * Check if Appearance assignment is correct for shared polygons
 * Check if non implicit geoemtries can be shared
 * Ensure that polygons that are children of shared geometries are not also children of non shared geometries (otherwise a coordinate transformation might be applied on the vertices which is not allowed for shared geometries)
+* THe namespace of the different modules may differ from the recommended one... make a namespace mapping based on the uri
 
 # Completness
 * Implement parsing of CityObject <generalizesTo> member (contains a cityobject or references one that is the generalization of the current one) => requires cityobject sharing
@@ -18,6 +19,7 @@
 * Implement <grp:geometry> support (Darunter kann eine beliebige GML Geometrie hängen)
 * Implement full support for <grp:groupMember> and <grp:parent> (requires city object sharing, currently only inline definitions are supported)
 * Implement lod0 parsing
+* Implement Relief/Terrain Model (Namespace DEM) parsing. More precisely implement ReliefComponentPropertyType parsing.
 
 # Refactoring
 * Change the NodeTypes so that typeID is a constant expression -> Use switch-case structures instead of if-then-else in the element parsers

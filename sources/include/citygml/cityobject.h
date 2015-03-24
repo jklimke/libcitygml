@@ -37,7 +37,7 @@ namespace citygml {
             COT_PlantCover                  = 1 << 12,
             COT_SolitaryVegetationObject    = 1 << 13,
             COT_WaterBody                   = 1 << 14,
-            COT_TINRelief                   = 1 << 15,
+            COT_ReliefFeature               = 1 << 15,
             COT_LandUse                     = 1 << 16,
             COT_Tunnel						= 1 << 17,
             COT_Bridge						= 1 << 18,

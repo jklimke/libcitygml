@@ -268,9 +268,6 @@ namespace citygml {
         // LUSE
         NODETYPE( LUSE, LandUse )
 
-        NODETYPE( LUSE, Lod )
-        NODETYPE( LUSE, TINRelief )
-
         NODETYPE( LUSE, Class )
         NODETYPE( LUSE, Usage )
         NODETYPE( LUSE, Function )
@@ -279,6 +276,22 @@ namespace citygml {
         NODETYPE( LUSE, Lod2MultiSurface )
         NODETYPE( LUSE, Lod3MultiSurface )
         NODETYPE( LUSE, Lod4MultiSurface )
+
+        // DEM (Relief)
+        NODETYPE( DEM, ReliefFeature )
+        NODETYPE( DEM, TINRelief )
+        NODETYPE( DEM, RasterRelief )
+        NODETYPE( DEM, MassPointRelief )
+        NODETYPE( DEM, BreaklineRelief )
+        NODETYPE( DEM, Lod )
+        NODETYPE( DEM, Extent )
+        NODETYPE( DEM, ReliefComponent )
+        NODETYPE( DEM, Tin )
+        NODETYPE( DEM, Grid )
+        NODETYPE( DEM, ReliefPoints )
+        NODETYPE( DEM, RidgeOrValleyLines )
+        NODETYPE( DEM, Breaklines )
+        NODETYPE( DEM, Elevation )
 
         // SUB
         NODETYPE( SUB, Tunnel )

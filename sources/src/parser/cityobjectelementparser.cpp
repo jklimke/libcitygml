@@ -61,7 +61,6 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, PlantCover));
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, SolitaryVegetationObject));
                 typeIDTypeMap.insert(HANDLE_TYPE(WTR, WaterBody));
-                typeIDTypeMap.insert(HANDLE_TYPE(LUSE, TINRelief));
                 typeIDTypeMap.insert(HANDLE_TYPE(LUSE, LandUse));
                 typeIDTypeMap.insert(HANDLE_TYPE(SUB, Tunnel));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, Bridge));
@@ -76,6 +75,7 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, InteriorWallSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CeilingSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(GRP, CityObjectGroup));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefFeature));
 
                 typeIDTypeMapInitialized = true;
             }
@@ -138,6 +138,7 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(LUSE, Class));
                 attributesSet.insert(HANDLE_ATTR(LUSE, Function));
                 attributesSet.insert(HANDLE_ATTR(LUSE, Usage));
+                attributesSet.insert(HANDLE_ATTR(DEM, Lod));
 
                 attributesSetInitialized = true;
             }
@@ -281,7 +282,8 @@ namespace citygml {
         } else if (node == NodeType::CORE_GeneralizesToNode
                    || node == NodeType::CORE_ExternalReferenceNode
                    || node == NodeType::GML_MultiPointNode
-                   || node == NodeType::GRP_GeometryNode) {
+                   || node == NodeType::GRP_GeometryNode
+                   || node == NodeType::DEM_ReliefComponentNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
@@ -391,7 +393,8 @@ namespace citygml {
                     || node == NodeType::LUSE_Lod1MultiSurfaceNode
                     || node == NodeType::LUSE_Lod2MultiSurfaceNode
                     || node == NodeType::LUSE_Lod3MultiSurfaceNode
-                    || node == NodeType::LUSE_Lod4MultiSurfaceNode) {
+                    || node == NodeType::LUSE_Lod4MultiSurfaceNode
+                    || node == NodeType::DEM_ReliefComponentNode) {
 
             return true;
         }

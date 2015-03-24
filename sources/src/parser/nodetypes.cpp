@@ -299,10 +299,6 @@ namespace citygml {
                 // LUSE
                 INITIALIZE_NODE( LUSE, LandUse )
 
-                // dem
-                INITIALIZE_NODE( LUSE, Lod )
-                INITIALIZE_NODE( LUSE, TINRelief )
-
                 INITIALIZE_NODE( LUSE, Class )
                 INITIALIZE_NODE( LUSE, Usage )
                 INITIALIZE_NODE( LUSE, Function )
@@ -312,6 +308,21 @@ namespace citygml {
                 INITIALIZE_NODE( LUSE, Lod3MultiSurface )
                 INITIALIZE_NODE( LUSE, Lod4MultiSurface )
 
+                // DEM (Relief)
+                INITIALIZE_NODE( DEM, ReliefFeature )
+                INITIALIZE_NODE( DEM, TINRelief )
+                INITIALIZE_NODE( DEM, RasterRelief )
+                INITIALIZE_NODE( DEM, MassPointRelief )
+                INITIALIZE_NODE( DEM, BreaklineRelief )
+                INITIALIZE_NODE( DEM, Lod )
+                INITIALIZE_NODE( DEM, Extent )
+                INITIALIZE_NODE( DEM, ReliefComponent )
+                INITIALIZE_NODE( DEM, Tin )
+                INITIALIZE_NODE( DEM, Grid )
+                INITIALIZE_NODE( DEM, ReliefPoints )
+                INITIALIZE_NODE( DEM, RidgeOrValleyLines )
+                INITIALIZE_NODE( DEM, Breaklines )
+                INITIALIZE_NODE( DEM, Elevation )
 
                 // SUB
                 INITIALIZE_NODE( SUB, Tunnel )
@@ -637,9 +648,6 @@ namespace citygml {
     // LUSE
     DEFINE_NODE( LUSE, LandUse )
 
-    DEFINE_NODE( LUSE, Lod )
-    DEFINE_NODE( LUSE, TINRelief )
-
     DEFINE_NODE( LUSE, Class )
     DEFINE_NODE( LUSE, Usage )
     DEFINE_NODE( LUSE, Function )
@@ -648,6 +656,22 @@ namespace citygml {
     DEFINE_NODE( LUSE, Lod2MultiSurface )
     DEFINE_NODE( LUSE, Lod3MultiSurface )
     DEFINE_NODE( LUSE, Lod4MultiSurface )
+
+    // DEM (Relief)
+    DEFINE_NODE( DEM, ReliefFeature )
+    DEFINE_NODE( DEM, TINRelief )
+    DEFINE_NODE( DEM, RasterRelief )
+    DEFINE_NODE( DEM, MassPointRelief )
+    DEFINE_NODE( DEM, BreaklineRelief )
+    DEFINE_NODE( DEM, Lod )
+    DEFINE_NODE( DEM, Extent )
+    DEFINE_NODE( DEM, ReliefComponent )
+    DEFINE_NODE( DEM, Tin )
+    DEFINE_NODE( DEM, Grid )
+    DEFINE_NODE( DEM, ReliefPoints )
+    DEFINE_NODE( DEM, RidgeOrValleyLines )
+    DEFINE_NODE( DEM, Breaklines )
+    DEFINE_NODE( DEM, Elevation )
 
     // SUB
     DEFINE_NODE( SUB, Tunnel )
