@@ -6,10 +6,13 @@
 
 namespace citygml {
 
-    SkipElementParser::SkipElementParser(CityGMLDocumentParser& documentParser, std::shared_ptr<CityGMLLogger> logger)
+    SkipElementParser::SkipElementParser(CityGMLDocumentParser& documentParser, std::shared_ptr<CityGMLLogger> logger, const NodeType::XMLNode& skipNode)
         : ElementParser(documentParser, logger)
     {
-
+        m_skipNode = skipNode;
+        if (skipNode.valid()) {
+            m_depth = 1;
+        }
     }
 
     std::string SkipElementParser::elementParserName() const
@@ -39,9 +42,7 @@ namespace citygml {
     {
         if (!m_skipNode.valid()) {
             m_documentParser.removeCurrentElementParser(this);
-        }
-
-        if (node == m_skipNode) {
+        } else if (node == m_skipNode) {
             m_depth--;
 
             if (m_depth == 0) {

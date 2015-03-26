@@ -2,8 +2,19 @@
 
 namespace citygml {
 
-    Material::Material(const std::string& id) : Appearance( id, "Material" ), m_ambientIntensity( 0.f ), m_shininess( 0.f ), m_transparency( 0.f ), m_isSmooth( false )
+    Material::Material(const std::string& id) : Appearance( id, "Material" )
     {
+        // Sets default values of the X3DMaterial definied in the citygml 1.0.0 spec see page 32 (section 9.3 Material)
+        m_ambientIntensity =  0.2f;
+
+        m_diffuse = TVec3f(0.8f, 0.8f, 0.8f);
+        m_emissive = TVec3f(0.f, 0.f, 0.f);
+        m_specular = TVec3f(1.f, 1.f, 1.f);
+
+        m_shininess = 0.2f;
+        m_transparency = 0.f;
+
+        m_isSmooth = false;
 
     }
 

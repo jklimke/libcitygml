@@ -142,6 +142,11 @@ namespace citygml {
         NODETYPE( GML, Interior )
         NODETYPE( GML, Exterior )
 
+        NODETYPE( GML, Shell )
+        NODETYPE( GML, PolyhedralSurface )
+        NODETYPE( GML, Surface )
+        NODETYPE( GML, PolygonPatch)
+
         // BLDG
         NODETYPE( BLDG, Building )
         NODETYPE( BLDG, BuildingPart )

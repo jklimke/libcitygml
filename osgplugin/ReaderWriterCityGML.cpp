@@ -92,6 +92,7 @@ public:
     CityGMLSettings( void )
         : _printNames(false)
         , _useMaxLODOnly(false)
+        , _storeGeomIDs(false)
         , _theme("")
     {}
 
@@ -111,6 +112,7 @@ public:
             else if ( currentOption == "pruneemptyobjects" ) _params.pruneEmptyObjects = true;
             else if ( currentOption == "usemaxlodonly" ) _useMaxLODOnly = true;
             else if ( currentOption == "usetheme" ) iss >> _theme;
+            else if ( currentOption == "storegeomids" ) _storeGeomIDs = true;
         }
     }
 
@@ -118,6 +120,7 @@ public:
     citygml::ParserParams _params;
     bool _printNames;
     bool _useMaxLODOnly;
+    bool _storeGeomIDs;
     std::map< std::string, osg::Texture2D* > _textureMap;
     std::string _theme;
 };
@@ -139,14 +142,15 @@ public:
         supportsOption( "destSRS", "Transform geometry to given reference system" );
         supportsOption( "useMaxLODonly", "Use the highest available LOD for geometry of one object" );
         supportsOption( "appearanceTheme", "Name of the appearance theme to use" );
+        supportsOption( "storegeomids", "Store the citygml id of geometry objects in the corresponding osg::Geometry object as a description string." );
 
         m_logger = std::make_shared<CityGMLOSGPluginLogger>();
     }
 
-    virtual const char* className( void ) const { return "CityGML Reader"; }
+    virtual const char* className( void ) const override { return "CityGML Reader"; }
 
-    virtual ReadResult readNode( const std::string&, const osgDB::ReaderWriter::Options* ) const;
-    virtual ReadResult readNode( std::istream&, const osgDB::ReaderWriter::Options* ) const;
+    virtual ReadResult readNode( const std::string&, const osgDB::ReaderWriter::Options* ) const override;
+    virtual ReadResult readNode( std::istream&, const osgDB::ReaderWriter::Options* ) const override;
 
 private:
 
@@ -155,7 +159,7 @@ private:
 
 private:
     ReadResult readCity(std::shared_ptr<const citygml::CityModel>, CityGMLSettings& ) const;
-    bool createCityObject(const citygml::CityObject&, CityGMLSettings&, osg::Group*, unsigned int minimumLODToConsider = 0 ) const;
+    bool createCityObject(const citygml::CityObject&, CityGMLSettings&, osg::Group*, const osg::Vec3d& offset = osg::Vec3d(0.0, 0.0, 0.0), unsigned int minimumLODToConsider = 0) const;
 
 };
 
@@ -251,7 +255,13 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readCity(std::shared_ptr<co
 
     const citygml::ConstCityObjects& roots = city->getRootCityObjects();
 
-    for ( unsigned int i = 0; i < roots.size(); ++i ) createCityObject( *roots[i], settings, root );
+    osg::Vec3d offset(0, 0, 0);
+    if (city->getEnvelope().validBounds()) {
+        TVec3d lb = city->getEnvelope().getLowerBound();
+        offset = osg::Vec3d(lb.x, lb.y, lb.z);
+    }
+
+    for ( unsigned int i = 0; i < roots.size(); ++i ) createCityObject( *roots[i], settings, root, offset );
 
     osg::notify(osg::NOTICE) << "Done." << std::endl;
 
@@ -339,14 +349,14 @@ void setMaterial(osg::ref_ptr<osg::StateSet> stateset, const citygml::Polygon& p
     material->setDiffuse( osg::Material::FRONT_AND_BACK, osg::Vec4(diffuse.r, diffuse.g, diffuse.b, diffuse.a ) );
     material->setSpecular( osg::Material::FRONT_AND_BACK, osg::Vec4(specular.r, specular.g, specular.b, specular.a ) );
     material->setEmission( osg::Material::FRONT_AND_BACK, osg::Vec4(emissive.r, emissive.g, emissive.b, emissive.a ) );
-    material->setShininess( osg::Material::FRONT_AND_BACK, citygmlMaterial->getShininess() );
+    material->setShininess( osg::Material::FRONT_AND_BACK, 128.f * citygmlMaterial->getShininess() );
     material->setAmbient( osg::Material::FRONT_AND_BACK, osg::Vec4( ambient, ambient, ambient, 1.0 ) );
     material->setTransparency( osg::Material::FRONT_AND_BACK, citygmlMaterial->getTransparency() );
     stateset->setAttributeAndModes( material, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON );
     stateset->setMode( GL_LIGHTING, osg::StateAttribute::OVERRIDE | osg::StateAttribute::ON );
 }
 
-void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, CityGMLSettings& settings, osg::Geode* geometryContainer ) {
+void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, CityGMLSettings& settings, osg::Geode* geometryContainer, const osg::Vec3d& offset ) {
     for ( unsigned int j = 0; j < geometry.getPolygonsCount(); j++ )
     {
         const citygml::Polygon& p = geometry.getPolygon(j);
@@ -365,7 +375,8 @@ void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, Cit
         vertices->reserve( vert.size() );
         for ( unsigned int k = 0; k < vert.size(); k++ )
         {
-            osg::Vec3d pt( vert[k].x, vert[k].y, vert[k].z );
+            TVec3d v = vert[k];
+            osg::Vec3d pt = osg::Vec3d( v.x, v.y, v.z ) - offset;
             vertices->push_back( pt );
         }
 
@@ -382,17 +393,20 @@ void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, Cit
         setMaterial(stateset, p, settings);
         setTexture(stateset, geom, p, settings);
 
+        if (settings._storeGeomIDs) {
+            geom->addDescription(p.getId());
+        }
 
         geometryContainer->addDrawable( geom );
     }
 
     // Parse child geoemtries
     for (unsigned int i = 0; i < geometry.getGeometriesCount(); i++) {
-        createOsgGeometryFromCityGMLGeometry(geometry.getGeometry(i), settings, geometryContainer);
+        createOsgGeometryFromCityGMLGeometry(geometry.getGeometry(i), settings, geometryContainer, offset);
     }
 }
 
-bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, CityGMLSettings& settings, osg::Group* parent, unsigned int minimumLODToConsider ) const
+bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, CityGMLSettings& settings, osg::Group* parent, const osg::Vec3d& offset , unsigned int minimumLODToConsider) const
 {
     // Skip objects without geometry
     if ( !parent ) return false;
@@ -421,7 +435,7 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Ci
             continue;
         }
 
-        createOsgGeometryFromCityGMLGeometry(geometry, settings, geode);
+        createOsgGeometryFromCityGMLGeometry(geometry, settings, geode, offset);
     }
 
     if ( settings._printNames )
@@ -461,7 +475,7 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Ci
     }
 
     for ( unsigned int i = 0; i < object.getChildCityObjectsCount(); ++i )
-        createCityObject( object.getChildCityObject(i), settings, grp, highestLOD);
+        createCityObject( object.getChildCityObject(i), settings, grp, offset, highestLOD);
 
     return true;
 }

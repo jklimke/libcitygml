@@ -321,7 +321,7 @@ namespace citygml {
                    || node == NodeType::WTR_Lod0MultiCurveNode
                    || node == NodeType::WTR_Lod0MultiSurfaceNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
-            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
+            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger, node));
             return true;
 
         } else {

@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "parser/citygmlelementparser.h"
+#include "parser/elementparser.h"
 
 namespace citygml {
 

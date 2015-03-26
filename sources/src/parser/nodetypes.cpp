@@ -55,6 +55,19 @@ namespace citygml {
         return !m_name.empty();
     }
 
+    std::ostream& operator<<(std::ostream& os, const NodeType::XMLNode& o)
+    {
+        if (!o.valid()) {
+            os << "InvalidNode";
+        } else {
+            os << o.name();
+        }
+
+        return os;
+    }
+
+    const NodeType::XMLNode NodeType::InvalidNode = XMLNode("", "");
+
 #define INITIALIZE_NODE( prefix, elementname ) \
     NodeType::prefix ## _ ## elementname ## Node = XMLNode( #prefix , #elementname ); \
     NodeType::nodeNameTypeMap[toLower(#elementname)] = &NodeType::prefix ## _ ## elementname ## Node; \
@@ -156,6 +169,10 @@ namespace citygml {
                 INITIALIZE_NODE( GML, PosList )
                 INITIALIZE_NODE( GML, OrientableSurface )
                 INITIALIZE_NODE( GML, LinearRing )
+                INITIALIZE_NODE( GML, Shell )
+                INITIALIZE_NODE( GML, PolyhedralSurface )
+                INITIALIZE_NODE( GML, Surface )
+                INITIALIZE_NODE( GML, PolygonPatch)
 
                 INITIALIZE_NODE( BLDG, Lod1Solid )
                 INITIALIZE_NODE( BLDG, Lod2Solid )
@@ -418,6 +435,9 @@ namespace citygml {
         size_t pos = nodeName.find_first_of( ":" );
         if ( pos != std::string::npos ) {
             nodeName = nodeName.substr(pos + 1);
+        } else {
+            // node has no prefix... try with core prefix
+            return getXMLNodeFor("core:" + name);
         }
 
         auto it = nodeNameTypeMap.find(nodeName);
@@ -428,22 +448,6 @@ namespace citygml {
             return *it->second;
         }
     }
-
-    std::ostream& operator<<(std::ostream& os, const NodeType::XMLNode& o)
-    {
-        if (!o.valid()) {
-            os << "InvalidNode";
-        } else {
-            if (!o.prefix().empty()) {
-                os << o.prefix() << ":";
-            }
-            os << o.name();
-        }
-
-        return os;
-    }
-
-    const NodeType::XMLNode NodeType::InvalidNode = XMLNode("", "");
 
 #define DEFINE_NODE( prefix, elementname ) NodeType::XMLNode NodeType::prefix ## _ ## elementname ## Node;
 
@@ -571,6 +575,11 @@ namespace citygml {
 
     DEFINE_NODE( GML, Interior )
     DEFINE_NODE( GML, Exterior )
+
+    DEFINE_NODE( GML, Shell )
+    DEFINE_NODE( GML, PolyhedralSurface )
+    DEFINE_NODE( GML, Surface )
+    DEFINE_NODE( GML, PolygonPatch)
 
     // BLDG
     DEFINE_NODE( BLDG, Building )

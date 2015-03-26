@@ -12,7 +12,13 @@ namespace citygml {
      */
     class SkipElementParser : public ElementParser {
     public:
-        SkipElementParser(CityGMLDocumentParser& documentParser, std::shared_ptr<CityGMLLogger> logger);
+        /**
+         * @brief initializes the SkipElementParser
+         * @param skipNode if a valid node is passed the skip parser is bound to that node and skips all its children.
+         *                 In that case the start tag of the node must already been parsed.
+         *                 If the node is not valid (Default) the skip parser will be bound to the first element it encounters.
+         */
+        SkipElementParser(CityGMLDocumentParser& documentParser, std::shared_ptr<CityGMLLogger> logger, const NodeType::XMLNode& skipNode = NodeType::XMLNode());
 
         // ElementParser interface
         virtual std::string elementParserName() const override;

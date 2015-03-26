@@ -26,6 +26,11 @@ namespace citygml {
         float getAmbientIntensity() const;
         void setAmbientIntensity(float intensity);
 
+        /**
+         * @brief the shininess of the material
+         * @return a value between 0 and 1, where 1 is the brightest intensity
+         * @note openGL defines the shininess as a value beteen 0 and 128 with 128 beeing the brightest intensity
+         */
         float getShininess() const;
         void setShininess(float shininess);
 
