@@ -37,7 +37,7 @@ namespace citygml {
             COT_PlantCover                  = 1 << 12,
             COT_SolitaryVegetationObject    = 1 << 13,
             COT_WaterBody                   = 1 << 14,
-            COT_TINRelief                   = 1 << 15,
+            COT_ReliefFeature               = 1 << 15,
             COT_LandUse                     = 1 << 16,
             COT_Tunnel						= 1 << 17,
             COT_Bridge						= 1 << 18,
@@ -53,6 +53,11 @@ namespace citygml {
             COT_FloorSurface                = 1 << 27,
             COT_InteriorWallSurface         = 1 << 28,
             COT_CeilingSurface              = 1 << 29,
+            COT_CityObjectGroup             = 1 << 30,
+
+            // covers all supertypes of tran::_TransportationObject that are not Track, Road, Railway or Square...
+            // there are to many for to few bits to explicitly enumerate them. However Track, Road, Railway or Square should be used most of the time
+            COT_TransportationObject        = 1 << 31,
 
             COT_All                         = 0xFFFFFFFF
         };

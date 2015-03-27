@@ -16,7 +16,7 @@
 namespace citygml {
 
     LinearRingElementParser::LinearRingElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, bool interior, std::function<void(LinearRing*)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
         m_interior = interior;
@@ -70,7 +70,7 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool LinearRingElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -88,8 +88,13 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementEndTag(node, characters);
 
+    }
+
+    Object* LinearRingElementParser::getObject()
+    {
+        return m_model;
     }
 
 }

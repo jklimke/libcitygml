@@ -16,8 +16,9 @@ namespace citygml {
             XMLNode();
             XMLNode(std::string prefix, std::string name);
 
-            const std::string& name() const;
+            const std::string name() const;
             const std::string& prefix() const;
+            const std::string& baseName() const;
             int typeID() const;
 
             bool operator==(const XMLNode& other) const;
@@ -42,15 +43,37 @@ namespace citygml {
         NODETYPE( CORE, CityObjectMember )
         NODETYPE( CORE, CreationDate )
         NODETYPE( CORE, TerminationDate )
+        NODETYPE( CORE, GeneralizesTo)
+
+        NODETYPE( CORE, ExternalReference)
+        NODETYPE( CORE, InformationSystem)
+        NODETYPE( CORE, ExternalObject)
+
+        NODETYPE( CORE, Uri)
+        NODETYPE( CORE, Name)
+
+        NODETYPE( CORE, Address )
+
         NODETYPE( CORE, ImplicitGeometry )
         NODETYPE( CORE, RelativeGMLGeometry )
         NODETYPE( CORE, TransformationMatrix )
+        NODETYPE( CORE, ReferencePoint)
+        NODETYPE( CORE, MimeType)
+        NODETYPE( CORE, LibraryObject)
 
         // GRP
         NODETYPE( GRP, CityObjectGroup )
         NODETYPE( GRP, GroupMember )
+        NODETYPE( GRP, Class )
+        NODETYPE( GRP, Function )
+        NODETYPE( GRP, Usage )
+        NODETYPE( GRP, Parent )
+        NODETYPE( GRP, Geometry )
 
         // GEN
+        NODETYPE( GEN, Class )
+        NODETYPE( GEN, Function )
+        NODETYPE( GEN, Usage )
         NODETYPE( GEN, GenericCityObject )
         NODETYPE( GEN, StringAttribute )
         NODETYPE( GEN, DoubleAttribute )
@@ -59,14 +82,21 @@ namespace citygml {
         NODETYPE( GEN, UriAttribute )
         NODETYPE( GEN, Value )
 
+        NODETYPE( GEN, Lod0Geometry )
         NODETYPE( GEN, Lod1Geometry )
         NODETYPE( GEN, Lod2Geometry )
         NODETYPE( GEN, Lod3Geometry )
         NODETYPE( GEN, Lod4Geometry )
+        NODETYPE( GEN, Lod0TerrainIntersection )
         NODETYPE( GEN, Lod1TerrainIntersection )
         NODETYPE( GEN, Lod2TerrainIntersection )
         NODETYPE( GEN, Lod3TerrainIntersection )
         NODETYPE( GEN, Lod4TerrainIntersection )
+        NODETYPE( GEN, Lod0ImplicitRepresentation )
+        NODETYPE( GEN, Lod1ImplicitRepresentation )
+        NODETYPE( GEN, Lod2ImplicitRepresentation )
+        NODETYPE( GEN, Lod3ImplicitRepresentation )
+        NODETYPE( GEN, Lod4ImplicitRepresentation )
 
         // TEX
         // NODETYPE( GML, TexturedSurface ) // Deprecated
@@ -76,6 +106,7 @@ namespace citygml {
         NODETYPE( GML, Identifier )
         NODETYPE( GML, Name )
         NODETYPE( GML, DescriptionReference )
+        NODETYPE( GML, MetaDataProperty )
         NODETYPE( GML, Coordinates )
         NODETYPE( GML, Pos )
         NODETYPE( GML, BoundedBy )
@@ -111,6 +142,11 @@ namespace citygml {
         NODETYPE( GML, Interior )
         NODETYPE( GML, Exterior )
 
+        NODETYPE( GML, Shell )
+        NODETYPE( GML, PolyhedralSurface )
+        NODETYPE( GML, Surface )
+        NODETYPE( GML, PolygonPatch)
+
         // BLDG
         NODETYPE( BLDG, Building )
         NODETYPE( BLDG, BuildingPart )
@@ -137,10 +173,6 @@ namespace citygml {
         NODETYPE( BLDG, RoomInstallation)
         NODETYPE( BLDG, Opening)
         NODETYPE( BLDG, RoofType)
-        NODETYPE( BLDG, ExternalReference)
-        NODETYPE( BLDG, InformationSystem)
-        NODETYPE( BLDG, ExternalObject)
-        NODETYPE( BLDG, Uri)
 
         NODETYPE( BLDG, Lod1Solid )
         NODETYPE( BLDG, Lod2Solid )
@@ -175,10 +207,11 @@ namespace citygml {
         NODETYPE( BLDG, BuildingFurniture )
 
         NODETYPE( BLDG, CityFurniture )
-
-        NODETYPE( BLDG, Address )
+        NODETYPE( BLDG, Address)
 
         // CityFurniture
+        NODETYPE( FRN, Class )
+        NODETYPE( FRN, Function )
         NODETYPE( FRN, CityFurniture )
         NODETYPE( FRN, Lod1Geometry )
         NODETYPE( FRN, Lod2Geometry )
@@ -212,17 +245,44 @@ namespace citygml {
 
         // WTR
         NODETYPE( WTR, WaterBody )
+        NODETYPE( WTR, WaterSurface )
+        NODETYPE( WTR, WaterGroundSurface )
+        NODETYPE( WTR, WaterClosureSurface )
+        NODETYPE( WTR, Class )
+        NODETYPE( WTR, Function )
+        NODETYPE( WTR, Usage )
+        NODETYPE( WTR, WaterLevel )
+        NODETYPE( WTR, Lod0MultiCurve )
+        NODETYPE( WTR, Lod0MultiSurface )
+        NODETYPE( WTR, Lod1MultiCurve )
+        NODETYPE( WTR, Lod1MultiSurface )
+        NODETYPE( WTR, Lod1Solid )
+        NODETYPE( WTR, Lod2Solid )
+        NODETYPE( WTR, Lod3Solid )
+        NODETYPE( WTR, Lod4Solid )
+        NODETYPE( WTR, Lod2Surface )
+        NODETYPE( WTR, Lod3Surface )
+        NODETYPE( WTR, Lod4Surface )
+        NODETYPE( WTR, BoundedBy )
 
         // VEG
         NODETYPE( VEG, PlantCover )
         NODETYPE( VEG, SolitaryVegetationObject )
-        NODETYPE( VEG, Species )
         NODETYPE( VEG, Lod1ImplicitRepresentation )
         NODETYPE( VEG, Lod2ImplicitRepresentation )
         NODETYPE( VEG, Lod3ImplicitRepresentation )
         NODETYPE( VEG, Lod4ImplicitRepresentation )
 
+        NODETYPE( VEG, Class )
+        NODETYPE( VEG, Function )
+        NODETYPE( VEG, AverageHeight )
+        NODETYPE( VEG, Species )
+        NODETYPE( VEG, Height )
+        NODETYPE( VEG, TrunkDiameter )
+        NODETYPE( VEG, CrownDiameter )
+
         // TRANS
+        NODETYPE( TRANS, TransportationComplex )
         NODETYPE( TRANS, TrafficArea )
         NODETYPE( TRANS, AuxiliaryTrafficArea )
         NODETYPE( TRANS, Track )
@@ -230,12 +290,44 @@ namespace citygml {
         NODETYPE( TRANS, Railway )
         NODETYPE( TRANS, Square )
 
+        NODETYPE( TRANS, Usage )
+        NODETYPE( TRANS, Function )
+        NODETYPE( TRANS, SurfaceMaterial )
+
+        NODETYPE( TRANS, Lod0Network )
+        NODETYPE( TRANS, Lod1MultiSurface )
+        NODETYPE( TRANS, Lod2MultiSurface )
+        NODETYPE( TRANS, Lod3MultiSurface )
+        NODETYPE( TRANS, Lod4MultiSurface )
+
+
         // LUSE
         NODETYPE( LUSE, LandUse )
 
-        // dem
-        NODETYPE( LUSE, Lod )
-        NODETYPE( LUSE, TINRelief )
+        NODETYPE( LUSE, Class )
+        NODETYPE( LUSE, Usage )
+        NODETYPE( LUSE, Function )
+
+        NODETYPE( LUSE, Lod1MultiSurface )
+        NODETYPE( LUSE, Lod2MultiSurface )
+        NODETYPE( LUSE, Lod3MultiSurface )
+        NODETYPE( LUSE, Lod4MultiSurface )
+
+        // DEM (Relief)
+        NODETYPE( DEM, ReliefFeature )
+        NODETYPE( DEM, TINRelief )
+        NODETYPE( DEM, RasterRelief )
+        NODETYPE( DEM, MassPointRelief )
+        NODETYPE( DEM, BreaklineRelief )
+        NODETYPE( DEM, Lod )
+        NODETYPE( DEM, Extent )
+        NODETYPE( DEM, ReliefComponent )
+        NODETYPE( DEM, Tin )
+        NODETYPE( DEM, Grid )
+        NODETYPE( DEM, ReliefPoints )
+        NODETYPE( DEM, RidgeOrValleyLines )
+        NODETYPE( DEM, Breaklines )
+        NODETYPE( DEM, Elevation )
 
         // SUB
         NODETYPE( SUB, Tunnel )
@@ -257,12 +349,17 @@ namespace citygml {
         NODETYPE( APP, TextureMap )
         NODETYPE( APP, Target )
         NODETYPE( APP, TexCoordList )
+        NODETYPE( APP, TexCoordGen )
         NODETYPE( APP, TextureCoordinates )
+        NODETYPE( APP, WorldToTexture )
         NODETYPE( APP, TextureType )
         NODETYPE( APP, Repeat )
         NODETYPE( APP, WrapMode )
         NODETYPE( APP, BorderColor )
         NODETYPE( APP, PreferWorldFile )
+        NODETYPE( APP, ReferencePoint)
+        NODETYPE( APP, Orientation)
+        NODETYPE( APP, isSmooth)
 
         NODETYPE( APP, X3DMaterial )
         NODETYPE( APP, Material )
@@ -276,6 +373,7 @@ namespace citygml {
         NODETYPE( APP, IsFront )
         NODETYPE( APP, Theme )
         NODETYPE( APP, MimeType )
+
     private:
         static void initializeNodeTypes();
 

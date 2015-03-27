@@ -42,15 +42,22 @@ SET(SOURCES
   src/citygml/geometrymanager.cpp
 
   src/parser/nodetypes.cpp
-  src/parser/citygmldocumentparser.cpp
-  src/parser/citygmlelementparser.cpp
-  src/parser/elementparser.cpp
-  src/parser/delayedchoiceelementparser.cpp
   src/parser/attributes.cpp
-  src/parser/parserxercesc.cpp
+
   src/parser/geocoordinatetransformer.cpp
 
+  src/parser/citygmldocumentparser.cpp
+  src/parser/parserxercesc.cpp
+  src/parser/citygmlelementparser.cpp
+  src/parser/elementparser.cpp
+
+  src/parser/delayedchoiceelementparser.cpp
+  src/parser/skipelementparser.cpp
+  src/parser/sequenceparser.cpp
+
+  src/parser/gmlobjectparser.cpp
   src/parser/gmlfeaturecollectionparser.cpp
+
   src/parser/citymodelelementparser.cpp
   src/parser/cityobjectelementparser.cpp
   src/parser/appearanceelementparser.cpp
@@ -96,22 +103,30 @@ SET(HEADERS
 
   include/citygml/citygml_api.h.in
 
-  include/parser/nodetypes.h
-  include/parser/citygmldocumentparser.h
-  include/parser/citygmlelementparser.h
-  include/parser/elementparser.h
-  include/parser/delayedchoiceelementparser.h
-  include/parser/attributes.h
-  include/parser/documentlocation.h
-  include/parser/geocoordinatetransformer.h
-  include/parser/parserutils.hpp
   include/citygml/tesselator.h
   include/citygml/utils.h
   include/citygml/appearancemanager.h
   include/citygml/polygonmanager.h
   include/citygml/geometrymanager.h
 
+  include/parser/nodetypes.h
+  include/parser/attributes.h
+  include/parser/documentlocation.h
+
+  include/parser/parserutils.hpp
+  include/parser/geocoordinatetransformer.h
+
+  include/parser/citygmldocumentparser.h
+  include/parser/citygmlelementparser.h
+  include/parser/elementparser.h
+
+  include/parser/delayedchoiceelementparser.h
+  include/parser/skipelementparser.h
+  include/parser/sequenceparser.h
+
+  include/parser/gmlobjectparser.h
   include/parser/gmlfeaturecollectionparser.h
+
   include/parser/citymodelelementparser.h
   include/parser/cityobjectelementparser.h
   include/parser/appearanceelementparser.h

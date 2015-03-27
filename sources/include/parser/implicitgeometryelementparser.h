@@ -1,6 +1,6 @@
 #pragma once
 
-#include <parser/citygmlelementparser.h>
+#include <parser/gmlobjectparser.h>
 #include <citygml/cityobject.h>
 
 #include <string>
@@ -10,7 +10,7 @@ namespace citygml {
 
     class ImplicitGeometry;
 
-    class ImplicitGeometryElementParser : public CityGMLElementParser {
+    class ImplicitGeometryElementParser : public GMLObjectElementParser {
     public:
         ImplicitGeometryElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger,
                               int lodLevel, CityObject::CityObjectsType parentType, std::function<void(ImplicitGeometry*)> callback);
@@ -24,6 +24,9 @@ namespace citygml {
         virtual bool parseElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;
         virtual bool parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes) override;
         virtual bool parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;
+
+        // GMLObjectElementParser interface
+        virtual Object* getObject() override;
 
     private:
         ImplicitGeometry* m_model;

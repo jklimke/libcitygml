@@ -1,6 +1,6 @@
 #pragma once
 
-#include <parser/citygmlelementparser.h>
+#include <parser/gmlobjectparser.h>
 
 #include <string>
 #include <vector>
@@ -11,7 +11,7 @@ namespace citygml {
     class CityObject;
     class Appearance;
 
-    class AppearanceElementParser : public CityGMLElementParser {
+    class AppearanceElementParser : public GMLObjectElementParser {
     public:
         AppearanceElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger);
 
@@ -26,8 +26,12 @@ namespace citygml {
         virtual bool parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes) override;
         virtual bool parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;
 
+        // GMLObjectElementParser interface
+        virtual Object* getObject() override;
+
     private:
         std::vector<std::shared_ptr<Appearance>> m_surfaceDataList;
+        std::shared_ptr<Object> m_appearanceObj;
         std::string m_theme;
     };
 
