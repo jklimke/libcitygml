@@ -1,6 +1,6 @@
 #pragma once
 
-#include <parser/citygmlelementparser.h>
+#include <parser/gmlobjectparser.h>
 
 #include <functional>
 #include <memory>
@@ -9,7 +9,7 @@ namespace citygml {
 
     class Polygon;
 
-    class PolygonElementParser : public CityGMLElementParser {
+    class PolygonElementParser : public GMLObjectElementParser {
     public:
         PolygonElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Polygon>)> callback);
 
@@ -22,6 +22,9 @@ namespace citygml {
         virtual bool parseElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;
         virtual bool parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes) override;
         virtual bool parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;
+
+        // GMLObjectElementParser interface
+        virtual Object* getObject() override;
 
     private:
         std::shared_ptr<Polygon> m_model;

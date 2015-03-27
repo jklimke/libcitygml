@@ -7,6 +7,7 @@
 #include "parser/documentlocation.h"
 #include "parser/geometryelementparser.h"
 #include "parser/parserutils.hpp"
+#include "parser/skipelementparser.h"
 
 #include "citygml/implictgeometry.h"
 #include "citygml/citygmlfactory.h"
@@ -19,7 +20,7 @@ namespace citygml {
 
     ImplicitGeometryElementParser::ImplicitGeometryElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger,
                                                  int lodLevel, CityObject::CityObjectsType parentType,  std::function<void(ImplicitGeometry*)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
         m_lodLevel = lodLevel;
@@ -64,7 +65,9 @@ namespace citygml {
         }
 
         if (   node == NodeType::CORE_TransformationMatrixNode
-            || node == NodeType::GML_ReferencePointNode) {
+            || node == NodeType::CORE_ReferencePointNode
+            || node == NodeType::GML_ReferencePointNode
+            || node == NodeType::CORE_MimeTypeNode) {
 
             return true;
 
@@ -94,9 +97,13 @@ namespace citygml {
                                     }));
             }
             return true;
+        } else if (node == NodeType::CORE_LibraryObjectNode) {
+            CITYGML_LOG_INFO(m_logger, "Skipping ImplicitGeometry child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
+            setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
+            return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool ImplicitGeometryElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -117,13 +124,22 @@ namespace citygml {
             return true;
         } else if (   node == NodeType::CORE_RelativeGMLGeometryNode
                    || node == NodeType::GML_PointNode
-                   || node == NodeType::GML_ReferencePointNode) {
+                   || node == NodeType::CORE_ReferencePointNode
+                   || node == NodeType::GML_ReferencePointNode
+                   || node == NodeType::CORE_LibraryObjectNode) {
 
             return true;
+        } else if (node == NodeType::CORE_MimeTypeNode) {
+            m_model->setAttribute(node.name(), characters);
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementEndTag(node, characters);
 
+    }
+
+    Object* ImplicitGeometryElementParser::getObject()
+    {
+        return m_model;
     }
 
 }

@@ -160,8 +160,8 @@ namespace citygml {
             return "SolitaryVegetationObject";
         case CityObject::COT_WaterBody:
             return "WaterBody";
-        case CityObject::COT_TINRelief:
-            return "TINRelief";
+        case CityObject::COT_ReliefFeature:
+            return "ReliefFeature";
         case CityObject::COT_LandUse:
             return "LandUse";
         case CityObject::COT_Tunnel:
@@ -190,6 +190,8 @@ namespace citygml {
             return "InteriorWallSurface";
         case CityObject::COT_CeilingSurface:
             return "CeilingSurface";
+        case CityObject::COT_TransportationObject:
+            return "TransportationObject";
         default:
             return "Unknown";
         }
@@ -217,7 +219,7 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::COT_PlantCover), CityObject::COT_PlantCover},
          {cityObjectsTypeToLowerString(CityObject::COT_SolitaryVegetationObject), CityObject::COT_SolitaryVegetationObject},
          {cityObjectsTypeToLowerString(CityObject::COT_WaterBody), CityObject::COT_WaterBody},
-         {cityObjectsTypeToLowerString(CityObject::COT_TINRelief), CityObject::COT_TINRelief},
+         {cityObjectsTypeToLowerString(CityObject::COT_ReliefFeature), CityObject::COT_ReliefFeature},
          {cityObjectsTypeToLowerString(CityObject::COT_LandUse), CityObject::COT_LandUse},
          {cityObjectsTypeToLowerString(CityObject::COT_Tunnel), CityObject::COT_Tunnel},
          {cityObjectsTypeToLowerString(CityObject::COT_Bridge), CityObject::COT_Bridge},
@@ -232,6 +234,7 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::COT_FloorSurface), CityObject::COT_FloorSurface},
          {cityObjectsTypeToLowerString(CityObject::COT_InteriorWallSurface), CityObject::COT_InteriorWallSurface},
          {cityObjectsTypeToLowerString(CityObject::COT_CeilingSurface), CityObject::COT_CeilingSurface},
+         {cityObjectsTypeToLowerString(CityObject::COT_TransportationObject), CityObject::COT_TransportationObject}
     };
 
     CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid)

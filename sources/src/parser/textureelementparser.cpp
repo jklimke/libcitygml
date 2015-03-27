@@ -6,6 +6,7 @@
 #include "parser/attributes.h"
 #include "parser/documentlocation.h"
 #include "parser/parserutils.hpp"
+#include "parser/skipelementparser.h"
 
 #include "citygml/cityobject.h"
 #include "citygml/citygmlfactory.h"
@@ -19,7 +20,7 @@
 namespace citygml {
 
     TextureElementParser::TextureElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (std::shared_ptr<Texture>)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
         m_model = nullptr;
@@ -59,8 +60,7 @@ namespace citygml {
             throw std::runtime_error("TextureElementParser::parseChildElementStartTag called before TextureElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode
-            || node == NodeType::APP_ImageURINode
+        if (node == NodeType::APP_ImageURINode
             || node == NodeType::APP_TextureTypeNode
             || node == NodeType::APP_WrapModeNode
             || node == NodeType::APP_BorderColorNode
@@ -86,7 +86,7 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool TextureElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -95,10 +95,7 @@ namespace citygml {
             throw std::runtime_error("TextureElementParser::parseChildElementEndTag called before TextureElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode) {
-
-            m_model->setAttribute(node.name(), characters);
-        } else if (node == NodeType::APP_ImageURINode) {
+        if (node == NodeType::APP_ImageURINode) {
 
             m_model->setUrl(characters);
         } else if (node == NodeType::APP_TextureTypeNode) {
@@ -142,10 +139,16 @@ namespace citygml {
 
             m_currentTexTargetDef = nullptr;
         } else if (node == NodeType::APP_MimeTypeNode) {
+            m_model->setAttribute(node.name(), characters);
         } else {
-            return false;
+            return GMLObjectElementParser::parseChildElementEndTag(node, characters);
         }
         return true;
+    }
+
+    Object* TextureElementParser::getObject()
+    {
+        return m_model.get();
     }
 
 

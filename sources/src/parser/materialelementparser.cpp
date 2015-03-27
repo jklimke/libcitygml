@@ -6,6 +6,7 @@
 #include "parser/attributes.h"
 #include "parser/documentlocation.h"
 #include "parser/parserutils.hpp"
+#include "parser/skipelementparser.h"
 
 #include "citygml/material.h"
 #include "citygml/citygmlfactory.h"
@@ -16,7 +17,7 @@
 namespace citygml {
 
     MaterialElementParser::MaterialElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Material>)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_model = nullptr;
         m_callback = callback;
@@ -56,21 +57,21 @@ namespace citygml {
             throw std::runtime_error("MaterialElementParser::parseChildElementStartTag called before MaterialElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode
-            || node == NodeType::APP_DiffuseColorNode
+        if (node == NodeType::APP_DiffuseColorNode
             || node == NodeType::APP_EmissiveColorNode
             || node == NodeType::APP_SpecularColorNode
             || node == NodeType::APP_ShininessNode
             || node == NodeType::APP_TransparencyNode
             || node == NodeType::APP_AmbientIntensityNode
-            || node == NodeType::APP_IsFrontNode) {
+            || node == NodeType::APP_IsFrontNode
+            || node == NodeType::APP_isSmoothNode) {
             return true;
         } else if (node == NodeType::APP_TargetNode) {
             m_lastTargetDefinitionID = attributes.getCityGMLIDAttribute();
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool MaterialElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -79,10 +80,7 @@ namespace citygml {
             throw std::runtime_error("MaterialElementParser::parseChildElementEndTag called before MaterialElementParser::parseElementStartTag");
         }
 
-        if (node == NodeType::GML_NameNode) {
-
-            m_model->setAttribute(node.name(), characters);
-        } else if (node == NodeType::APP_DiffuseColorNode) {
+        if (node == NodeType::APP_DiffuseColorNode) {
 
             m_model->setDiffuse(parseValue<TVec3f>(characters, m_logger, getDocumentLocation()));
         } else if (node == NodeType::APP_EmissiveColorNode) {
@@ -103,17 +101,23 @@ namespace citygml {
         } else if (node == NodeType::APP_IsFrontNode) {
 
             m_model->setIsFront(parseValue<bool>(characters, m_logger, getDocumentLocation()));
+        } else if (node == NodeType::APP_isSmoothNode) {
+
+            m_model->setIsSmooth(parseValue<bool>(characters, m_logger, getDocumentLocation()));
         } else if (node == NodeType::APP_TargetNode) {
 
             m_factory.createMaterialTargetDefinition(parseReference(characters, m_logger, getDocumentLocation()), m_model, m_lastTargetDefinitionID);
             m_lastTargetDefinitionID = "";
-        } else {
-            return false;
+        }  else {
+            return GMLObjectElementParser::parseChildElementEndTag(node, characters);
         }
         return true;
     }
 
-
+    Object* MaterialElementParser::getObject()
+    {
+        return m_model.get();
+    }
 
 
 }

@@ -11,6 +11,7 @@
 #include "citygml/citygmlfactory.h"
 #include "citygml/citygmllogger.h"
 
+#include <mutex>
 #include <stdexcept>
 
 namespace citygml {
@@ -19,9 +20,10 @@ namespace citygml {
     // The nodes that are valid Polygon Objects
     std::unordered_set<int> typeIDSet;
     bool typeIDSetInitialized = false;
+    std::mutex polygonElementParser_initializedTypeIDMutex;
 
     PolygonElementParser::PolygonElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(std::shared_ptr<Polygon>)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
     }
@@ -33,11 +35,16 @@ namespace citygml {
 
     bool PolygonElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        if(!typeIDSetInitialized) {
-            typeIDSet.insert(NodeType::GML_TriangleNode.typeID());
-            typeIDSet.insert(NodeType::GML_RectangleNode.typeID());
-            typeIDSet.insert(NodeType::GML_PolygonNode.typeID());
-            typeIDSetInitialized = true;
+        if (!typeIDSetInitialized) {
+            std::lock_guard<std::mutex> lock(polygonElementParser_initializedTypeIDMutex);
+
+            if(!typeIDSetInitialized) {
+                typeIDSet.insert(NodeType::GML_TriangleNode.typeID());
+                typeIDSet.insert(NodeType::GML_RectangleNode.typeID());
+                typeIDSet.insert(NodeType::GML_PolygonNode.typeID());
+                typeIDSet.insert(NodeType::GML_PolygonPatchNode.typeID());
+                typeIDSetInitialized = true;
+            }
         }
 
         return typeIDSet.count(node.typeID()) > 0;
@@ -80,7 +87,7 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool PolygonElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -95,8 +102,13 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementEndTag(node, characters);
 
+    }
+
+    Object* PolygonElementParser::getObject()
+    {
+        return m_model.get();
     }
 
     void PolygonElementParser::parseRingElement(bool interior)

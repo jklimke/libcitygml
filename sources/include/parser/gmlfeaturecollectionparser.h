@@ -1,6 +1,6 @@
 #pragma once
 
-#include <parser/citygmlelementparser.h>
+#include <parser/gmlobjectparser.h>
 
 namespace citygml {
 
@@ -10,7 +10,7 @@ namespace citygml {
     /**
      * @brief abstract base class for all CityGMLElementParser's that parse citygml elements which inherit from gml:AbstractFeatureCollectionType
      */
-    class GMLFeatureCollectionElementParser : public CityGMLElementParser {
+    class GMLFeatureCollectionElementParser : public GMLObjectElementParser {
     public:
         GMLFeatureCollectionElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger);
 
@@ -21,8 +21,13 @@ namespace citygml {
 
         virtual FeatureObject* getFeatureObject() = 0;
 
+        // GMLObjectElementParser interface
+        virtual Object* getObject() override;
+
     private:
         Envelope* m_bounds;
+
+
     };
 
 }

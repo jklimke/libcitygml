@@ -54,7 +54,7 @@ namespace citygml {
         m_materialTargetDefinitions.push_back(targetDef);
     }
 
-    template<class T> void assignTargetDefinition(std::shared_ptr<T>& targetDef, std::unordered_map<std::string, AppearanceTarget*> targetMap, std::shared_ptr<CityGMLLogger>& logger) {
+    template<class T> void assignTargetDefinition(std::shared_ptr<T>& targetDef, const std::unordered_map<std::string, AppearanceTarget*>& targetMap, std::shared_ptr<CityGMLLogger>& logger) {
         std::string targetID = targetDef->getTargetID();
         auto it = targetMap.find(targetID);
 

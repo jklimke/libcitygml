@@ -5,6 +5,7 @@
 #include "parser/nodetypes.h"
 #include "parser/attributes.h"
 #include "parser/documentlocation.h"
+#include "parser/skipelementparser.h"
 
 #include "citygml/georeferencedtexture.h"
 #include "citygml/citygmlfactory.h"
@@ -37,25 +38,28 @@ namespace citygml {
             CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::APP_GeoreferencedTextureNode.name() << "> got " << node << " at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
         }
+
+        CITYGML_LOG_WARN(m_logger, "Skipping contents of GeoReferencedTextureElement at " << getDocumentLocation() << ". (Currently not supported!)");
+
         return true;
     }
 
     bool GeoReferencedTextureElementParser::parseElementEndTag(const NodeType::XMLNode&, const std::string&)
     {
         // Not Implemented
-        return false;
+        return true;
     }
 
     bool GeoReferencedTextureElementParser::parseChildElementStartTag(const NodeType::XMLNode&, Attributes&)
     {
-        // Not Implemented
-        return false;
+        setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
+        return true;
     }
 
     bool GeoReferencedTextureElementParser::parseChildElementEndTag(const NodeType::XMLNode&, const std::string&)
     {
-        // Not Implemented
-        return false;
+        setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
+        return true;
     }
 
 

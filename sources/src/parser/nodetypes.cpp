@@ -20,14 +20,19 @@ namespace citygml {
         m_typeID = NodeType::typeCount++;
     }
 
-    const std::string&NodeType::XMLNode::name() const
+    const std::string NodeType::XMLNode::name() const
     {
-        return m_name;
+        return m_prefix + ":" + m_name;
     }
 
-    const std::string&NodeType::XMLNode::prefix() const
+    const std::string& NodeType::XMLNode::prefix() const
     {
         return m_prefix;
+    }
+
+    const std::string& NodeType::XMLNode::baseName() const
+    {
+        return m_name;
     }
 
     int NodeType::XMLNode::typeID() const
@@ -50,6 +55,19 @@ namespace citygml {
         return !m_name.empty();
     }
 
+    std::ostream& operator<<(std::ostream& os, const NodeType::XMLNode& o)
+    {
+        if (!o.valid()) {
+            os << "InvalidNode";
+        } else {
+            os << o.name();
+        }
+
+        return os;
+    }
+
+    const NodeType::XMLNode NodeType::InvalidNode = XMLNode("", "");
+
 #define INITIALIZE_NODE( prefix, elementname ) \
     NodeType::prefix ## _ ## elementname ## Node = XMLNode( #prefix , #elementname ); \
     NodeType::nodeNameTypeMap[toLower(#elementname)] = &NodeType::prefix ## _ ## elementname ## Node; \
@@ -68,15 +86,37 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, CityObjectMember )
                 INITIALIZE_NODE( CORE, CreationDate )
                 INITIALIZE_NODE( CORE, TerminationDate )
+                INITIALIZE_NODE( CORE, GeneralizesTo)
+
+                INITIALIZE_NODE( CORE, ExternalReference)
+                INITIALIZE_NODE( CORE, InformationSystem)
+                INITIALIZE_NODE( CORE, ExternalObject)
+
+                INITIALIZE_NODE( CORE, Uri)
+                INITIALIZE_NODE( CORE, Name)
+
+                INITIALIZE_NODE( CORE, Address )
+
                 INITIALIZE_NODE( CORE, ImplicitGeometry )
                 INITIALIZE_NODE( CORE, RelativeGMLGeometry )
                 INITIALIZE_NODE( CORE, TransformationMatrix )
+                INITIALIZE_NODE( CORE, ReferencePoint)
+                INITIALIZE_NODE( CORE, MimeType)
+                INITIALIZE_NODE( CORE, LibraryObject)
 
                 // GRP
                 INITIALIZE_NODE( GRP, CityObjectGroup )
                 INITIALIZE_NODE( GRP, GroupMember )
+                INITIALIZE_NODE( GRP, Class )
+                INITIALIZE_NODE( GRP, Function )
+                INITIALIZE_NODE( GRP, Usage )
+                INITIALIZE_NODE( GRP, Parent )
+                INITIALIZE_NODE( GRP, Geometry )
 
                 // GEN
+                INITIALIZE_NODE( GEN, Class )
+                INITIALIZE_NODE( GEN, Function )
+                INITIALIZE_NODE( GEN, Usage )
                 INITIALIZE_NODE( GEN, GenericCityObject )
                 INITIALIZE_NODE( GEN, StringAttribute )
                 INITIALIZE_NODE( GEN, DoubleAttribute )
@@ -85,14 +125,21 @@ namespace citygml {
                 INITIALIZE_NODE( GEN, UriAttribute )
                 INITIALIZE_NODE( GEN, Value )
 
+                INITIALIZE_NODE( GEN, Lod0Geometry )
                 INITIALIZE_NODE( GEN, Lod1Geometry )
                 INITIALIZE_NODE( GEN, Lod2Geometry )
                 INITIALIZE_NODE( GEN, Lod3Geometry )
                 INITIALIZE_NODE( GEN, Lod4Geometry )
+                INITIALIZE_NODE( GEN, Lod0TerrainIntersection )
                 INITIALIZE_NODE( GEN, Lod1TerrainIntersection )
                 INITIALIZE_NODE( GEN, Lod2TerrainIntersection )
                 INITIALIZE_NODE( GEN, Lod3TerrainIntersection )
                 INITIALIZE_NODE( GEN, Lod4TerrainIntersection )
+                INITIALIZE_NODE( GEN, Lod0ImplicitRepresentation )
+                INITIALIZE_NODE( GEN, Lod1ImplicitRepresentation )
+                INITIALIZE_NODE( GEN, Lod2ImplicitRepresentation )
+                INITIALIZE_NODE( GEN, Lod3ImplicitRepresentation )
+                INITIALIZE_NODE( GEN, Lod4ImplicitRepresentation )
 
                 // TEX
                 // INITIALIZE_NODE( GML, TexturedSurface ) // Deprecated
@@ -102,6 +149,7 @@ namespace citygml {
                 INITIALIZE_NODE( GML, Identifier )
                 INITIALIZE_NODE( GML, Name )
                 INITIALIZE_NODE( GML, DescriptionReference )
+                INITIALIZE_NODE( GML, MetaDataProperty )
                 INITIALIZE_NODE( GML, Coordinates )
                 INITIALIZE_NODE( GML, Pos )
                 INITIALIZE_NODE( GML, BoundedBy )
@@ -121,6 +169,10 @@ namespace citygml {
                 INITIALIZE_NODE( GML, PosList )
                 INITIALIZE_NODE( GML, OrientableSurface )
                 INITIALIZE_NODE( GML, LinearRing )
+                INITIALIZE_NODE( GML, Shell )
+                INITIALIZE_NODE( GML, PolyhedralSurface )
+                INITIALIZE_NODE( GML, Surface )
+                INITIALIZE_NODE( GML, PolygonPatch)
 
                 INITIALIZE_NODE( BLDG, Lod1Solid )
                 INITIALIZE_NODE( BLDG, Lod2Solid )
@@ -165,7 +217,6 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, Door )
                 INITIALIZE_NODE( BLDG, Window )
                 INITIALIZE_NODE( BLDG, BuildingInstallation )
-                INITIALIZE_NODE( BLDG, Address )
                 INITIALIZE_NODE( BLDG, MeasuredHeight )
                 INITIALIZE_NODE( BLDG, Class )
                 INITIALIZE_NODE( BLDG, Type )
@@ -187,6 +238,8 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, ConsistsOfBuildingPart )
 
                 // CityFurniture
+                INITIALIZE_NODE( FRN, Class )
+                INITIALIZE_NODE( FRN, Function )
                 INITIALIZE_NODE( FRN, CityFurniture )
                 INITIALIZE_NODE( FRN, Lod1Geometry )
                 INITIALIZE_NODE( FRN, Lod2Geometry )
@@ -211,12 +264,10 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, CeilingSurface )
                 INITIALIZE_NODE( BLDG, BuildingFurniture )
                 INITIALIZE_NODE( BLDG, RoofType)
-                INITIALIZE_NODE( BLDG, ExternalReference)
-                INITIALIZE_NODE( BLDG, InformationSystem)
-                INITIALIZE_NODE( BLDG, ExternalObject)
-                INITIALIZE_NODE( BLDG, Uri)
 
                 INITIALIZE_NODE( BLDG, CityFurniture )
+
+                INITIALIZE_NODE( BLDG, Address)
 
                 // ADDRESS
                 INITIALIZE_NODE( XAL, XalAddress )
@@ -235,20 +286,45 @@ namespace citygml {
                 INITIALIZE_NODE( XAL, AddressDetails )
                 INITIALIZE_NODE( XAL, DependentLocalityName )
 
-
                 // WTR
                 INITIALIZE_NODE( WTR, WaterBody )
+                INITIALIZE_NODE( WTR, WaterSurface )
+                INITIALIZE_NODE( WTR, WaterGroundSurface )
+                INITIALIZE_NODE( WTR, WaterClosureSurface )
+                INITIALIZE_NODE( WTR, Class )
+                INITIALIZE_NODE( WTR, Function )
+                INITIALIZE_NODE( WTR, Usage )
+                INITIALIZE_NODE( WTR, WaterLevel )
+                INITIALIZE_NODE( WTR, Lod0MultiCurve )
+                INITIALIZE_NODE( WTR, Lod0MultiSurface )
+                INITIALIZE_NODE( WTR, Lod1MultiCurve )
+                INITIALIZE_NODE( WTR, Lod1MultiSurface )
+                INITIALIZE_NODE( WTR, Lod1Solid )
+                INITIALIZE_NODE( WTR, Lod2Solid )
+                INITIALIZE_NODE( WTR, Lod3Solid )
+                INITIALIZE_NODE( WTR, Lod4Solid )
+                INITIALIZE_NODE( WTR, Lod2Surface )
+                INITIALIZE_NODE( WTR, Lod3Surface )
+                INITIALIZE_NODE( WTR, Lod4Surface )
+                INITIALIZE_NODE( WTR, BoundedBy )
 
                 // VEG
                 INITIALIZE_NODE( VEG, PlantCover )
                 INITIALIZE_NODE( VEG, SolitaryVegetationObject )
-                INITIALIZE_NODE( VEG, Species )
                 INITIALIZE_NODE( VEG, Lod1ImplicitRepresentation )
                 INITIALIZE_NODE( VEG, Lod2ImplicitRepresentation )
                 INITIALIZE_NODE( VEG, Lod3ImplicitRepresentation )
                 INITIALIZE_NODE( VEG, Lod4ImplicitRepresentation )
+                INITIALIZE_NODE( VEG, Class )
+                INITIALIZE_NODE( VEG, Function )
+                INITIALIZE_NODE( VEG, AverageHeight )
+                INITIALIZE_NODE( VEG, Species )
+                INITIALIZE_NODE( VEG, Height )
+                INITIALIZE_NODE( VEG, TrunkDiameter )
+                INITIALIZE_NODE( VEG, CrownDiameter )
 
                 // TRANS
+                INITIALIZE_NODE( TRANS, TransportationComplex )
                 INITIALIZE_NODE( TRANS, TrafficArea )
                 INITIALIZE_NODE( TRANS, AuxiliaryTrafficArea )
                 INITIALIZE_NODE( TRANS, Track )
@@ -256,12 +332,43 @@ namespace citygml {
                 INITIALIZE_NODE( TRANS, Railway )
                 INITIALIZE_NODE( TRANS, Square )
 
+                INITIALIZE_NODE( TRANS, Usage )
+                INITIALIZE_NODE( TRANS, Function )
+                INITIALIZE_NODE( TRANS, SurfaceMaterial )
+
+                INITIALIZE_NODE( TRANS, Lod0Network )
+                INITIALIZE_NODE( TRANS, Lod1MultiSurface )
+                INITIALIZE_NODE( TRANS, Lod2MultiSurface )
+                INITIALIZE_NODE( TRANS, Lod3MultiSurface )
+                INITIALIZE_NODE( TRANS, Lod4MultiSurface )
+
                 // LUSE
                 INITIALIZE_NODE( LUSE, LandUse )
 
-                // dem
-                INITIALIZE_NODE( LUSE, Lod )
-                INITIALIZE_NODE( LUSE, TINRelief )
+                INITIALIZE_NODE( LUSE, Class )
+                INITIALIZE_NODE( LUSE, Usage )
+                INITIALIZE_NODE( LUSE, Function )
+
+                INITIALIZE_NODE( LUSE, Lod1MultiSurface )
+                INITIALIZE_NODE( LUSE, Lod2MultiSurface )
+                INITIALIZE_NODE( LUSE, Lod3MultiSurface )
+                INITIALIZE_NODE( LUSE, Lod4MultiSurface )
+
+                // DEM (Relief)
+                INITIALIZE_NODE( DEM, ReliefFeature )
+                INITIALIZE_NODE( DEM, TINRelief )
+                INITIALIZE_NODE( DEM, RasterRelief )
+                INITIALIZE_NODE( DEM, MassPointRelief )
+                INITIALIZE_NODE( DEM, BreaklineRelief )
+                INITIALIZE_NODE( DEM, Lod )
+                INITIALIZE_NODE( DEM, Extent )
+                INITIALIZE_NODE( DEM, ReliefComponent )
+                INITIALIZE_NODE( DEM, Tin )
+                INITIALIZE_NODE( DEM, Grid )
+                INITIALIZE_NODE( DEM, ReliefPoints )
+                INITIALIZE_NODE( DEM, RidgeOrValleyLines )
+                INITIALIZE_NODE( DEM, Breaklines )
+                INITIALIZE_NODE( DEM, Elevation )
 
                 // SUB
                 INITIALIZE_NODE( SUB, Tunnel )
@@ -288,6 +395,9 @@ namespace citygml {
                 INITIALIZE_NODE( APP, WrapMode )
                 INITIALIZE_NODE( APP, BorderColor )
                 INITIALIZE_NODE( APP, PreferWorldFile )
+                INITIALIZE_NODE( APP, ReferencePoint)
+                INITIALIZE_NODE( APP, Orientation)
+                INITIALIZE_NODE( APP, isSmooth)
 
                 INITIALIZE_NODE( APP, X3DMaterial )
                 INITIALIZE_NODE( APP, Material )
@@ -322,9 +432,12 @@ namespace citygml {
 
         std::string nodeName = lowerName;
 
-        size_t pos = name.find_first_of( ":" );
+        size_t pos = nodeName.find_first_of( ":" );
         if ( pos != std::string::npos ) {
-            nodeName = name.substr(pos);
+            nodeName = nodeName.substr(pos + 1);
+        } else {
+            // node has no prefix... try with core prefix
+            return getXMLNodeFor("core:" + name);
         }
 
         auto it = nodeNameTypeMap.find(nodeName);
@@ -336,22 +449,6 @@ namespace citygml {
         }
     }
 
-    std::ostream& operator<<(std::ostream& os, const NodeType::XMLNode& o)
-    {
-        if (!o.valid()) {
-            os << "InvalidNode";
-        } else {
-            if (!o.prefix().empty()) {
-                os << o.prefix() << ":";
-            }
-            os << o.name();
-        }
-
-        return os;
-    }
-
-    const NodeType::XMLNode NodeType::InvalidNode = XMLNode("", "");
-
 #define DEFINE_NODE( prefix, elementname ) NodeType::XMLNode NodeType::prefix ## _ ## elementname ## Node;
 
     // CORE
@@ -359,15 +456,37 @@ namespace citygml {
     DEFINE_NODE( CORE, CityObjectMember )
     DEFINE_NODE( CORE, CreationDate )
     DEFINE_NODE( CORE, TerminationDate )
+    DEFINE_NODE( CORE, GeneralizesTo)
+
+    DEFINE_NODE( CORE, ExternalReference)
+    DEFINE_NODE( CORE, InformationSystem)
+    DEFINE_NODE( CORE, ExternalObject)
+
+    DEFINE_NODE( CORE, Uri)
+    DEFINE_NODE( CORE, Name)
+
+    DEFINE_NODE( CORE, Address )
+
     DEFINE_NODE( CORE, ImplicitGeometry )
     DEFINE_NODE( CORE, RelativeGMLGeometry )
     DEFINE_NODE( CORE, TransformationMatrix )
+    DEFINE_NODE( CORE, ReferencePoint)
+    DEFINE_NODE( CORE, MimeType)
+    DEFINE_NODE( CORE, LibraryObject)
 
     // GRP
     DEFINE_NODE( GRP, CityObjectGroup )
     DEFINE_NODE( GRP, GroupMember )
+    DEFINE_NODE( GRP, Class )
+    DEFINE_NODE( GRP, Function )
+    DEFINE_NODE( GRP, Usage )
+    DEFINE_NODE( GRP, Parent )
+    DEFINE_NODE( GRP, Geometry )
 
     // GEN
+    DEFINE_NODE( GEN, Class )
+    DEFINE_NODE( GEN, Function )
+    DEFINE_NODE( GEN, Usage )
     DEFINE_NODE( GEN, GenericCityObject )
     DEFINE_NODE( GEN, StringAttribute )
     DEFINE_NODE( GEN, DoubleAttribute )
@@ -376,14 +495,21 @@ namespace citygml {
     DEFINE_NODE( GEN, UriAttribute )
     DEFINE_NODE( GEN, Value )
 
+    DEFINE_NODE( GEN, Lod0Geometry )
     DEFINE_NODE( GEN, Lod1Geometry )
     DEFINE_NODE( GEN, Lod2Geometry )
     DEFINE_NODE( GEN, Lod3Geometry )
     DEFINE_NODE( GEN, Lod4Geometry )
+    DEFINE_NODE( GEN, Lod0TerrainIntersection )
     DEFINE_NODE( GEN, Lod1TerrainIntersection )
     DEFINE_NODE( GEN, Lod2TerrainIntersection )
     DEFINE_NODE( GEN, Lod3TerrainIntersection )
     DEFINE_NODE( GEN, Lod4TerrainIntersection )
+    DEFINE_NODE( GEN, Lod0ImplicitRepresentation )
+    DEFINE_NODE( GEN, Lod1ImplicitRepresentation )
+    DEFINE_NODE( GEN, Lod2ImplicitRepresentation )
+    DEFINE_NODE( GEN, Lod3ImplicitRepresentation )
+    DEFINE_NODE( GEN, Lod4ImplicitRepresentation )
 
     // TEX
     // DEFINE_NODE( GML, TexturedSurface ) // Deprecated
@@ -393,6 +519,7 @@ namespace citygml {
     DEFINE_NODE( GML, Identifier )
     DEFINE_NODE( GML, Name )
     DEFINE_NODE( GML, DescriptionReference )
+    DEFINE_NODE( GML, MetaDataProperty )
     DEFINE_NODE( GML, Coordinates )
     DEFINE_NODE( GML, Pos )
     DEFINE_NODE( GML, BoundedBy )
@@ -449,6 +576,11 @@ namespace citygml {
     DEFINE_NODE( GML, Interior )
     DEFINE_NODE( GML, Exterior )
 
+    DEFINE_NODE( GML, Shell )
+    DEFINE_NODE( GML, PolyhedralSurface )
+    DEFINE_NODE( GML, Surface )
+    DEFINE_NODE( GML, PolygonPatch)
+
     // BLDG
     DEFINE_NODE( BLDG, Building )
     DEFINE_NODE( BLDG, BuildingPart )
@@ -456,7 +588,6 @@ namespace citygml {
     DEFINE_NODE( BLDG, Door )
     DEFINE_NODE( BLDG, Window )
     DEFINE_NODE( BLDG, BuildingInstallation )
-    DEFINE_NODE( BLDG, Address )
     DEFINE_NODE( BLDG, MeasuredHeight )
     DEFINE_NODE( BLDG, Class )
     DEFINE_NODE( BLDG, Type )
@@ -478,6 +609,8 @@ namespace citygml {
     DEFINE_NODE( BLDG, ConsistsOfBuildingPart )
 
     // CityFurniture
+    DEFINE_NODE( FRN, Class )
+    DEFINE_NODE( FRN, Function )
     DEFINE_NODE( FRN, CityFurniture )
     DEFINE_NODE( FRN, Lod1Geometry )
     DEFINE_NODE( FRN, Lod2Geometry )
@@ -502,12 +635,10 @@ namespace citygml {
     DEFINE_NODE( BLDG, CeilingSurface )
     DEFINE_NODE( BLDG, BuildingFurniture )
     DEFINE_NODE( BLDG, RoofType)
-    DEFINE_NODE( BLDG, ExternalReference)
-    DEFINE_NODE( BLDG, InformationSystem)
-    DEFINE_NODE( BLDG, ExternalObject)
-    DEFINE_NODE( BLDG, Uri)
 
     DEFINE_NODE( BLDG, CityFurniture )
+
+    DEFINE_NODE( BLDG, Address)
 
     // ADDRESS
     DEFINE_NODE( XAL, XalAddress )
@@ -525,19 +656,47 @@ namespace citygml {
     DEFINE_NODE( XAL, Locality )
     DEFINE_NODE( XAL, AddressDetails )
     DEFINE_NODE( XAL, DependentLocalityName )
+
     // WTR
     DEFINE_NODE( WTR, WaterBody )
+    DEFINE_NODE( WTR, WaterSurface )
+    DEFINE_NODE( WTR, WaterGroundSurface )
+    DEFINE_NODE( WTR, WaterClosureSurface )
+    DEFINE_NODE( WTR, Class )
+    DEFINE_NODE( WTR, Function )
+    DEFINE_NODE( WTR, Usage )
+    DEFINE_NODE( WTR, WaterLevel )
+    DEFINE_NODE( WTR, Lod0MultiCurve )
+    DEFINE_NODE( WTR, Lod0MultiSurface )
+    DEFINE_NODE( WTR, Lod1MultiCurve )
+    DEFINE_NODE( WTR, Lod1MultiSurface )
+    DEFINE_NODE( WTR, Lod1Solid )
+    DEFINE_NODE( WTR, Lod2Solid )
+    DEFINE_NODE( WTR, Lod3Solid )
+    DEFINE_NODE( WTR, Lod4Solid )
+    DEFINE_NODE( WTR, Lod2Surface )
+    DEFINE_NODE( WTR, Lod3Surface )
+    DEFINE_NODE( WTR, Lod4Surface )
+    DEFINE_NODE( WTR, BoundedBy )
 
     // VEG
     DEFINE_NODE( VEG, PlantCover )
     DEFINE_NODE( VEG, SolitaryVegetationObject )
-    DEFINE_NODE( VEG, Species )
     DEFINE_NODE( VEG, Lod1ImplicitRepresentation )
     DEFINE_NODE( VEG, Lod2ImplicitRepresentation )
     DEFINE_NODE( VEG, Lod3ImplicitRepresentation )
     DEFINE_NODE( VEG, Lod4ImplicitRepresentation )
 
+    DEFINE_NODE( VEG, Class )
+    DEFINE_NODE( VEG, Function )
+    DEFINE_NODE( VEG, AverageHeight )
+    DEFINE_NODE( VEG, Species )
+    DEFINE_NODE( VEG, Height )
+    DEFINE_NODE( VEG, TrunkDiameter )
+    DEFINE_NODE( VEG, CrownDiameter )
+
     // TRANS
+    DEFINE_NODE( TRANS, TransportationComplex )
     DEFINE_NODE( TRANS, TrafficArea )
     DEFINE_NODE( TRANS, AuxiliaryTrafficArea )
     DEFINE_NODE( TRANS, Track )
@@ -545,12 +704,43 @@ namespace citygml {
     DEFINE_NODE( TRANS, Railway )
     DEFINE_NODE( TRANS, Square )
 
+    DEFINE_NODE( TRANS, Usage )
+    DEFINE_NODE( TRANS, Function )
+    DEFINE_NODE( TRANS, SurfaceMaterial )
+
+    DEFINE_NODE( TRANS, Lod0Network )
+    DEFINE_NODE( TRANS, Lod1MultiSurface )
+    DEFINE_NODE( TRANS, Lod2MultiSurface )
+    DEFINE_NODE( TRANS, Lod3MultiSurface )
+    DEFINE_NODE( TRANS, Lod4MultiSurface )
+
     // LUSE
     DEFINE_NODE( LUSE, LandUse )
 
-    // dem
-    DEFINE_NODE( LUSE, Lod )
-    DEFINE_NODE( LUSE, TINRelief )
+    DEFINE_NODE( LUSE, Class )
+    DEFINE_NODE( LUSE, Usage )
+    DEFINE_NODE( LUSE, Function )
+
+    DEFINE_NODE( LUSE, Lod1MultiSurface )
+    DEFINE_NODE( LUSE, Lod2MultiSurface )
+    DEFINE_NODE( LUSE, Lod3MultiSurface )
+    DEFINE_NODE( LUSE, Lod4MultiSurface )
+
+    // DEM (Relief)
+    DEFINE_NODE( DEM, ReliefFeature )
+    DEFINE_NODE( DEM, TINRelief )
+    DEFINE_NODE( DEM, RasterRelief )
+    DEFINE_NODE( DEM, MassPointRelief )
+    DEFINE_NODE( DEM, BreaklineRelief )
+    DEFINE_NODE( DEM, Lod )
+    DEFINE_NODE( DEM, Extent )
+    DEFINE_NODE( DEM, ReliefComponent )
+    DEFINE_NODE( DEM, Tin )
+    DEFINE_NODE( DEM, Grid )
+    DEFINE_NODE( DEM, ReliefPoints )
+    DEFINE_NODE( DEM, RidgeOrValleyLines )
+    DEFINE_NODE( DEM, Breaklines )
+    DEFINE_NODE( DEM, Elevation )
 
     // SUB
     DEFINE_NODE( SUB, Tunnel )
@@ -577,6 +767,9 @@ namespace citygml {
     DEFINE_NODE( APP, WrapMode )
     DEFINE_NODE( APP, BorderColor )
     DEFINE_NODE( APP, PreferWorldFile )
+    DEFINE_NODE( APP, ReferencePoint)
+    DEFINE_NODE( APP, Orientation)
+    DEFINE_NODE( APP, isSmooth)
 
     DEFINE_NODE( APP, X3DMaterial )
     DEFINE_NODE( APP, Material )
@@ -591,5 +784,4 @@ namespace citygml {
     DEFINE_NODE( APP, IsFront )
     DEFINE_NODE( APP, Theme )
     DEFINE_NODE( APP, MimeType )
-
 }

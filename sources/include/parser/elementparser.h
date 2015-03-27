@@ -15,7 +15,8 @@ namespace citygml {
 
     /**
      * @brief The ElementParser is the base class for parsers that only handle a specific subset of elements
-     * @see CityGMLElementParser
+     *
+     * For a basic explanation of the parsing process @see CityGMLElementParser
      */
     class ElementParser {
     public:
@@ -38,14 +39,22 @@ namespace citygml {
 
         /**
          * @brief returns wether the parser handels elements of type node
+         * @note this is required for the delayed choice mechanism @see DelayedChoiceElementParser
          */
         virtual bool handlesElement(const NodeType::XMLNode& node) const = 0;
 
+        /**
+         * @brief the name of the parser (for logging purposes)
+         */
         virtual std::string elementParserName() const = 0;
 
         virtual ~ElementParser();
 
     protected:
+        /**
+         * @brief sets a parser that will be called for the next element.
+         * @note The parser will be deleted after parsing the elment.
+         */
         void setParserForNextElement(ElementParser* parser);
         virtual const DocumentLocation& getDocumentLocation() const;
 

@@ -7,11 +7,14 @@
 #include "parser/documentlocation.h"
 #include "parser/polygonelementparser.h"
 #include "parser/delayedchoiceelementparser.h"
+#include "parser/sequenceparser.h"
 
 #include "citygml/geometry.h"
 #include "citygml/citygmlfactory.h"
 #include "citygml/citygmllogger.h"
 #include "citygml/polygon.h"
+
+#include <mutex>
 
 #include <stdexcept>
 
@@ -21,10 +24,11 @@ namespace citygml {
     // The nodes that are valid Geometry Objects
     std::unordered_set<int> geometryTypeIDSet;
     bool geometryTypeIDSetInitialized = false;
+    std::mutex geometryElement_initializedTypeIDMutex;
 
     GeometryElementParser::GeometryElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger,
                                                  int lodLevel, CityObject::CityObjectsType parentType,  std::function<void(Geometry*)> callback)
-        : CityGMLElementParser(documentParser, factory, logger)
+        : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_callback = callback;
         m_lodLevel = lodLevel;
@@ -39,15 +43,26 @@ namespace citygml {
     bool GeometryElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
         if(!geometryTypeIDSetInitialized) {
-            geometryTypeIDSet.insert(NodeType::GML_CompositeSolidNode.typeID());
-            geometryTypeIDSet.insert(NodeType::GML_SolidNode.typeID());
-            geometryTypeIDSet.insert(NodeType::GML_MultiSurfaceNode.typeID());
-            geometryTypeIDSet.insert(NodeType::GML_CompositeSurfaceNode.typeID());
-            geometryTypeIDSet.insert(NodeType::GML_TriangulatedSurfaceNode.typeID());
-            geometryTypeIDSet.insert(NodeType::GML_OrientableSurfaceNode.typeID());
-            geometryTypeIDSet.insert(NodeType::GML_MultiSolidNode.typeID());
-            geometryTypeIDSet.insert(NodeType::GML_CompositeSolidNode.typeID());
-            geometryTypeIDSetInitialized = true;
+
+            std::lock_guard<std::mutex> lock(geometryElement_initializedTypeIDMutex);
+
+            if (!geometryTypeIDSetInitialized) {
+
+                geometryTypeIDSet.insert(NodeType::GML_CompositeSolidNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_SolidNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_MultiSurfaceNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_CompositeSurfaceNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_TriangulatedSurfaceNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_OrientableSurfaceNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_MultiSolidNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_CompositeSolidNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_ShellNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_PolyhedralSurfaceNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_SurfaceNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_ShellNode.typeID());
+                geometryTypeIDSetInitialized = true;
+
+            }
         }
 
         return geometryTypeIDSet.count(node.typeID()) > 0;
@@ -120,9 +135,7 @@ namespace citygml {
             return true;
 
         } else if (node == NodeType::GML_SurfaceMemberNode
-                   || node == NodeType::GML_BaseSurfaceNode
-                   || node == NodeType::GML_PatchesNode
-                   || node == NodeType::GML_TrianglePatchesNode) {
+                   || node == NodeType::GML_BaseSurfaceNode) {
 
             if (attributes.hasXLinkAttribute()) {
                 m_factory.requestSharedPolygonForGeometry(m_model, attributes.getXLinkValue());
@@ -138,9 +151,18 @@ namespace citygml {
                 setParserForNextElement(new DelayedChoiceElementParser(m_documentParser, m_logger, parsers));
             }
             return true;
+        } else if (node == NodeType::GML_PatchesNode
+                   || node == NodeType::GML_TrianglePatchesNode) {
+
+            std::function<ElementParser*()> patchParserFactory = [this]() {
+                return new PolygonElementParser(m_documentParser, m_factory, m_logger, [this](std::shared_ptr<Polygon> poly) {m_model->addPolygon(poly);});
+            };
+
+            setParserForNextElement(new SequenceParser(m_documentParser, m_logger, patchParserFactory, node));
+
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }
 
     bool GeometryElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -160,8 +182,13 @@ namespace citygml {
             return true;
         }
 
-        return false;
+        return GMLObjectElementParser::parseChildElementEndTag(node, characters);
 
+    }
+
+    Object* GeometryElementParser::getObject()
+    {
+        return m_model;
     }
 
 }
