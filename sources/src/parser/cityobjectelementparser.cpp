@@ -14,6 +14,7 @@
 #include "citygml/citygmllogger.h"
 
 #include <stdexcept>
+#include <iostream>
 
 namespace citygml {
 
@@ -281,19 +282,23 @@ namespace citygml {
 
             parseGeometryForLODLevel(4);
         } else if (node == NodeType::GEN_Lod1GeometryNode
-                   || node == NodeType::FRN_Lod1GeometryNode) {
+                   || node == NodeType::FRN_Lod1GeometryNode
+                   || node == NodeType::VEG_Lod1GeometryNode) {
             parseGeometryPropertyElementForLODLevel(1, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::GEN_Lod2GeometryNode
                    || node == NodeType::FRN_Lod2GeometryNode
-                   || node == NodeType::BLDG_Lod2GeometryNode) {
+                   || node == NodeType::BLDG_Lod2GeometryNode
+                   || node == NodeType::VEG_Lod2GeometryNode) {
             parseGeometryPropertyElementForLODLevel(2, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::GEN_Lod3GeometryNode
                    || node == NodeType::FRN_Lod3GeometryNode
-                   || node == NodeType::BLDG_Lod3GeometryNode) {
+                   || node == NodeType::BLDG_Lod3GeometryNode
+                   || node == NodeType::VEG_Lod3GeometryNode) {
             parseGeometryPropertyElementForLODLevel(3, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::GEN_Lod4GeometryNode
                    || node == NodeType::FRN_Lod4GeometryNode
-                   || node == NodeType::BLDG_Lod4GeometryNode) {
+                   || node == NodeType::BLDG_Lod4GeometryNode
+                   || node == NodeType::VEG_Lod4GeometryNode) {
             parseGeometryPropertyElementForLODLevel(4, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
                    || node == NodeType::FRN_Lod1ImplicitRepresentationNode

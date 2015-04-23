@@ -19,6 +19,7 @@
 * Implement appearence `<TexCoordGen>` support
 * Implement `<grp:geometry>` support (Darunter kann eine beliebige GML Geometrie hängen)
 * Implement full support for `<grp:groupMember>` and `<grp:parent>` (requires city object sharing, currently only inline definitions are supported)
+* Implement sharing for all geometries (currently onl ImplicitGeometries)
 * Implement lod0 parsing
 * Implement Relief/Terrain Model (Namespace DEM) parsing. More precisely implement ReliefComponentPropertyType parsing.
 	* Requires gml:MultiPointPropertyType parsing

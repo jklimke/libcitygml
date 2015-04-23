@@ -25,6 +25,7 @@ namespace citygml {
 
         /**
          * @brief gets the citygml id attribute value or if not present generates a value based on the document location
+         * @return the value of the gml::id attribute or "genID_<CityGMLFileName>_<LineNumber>_<ColumnNumber>" if there is no id attribute
          */
         std::string getCityGMLIDAttribute() const;
 

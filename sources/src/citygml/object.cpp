@@ -7,12 +7,12 @@ namespace citygml {
 
     Object::Object(const std::string& id) : m_id( id )
     {
-         if ( m_id == "" )
-         {
-             std::stringstream ss;
-             ss << "PtrId_" << this;
-             m_id = ss.str();
-         }
+        if ( m_id == "" )
+        {
+         std::stringstream ss;
+         ss << "PtrId_" << this;
+         m_id = ss.str();
+        }
     }
 
     const std::string&Object::getId() const

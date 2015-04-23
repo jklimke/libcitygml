@@ -323,6 +323,12 @@ namespace citygml {
                 INITIALIZE_NODE( VEG, TrunkDiameter )
                 INITIALIZE_NODE( VEG, CrownDiameter )
 
+                INITIALIZE_NODE( VEG, Lod0Geometry )
+                INITIALIZE_NODE( VEG, Lod1Geometry )
+                INITIALIZE_NODE( VEG, Lod2Geometry )
+                INITIALIZE_NODE( VEG, Lod3Geometry )
+                INITIALIZE_NODE( VEG, Lod4Geometry )
+
                 // TRANS
                 INITIALIZE_NODE( TRANS, TransportationComplex )
                 INITIALIZE_NODE( TRANS, TrafficArea )
@@ -695,6 +701,12 @@ namespace citygml {
     DEFINE_NODE( VEG, Height )
     DEFINE_NODE( VEG, TrunkDiameter )
     DEFINE_NODE( VEG, CrownDiameter )
+
+    DEFINE_NODE( VEG, Lod0Geometry )
+    DEFINE_NODE( VEG, Lod1Geometry )
+    DEFINE_NODE( VEG, Lod2Geometry )
+    DEFINE_NODE( VEG, Lod3Geometry )
+    DEFINE_NODE( VEG, Lod4Geometry )
 
     // TRANS
     DEFINE_NODE( TRANS, TransportationComplex )

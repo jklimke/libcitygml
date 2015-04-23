@@ -19,8 +19,9 @@ namespace citygml {
         if (id.empty()) {
             std::stringstream defaultID;
             defaultID << "genID_" << getDocumentLocation().getDocumentFileName() << "_" << getDocumentLocation().getCurrentLine() << "_" << + getDocumentLocation().getCurrentColumn();
-            return defaultID.str();
+            id = defaultID.str();
         }
+        return id;
     }
 
     bool Attributes::hasXLinkAttribute() const

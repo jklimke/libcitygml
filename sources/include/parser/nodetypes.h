@@ -282,6 +282,12 @@ namespace citygml {
         NODETYPE( VEG, TrunkDiameter )
         NODETYPE( VEG, CrownDiameter )
 
+        NODETYPE( VEG, Lod0Geometry )
+        NODETYPE( VEG, Lod1Geometry )
+        NODETYPE( VEG, Lod2Geometry )
+        NODETYPE( VEG, Lod3Geometry )
+        NODETYPE( VEG, Lod4Geometry )
+
         // TRANS
         NODETYPE( TRANS, TransportationComplex )
         NODETYPE( TRANS, TrafficArea )
