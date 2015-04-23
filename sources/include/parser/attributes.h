@@ -23,6 +23,9 @@ namespace citygml {
         virtual std::string getAttribute( const std::string& attname, const std::string& defvalue = "" ) const = 0;
         virtual const DocumentLocation& getDocumentLocation() const = 0;
 
+        /**
+         * @brief gets the citygml id attribute value or if not present generates a value based on the document location
+         */
         std::string getCityGMLIDAttribute() const;
 
         bool hasXLinkAttribute() const;

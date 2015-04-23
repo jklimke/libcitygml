@@ -147,6 +147,8 @@ namespace citygml {
         NODETYPE( GML, Surface )
         NODETYPE( GML, PolygonPatch)
 
+        NODETYPE( GML, LineString )
+
         // BLDG
         NODETYPE( BLDG, Building )
         NODETYPE( BLDG, BuildingPart )
@@ -178,7 +180,6 @@ namespace citygml {
         NODETYPE( BLDG, Lod2Solid )
         NODETYPE( BLDG, Lod3Solid )
         NODETYPE( BLDG, Lod4Solid )
-        NODETYPE( BLDG, Lod1Geometry )
         NODETYPE( BLDG, Lod2Geometry )
         NODETYPE( BLDG, Lod3Geometry )
         NODETYPE( BLDG, Lod4Geometry )

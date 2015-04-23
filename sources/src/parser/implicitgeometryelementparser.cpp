@@ -8,6 +8,9 @@
 #include "parser/geometryelementparser.h"
 #include "parser/parserutils.hpp"
 #include "parser/skipelementparser.h"
+#include "parser/linestringelementparser.h"
+#include "parser/polygonelementparser.h"
+#include "parser/delayedchoiceelementparser.h"
 
 #include "citygml/implictgeometry.h"
 #include "citygml/citygmlfactory.h"
@@ -91,10 +94,23 @@ namespace citygml {
                 m_factory.requestSharedGeometryWithID(m_model, sharedGeomID);
             } else {
 
-                setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* geom) {
-                                        std::shared_ptr<Geometry> shared = m_factory.shareGeometry(geom);
-                                        m_model->addGeometry(shared);
-                                    }));
+                std::string id = attributes.getCityGMLIDAttribute();
+
+                setParserForNextElement(new DelayedChoiceElementParser(m_documentParser, m_logger, {
+                    new PolygonElementParser(m_documentParser, m_factory, m_logger, [id, this](std::shared_ptr<Polygon> p) {
+                                                                               Geometry* geom = m_factory.createGeometry(id, m_parentType, m_lodLevel);
+                                                                               geom->addPolygon(p);
+                                                                               m_model->addGeometry(m_factory.shareGeometry(geom));
+                                                                           }),
+                    new LineStringElementParser(m_documentParser, m_factory, m_logger, [id, this](std::shared_ptr<LineString> l) {
+                                                                               Geometry* geom = m_factory.createGeometry(id, m_parentType, m_lodLevel);
+                                                                               geom->addLineString(l);
+                                                                               m_model->addGeometry(m_factory.shareGeometry(geom));
+                                                                           }),
+                    new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* geom) {
+                                                                               m_model->addGeometry(m_factory.shareGeometry(geom));
+                                                                           })
+                }));
             }
             return true;
         } else if (node == NodeType::CORE_LibraryObjectNode) {

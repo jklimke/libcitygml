@@ -11,6 +11,7 @@ class Tesselator;
 
 namespace citygml {
 
+    class LineString;
     class Polygon;
     class AppearanceManager;
     class Appearance;
@@ -34,13 +35,15 @@ namespace citygml {
             GT_Ceiling          = 1 << 7
         };
 
-        // Get the geometry LOD
         unsigned int getLOD() const;
 
-        // Get the polygons
         unsigned int getPolygonsCount() const;
         Polygon& getPolygon( unsigned int i );
         const Polygon& getPolygon( unsigned int i ) const;
+
+        unsigned int getLineStringCount() const;
+        LineString& getLineString( unsigned int i );
+        const LineString& getLineString( unsigned int i ) const;
 
         unsigned int getGeometriesCount() const;
         const Geometry& getGeometry( unsigned int i ) const;
@@ -50,12 +53,12 @@ namespace citygml {
         GeometryType getType() const;
 
         std::string getTypeAsString() const;
-        //std::string getTypeAsString( void ) const { return getGeometryClassName( _type ); }
 
         unsigned int lod() const;
         void setLod(unsigned int lod);
 
         void addPolygon(std::shared_ptr<Polygon> );
+        void addLineString(std::shared_ptr<LineString>);
 
         /**
          * @brief finishes the geometry by finishing its child polygons after broadcasting its appearances to all child polygons
@@ -80,6 +83,7 @@ namespace citygml {
         std::vector<std::shared_ptr<Geometry>> m_childGeometries;
 
         std::vector<std::shared_ptr<Polygon>> m_polygons;
+        std::vector<std::shared_ptr<LineString>> m_lineStrings;
     };
 
     std::ostream& operator<<( std::ostream& os, const citygml::Geometry& s );

@@ -18,6 +18,7 @@ namespace citygml {
     class Geometry;
     class ImplicitGeometry;
     class Polygon;
+    class LineString;
 
     class Appearance;
     class Texture;
@@ -33,9 +34,10 @@ namespace citygml {
 
         CityModel* createCityModel(const std::string& id);
         CityObject* createCityObject(const std::string& id, CityObject::CityObjectsType type);
-        Geometry* createGeometry(const std::string& id, Geometry::GeometryType type = Geometry::GeometryType::GT_Unknown, unsigned int lod = 0);
+        Geometry* createGeometry(const std::string& id, const CityObject::CityObjectsType& cityObjType = CityObject::CityObjectsType::COT_All, unsigned int lod = 0);
 
         std::shared_ptr<Polygon> createPolygon(const std::string& id);
+        std::shared_ptr<LineString> createLineString(const std::string& id);
 
         /**
          * @brief requests a polygon for a Geometry object that will be added later

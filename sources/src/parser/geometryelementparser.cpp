@@ -68,29 +68,6 @@ namespace citygml {
         return geometryTypeIDSet.count(node.typeID()) > 0;
     }
 
-    Geometry::GeometryType mapCityObjectsTypeToGeometryType(const CityObject::CityObjectsType& cityObjType) {
-
-        switch (cityObjType) {
-        case CityObject::CityObjectsType::COT_RoofSurface:
-            return Geometry::GeometryType::GT_Roof;
-        case CityObject::CityObjectsType::COT_WallSurface:
-            return Geometry::GeometryType::GT_Wall;
-        case CityObject::CityObjectsType::COT_GroundSurface:
-            return Geometry::GeometryType::GT_Ground;
-        case CityObject::CityObjectsType::COT_ClosureSurface:
-            return Geometry::GeometryType::GT_Closure;
-        case CityObject::CityObjectsType::COT_FloorSurface:
-            return Geometry::GeometryType::GT_Floor;
-        case CityObject::CityObjectsType::COT_InteriorWallSurface:
-            return Geometry::GeometryType::GT_InteriorWall;
-        case CityObject::CityObjectsType::COT_CeilingSurface:
-            return Geometry::GeometryType::GT_Ceiling;
-        default:
-            return Geometry::GeometryType::GT_Unknown;
-        }
-
-    }
-
     bool GeometryElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
 
@@ -99,7 +76,7 @@ namespace citygml {
             throw std::runtime_error("Unexpected start tag found.");
         }
 
-        m_model = m_factory.createGeometry(attributes.getCityGMLIDAttribute(), mapCityObjectsTypeToGeometryType(m_parentType), m_lodLevel);
+        m_model = m_factory.createGeometry(attributes.getCityGMLIDAttribute(), m_parentType, m_lodLevel);
         m_orientation = attributes.getAttribute("orientation", "+"); // A gml:OrientableSurface may define a negative orientation
         return true;
 

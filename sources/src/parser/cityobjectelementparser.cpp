@@ -5,7 +5,10 @@
 #include "parser/appearanceelementparser.h"
 #include "parser/geometryelementparser.h"
 #include "parser/implicitgeometryelementparser.h"
+#include "parser/polygonelementparser.h"
 #include "parser/skipelementparser.h"
+#include "parser/delayedchoiceelementparser.h"
+#include "parser/linestringelementparser.h"
 
 #include "citygml/citygmlfactory.h"
 #include "citygml/citygmllogger.h"
@@ -228,14 +231,11 @@ namespace citygml {
                    || node == NodeType::APP_AppearanceMemberNode) {
 
             setParserForNextElement(new AppearanceElementParser(m_documentParser, m_factory, m_logger));
-        } else if (node == NodeType::BLDG_Lod1GeometryNode
-                   || node == NodeType::BLDG_Lod1MultiCurveNode
+        } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
                    || node == NodeType::BLDG_Lod1SolidNode
                    || node == NodeType::BLDG_Lod1TerrainIntersectionNode
-                   || node == NodeType::GEN_Lod1GeometryNode
                    || node == NodeType::GEN_Lod1TerrainIntersectionNode
-                   || node == NodeType::FRN_Lod1GeometryNode
                    || node == NodeType::FRN_Lod1TerrainIntersectionNode
                    || node == NodeType::LUSE_Lod1MultiSurfaceNode
                    || node == NodeType::TRANS_Lod1MultiSurfaceNode
@@ -244,14 +244,11 @@ namespace citygml {
                    || node == NodeType::WTR_Lod1SolidNode) {
 
             parseGeometryForLODLevel(1);
-        } else if (node == NodeType::BLDG_Lod2GeometryNode
-                   || node == NodeType::BLDG_Lod2MultiCurveNode
+        } else if (node == NodeType::BLDG_Lod2MultiCurveNode
                    || node == NodeType::BLDG_Lod2MultiSurfaceNode
                    || node == NodeType::BLDG_Lod2SolidNode
                    || node == NodeType::BLDG_Lod2TerrainIntersectionNode
-                   || node == NodeType::GEN_Lod2GeometryNode
                    || node == NodeType::GEN_Lod2TerrainIntersectionNode
-                   || node == NodeType::FRN_Lod2GeometryNode
                    || node == NodeType::FRN_Lod2TerrainIntersectionNode
                    || node == NodeType::LUSE_Lod2MultiSurfaceNode
                    || node == NodeType::TRANS_Lod2MultiSurfaceNode
@@ -259,14 +256,11 @@ namespace citygml {
                    || node == NodeType::WTR_Lod2SurfaceNode) {
 
             parseGeometryForLODLevel(2);
-        } else if (node == NodeType::BLDG_Lod3GeometryNode
-                   || node == NodeType::BLDG_Lod3MultiCurveNode
+        } else if (node == NodeType::BLDG_Lod3MultiCurveNode
                    || node == NodeType::BLDG_Lod3MultiSurfaceNode
                    || node == NodeType::BLDG_Lod3SolidNode
                    || node == NodeType::BLDG_Lod3TerrainIntersectionNode
-                   || node == NodeType::GEN_Lod3GeometryNode
                    || node == NodeType::GEN_Lod3TerrainIntersectionNode
-                   || node == NodeType::FRN_Lod3GeometryNode
                    || node == NodeType::FRN_Lod3TerrainIntersectionNode
                    || node == NodeType::LUSE_Lod3MultiSurfaceNode
                    || node == NodeType::TRANS_Lod3MultiSurfaceNode
@@ -274,14 +268,11 @@ namespace citygml {
                    || node == NodeType::WTR_Lod3SurfaceNode) {
 
             parseGeometryForLODLevel(3);
-        } else if (node == NodeType::BLDG_Lod4GeometryNode
-                   || node == NodeType::BLDG_Lod4MultiCurveNode
+        } else if (node == NodeType::BLDG_Lod4MultiCurveNode
                    || node == NodeType::BLDG_Lod4MultiSurfaceNode
                    || node == NodeType::BLDG_Lod4SolidNode
                    || node == NodeType::BLDG_Lod4TerrainIntersectionNode
-                   || node == NodeType::GEN_Lod4GeometryNode
                    || node == NodeType::GEN_Lod4TerrainIntersectionNode
-                   || node == NodeType::FRN_Lod4GeometryNode
                    || node == NodeType::FRN_Lod4TerrainIntersectionNode
                    || node == NodeType::LUSE_Lod4MultiSurfaceNode
                    || node == NodeType::TRANS_Lod4MultiSurfaceNode
@@ -289,6 +280,21 @@ namespace citygml {
                    || node == NodeType::WTR_Lod4SurfaceNode) {
 
             parseGeometryForLODLevel(4);
+        } else if (node == NodeType::GEN_Lod1GeometryNode
+                   || node == NodeType::FRN_Lod1GeometryNode) {
+            parseGeometryPropertyElementForLODLevel(1, attributes.getCityGMLIDAttribute());
+        } else if (node == NodeType::GEN_Lod2GeometryNode
+                   || node == NodeType::FRN_Lod2GeometryNode
+                   || node == NodeType::BLDG_Lod2GeometryNode) {
+            parseGeometryPropertyElementForLODLevel(2, attributes.getCityGMLIDAttribute());
+        } else if (node == NodeType::GEN_Lod3GeometryNode
+                   || node == NodeType::FRN_Lod3GeometryNode
+                   || node == NodeType::BLDG_Lod3GeometryNode) {
+            parseGeometryPropertyElementForLODLevel(3, attributes.getCityGMLIDAttribute());
+        } else if (node == NodeType::GEN_Lod4GeometryNode
+                   || node == NodeType::FRN_Lod4GeometryNode
+                   || node == NodeType::BLDG_Lod4GeometryNode) {
+            parseGeometryPropertyElementForLODLevel(4, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
                    || node == NodeType::FRN_Lod1ImplicitRepresentationNode
                    || node == NodeType::GEN_Lod1ImplicitRepresentationNode) {
@@ -363,7 +369,7 @@ namespace citygml {
                 m_model->setAttribute(node.name(), characters);
             }
             return true;
-        } else if (    node == NodeType::BLDG_BoundedByNode
+        } else if (node == NodeType::BLDG_BoundedByNode
                     || node == NodeType::BLDG_OuterBuildingInstallationNode
                     || node == NodeType::BLDG_InteriorBuildingInstallationNode
                     || node == NodeType::BLDG_InteriorFurnitureNode
@@ -372,7 +378,6 @@ namespace citygml {
                     || node == NodeType::BLDG_OpeningNode
                     || node == NodeType::APP_AppearanceNode
                     || node == NodeType::APP_AppearanceMemberNode
-                    || node == NodeType::BLDG_Lod1GeometryNode
                     || node == NodeType::BLDG_Lod1MultiCurveNode
                     || node == NodeType::BLDG_Lod1MultiSurfaceNode
                     || node == NodeType::BLDG_Lod1SolidNode
@@ -470,7 +475,7 @@ namespace citygml {
     {
         setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, lod, m_model->getType(), [this](Geometry* geom) {
             m_model->addGeometry(geom);
-                                }));
+        }));
     }
 
     void CityObjectElementParser::parseImplicitGeometryForLODLevel(int lod)
@@ -478,6 +483,26 @@ namespace citygml {
         setParserForNextElement(new ImplicitGeometryElementParser(m_documentParser, m_factory, m_logger, lod, m_model->getType(), [this](ImplicitGeometry* imp) {
             m_model->addImplictGeometry(imp);
         }));
+    }
+
+    void CityObjectElementParser::parseGeometryPropertyElementForLODLevel(int lod, const std::string& id)
+    {
+        setParserForNextElement(new DelayedChoiceElementParser(m_documentParser, m_logger, {
+            new PolygonElementParser(m_documentParser, m_factory, m_logger, [id, lod, this](std::shared_ptr<Polygon> p) {
+                                                                       Geometry* geom = m_factory.createGeometry(id, m_model->getType(), lod);
+                                                                       geom->addPolygon(p);
+                                                                       m_model->addGeometry(geom);
+                                                                   }),
+            new LineStringElementParser(m_documentParser, m_factory, m_logger, [id, lod, this](std::shared_ptr<LineString> l) {
+                                                                       Geometry* geom = m_factory.createGeometry(id, m_model->getType(), lod);
+                                                                       geom->addLineString(l);
+                                                                       m_model->addGeometry(geom);
+                                                                   }),
+            new GeometryElementParser(m_documentParser, m_factory, m_logger, lod, m_model->getType(), [this](Geometry* geom) {
+                                                                       m_model->addGeometry(geom);
+                                                                   })
+        }));
+
     }
 
 }

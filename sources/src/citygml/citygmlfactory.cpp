@@ -5,6 +5,7 @@
 #include "citygml/cityobject.h"
 #include "citygml/appearancetarget.h"
 #include "citygml/polygon.h"
+#include "citygml/linestring.h"
 #include "citygml/implictgeometry.h"
 #include "citygml/texture.h"
 #include "citygml/georeferencedtexture.h"
@@ -36,9 +37,32 @@ namespace citygml {
         return cityObject;
     }
 
-    Geometry* CityGMLFactory::createGeometry(const std::string& id, Geometry::GeometryType type, unsigned int lod)
+    Geometry::GeometryType mapCityObjectsTypeToGeometryType(const CityObject::CityObjectsType& cityObjType) {
+
+        switch (cityObjType) {
+        case CityObject::CityObjectsType::COT_RoofSurface:
+            return Geometry::GeometryType::GT_Roof;
+        case CityObject::CityObjectsType::COT_WallSurface:
+            return Geometry::GeometryType::GT_Wall;
+        case CityObject::CityObjectsType::COT_GroundSurface:
+            return Geometry::GeometryType::GT_Ground;
+        case CityObject::CityObjectsType::COT_ClosureSurface:
+            return Geometry::GeometryType::GT_Closure;
+        case CityObject::CityObjectsType::COT_FloorSurface:
+            return Geometry::GeometryType::GT_Floor;
+        case CityObject::CityObjectsType::COT_InteriorWallSurface:
+            return Geometry::GeometryType::GT_InteriorWall;
+        case CityObject::CityObjectsType::COT_CeilingSurface:
+            return Geometry::GeometryType::GT_Ceiling;
+        default:
+            return Geometry::GeometryType::GT_Unknown;
+        }
+
+    }
+
+    Geometry* CityGMLFactory::createGeometry(const std::string& id, const CityObject::CityObjectsType& cityObjType, unsigned int lod)
     {
-        Geometry* geom = new Geometry(id, type, lod);
+        Geometry* geom = new Geometry(id, mapCityObjectsTypeToGeometryType(cityObjType), lod);
         appearanceTargetCreated(geom);
         return geom;
     }
@@ -52,6 +76,13 @@ namespace citygml {
         m_polygonManager->addPolygon(shared);
 
         return shared;
+    }
+
+    std::shared_ptr<LineString> CityGMLFactory::createLineString(const std::string& id)
+    {
+        LineString* lineString = new LineString(id);
+        return std::shared_ptr<LineString>(lineString);
+
     }
 
     void CityGMLFactory::requestSharedPolygonForGeometry(Geometry* geom, const std::string& polygonId)
