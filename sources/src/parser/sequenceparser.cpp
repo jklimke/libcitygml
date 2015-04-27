@@ -27,10 +27,13 @@ namespace citygml {
         if (node != m_containerType) {
             CITYGML_LOG_ERROR(m_logger, "Sequence parser was bound to container element <" << m_containerType << "> but found unexpected"
                                        " end tag <" << node << "> at " << getDocumentLocation() << ". Ignoring tag...");
+            return false;
 
         } else {
             m_documentParser.removeCurrentElementParser(this);
         }
+
+        return true;
     }
 
     bool SequenceParser::handlesElement(const NodeType::XMLNode& node) const

@@ -4,6 +4,8 @@
 
 #include "citygml/citygmllogger.h"
 
+#include "sstream"
+
 namespace citygml {
 
     Attributes::Attributes(std::shared_ptr<CityGMLLogger> logger)
@@ -13,7 +15,13 @@ namespace citygml {
 
     std::string Attributes::getCityGMLIDAttribute() const
     {
-        return getAttribute("gml:id", "");
+        std::string id = getAttribute("gml:id", "");
+        if (id.empty()) {
+            std::stringstream defaultID;
+            defaultID << "genID_" << getDocumentLocation().getDocumentFileName() << "_" << getDocumentLocation().getCurrentLine() << "_" << + getDocumentLocation().getCurrentColumn();
+            id = defaultID.str();
+        }
+        return id;
     }
 
     bool Attributes::hasXLinkAttribute() const

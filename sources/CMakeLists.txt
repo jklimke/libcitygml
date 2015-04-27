@@ -40,6 +40,7 @@ SET(SOURCES
   src/citygml/citygmlfactory.cpp
   src/citygml/polygonmanager.cpp
   src/citygml/geometrymanager.cpp
+  src/citygml/linestring.cpp
 
   src/parser/nodetypes.cpp
   src/parser/attributes.cpp
@@ -66,6 +67,7 @@ SET(SOURCES
   src/parser/georeferencedtextureelementparser.cpp
   src/parser/geometryelementparser.cpp
   src/parser/polygonelementparser.cpp
+  src/parser/linestringelementparser.cpp
   src/parser/linearringelementparser.cpp
   src/parser/implicitgeometryelementparser.cpp
 )
@@ -96,6 +98,7 @@ SET(PUBLIC_HEADER
   include/citygml/texturecoordinates.h
   include/citygml/appearancetarget.h
   include/citygml/citygmlfactory.h
+  include/citygml/linestring.h
 )
 
 SET(HEADERS
@@ -135,6 +138,7 @@ SET(HEADERS
   include/parser/georeferencedtextureelementparser.h
   include/parser/geometryelementparser.h
   include/parser/polygonelementparser.h
+  include/parser/linestringelementparser.h
   include/parser/linearringelementparser.h
   include/parser/implicitgeometryelementparser.h
 )

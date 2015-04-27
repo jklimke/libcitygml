@@ -33,6 +33,21 @@ namespace citygml {
         return *m_polygons.at(i);
     }
 
+    unsigned int Geometry::getLineStringCount() const
+    {
+        return m_lineStrings.size();
+    }
+
+    LineString& Geometry::getLineString(unsigned int i)
+    {
+        return *m_lineStrings.at(i);
+    }
+
+    const LineString& Geometry::getLineString(unsigned int i) const
+    {
+        return *m_lineStrings.at(i);
+    }
+
     unsigned int Geometry::getGeometriesCount() const
     {
         return m_childGeometries.size();
@@ -99,7 +114,12 @@ namespace citygml {
 
     void Geometry::addPolygon( std::shared_ptr<Polygon> p )
     {
-        m_polygons.push_back( p );
+        m_polygons.push_back(p);
+    }
+
+    void Geometry::addLineString(std::shared_ptr<LineString> l)
+    {
+        m_lineStrings.push_back(l);
     }
 
     void Geometry::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)

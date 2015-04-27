@@ -24,6 +24,7 @@ namespace citygml {
         std::string m_destinationSRS;
         std::shared_ptr<CityGMLLogger> m_logger;
         std::unordered_map<std::string, std::string> m_transformedPolygonsSourceURNMap;
+        std::unordered_map<std::string, std::string> m_transformedLineStringsSourceURNMap;
 
         void transformRecursive(CityObject& obj, GeoTransform& transformation);
         void transformRecursive_helper(CityObject& obj, GeoTransform& transformation);

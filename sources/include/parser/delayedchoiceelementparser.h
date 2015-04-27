@@ -15,6 +15,13 @@ namespace citygml {
      */
     class DelayedChoiceElementParser : public ElementParser {
     public:
+
+        /**
+         * @brief creates a DelayedChoiceElementParser
+         * @param documentParser
+         * @param logger
+         * @param choices the parsers to choose from. The DelayedChoiceElementParser takes ownership of the parsers.
+         */
         DelayedChoiceElementParser(CityGMLDocumentParser& documentParser, std::shared_ptr<CityGMLLogger> logger, std::vector<ElementParser*> choices);
 
         // ElementParser interface
