@@ -41,6 +41,7 @@ SET(SOURCES
   src/citygml/polygonmanager.cpp
   src/citygml/geometrymanager.cpp
   src/citygml/linestring.cpp
+  src/citygml/address.cpp
 
   src/parser/nodetypes.cpp
   src/parser/attributes.cpp
@@ -70,6 +71,7 @@ SET(SOURCES
   src/parser/linestringelementparser.cpp
   src/parser/linearringelementparser.cpp
   src/parser/implicitgeometryelementparser.cpp
+  src/parser/addressparser.cpp
 )
 
 SET(PUBLIC_HEADER
@@ -99,6 +101,7 @@ SET(PUBLIC_HEADER
   include/citygml/appearancetarget.h
   include/citygml/citygmlfactory.h
   include/citygml/linestring.h
+  include/citygml/address.h
 )
 
 SET(HEADERS
@@ -141,6 +144,7 @@ SET(HEADERS
   include/parser/linestringelementparser.h
   include/parser/linearringelementparser.h
   include/parser/implicitgeometryelementparser.h
+  include/parser/addressparser.h
 )
 
 ADD_LIBRARY( ${target} ${LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC} ${SOURCES} ${HEADERS} )
