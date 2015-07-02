@@ -53,6 +53,7 @@ namespace citygml {
         NODETYPE( CORE, Name)
 
         NODETYPE( CORE, Address )
+        NODETYPE( CORE, XalAddress )
 
         NODETYPE( CORE, ImplicitGeometry )
         NODETYPE( CORE, RelativeGMLGeometry )
@@ -228,21 +229,19 @@ namespace citygml {
         NODETYPE( FRN, Lod4ImplicitRepresentation )
 
         // ADDRESS
-        NODETYPE( XAL, XalAddress )
-        NODETYPE( XAL, Administrativearea )
+        NODETYPE( XAL, AddressDetails )
         NODETYPE( XAL, Country )
         NODETYPE( XAL, CountryName )
-        NODETYPE( XAL, Code )
-        NODETYPE( XAL, Street )
-        NODETYPE( XAL, PostalCode )
-        NODETYPE( XAL, City )
-        NODETYPE( XAL, LocalityName )
-        NODETYPE( XAL, Thoroughfare )
-        NODETYPE( XAL, ThoroughfareNumber )
-        NODETYPE( XAL, ThoroughfareName )
+        NODETYPE( XAL, CountryNameCode )
+        NODETYPE( XAL, AdministrativeArea )
+        NODETYPE( XAL, AdministrativeAreaName )
         NODETYPE( XAL, Locality )
-        NODETYPE( XAL, AddressDetails )
-        NODETYPE( XAL, DependentLocalityName )
+        NODETYPE( XAL, LocalityName )
+        NODETYPE( XAL, PostalCode )
+        NODETYPE( XAL, PostalCodeNumber )
+        NODETYPE( XAL, Thoroughfare )
+        NODETYPE( XAL, ThoroughfareName )
+        NODETYPE( XAL, ThoroughfareNumber )
 
         // WTR
         NODETYPE( WTR, WaterBody )
@@ -393,3 +392,23 @@ namespace citygml {
 
     std::ostream& operator<<( std::ostream& os, const NodeType::XMLNode& o );
 }
+
+namespace std {
+
+template <>
+struct hash<citygml::NodeType::XMLNode> {
+    size_t operator()(const citygml::NodeType::XMLNode& node) const
+    {
+        return node.typeID();
+    }
+};
+
+template <>
+struct hash<const citygml::NodeType::XMLNode&> {
+    size_t operator()(const citygml::NodeType::XMLNode& node) const
+    {
+        return node.typeID();
+    }
+};
+
+}  // namespace std

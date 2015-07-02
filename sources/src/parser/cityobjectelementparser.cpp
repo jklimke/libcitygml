@@ -9,9 +9,11 @@
 #include "parser/skipelementparser.h"
 #include "parser/delayedchoiceelementparser.h"
 #include "parser/linestringelementparser.h"
+#include "parser/addressparser.h"
 
 #include "citygml/citygmlfactory.h"
 #include "citygml/citygmllogger.h"
+#include "citygml/address.h"
 
 #include <stdexcept>
 #include <iostream>
@@ -114,23 +116,6 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(BLDG, StoreysAboveGround));
                 attributesSet.insert(HANDLE_ATTR(BLDG, MeasuredHeight));
                 attributesSet.insert(HANDLE_ATTR(BLDG, RoofType));
-                attributesSet.insert(HANDLE_ATTR(CORE, Address));
-                attributesSet.insert(HANDLE_ATTR(BLDG, Address));
-                attributesSet.insert(HANDLE_ATTR(XAL, XalAddress));
-                attributesSet.insert(HANDLE_ATTR(XAL, Administrativearea));
-                attributesSet.insert(HANDLE_ATTR(XAL, Country));
-                attributesSet.insert(HANDLE_ATTR(XAL, CountryName));
-                attributesSet.insert(HANDLE_ATTR(XAL, Code));
-                attributesSet.insert(HANDLE_ATTR(XAL, Street));
-                attributesSet.insert(HANDLE_ATTR(XAL, PostalCode));
-                attributesSet.insert(HANDLE_ATTR(XAL, City));
-                attributesSet.insert(HANDLE_ATTR(XAL, LocalityName));
-                attributesSet.insert(HANDLE_ATTR(XAL, Thoroughfare));
-                attributesSet.insert(HANDLE_ATTR(XAL, ThoroughfareNumber));
-                attributesSet.insert(HANDLE_ATTR(XAL, ThoroughfareName));
-                attributesSet.insert(HANDLE_ATTR(XAL, Locality));
-                attributesSet.insert(HANDLE_ATTR(XAL, AddressDetails));
-                attributesSet.insert(HANDLE_ATTR(XAL, DependentLocalityName));
                 attributesSet.insert(HANDLE_ATTR(VEG, Class ));
                 attributesSet.insert(HANDLE_ATTR(VEG, Function ));
                 attributesSet.insert(HANDLE_ATTR(VEG, AverageHeight ));
@@ -334,7 +319,13 @@ namespace citygml {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger, node));
             return true;
-
+        } else if (node == NodeType::BLDG_AddressNode
+                   || node == NodeType::CORE_AddressNode
+                   || node == NodeType::CORE_XalAddressNode) {
+            setParserForNextElement(new AddressParser(m_documentParser, m_factory, m_logger, [this](std::unique_ptr<Address>&& address) {
+                m_model->setAddress(std::move(address));
+            }));
+            return true;
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
         }

@@ -16,6 +16,7 @@ namespace citygml {
     class Composite;
     class CityGMLLogger;
     class AppearanceManager;
+    class Address;
 
     class LIBCITYGML_EXPORT CityObject : public FeatureObject
     {
@@ -88,12 +89,14 @@ namespace citygml {
 
         // Access the children
         unsigned int getChildCityObjectsCount() const;
-
         const CityObject& getChildCityObject( unsigned int i ) const;
-
         CityObject& getChildCityObject( unsigned int i );
 
         void addChildCityObject(CityObject* cityObj);
+
+        // Access address
+        const Address* address() const;
+        void setAddress(std::unique_ptr<Address>&& address);
 
         void finish(Tesselator& tesselator, bool optimize, std::shared_ptr<citygml::CityGMLLogger> logger);
 
@@ -105,6 +108,7 @@ namespace citygml {
         std::vector<std::unique_ptr<Geometry>> m_geometries;
         std::vector<std::unique_ptr<ImplicitGeometry>> m_implicitGeometries;
         std::vector<std::unique_ptr<CityObject>> m_children;
+        std::unique_ptr<Address> m_address;
     };
 
     std::ostream& operator<<( std::ostream& os, const CityObject& o );
