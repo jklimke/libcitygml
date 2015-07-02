@@ -4,6 +4,7 @@
 #include "citygml/appearancemanager.h"
 #include "citygml/citygml.h"
 #include "citygml/citygmllogger.h"
+#include "citygml/address.h"
 
 #include <unordered_map>
 #include <algorithm>
@@ -83,6 +84,16 @@ namespace citygml {
     void CityObject::addChildCityObject(CityObject* cityObj)
     {
         m_children.push_back(std::unique_ptr<CityObject>(cityObj));
+    }
+
+    const Address* CityObject::address() const
+    {
+        return m_address.get();
+    }
+
+    void CityObject::setAddress(std::unique_ptr<Address>&& address)
+    {
+        m_address = std::move(address);
     }
 
     void CityObject::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)

@@ -96,6 +96,7 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, Name)
 
                 INITIALIZE_NODE( CORE, Address )
+                INITIALIZE_NODE( CORE, XalAddress )
 
                 INITIALIZE_NODE( CORE, ImplicitGeometry )
                 INITIALIZE_NODE( CORE, RelativeGMLGeometry )
@@ -270,21 +271,19 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, Address)
 
                 // ADDRESS
-                INITIALIZE_NODE( XAL, XalAddress )
-                INITIALIZE_NODE( XAL, Administrativearea )
+                INITIALIZE_NODE( XAL, AddressDetails )
                 INITIALIZE_NODE( XAL, Country )
                 INITIALIZE_NODE( XAL, CountryName )
-                INITIALIZE_NODE( XAL, Code )
-                INITIALIZE_NODE( XAL, Street )
-                INITIALIZE_NODE( XAL, PostalCode )
-                INITIALIZE_NODE( XAL, City )
-                INITIALIZE_NODE( XAL, LocalityName )
-                INITIALIZE_NODE( XAL, Thoroughfare )
-                INITIALIZE_NODE( XAL, ThoroughfareNumber )
-                INITIALIZE_NODE( XAL, ThoroughfareName )
+                INITIALIZE_NODE( XAL, CountryNameCode )
+                INITIALIZE_NODE( XAL, AdministrativeArea )
+                INITIALIZE_NODE( XAL, AdministrativeAreaName )
                 INITIALIZE_NODE( XAL, Locality )
-                INITIALIZE_NODE( XAL, AddressDetails )
-                INITIALIZE_NODE( XAL, DependentLocalityName )
+                INITIALIZE_NODE( XAL, LocalityName )
+                INITIALIZE_NODE( XAL, PostalCode )
+                INITIALIZE_NODE( XAL, PostalCodeNumber )
+                INITIALIZE_NODE( XAL, Thoroughfare )
+                INITIALIZE_NODE( XAL, ThoroughfareName )
+                INITIALIZE_NODE( XAL, ThoroughfareNumber )
 
                 // WTR
                 INITIALIZE_NODE( WTR, WaterBody )
@@ -472,6 +471,7 @@ namespace citygml {
     DEFINE_NODE( CORE, Name)
 
     DEFINE_NODE( CORE, Address )
+    DEFINE_NODE( CORE, XalAddress )
 
     DEFINE_NODE( CORE, ImplicitGeometry )
     DEFINE_NODE( CORE, RelativeGMLGeometry )
@@ -648,21 +648,19 @@ namespace citygml {
     DEFINE_NODE( BLDG, Address)
 
     // ADDRESS
-    DEFINE_NODE( XAL, XalAddress )
-    DEFINE_NODE( XAL, Administrativearea )
+    DEFINE_NODE( XAL, AddressDetails )
     DEFINE_NODE( XAL, Country )
     DEFINE_NODE( XAL, CountryName )
-    DEFINE_NODE( XAL, Code )
-    DEFINE_NODE( XAL, Street )
-    DEFINE_NODE( XAL, PostalCode )
-    DEFINE_NODE( XAL, City )
-    DEFINE_NODE( XAL, LocalityName )
-    DEFINE_NODE( XAL, Thoroughfare )
-    DEFINE_NODE( XAL, ThoroughfareNumber )
-    DEFINE_NODE( XAL, ThoroughfareName )
+    DEFINE_NODE( XAL, CountryNameCode )
+    DEFINE_NODE( XAL, AdministrativeArea )
+    DEFINE_NODE( XAL, AdministrativeAreaName )
     DEFINE_NODE( XAL, Locality )
-    DEFINE_NODE( XAL, AddressDetails )
-    DEFINE_NODE( XAL, DependentLocalityName )
+    DEFINE_NODE( XAL, LocalityName )
+    DEFINE_NODE( XAL, PostalCode )
+    DEFINE_NODE( XAL, PostalCodeNumber )
+    DEFINE_NODE( XAL, Thoroughfare )
+    DEFINE_NODE( XAL, ThoroughfareName )
+    DEFINE_NODE( XAL, ThoroughfareNumber )
 
     // WTR
     DEFINE_NODE( WTR, WaterBody )
