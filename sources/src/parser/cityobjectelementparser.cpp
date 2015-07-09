@@ -453,7 +453,10 @@ namespace citygml {
                     || node == NodeType::WTR_Lod2SurfaceNode
                     || node == NodeType::WTR_Lod3SurfaceNode
                     || node == NodeType::WTR_Lod4SurfaceNode
-                    || node == NodeType::WTR_BoundedByNode) {
+                    || node == NodeType::WTR_BoundedByNode
+                    || node == NodeType::BLDG_AddressNode
+                    || node == NodeType::CORE_AddressNode
+                    || node == NodeType::CORE_XalAddressNode) {
 
             return true;
         }
