@@ -72,9 +72,7 @@ namespace citygml {
 
     bool AddressParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        return k_rootElements.count(node) > 0
-            || k_subElements.count(node) > 0
-            || k_dataElements.count(node) > 0;
+        return k_rootElements.count(node) > 0;
     }
 
     bool AddressParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
@@ -97,7 +95,7 @@ namespace citygml {
 
     bool AddressParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        return handlesElement(node);
+        return k_subElements.count(node) > 0 || k_dataElements.count(node) > 0 || k_rootElements.count(node) > 0;
     }
 
     bool AddressParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
@@ -108,7 +106,7 @@ namespace citygml {
             return true;
         }
 
-        return handlesElement(node);
+        return k_subElements.count(node) > 0 || k_dataElements.count(node) > 0 || k_rootElements.count(node) > 0;
     }
 
 } /* namespace citygml */

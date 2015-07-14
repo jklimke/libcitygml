@@ -40,6 +40,8 @@ namespace citygml {
         /**
          * @brief returns wether the parser handels elements of type node
          * @note this is required for the delayed choice mechanism @see DelayedChoiceElementParser
+         * @return true if node is a valid !!root!! element for this parser
+         * (e.g. <Appearence> is valid root element for the appearance parser but <theme> is not since its a child element of an appearance)
          */
         virtual bool handlesElement(const NodeType::XMLNode& node) const = 0;
 
