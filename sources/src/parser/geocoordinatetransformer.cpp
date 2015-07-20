@@ -233,20 +233,20 @@ namespace citygml {
 
         for (unsigned int i = 0; i < obj.getPolygonsCount(); i++) {
 
-            Polygon& poly = obj.getPolygon(i);
+            Polygon* poly = obj.getPolygon(i);
 
-            auto it = m_transformedPolygonsSourceURNMap.find(poly.getId());
+            auto it = m_transformedPolygonsSourceURNMap.find(poly);
 
             if (it == m_transformedPolygonsSourceURNMap.end()) {
 
-                for (TVec3d& vertex : poly.getVertices()) {
+                for (TVec3d& vertex : poly->getVertices()) {
                     transformation.transform(vertex);
                 }
 
-                m_transformedPolygonsSourceURNMap[poly.getId()] = transformation.sourceURN();
+                m_transformedPolygonsSourceURNMap[poly] = transformation.sourceURN();
 
             } else if (it->second != transformation.sourceURN()) {
-                CITYGML_LOG_WARN(m_logger, "Polygon with id '" << poly.getId() << "' was already transformed from " << it->second << " to " << m_destinationSRS
+                CITYGML_LOG_WARN(m_logger, "Polygon with id '" << poly->getId() << "' was already transformed from " << it->second << " to " << m_destinationSRS
                                  << ". But the spatial reference system of Geometry object with id '" << obj.getId() << "' that also contains the polygon is different "
                                  << "(" << transformation.sourceURN() << "). Ignoring new source SRS.");
             }
@@ -254,26 +254,26 @@ namespace citygml {
 
         for (unsigned int i = 0; i < obj.getLineStringCount(); i++) {
 
-            LineString& lineString = obj.getLineString(i);
+            LineString* lineString = obj.getLineString(i);
 
-            auto it = m_transformedLineStringsSourceURNMap.find(lineString.getId());
+            auto it = m_transformedLineStringsSourceURNMap.find(lineString);
 
             if (it == m_transformedLineStringsSourceURNMap.end()) {
 
-                if (lineString.getDimensions() == 2) {
-                    for (TVec2d& vertex : lineString.getVertices2D()) {
+                if (lineString->getDimensions() == 2) {
+                    for (TVec2d& vertex : lineString->getVertices2D()) {
                         transformation.transform(vertex);
                     }
-                } else if (lineString.getDimensions() == 3) {
-                    for (TVec3d& vertex : lineString.getVertices3D()) {
+                } else if (lineString->getDimensions() == 3) {
+                    for (TVec3d& vertex : lineString->getVertices3D()) {
                         transformation.transform(vertex);
                     }
                 }
 
-                m_transformedLineStringsSourceURNMap[lineString.getId()] = transformation.sourceURN();
+                m_transformedLineStringsSourceURNMap[lineString] = transformation.sourceURN();
 
             } else if (it->second != transformation.sourceURN()) {
-                CITYGML_LOG_WARN(m_logger, "LineString with id '" << lineString.getId() << "' was already transformed from " << it->second << " to " << m_destinationSRS
+                CITYGML_LOG_WARN(m_logger, "LineString with id '" << lineString->getId() << "' was already transformed from " << it->second << " to " << m_destinationSRS
                                  << ". But the spatial reference system of Geometry object with id '" << obj.getId() << "' that also contains the LineString is different "
                                  << "(" << transformation.sourceURN() << "). Ignoring new source SRS.");
             }

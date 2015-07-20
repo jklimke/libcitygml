@@ -38,12 +38,12 @@ namespace citygml {
         unsigned int getLOD() const;
 
         unsigned int getPolygonsCount() const;
-        Polygon& getPolygon( unsigned int i );
-        const Polygon& getPolygon( unsigned int i ) const;
+        Polygon* getPolygon( unsigned int i );
+        const Polygon* getPolygon( unsigned int i ) const;
 
         unsigned int getLineStringCount() const;
-        LineString& getLineString( unsigned int i );
-        const LineString& getLineString( unsigned int i ) const;
+        LineString* getLineString( unsigned int i );
+        const LineString* getLineString( unsigned int i ) const;
 
         unsigned int getGeometriesCount() const;
         const Geometry& getGeometry( unsigned int i ) const;
