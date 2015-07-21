@@ -364,7 +364,7 @@ void setMaterial(osg::ref_ptr<osg::StateSet> stateset, const citygml::Polygon& p
 void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, CityGMLSettings& settings, osg::Geode* geometryContainer, const osg::Vec3d& offset ) {
     for ( unsigned int j = 0; j < geometry.getPolygonsCount(); j++ )
     {
-        const citygml::Polygon& p = geometry.getPolygon(j);
+        const citygml::Polygon& p = *geometry.getPolygon(j);
 
         if ( p.getIndices().size() == 0 ) continue;
 
