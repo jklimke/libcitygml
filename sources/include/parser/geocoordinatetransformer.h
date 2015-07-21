@@ -14,6 +14,7 @@ namespace citygml {
     class ImplicitGeometry;
     class Geometry;
     class Polygon;
+    class LineString;
 
     class GeoCoordinateTransformer {
     public:
@@ -23,8 +24,8 @@ namespace citygml {
     private:
         std::string m_destinationSRS;
         std::shared_ptr<CityGMLLogger> m_logger;
-        std::unordered_map<std::string, std::string> m_transformedPolygonsSourceURNMap;
-        std::unordered_map<std::string, std::string> m_transformedLineStringsSourceURNMap;
+        std::unordered_map<Polygon*, std::string> m_transformedPolygonsSourceURNMap;
+        std::unordered_map<LineString*, std::string> m_transformedLineStringsSourceURNMap;
 
         void transformRecursive(CityObject& obj, GeoTransform& transformation);
         void transformRecursive_helper(CityObject& obj, GeoTransform& transformation);

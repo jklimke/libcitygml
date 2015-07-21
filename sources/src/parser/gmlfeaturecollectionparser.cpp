@@ -61,7 +61,7 @@ namespace citygml {
         } else if (node == NodeType::GML_UpperCornerNode) {
 
             if (m_bounds != nullptr) {
-                m_bounds->setLowerBound(parseValue<TVec3d>(characters, m_logger, getDocumentLocation()));
+                m_bounds->setUpperBound(parseValue<TVec3d>(characters, m_logger, getDocumentLocation()));
             } else {
                 CITYGML_LOG_WARN(m_logger, "Definition of " << NodeType::GML_UpperCornerNode << " outside " << NodeType::GML_EnvelopeNode << " at " << getDocumentLocation());
             }

@@ -23,14 +23,14 @@ namespace citygml {
         return m_polygons.size();
     }
 
-    Polygon& Geometry::getPolygon(unsigned int i)
+    Polygon* Geometry::getPolygon(unsigned int i)
     {
-        return *m_polygons.at(i);
+        return m_polygons.at(i).get();
     }
 
-    const Polygon& Geometry::getPolygon(unsigned int i) const
+    const Polygon* Geometry::getPolygon(unsigned int i) const
     {
-        return *m_polygons.at(i);
+        return m_polygons.at(i).get();
     }
 
     unsigned int Geometry::getLineStringCount() const
@@ -38,14 +38,14 @@ namespace citygml {
         return m_lineStrings.size();
     }
 
-    LineString& Geometry::getLineString(unsigned int i)
+    LineString* Geometry::getLineString(unsigned int i)
     {
-        return *m_lineStrings.at(i);
+        return m_lineStrings.at(i).get();
     }
 
-    const LineString& Geometry::getLineString(unsigned int i) const
+    const LineString* Geometry::getLineString(unsigned int i) const
     {
-        return *m_lineStrings.at(i);
+        return m_lineStrings.at(i).get();
     }
 
     unsigned int Geometry::getGeometriesCount() const
@@ -149,7 +149,7 @@ namespace citygml {
         for ( unsigned int i = 0; i < s.getPolygonsCount(); i++ )
         {
             os << s.getPolygon(i);
-            count += s.getPolygon(i).getVertices().size();
+            count += s.getPolygon(i)->getVertices().size();
         }
 
         os << "  @ " << s.getPolygonsCount() << " polys [" << count << " vertices]" << std::endl;

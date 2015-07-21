@@ -86,7 +86,7 @@ namespace citygml {
     {
         if (m_orientation == "-") {
             for (int i = 0; i < m_model->getPolygonsCount(); i++) {
-                m_model->getPolygon(i).setNegNormal(true);
+                m_model->getPolygon(i)->setNegNormal(true);
             }
         }
 
