@@ -163,3 +163,6 @@ INSTALL(
     DESTINATION  ${INCLUDE_INSTALL_DIR}
 )
 
+configure_file(citygml.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+
