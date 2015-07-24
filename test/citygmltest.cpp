@@ -28,7 +28,7 @@ void usage()
 {
     std::cout << "Usage: citygmltest [-options...] <filename>" << std::endl;
     std::cout << " Options:" << std::endl;
-    std::cout << "  -log            Print some informations during parsing" << std::endl;
+    std::cout << "  -log            Print some information during parsing" << std::endl;
     std::cout << "  -filter <mask>  CityGML objects to parse (default:All)" << std::endl
         << "                  The mask is composed of:" << std::endl
         << "                   GenericCityObject, Building, Room," << std::endl
