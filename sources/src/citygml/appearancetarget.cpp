@@ -56,44 +56,44 @@ namespace citygml {
         m_themeTexMapBack.insert(other.m_themeTexMapBack.begin(), other.m_themeTexMapBack.end());
     }
 
-    MaterialTargetDefinition* AppearanceTarget::getMaterialTargetDefinitionForTheme(const std::string& theme, bool front)
+    std::shared_ptr<MaterialTargetDefinition> AppearanceTarget::getMaterialTargetDefinitionForTheme(const std::string& theme, bool front)
     {
         auto& map = front ? m_themeMatMapFront : m_themeMatMapBack;
         auto it = map.find(theme);
         if (it == map.end()) {
             return nullptr;
         }
-        return it->second.get();
+        return it->second;
     }
 
-    const MaterialTargetDefinition* AppearanceTarget::getMaterialTargetDefinitionForTheme(const std::string& theme, bool front) const
+    std::shared_ptr<const MaterialTargetDefinition> AppearanceTarget::getMaterialTargetDefinitionForTheme(const std::string& theme, bool front) const
     {
         auto& map = front ? m_themeMatMapFront : m_themeMatMapBack;
         const auto it = map.find(theme);
         if (it == map.end()) {
             return nullptr;
         }
-        return it->second.get();
+        return it->second;
     }
 
-    TextureTargetDefinition* AppearanceTarget::getTextureTargetDefinitionForTheme(const std::string& theme, bool front)
+    std::shared_ptr<TextureTargetDefinition> AppearanceTarget::getTextureTargetDefinitionForTheme(const std::string& theme, bool front)
     {
         auto& map = front ? m_themeTexMapFront : m_themeTexMapBack;
         auto it = map.find(theme);
         if (it == map.end()) {
             return nullptr;
         }
-        return it->second.get();
+        return it->second;
     }
 
-    const TextureTargetDefinition* AppearanceTarget::getTextureTargetDefinitionForTheme(const std::string& theme, bool front) const
+    std::shared_ptr<const TextureTargetDefinition> AppearanceTarget::getTextureTargetDefinitionForTheme(const std::string& theme, bool front) const
     {
         auto& map = front ? m_themeTexMapFront : m_themeTexMapBack;
         const auto it = map.find(theme);
         if (it == map.end()) {
             return nullptr;
         }
-        return it->second.get();
+        return it->second;
     }
 
     std::vector<TextureTargetDefinition*> AppearanceTarget::getTextureTargetDefinitions()

@@ -34,7 +34,7 @@ namespace citygml {
         std::shared_ptr<Texture> m_model;
         std::function<void(std::shared_ptr<Texture>)> m_callback;
         std::shared_ptr<TextureTargetDefinition> m_currentTexTargetDef;
-        TextureCoordinates* m_currentTexCoords;
+        std::shared_ptr<TextureCoordinates> m_currentTexCoords;
     };
 
 }

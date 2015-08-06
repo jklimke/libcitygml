@@ -23,14 +23,14 @@ namespace citygml {
         return m_polygons.size();
     }
 
-    Polygon* Geometry::getPolygon(unsigned int i)
+    std::shared_ptr<Polygon> Geometry::getPolygon(unsigned int i)
     {
-        return m_polygons.at(i).get();
+        return m_polygons.at(i);
     }
 
-    const Polygon* Geometry::getPolygon(unsigned int i) const
+    std::shared_ptr<const Polygon> Geometry::getPolygon(unsigned int i) const
     {
-        return m_polygons.at(i).get();
+        return m_polygons.at(i);
     }
 
     unsigned int Geometry::getLineStringCount() const
@@ -38,14 +38,14 @@ namespace citygml {
         return m_lineStrings.size();
     }
 
-    LineString* Geometry::getLineString(unsigned int i)
+    std::shared_ptr<LineString> Geometry::getLineString(unsigned int i)
     {
-        return m_lineStrings.at(i).get();
+        return m_lineStrings.at(i);
     }
 
-    const LineString* Geometry::getLineString(unsigned int i) const
+    std::shared_ptr<const LineString> Geometry::getLineString(unsigned int i) const
     {
-        return m_lineStrings.at(i).get();
+        return m_lineStrings.at(i);
     }
 
     unsigned int Geometry::getGeometriesCount() const

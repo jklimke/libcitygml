@@ -45,14 +45,14 @@ namespace citygml {
          * @param front determines for which side the material should be returned (true = front side, false = backside)
          * @return a Material object or nullptr if there is no material for the theme and side
          */
-        const Material* getMaterialFor(const std::string& theme, bool front) const;
+        std::shared_ptr<const Material> getMaterialFor(const std::string& theme, bool front) const;
 
         /**
          * @brief returns the material of this polygon for the given theme. Prefers front side materials over back side materials
          * @param theme a name of an appearance theme
          * @return a Material object or nullptr if there is no material for the theme
          */
-        const Material* getMaterialFor(const std::string& theme) const;
+        std::shared_ptr<const Material> getMaterialFor(const std::string& theme) const;
 
         /**
          * @brief returns the texture of this polygon for the given theme and side
@@ -60,14 +60,14 @@ namespace citygml {
          * @param front determines for which side the texture should be returned (true = front side, false = backside)
          * @return a Texture object or nullptr if there is no texture for the theme and side
          */
-        const Texture* getTextureFor(const std::string& theme, bool front) const;
+        std::shared_ptr<const Texture> getTextureFor(const std::string& theme, bool front) const;
 
         /**
          * @brief returns the texture of this polygon for the given theme. Prefers front side textures over back side textures
          * @param theme a name of an appearance theme
          * @return a Texture object or nullptr if there is no texture for the theme
          */
-        const Texture* getTextureFor(const std::string& theme) const;
+        std::shared_ptr<const Texture> getTextureFor(const std::string& theme) const;
 
         /**
          * @brief returns the texture coordinates for the given theme and side
