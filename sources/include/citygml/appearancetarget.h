@@ -28,11 +28,11 @@ namespace citygml {
 
         void addTargetDefinitionsOf(const AppearanceTarget& other);
 
-        MaterialTargetDefinition* getMaterialTargetDefinitionForTheme(const std::string& theme, bool front);
-        const MaterialTargetDefinition* getMaterialTargetDefinitionForTheme(const std::string& theme, bool front) const;
+        std::shared_ptr<MaterialTargetDefinition> getMaterialTargetDefinitionForTheme(const std::string& theme, bool front);
+        std::shared_ptr<const MaterialTargetDefinition> getMaterialTargetDefinitionForTheme(const std::string& theme, bool front) const;
 
-        TextureTargetDefinition* getTextureTargetDefinitionForTheme(const std::string& theme, bool front);
-        const TextureTargetDefinition* getTextureTargetDefinitionForTheme(const std::string& theme, bool front) const;
+        std::shared_ptr<TextureTargetDefinition> getTextureTargetDefinitionForTheme(const std::string& theme, bool front);
+        std::shared_ptr<const TextureTargetDefinition> getTextureTargetDefinitionForTheme(const std::string& theme, bool front) const;
 
         std::vector<TextureTargetDefinition*> getTextureTargetDefinitions();
 

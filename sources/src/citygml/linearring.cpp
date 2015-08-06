@@ -66,14 +66,14 @@ namespace citygml {
     {
         // Currently TextureCoordinates sharing via xlink is not supported (every TextureTargetDefinition is the
         // sole owner of its TextureCoordinate objects... if this ever changes use an unordered_set for the texture coordinates
-        std::vector<TextureCoordinates*> coordinatesList;
+        std::vector<std::shared_ptr<TextureCoordinates>> coordinatesList;
 
         bool textureCoordinatesVerticesMismatch = false;
 
         for (auto& texTarget : targets) {
 
             for (unsigned int i = 0; i < texTarget->getTextureCoordinatesCount(); i++) {
-                TextureCoordinates* texCoords = texTarget->getTextureCoordinates(i);
+                auto texCoords = texTarget->getTextureCoordinates(i);
 
                 if (texCoords->targets(*this)) {
 
@@ -100,7 +100,7 @@ namespace citygml {
             if ( ( m_vertices[i] - m_vertices[ ( i + 1 ) % m_vertices.size() ] ).sqrLength() <= DBL_EPSILON )
             {
                 m_vertices.erase( m_vertices.begin() + i );
-                for (TextureCoordinates* coordinates : coordinatesList) {
+                for (auto coordinates : coordinatesList) {
                     coordinates->eraseCoordinate(i);
                 }
             } else {
@@ -114,7 +114,7 @@ namespace citygml {
             return;
         }
 
-        for (TextureCoordinates* coordinates : coordinatesList) {
+        for (auto coordinates : coordinatesList) {
             if (coordinates->getCoords().size() != m_vertices.size()) {
                 CITYGML_LOG_ERROR(logger, "Broken implementation. Duplicate vertex removal in LinearRing with id '" << this->getId()
                                   << "' caused a mismatch of texture coordinates in coordinates list  with id '" << coordinates->getId()

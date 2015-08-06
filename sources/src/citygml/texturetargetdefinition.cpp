@@ -12,17 +12,17 @@ namespace citygml {
         return m_coordinatesList.size();
     }
 
-    TextureCoordinates* TextureTargetDefinition::getTextureCoordinates(unsigned int i)
+    std::shared_ptr<TextureCoordinates> TextureTargetDefinition::getTextureCoordinates(unsigned int i)
     {
-        return m_coordinatesList.at(i).get();
+        return m_coordinatesList.at(i);
     }
 
-    const TextureCoordinates*TextureTargetDefinition::getTextureCoordinates(unsigned int i) const
+    std::shared_ptr<const TextureCoordinates> TextureTargetDefinition::getTextureCoordinates(unsigned int i) const
     {
-        return m_coordinatesList.at(i).get();
+        return m_coordinatesList.at(i);
     }
 
-    TextureCoordinates* TextureTargetDefinition::getTextureCoordinatesForID(const std::string& ringID)
+    std::shared_ptr<TextureCoordinates> TextureTargetDefinition::getTextureCoordinatesForID(const std::string& ringID)
     {
         auto it = m_idTexCoordMap.find(ringID);
         if (it != m_idTexCoordMap.end()) {
@@ -31,7 +31,7 @@ namespace citygml {
         return nullptr;
     }
 
-    const TextureCoordinates* TextureTargetDefinition::getTextureCoordinatesForID(const std::string& ringID) const
+    std::shared_ptr<const TextureCoordinates> TextureTargetDefinition::getTextureCoordinatesForID(const std::string& ringID) const
     {
         const auto it = m_idTexCoordMap.find(ringID);
         if (it != m_idTexCoordMap.end()) {
@@ -40,9 +40,9 @@ namespace citygml {
         return nullptr;
     }
 
-    void TextureTargetDefinition::addTexCoordinates(TextureCoordinates* texCoords)
+    void TextureTargetDefinition::addTexCoordinates(std::shared_ptr<TextureCoordinates> texCoords)
     {
-        m_coordinatesList.push_back(std::unique_ptr<TextureCoordinates>(texCoords));
+        m_coordinatesList.push_back(texCoords);
         m_idTexCoordMap[texCoords->getTargetLinearRingID()] = texCoords;
     }
 

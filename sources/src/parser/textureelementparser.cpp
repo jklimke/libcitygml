@@ -81,7 +81,7 @@ namespace citygml {
             } else if (m_currentTexCoords != nullptr) {
                 CITYGML_LOG_WARN(m_logger, "Nested texture coordinates definition detected at: " << getDocumentLocation());
             } else {
-                m_currentTexCoords = new TextureCoordinates(attributes.getCityGMLIDAttribute(), parseReference(attributes.getAttribute("ring"), m_logger, getDocumentLocation()));
+                m_currentTexCoords = std::make_shared<TextureCoordinates>(attributes.getCityGMLIDAttribute(), parseReference(attributes.getAttribute("ring"), m_logger, getDocumentLocation()));
             }
             return true;
         }
@@ -122,7 +122,6 @@ namespace citygml {
 
             if (m_currentTexCoords != nullptr) {
                 CITYGML_LOG_WARN(m_logger, "TexCoordList node finished before TextureCoordinates child is finished at " << getDocumentLocation());
-                delete m_currentTexCoords;
                 m_currentTexCoords = nullptr;
             }
 

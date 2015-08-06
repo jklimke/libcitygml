@@ -38,36 +38,36 @@ namespace citygml {
     }
 
 
-    const Material* Polygon::getMaterialFor(const std::string& theme, bool front) const
+    std::shared_ptr<const Material> Polygon::getMaterialFor(const std::string& theme, bool front) const
     {
-        const MaterialTargetDefinition* targetDef = getMaterialTargetDefinitionForTheme(theme, front);
+        const auto targetDef = getMaterialTargetDefinitionForTheme(theme, front);
         if (targetDef == nullptr) {
             return nullptr;
         }
-        return targetDef->getAppearance().get();
+        return targetDef->getAppearance();
     }
 
-    const Material* Polygon::getMaterialFor(const std::string& theme) const
+    std::shared_ptr<const Material> Polygon::getMaterialFor(const std::string& theme) const
     {
-        const Material* result = getMaterialFor(theme, true);
+        const auto result = getMaterialFor(theme, true);
         if (result != nullptr) {
             return result;
         }
         return getMaterialFor(theme, false);
     }
 
-    const Texture* Polygon::getTextureFor(const std::string& theme, bool front) const
+    std::shared_ptr<const Texture> Polygon::getTextureFor(const std::string& theme, bool front) const
     {
-        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme, front);
+        const auto targetDef = getTextureTargetDefinitionForTheme(theme, front);
         if (targetDef == nullptr) {
             return nullptr;
         }
-        return targetDef->getAppearance().get();
+        return targetDef->getAppearance();
     }
 
-    const Texture* Polygon::getTextureFor(const std::string& theme) const
+    std::shared_ptr<const Texture> Polygon::getTextureFor(const std::string& theme) const
     {
-        const Texture* result = getTextureFor(theme, true);
+        const auto result = getTextureFor(theme, true);
         if (result != nullptr) {
             return result;
         }
@@ -96,7 +96,7 @@ namespace citygml {
 
     std::shared_ptr<const Texture> Polygon::getTextureForTheme(const std::string& theme, bool front) const
     {
-        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme, front);
+        const auto targetDef = getTextureTargetDefinitionForTheme(theme, front);
 
         if (targetDef == nullptr) {
             return nullptr;
@@ -142,13 +142,13 @@ namespace citygml {
 
     std::vector<TVec2f> Polygon::getTexCoordsForRingAndTheme(const LinearRing& ring, const std::string& theme, bool front) {
 
-        const TextureTargetDefinition* targetDef = getTextureTargetDefinitionForTheme(theme, front);
+        const auto targetDef = getTextureTargetDefinitionForTheme(theme, front);
 
         if (targetDef == nullptr) {
             return std::vector<TVec2f>();
         }
 
-        const TextureCoordinates* coords = targetDef->getTextureCoordinatesForID(ring.getId());
+        const auto coords = targetDef->getTextureCoordinatesForID(ring.getId());
 
         if (coords == nullptr || coords->getCoords().empty()) {
             return std::vector<TVec2f>();

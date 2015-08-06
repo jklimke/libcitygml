@@ -29,17 +29,17 @@ namespace citygml {
         /**
          * @brief the i-th texture coordinates in texture coordinates list (gml::TexCoordList)
          */
-        TextureCoordinates* getTextureCoordinates(unsigned int i);
-        const TextureCoordinates* getTextureCoordinates(unsigned int i) const;
+        std::shared_ptr<TextureCoordinates> getTextureCoordinates(unsigned int i);
+        std::shared_ptr<const TextureCoordinates> getTextureCoordinates(unsigned int i) const;
 
         /**
          * @brief the texture coordinates for linear ring with the given id
          * @return the TextureCoordinates object or nullptr if no such object exists for ringID
          */
-        TextureCoordinates* getTextureCoordinatesForID(const std::string& ringID);
-        const TextureCoordinates* getTextureCoordinatesForID(const std::string& ringID) const;
+        std::shared_ptr<TextureCoordinates> getTextureCoordinatesForID(const std::string& ringID);
+        std::shared_ptr<const TextureCoordinates> getTextureCoordinatesForID(const std::string& ringID) const;
 
-        void addTexCoordinates(TextureCoordinates* texCoords);
+        void addTexCoordinates(std::shared_ptr<TextureCoordinates> texCoords);
 
 
         ~TextureTargetDefinition();
@@ -47,6 +47,6 @@ namespace citygml {
     protected:
         TextureTargetDefinition(const std::string& targetID, std::shared_ptr<Texture> appearance, const std::string& id);
         std::vector<std::shared_ptr<TextureCoordinates>> m_coordinatesList;
-        std::unordered_map<std::string, TextureCoordinates*> m_idTexCoordMap;
+        std::unordered_map<std::string, std::shared_ptr<TextureCoordinates>> m_idTexCoordMap;
     };
 }
