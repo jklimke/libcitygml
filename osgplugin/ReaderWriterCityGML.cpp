@@ -274,7 +274,7 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readCity(std::shared_ptr<co
 }
 
 void setTexture(osg::ref_ptr<osg::StateSet> stateset, osg::Geometry* geom, const citygml::Polygon& polygon, CityGMLSettings& settings) {
-    const citygml::Texture* citygmlTex = polygon.getTextureFor(settings._theme);
+    const auto citygmlTex = polygon.getTextureFor(settings._theme);
 
     if ( !citygmlTex )
     {
@@ -338,7 +338,7 @@ void setTexture(osg::ref_ptr<osg::StateSet> stateset, osg::Geometry* geom, const
 
 void setMaterial(osg::ref_ptr<osg::StateSet> stateset, const citygml::Polygon& polygon, CityGMLSettings& settings) {
 
-    const citygml::Material* citygmlMaterial = polygon.getMaterialFor(settings._theme);
+    const auto citygmlMaterial = polygon.getMaterialFor(settings._theme);
 
     if (!citygmlMaterial) {
         return;
