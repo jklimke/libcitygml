@@ -10,6 +10,30 @@
 #include <functional>
 
 namespace citygml {
+	void setCountry(Address* address, std::string const &country)
+	{
+		address->setCountry(country);
+	}
+
+	void setLocality(Address* address, std::string const &locality)
+	{
+		address->setLocality(locality);
+	}
+
+	void setThoroughfareName(Address* address, std::string const &thoroughfareName)
+	{
+		address->setThoroughfareName(thoroughfareName);
+	}
+
+	void setThoroughfareNumber(Address *address, std::string const &thoroughfareNumber)
+	{
+		address->setThoroughfareNumber(thoroughfareNumber);
+	}
+
+	void setPostalCode(Address* address, std::string const &postalCode)
+	{
+		address->setPostalCode(postalCode);
+	}
 
     namespace {
 
@@ -43,13 +67,18 @@ namespace citygml {
                         NodeType::XAL_ThoroughfareNode
                     };
 
-                    k_dataElements = {
-                        { NodeType::XAL_CountryNameNode, &Address::setCountry },
-                        { NodeType::XAL_LocalityNameNode, &Address::setLocality },
-                        { NodeType::XAL_ThoroughfareNameNode, &Address::setThoroughfareName },
-                        { NodeType::XAL_ThoroughfareNumberNode, &Address::setThoroughfareNumber },
-                        { NodeType::XAL_PostalCodeNumberNode, &Address::setPostalCode }
-                    };
+                    //k_dataElements = {
+                    //    { NodeType::XAL_CountryNameNode, &Address::setCountry },
+                    //    { NodeType::XAL_LocalityNameNode, &Address::setLocality },
+                    //    { NodeType::XAL_ThoroughfareNameNode, &Address::setThoroughfareName },
+                    //    { NodeType::XAL_ThoroughfareNumberNode, &Address::setThoroughfareNumber },
+                    //    { NodeType::XAL_PostalCodeNumberNode, &Address::setPostalCode }
+                    //};
+					k_dataElements[NodeType::XAL_CountryNameNode] = &setCountry;
+					k_dataElements[NodeType::XAL_LocalityNameNode] = &setLocality;
+					k_dataElements[NodeType::XAL_ThoroughfareNameNode] = &setThoroughfareName;
+					k_dataElements[NodeType::XAL_ThoroughfareNumberNode] = &setThoroughfareNumber;
+					k_dataElements[NodeType::XAL_PostalCodeNumberNode] = &setPostalCode;
 
                     g_nodeSetsInitialized = true;
                 }
@@ -82,7 +111,7 @@ namespace citygml {
             throw std::runtime_error("Unexpected start tag found.");
         }
 
-        m_address = make_unique<Address>(attributes.getCityGMLIDAttribute());
+        m_address = std::make_unique<Address>(attributes.getCityGMLIDAttribute());
         return true;
     }
 

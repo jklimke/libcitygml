@@ -32,6 +32,7 @@
 
 #include <iostream>
 #include <assert.h>
+#include <algorithm>
 
 Tesselator::Tesselator(std::shared_ptr<citygml::CityGMLLogger> logger )
 {
