@@ -67,13 +67,6 @@ namespace citygml {
                         NodeType::XAL_ThoroughfareNode
                     };
 
-                    //k_dataElements = {
-                    //    { NodeType::XAL_CountryNameNode, &Address::setCountry },
-                    //    { NodeType::XAL_LocalityNameNode, &Address::setLocality },
-                    //    { NodeType::XAL_ThoroughfareNameNode, &Address::setThoroughfareName },
-                    //    { NodeType::XAL_ThoroughfareNumberNode, &Address::setThoroughfareNumber },
-                    //    { NodeType::XAL_PostalCodeNumberNode, &Address::setPostalCode }
-                    //};
 					k_dataElements[NodeType::XAL_CountryNameNode] = &setCountry;
 					k_dataElements[NodeType::XAL_LocalityNameNode] = &setLocality;
 					k_dataElements[NodeType::XAL_ThoroughfareNameNode] = &setThoroughfareName;
