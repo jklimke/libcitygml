@@ -42,7 +42,7 @@ namespace citygml {
         TVec4f getBorderColor() const;
         void setBorderColor(TVec4f color);
 
-        std::string toString() const;
+        std::string toString() const override;
 
         virtual std::shared_ptr<Texture> asTexture() override;
         virtual std::shared_ptr<const Texture> asTexture() const override;

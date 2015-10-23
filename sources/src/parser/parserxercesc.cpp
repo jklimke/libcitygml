@@ -140,7 +140,7 @@ public:
         CityGMLDocumentParser::endDocument();
     }
 
-    virtual void setDocumentLocator(const xercesc::Locator* const locator) {
+    virtual void setDocumentLocator(const xercesc::Locator* const locator) override {
         m_documentLocation.setLocator(locator);
     }
 

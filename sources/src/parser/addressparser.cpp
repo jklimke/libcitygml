@@ -104,7 +104,7 @@ namespace citygml {
             throw std::runtime_error("Unexpected start tag found.");
         }
 
-        m_address = make_unique<Address>(attributes.getCityGMLIDAttribute());
+        m_address = citygml::make_unique<Address>(attributes.getCityGMLIDAttribute());
         return true;
     }
 
