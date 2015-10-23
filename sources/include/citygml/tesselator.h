@@ -30,7 +30,7 @@
   #include <GL/glu.h>
 #endif
 
-#include "citygml/vecs.hpp"
+#include <citygml/vecs.hpp>
 #include <vector>
 #include <list>
 #include <memory>

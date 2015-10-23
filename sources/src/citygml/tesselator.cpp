@@ -22,7 +22,7 @@
 #define NOMINMAX
 #endif
 
-#include "citygml/tesselator.h"
+#include <citygml/tesselator.h>
 #ifndef WIN32
 #	include <stdint.h>
 #endif

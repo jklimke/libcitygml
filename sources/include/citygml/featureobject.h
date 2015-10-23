@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "citygml/citygml_api.h"
-#include "citygml/object.h"
+#include <citygml/object.h>
+#include <citygml/envelope.h>
 
 namespace citygml {
 

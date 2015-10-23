@@ -11,9 +11,9 @@
 #include "parser/linestringelementparser.h"
 #include "parser/addressparser.h"
 
-#include <citygml/citygmlfactory.h>
-#include <citygml/citygmllogger.h>
-#include <citygml/address.h>
+#include <citygml$0>
+#include <citygml$0>
+#include <citygml$0>
 
 #include <stdexcept>
 #include <iostream>

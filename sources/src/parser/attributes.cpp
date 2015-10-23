@@ -2,7 +2,7 @@
 #include "parser/parserutils.hpp"
 #include "parser/documentlocation.h"
 
-#include "citygml/citygmllogger.h"
+#include <citygml/citygmllogger.h>
 
 #include "sstream"
 

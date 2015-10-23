@@ -1,8 +1,8 @@
-#include "citygml/appearancetarget.h"
-#include "citygml/texturetargetdefinition.h"
-#include "citygml/materialtargetdefinition.h"
-#include "citygml/appearancetargetdefinition.h"
-#include "citygml/appearance.h"
+#include <citygml/appearancetarget.h>
+#include <citygml/texturetargetdefinition.h>
+#include <citygml/materialtargetdefinition.h>
+#include <citygml/appearancetargetdefinition.h>
+#include <citygml/appearance.h>
 
 #include <unordered_set>
 #include <algorithm>

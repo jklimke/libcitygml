@@ -12,13 +12,13 @@
 #include "parser/georeferencedtextureelementparser.h"
 #include "parser/skipelementparser.h"
 
-#include "citygml/appearance.h"
-#include "citygml/texture.h"
-#include "citygml/material.h"
-#include "citygml/georeferencedtexture.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/citygmllogger.h"
-#include "citygml/object.h"
+#include <citygml/appearance.h>
+#include <citygml/texture.h>
+#include <citygml/material.h>
+#include <citygml/georeferencedtexture.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/citygmllogger.h>
+#include <citygml/object.h>
 
 #include <stdexcept>
 

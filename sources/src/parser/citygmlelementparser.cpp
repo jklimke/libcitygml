@@ -1,7 +1,7 @@
 #include "parser/citygmlelementparser.h"
 
-#include "citygml/utils.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/utils.h>
+#include <citygml/citygmllogger.h>
 
 #include "parser/citygmldocumentparser.h"
 #include "parser/documentlocation.h"

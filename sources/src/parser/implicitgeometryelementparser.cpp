@@ -12,9 +12,9 @@
 #include "parser/polygonelementparser.h"
 #include "parser/delayedchoiceelementparser.h"
 
-#include "citygml/implictgeometry.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/implictgeometry.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/citygmllogger.h>
 
 #include <stdexcept>
 

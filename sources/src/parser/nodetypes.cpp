@@ -1,5 +1,5 @@
 #include "parser/nodetypes.h"
-#include "citygml/utils.h"
+#include <citygml/utils.h>
 
 namespace citygml {
 

@@ -7,9 +7,9 @@
 #include "parser/documentlocation.h"
 #include "parser/skipelementparser.h"
 
-#include "citygml/georeferencedtexture.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/georeferencedtexture.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/citygmllogger.h>
 
 #include <stdexcept>
 

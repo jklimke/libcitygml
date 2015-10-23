@@ -1,4 +1,4 @@
-#include "citygml/georeferencedtexture.h"
+#include <citygml/georeferencedtexture.h>
 
 namespace citygml {
 

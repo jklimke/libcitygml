@@ -1,5 +1,5 @@
-#include "citygml/texturetargetdefinition.h"
-#include "citygml/texturecoordinates.h"
+#include <citygml/texturetargetdefinition.h>
+#include <citygml/texturecoordinates.h>
 
 namespace citygml {
 

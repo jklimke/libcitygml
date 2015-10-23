@@ -1,8 +1,8 @@
-#include "citygml/geometrymanager.h"
+#include <citygml/geometrymanager.h>
 
-#include "citygml/geometry.h"
-#include "citygml/implictgeometry.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/geometry.h>
+#include <citygml/implictgeometry.h>
+#include <citygml/citygmllogger.h>
 
 namespace citygml {
 

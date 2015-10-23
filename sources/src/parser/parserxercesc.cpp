@@ -14,14 +14,15 @@
 * GNU Lesser General Public License for more details.
 */
 
-#include "citygml/citygml.h"
+#include <citygml/citygml.h>
+#include <citygml/citygmllogger.h>
 
 #include <fstream>
 #include <string>
 #include <memory>
 #include <mutex>
 
-#include "citygml/citygmllogger.h"
+#include <citygml/citygml_api.h>
 #include "parser/citygmldocumentparser.h"
 #include "parser/documentlocation.h"
 #include "parser/attributes.h"
@@ -145,7 +146,7 @@ public:
     }
 
     // CityGMLDocumentParser interface
-    virtual const citygml::DocumentLocation& getDocumentLocation() const {
+    virtual const citygml::DocumentLocation& getDocumentLocation() const override {
         return m_documentLocation;
     }
 protected:

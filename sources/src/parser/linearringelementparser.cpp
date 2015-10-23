@@ -7,9 +7,9 @@
 #include "parser/documentlocation.h"
 #include "parser/parserutils.hpp"
 
-#include "citygml/linearring.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/linearring.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/citygmllogger.h>
 
 #include <stdexcept>
 

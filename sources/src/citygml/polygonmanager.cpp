@@ -1,8 +1,8 @@
-#include "citygml/polygonmanager.h"
+#include <citygml/polygonmanager.h>
 
-#include "citygml/polygon.h"
-#include "citygml/citygmllogger.h"
-#include "citygml/geometry.h"
+#include <citygml/polygon.h>
+#include <citygml/citygmllogger.h>
+#include <citygml/geometry.h>
 
 namespace citygml {
 

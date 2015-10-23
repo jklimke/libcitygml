@@ -9,10 +9,10 @@
 #include "parser/delayedchoiceelementparser.h"
 #include "parser/sequenceparser.h"
 
-#include "citygml/geometry.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/citygmllogger.h"
-#include "citygml/polygon.h"
+#include <citygml/geometry.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/citygmllogger.h>
+#include <citygml/polygon.h>
 
 #include <mutex>
 

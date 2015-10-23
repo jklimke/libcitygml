@@ -1,8 +1,8 @@
-#include "citygml/linearring.h"
-#include "citygml/texturecoordinates.h"
-#include "citygml/texture.h"
-#include "citygml/texturetargetdefinition.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/linearring.h>
+#include <citygml/texturecoordinates.h>
+#include <citygml/texture.h>
+#include <citygml/texturetargetdefinition.h>
+#include <citygml/citygmllogger.h>
 #include <float.h>
 #include <assert.h>
 

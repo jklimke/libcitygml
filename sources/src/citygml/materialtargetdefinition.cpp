@@ -1,4 +1,4 @@
-#include "citygml/materialtargetdefinition.h"
+#include <citygml/materialtargetdefinition.h>
 
 namespace citygml {
 

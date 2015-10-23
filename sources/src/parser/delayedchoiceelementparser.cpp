@@ -3,7 +3,7 @@
 #include "parser/documentlocation.h"
 #include "parser/citygmldocumentparser.h"
 
-#include "citygml/citygmllogger.h"
+#include <citygml/citygmllogger.h>
 
 #include <sstream>
 #include <stdexcept>

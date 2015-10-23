@@ -8,9 +8,9 @@
 #include "parser/parserutils.hpp"
 #include "parser/skipelementparser.h"
 
-#include "citygml/material.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/material.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/citygmllogger.h>
 
 #include <stdexcept>
 

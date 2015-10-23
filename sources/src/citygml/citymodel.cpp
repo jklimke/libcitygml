@@ -17,10 +17,10 @@
  * GNU Lesser General Public License for more details.
  */
 
-#include "citygml/citymodel.h"
-#include "citygml/appearancemanager.h"
-#include "citygml/appearance.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/citymodel.h>
+#include <citygml/appearancemanager.h>
+#include <citygml/appearance.h>
+#include <citygml/citygmllogger.h>
 
 #include <float.h>
 #include <string.h>

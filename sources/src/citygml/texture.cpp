@@ -1,5 +1,5 @@
-#include "citygml/texture.h"
-#include "citygml/utils.h"
+#include <citygml/texture.h>
+#include <citygml/utils.h>
 
 namespace citygml {
 

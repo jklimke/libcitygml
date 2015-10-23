@@ -1,5 +1,5 @@
-#include "citygml/implictgeometry.h"
-#include "citygml/geometry.h"
+#include <citygml/implictgeometry.h>
+#include <citygml/geometry.h>
 
 namespace citygml {
 

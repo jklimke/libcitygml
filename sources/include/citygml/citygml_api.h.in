@@ -9,12 +9,4 @@
                                                         (major == LIBCITYGML_VERSION_MAJOR && (minor > LIBCITYGML_VERSION_MINOR || \
                                                         (minor == LIBCITYGML_VERSION_MINOR && revision > LIBCITYGML_VERSION_REVISION)))
 
-#if defined( _MSC_VER ) && defined( LIBCITYGML_DYNAMIC )
-#	ifdef LIBCITYGML_BUILD
-#		define LIBCITYGML_EXPORT __declspec( dllexport )
-#	else
-#		define LIBCITYGML_EXPORT __declspec( dllimport )
-#	endif
-#else
-#	define LIBCITYGML_EXPORT
-#endif
+#include <citygml/citygml_export.h>

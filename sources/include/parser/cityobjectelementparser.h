@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <mutex>
 
-#include "citygml/cityobject.h"
+#include <citygml/cityobject.h>
 
 namespace citygml {
 

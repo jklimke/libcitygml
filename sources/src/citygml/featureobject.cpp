@@ -1,6 +1,6 @@
-#include "citygml/featureobject.h"
+#include <citygml/featureobject.h>
 
-#include "citygml/envelope.h"
+#include <citygml/envelope.h>
 
 namespace citygml {
 

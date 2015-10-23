@@ -1,4 +1,4 @@
-#include "citygml/geometry.h"
+#include <citygml/geometry.h>
 
 #include <citygml/polygon.h>
 #include <citygml/appearancemanager.h>

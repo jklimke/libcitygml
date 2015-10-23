@@ -4,11 +4,11 @@
 #include "parser/parserutils.hpp"
 #include "parser/nodetypes.h"
 
-#include "citygml/citygmllogger.h"
-#include "citygml/envelope.h"
-#include "citygml/object.h"
-#include "citygml/vecs.hpp"
-#include "citygml/featureobject.h"
+#include <citygml/citygmllogger.h>
+#include <citygml/envelope.h>
+#include <citygml/object.h>
+#include <citygml/vecs.hpp>
+#include <citygml/featureobject.h>
 
 
 #include <stdexcept>

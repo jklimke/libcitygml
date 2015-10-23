@@ -1,7 +1,7 @@
 #pragma once
 
-#include "citygml/geometry.h"
-#include "citygml/cityobject.h"
+#include <citygml/geometry.h>
+#include <citygml/cityobject.h>
 
 #include <memory>
 

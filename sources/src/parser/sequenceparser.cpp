@@ -1,6 +1,6 @@
 #include "parser/sequenceparser.h"
 
-#include "citygml/citygmllogger.h"
+#include <citygml/citygmllogger.h>
 #include "parser/documentlocation.h"
 #include "parser/citygmldocumentparser.h"
 

@@ -1,20 +1,20 @@
-#include "citygml/citygmlfactory.h"
-#include "citygml/appearancemanager.h"
-#include "citygml/polygonmanager.h"
-#include "citygml/geometrymanager.h"
-#include "citygml/cityobject.h"
-#include "citygml/appearancetarget.h"
-#include "citygml/polygon.h"
-#include "citygml/linestring.h"
-#include "citygml/implictgeometry.h"
-#include "citygml/texture.h"
-#include "citygml/georeferencedtexture.h"
-#include "citygml/material.h"
-#include "citygml/materialtargetdefinition.h"
-#include "citygml/texturetargetdefinition.h"
-#include "citygml/citymodel.h"
-#include "citygml/implictgeometry.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/citygmlfactory.h>
+#include <citygml/appearancemanager.h>
+#include <citygml/polygonmanager.h>
+#include <citygml/geometrymanager.h>
+#include <citygml/cityobject.h>
+#include <citygml/appearancetarget.h>
+#include <citygml/polygon.h>
+#include <citygml/linestring.h>
+#include <citygml/implictgeometry.h>
+#include <citygml/texture.h>
+#include <citygml/georeferencedtexture.h>
+#include <citygml/material.h>
+#include <citygml/materialtargetdefinition.h>
+#include <citygml/texturetargetdefinition.h>
+#include <citygml/citymodel.h>
+#include <citygml/implictgeometry.h>
+#include <citygml/citygmllogger.h>
 
 namespace citygml {
 

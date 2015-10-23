@@ -1,10 +1,10 @@
-#include "citygml/cityobject.h"
-#include "citygml/geometry.h"
-#include "citygml/implictgeometry.h"
-#include "citygml/appearancemanager.h"
-#include "citygml/citygml.h"
-#include "citygml/citygmllogger.h"
-#include "citygml/address.h"
+#include <citygml/cityobject.h>
+#include <citygml/geometry.h>
+#include <citygml/implictgeometry.h>
+#include <citygml/appearancemanager.h>
+#include <citygml/citygml.h>
+#include <citygml/citygmllogger.h>
+#include <citygml/address.h>
 
 #include <unordered_map>
 #include <algorithm>

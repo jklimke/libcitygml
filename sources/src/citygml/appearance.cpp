@@ -1,4 +1,4 @@
-#include "citygml/appearance.h"
+#include <citygml/appearance.h>
 
 #include <algorithm>
 

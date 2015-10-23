@@ -7,9 +7,9 @@
 #include "parser/documentlocation.h"
 #include "parser/linearringelementparser.h"
 
-#include "citygml/polygon.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/citygmllogger.h"
+#include <citygml/polygon.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/citygmllogger.h>
 
 #include <mutex>
 #include <stdexcept>

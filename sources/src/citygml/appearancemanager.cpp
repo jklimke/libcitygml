@@ -1,9 +1,9 @@
-#include "citygml/appearancemanager.h"
-#include "citygml/appearance.h"
-#include "citygml/appearancetarget.h"
-#include "citygml/citygmllogger.h"
-#include "citygml/materialtargetdefinition.h"
-#include "citygml/texturetargetdefinition.h"
+#include <citygml/appearancemanager.h>
+#include <citygml/appearance.h>
+#include <citygml/appearancetarget.h>
+#include <citygml/citygmllogger.h>
+#include <citygml/materialtargetdefinition.h>
+#include <citygml/texturetargetdefinition.h>
 
 namespace citygml {
 

@@ -1,5 +1,5 @@
-#include "citygml/texturecoordinates.h"
-#include "citygml/linearring.h"
+#include <citygml/texturecoordinates.h>
+#include <citygml/linearring.h>
 
 namespace citygml {
 

@@ -1,3 +1,4 @@
+include(GenerateExportHeader)
 SET( target citygml )
 
 ADD_DEFINITIONS( -DCITYGML_LIBRARY )
@@ -13,6 +14,8 @@ IF( LIBCITYGML_DYNAMIC )
 ENDIF( LIBCITYGML_DYNAMIC )
 
 configure_file(include/citygml/citygml_api.h.in ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h)
+
+SET(EXPORT_HEADER_FILE_NAME ${PROJECT_BINARY_DIR}/include/citygml_export.h)
 
 INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include ${XERCESC_INCLUDE}  ${ICONV_INCLUDE_DIR} ${GLU_INCLUDE_PATH} ${GDAL_INCLUDE_DIR} ${CMAKE_BINARY_DIR}/include)
 
@@ -75,6 +78,7 @@ SET(SOURCES
 )
 
 SET(PUBLIC_HEADER
+  ${EXPORT_HEADER_FILE_NAME}
   ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h
   include/citygml/citygmllogger.h
   include/citygml/polygon.h
@@ -149,6 +153,11 @@ SET(HEADERS
 
 ADD_LIBRARY( ${target} ${LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC} ${SOURCES} ${HEADERS} )
 
+
+generate_export_header(citygml
+                        EXPORT_MACRO_NAME LIBCITYGML_EXPORT
+                        EXPORT_FILE_NAME ${EXPORT_HEADER_FILE_NAME})
+
 TARGET_LINK_LIBRARIES( ${target} ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} ${GDAL_LIBRARY} )
 
 set_target_properties( ${target} PROPERTIES
@@ -162,6 +171,8 @@ INSTALL(
     LIBRARY DESTINATION ${LIB_INSTALL_DIR}
     ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
 )
+
+
 # FIXME: Do not run for OS X framework
 INSTALL(
     FILES        ${PUBLIC_HEADER}

@@ -6,10 +6,10 @@
 #include "parser/cityobjectelementparser.h"
 #include "parser/appearanceelementparser.h"
 
-#include "citygml/citymodel.h"
-#include "citygml/citygmllogger.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/cityobject.h"
+#include <citygml/citymodel.h>
+#include <citygml/citygmllogger.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/cityobject.h>
 
 #include <stdexcept>
 

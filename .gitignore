@@ -18,3 +18,4 @@ CMakeLists.txt.user*
 install
 build/
 buildRelease/
+*.autosave

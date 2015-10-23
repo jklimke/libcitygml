@@ -1,14 +1,14 @@
 #include "parser/geocoordinatetransformer.h"
 
-#include "citygml/citygmllogger.h"
-#include "citygml/citymodel.h"
-#include "citygml/cityobject.h"
-#include "citygml/implictgeometry.h"
-#include "citygml/geometry.h"
-#include "citygml/polygon.h"
-#include "citygml/linestring.h"
-#include "citygml/vecs.hpp"
-#include "citygml/envelope.h"
+#include <citygml/citygmllogger.h>
+#include <citygml/citymodel.h>
+#include <citygml/cityobject.h>
+#include <citygml/implictgeometry.h>
+#include <citygml/geometry.h>
+#include <citygml/polygon.h>
+#include <citygml/linestring.h>
+#include <citygml/vecs.hpp>
+#include <citygml/envelope.h>
 
 #ifdef USE_GDAL
 #include "ogrsf_frmts.h"

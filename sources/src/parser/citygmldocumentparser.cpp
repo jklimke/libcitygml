@@ -5,10 +5,10 @@
 #include "parser/citymodelelementparser.h"
 #include "parser/geocoordinatetransformer.h"
 
-#include "citygml/citygmllogger.h"
-#include "citygml/citygmlfactory.h"
-#include "citygml/citymodel.h"
-#include "citygml/tesselator.h"
+#include <citygml/citygmllogger.h>
+#include <citygml/citygmlfactory.h>
+#include <citygml/citymodel.h>
+#include <citygml/tesselator.h>
 
 #include <stdexcept>
 
