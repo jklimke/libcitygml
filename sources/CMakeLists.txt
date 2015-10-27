@@ -22,7 +22,8 @@ INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include
                         ${ICONV_INCLUDE_DIR}
                         ${GLU_INCLUDE_PATH}
                         ${GDAL_INCLUDE_DIR}
-                        ${CMAKE_BINARY_DIR}/include)
+                        ${CMAKE_BINARY_DIR}/include
+                        ${PROJECT_BINARY_DIR}/include)
 
 SET(SOURCES
   src/citygml/citymodel.cpp
