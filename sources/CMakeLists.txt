@@ -78,7 +78,6 @@ SET(SOURCES
 )
 
 SET(PUBLIC_HEADER
-  ${EXPORT_HEADER_FILE_NAME}
   ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h
   include/citygml/citygmllogger.h
   include/citygml/polygon.h
@@ -175,10 +174,20 @@ INSTALL(
 
 # FIXME: Do not run for OS X framework
 INSTALL(
-    FILES        ${PUBLIC_HEADER}
+    FILES        
+      ${PUBLIC_HEADER}
     DESTINATION  ${INCLUDE_INSTALL_DIR}
 )
 
+INSTALL(
+    FILES        
+      ${EXPORT_HEADER_FILE_NAME}
+    DESTINATION  
+      ${INCLUDE_INSTALL_DIR}/citygml
+)
+      
+
 configure_file(citygml.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc)
+
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
