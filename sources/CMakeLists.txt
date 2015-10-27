@@ -17,7 +17,12 @@ configure_file(include/citygml/citygml_api.h.in ${CMAKE_BINARY_DIR}/include/city
 
 SET(EXPORT_HEADER_FILE_NAME ${PROJECT_BINARY_DIR}/include/citygml/citygml_export.h)
 
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include ${XERCESC_INCLUDE}  ${ICONV_INCLUDE_DIR} ${GLU_INCLUDE_PATH} ${GDAL_INCLUDE_DIR} ${CMAKE_BINARY_DIR}/include)
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include
+                        ${XERCESC_INCLUDE}
+                        ${ICONV_INCLUDE_DIR}
+                        ${GLU_INCLUDE_PATH}
+                        ${GDAL_INCLUDE_DIR}
+                        ${CMAKE_BINARY_DIR}/include)
 
 SET(SOURCES
   src/citygml/citymodel.cpp
@@ -77,8 +82,7 @@ SET(SOURCES
   src/parser/addressparser.cpp
 )
 
-SET(PUBLIC_HEADER
-  ${EXPORT_HEADER_FILE_NAME}
+SET(PUBLIC_HEADER  
   ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h
   include/citygml/citygmllogger.h
   include/citygml/polygon.h
