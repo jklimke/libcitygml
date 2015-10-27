@@ -6,7 +6,6 @@ compiler:
 before_install:
   - echo $LANG
   - echo $LC_ALL
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 script: mkdir build && cd build && cmake ../ && make
 addons:
   apt:
