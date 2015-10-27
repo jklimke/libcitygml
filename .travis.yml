@@ -12,6 +12,7 @@ addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
+      - george-edison55-precise-backports
     packages:
       - libxerces-c-dev
       - libxerces-c3.1
@@ -19,3 +20,4 @@ addons:
       - libgdal-dev
       - cmake
       - g++-4.8
+      - gcc-4.8
