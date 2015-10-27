@@ -20,3 +20,4 @@ addons:
       - libgdal-dev
       - cmake
       - g++-4.8
+      - gcc-4.8
