@@ -13,7 +13,7 @@ namespace citygml {
         LinearRingElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, bool interior, std::function<void(LinearRing*)> callback);
 
         // ElementParser interface
-        virtual std::string elementParserName() const;
+        virtual std::string elementParserName() const override;
         virtual bool handlesElement(const NodeType::XMLNode &node) const override;
     protected:
         // CityGMLElementParser interface

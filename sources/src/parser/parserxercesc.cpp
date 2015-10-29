@@ -140,12 +140,12 @@ public:
         CityGMLDocumentParser::endDocument();
     }
 
-    virtual void setDocumentLocator(const xercesc::Locator* const locator) {
+    virtual void setDocumentLocator(const xercesc::Locator* const locator) override {
         m_documentLocation.setLocator(locator);
     }
 
     // CityGMLDocumentParser interface
-    virtual const citygml::DocumentLocation& getDocumentLocation() const {
+    virtual const citygml::DocumentLocation& getDocumentLocation() const override {
         return m_documentLocation;
     }
 protected:

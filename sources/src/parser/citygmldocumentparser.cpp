@@ -133,6 +133,7 @@ namespace citygml {
                     CITYGML_LOG_INFO(m_logger, "Finished coordinates transformation .");
                 } catch (const std::runtime_error& e) {
                     CITYGML_LOG_ERROR(m_logger, "Coordinate transformation aborted: " << e.what());
+                    throw e;
                 }
             }
 
