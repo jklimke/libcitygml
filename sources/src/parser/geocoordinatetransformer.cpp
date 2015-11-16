@@ -19,12 +19,11 @@ class GeoTransform
 {
 public:
     GeoTransform( const std::string& destURN, std::shared_ptr<citygml::CityGMLLogger> logger )
+		: m_destSRSURN(destURN)
+		, m_sourceURN("")
+		, m_transformation(nullptr)
+		, m_logger(logger)
     {
-        m_logger = logger;
-        m_transformation = nullptr;
-        m_destSRSURN = destURN;
-        m_sourceURN = "";
-
         OGRErr err = m_destSRS.SetFromUserInput(destURN.c_str());
 
         if (err != OGRERR_NONE) {
@@ -33,13 +32,13 @@ public:
         }
     }
 
-    GeoTransform(const GeoTransform& other) {
-        m_logger = other.m_logger;
-        m_destSRSURN = other.m_destSRSURN;
-        m_destSRS = other.m_destSRS;
-        m_sourceURN = "";
-
-        m_transformation = nullptr;
+    GeoTransform(const GeoTransform& other)
+		: m_destSRS(other.m_destSRS)
+		, m_destSRSURN(other.m_destSRSURN)
+		, m_sourceURN("")
+		, m_transformation(nullptr)
+		, m_logger(other.m_logger)
+	{
     }
 
     ~GeoTransform()

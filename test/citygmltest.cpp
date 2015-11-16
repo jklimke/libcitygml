@@ -113,7 +113,7 @@ int main( int argc, char **argv )
     if ( log )
     {
         std::cout << std::endl << "Objects hierarchy:" << std::endl;
-        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
+//        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
 
 //        for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( roots[ i ], 2 );
     }
