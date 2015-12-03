@@ -126,7 +126,7 @@ namespace citygml {
         while ( it != o.getAttributes().end() )
         {
             os << "  + " << it->first << ": " << it->second << std::endl;
-            it++;
+            ++it;
         }
 
         for (unsigned int i = 0; i < o.getGeometriesCount(); i++) {

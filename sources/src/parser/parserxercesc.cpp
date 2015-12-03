@@ -63,9 +63,11 @@ std::shared_ptr<XMLCh> toXercesString(const std::string& str) {
 
 class DocumentLocationXercesAdapter : public citygml::DocumentLocation {
 public:
-    DocumentLocationXercesAdapter(const std::string& fileName) {
-        m_locator = nullptr;
-        m_fileName = fileName;
+    explicit DocumentLocationXercesAdapter(const std::string& fileName)
+		: m_locator(nullptr)
+		, m_fileName(fileName)
+	{
+        
     }
 
     void setLocator(const xercesc::Locator* locator) {
@@ -158,7 +160,7 @@ protected:
 class StdBinInputStream : public xercesc::BinInputStream
 {
 public:
-    StdBinInputStream( std::istream& stream ) : BinInputStream(), m_stream( stream ) {}
+    explicit StdBinInputStream( std::istream& stream ) : BinInputStream(), m_stream( stream ) {}
 
     virtual ~StdBinInputStream() {}
 
@@ -181,7 +183,7 @@ private:
 class StdBinInputSource : public xercesc::InputSource
 {
 public:
-    StdBinInputSource( std::istream& stream ) : m_stream( stream ) {}
+    explicit StdBinInputSource( std::istream& stream ) : m_stream( stream ) {}
 
     virtual xercesc::BinInputStream* makeStream() const
     {
