@@ -35,6 +35,7 @@ namespace citygml {
 
     CityObjectElementParser::CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (CityObject*)> callback)
         : GMLFeatureCollectionElementParser(documentParser, factory, logger)
+        , m_lastAttributeType(AttributeType::String)
     {
         m_callback = callback;
     }
@@ -148,6 +149,24 @@ namespace citygml {
         }
     }
 
+    AttributeType CityObjectElementParser::getAttributeType(const NodeType::XMLNode& node)
+    {
+        if (node == NodeType::GEN_StringAttributeNode) {
+            return AttributeType::String;
+        } else if (node == NodeType::GEN_DoubleAttributeNode) {
+            return AttributeType::Double;
+        } else if (node == NodeType::GEN_IntAttributeNode) {
+            return AttributeType::Integer;
+        } else if (node == NodeType::GEN_DateAttributeNode) {
+            return AttributeType::Date;
+        } else if (node == NodeType::GEN_UriAttributeNode) {
+            return AttributeType::Uri;
+        } else {
+            // fallback to string for other types
+            return AttributeType::String;
+        }
+    }
+
     bool CityObjectElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
         initializeTypeIDTypeMap();
@@ -193,7 +212,7 @@ namespace citygml {
              || node == NodeType::GEN_UriAttributeNode) {
 
             m_lastAttributeName = attributes.getAttribute("name");
-
+            m_lastAttributeType = getAttributeType(node);
         } else if (attributesSet.count(node.typeID()) > 0 || node == NodeType::GEN_ValueNode) {
 
             return true;
@@ -349,12 +368,14 @@ namespace citygml {
              || node == NodeType::GEN_UriAttributeNode) {
 
             m_lastAttributeName = "";
+            m_lastAttributeType = AttributeType::String;
+
             return true;
 
         } else if (node == NodeType::GEN_ValueNode) {
 
             if (!m_lastAttributeName.empty()) {
-                m_model->setAttribute(m_lastAttributeName, characters);
+                m_model->setAttribute(m_lastAttributeName, characters, m_lastAttributeType);
             } else {
                 CITYGML_LOG_WARN(m_logger, "Found value node (" << NodeType::GEN_ValueNode << ") outside attribute node... ignore.");
             }
