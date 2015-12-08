@@ -27,6 +27,7 @@ class LIBCITYGML_EXPORT AttributeValue
 {
 public:
     AttributeValue();
+    AttributeValue(const char* value);
     AttributeValue(const std::string& value, AttributeType type=AttributeType::String);
     AttributeValue(double value);
     AttributeValue(int value);

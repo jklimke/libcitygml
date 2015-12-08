@@ -46,6 +46,7 @@ namespace citygml {
 
         static std::mutex initializedAttributeSetMutex;
         static std::unordered_set<int> attributesSet;
+        static std::unordered_map<int, AttributeType> attributeTypeMap;
         static bool attributesSetInitialized;
 
         void parseGeometryForLODLevel(int lod);

@@ -25,6 +25,7 @@ namespace citygml {
 
     std::unordered_map<int, CityObject::CityObjectsType> CityObjectElementParser::typeIDTypeMap = std::unordered_map<int, CityObject::CityObjectsType>();
     std::unordered_set<int> CityObjectElementParser::attributesSet = std::unordered_set<int>();
+    std::unordered_map<int, AttributeType> CityObjectElementParser::attributeTypeMap;
 
     std::mutex CityObjectElementParser::initializedTypeIDMutex;
     std::mutex CityObjectElementParser::initializedAttributeSetMutex;
@@ -143,6 +144,48 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(WTR, Function));
                 attributesSet.insert(HANDLE_ATTR(WTR, Usage));
                 attributesSet.insert(HANDLE_ATTR(WTR, WaterLevel));
+
+
+                attributeTypeMap[HANDLE_ATTR(CORE, CreationDate)] = AttributeType::Date;
+                attributeTypeMap[HANDLE_ATTR(CORE, TerminationDate)] = AttributeType::Date;
+                attributeTypeMap[HANDLE_ATTR(BLDG, Type)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(BLDG, Class)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(BLDG, Function)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(BLDG, Usage)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(BLDG, YearOfConstruction)] = AttributeType::Date;
+                attributeTypeMap[HANDLE_ATTR(BLDG, YearOfDemolition)] = AttributeType::Date;
+                attributeTypeMap[HANDLE_ATTR(BLDG, StoreyHeightsAboveGround)] = AttributeType::Double;
+                attributeTypeMap[HANDLE_ATTR(BLDG, StoreyHeightsBelowGround)] = AttributeType::Double;
+                attributeTypeMap[HANDLE_ATTR(BLDG, StoreysBelowGround)] = AttributeType::Integer;
+                attributeTypeMap[HANDLE_ATTR(BLDG, StoreysAboveGround)] = AttributeType::Integer;
+                attributeTypeMap[HANDLE_ATTR(BLDG, MeasuredHeight)] = AttributeType::Double;
+                attributeTypeMap[HANDLE_ATTR(BLDG, RoofType)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(VEG, Class )] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(VEG, Function )] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(VEG, AverageHeight )] = AttributeType::Double;
+                attributeTypeMap[HANDLE_ATTR(VEG, Species )] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(VEG, Height )] = AttributeType::Double;
+                attributeTypeMap[HANDLE_ATTR(VEG, TrunkDiameter )] = AttributeType::Double;
+                attributeTypeMap[HANDLE_ATTR(VEG, CrownDiameter )] = AttributeType::Double;
+                attributeTypeMap[HANDLE_ATTR(FRN, Class)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(FRN, Function)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GRP, Class)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GRP, Function)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GRP, Usage)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GEN, Class)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GEN, Function)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GEN, Usage)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(LUSE, Class)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(LUSE, Function)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(LUSE, Usage)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(DEM, Lod)] = AttributeType::Integer;
+                attributeTypeMap[HANDLE_ATTR(TRANS, Usage)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(TRANS, Function)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(TRANS, SurfaceMaterial)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(WTR, Class)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(WTR, Function)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(WTR, Usage)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(WTR, WaterLevel)] = AttributeType::Double;
 
                 attributesSetInitialized = true;
             }
@@ -371,7 +414,6 @@ namespace citygml {
             m_lastAttributeType = AttributeType::String;
 
             return true;
-
         } else if (node == NodeType::GEN_ValueNode) {
 
             if (!m_lastAttributeName.empty()) {
@@ -383,7 +425,7 @@ namespace citygml {
             return true;
         } else if (attributesSet.count(node.typeID()) > 0) {
             if (!characters.empty()) {
-                m_model->setAttribute(node.name(), characters);
+                m_model->setAttribute(node.name(), characters, attributeTypeMap.at(node.typeID()));
             }
             return true;
         } else if (node == NodeType::BLDG_BoundedByNode

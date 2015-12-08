@@ -191,7 +191,7 @@ INSTALL(
     FILES        
       ${EXPORT_HEADER_FILE_NAME}
     DESTINATION  
-      ${INCLUDE_INSTALL_DIR}/citygml
+      ${INCLUDE_INSTALL_DIR}
 )
       
 

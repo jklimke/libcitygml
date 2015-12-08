@@ -9,10 +9,18 @@ AttributeValue::AttributeValue()
 {
 }
 
+AttributeValue::AttributeValue(const char* value)
+    : m_type(AttributeType::String)
+    , m_value(value)
+{
+
+}
+
 AttributeValue::AttributeValue(const std::string& value, AttributeType type)
     : m_type(type)
     , m_value(value)
 {
+
 }
 
 AttributeValue::AttributeValue(double value)
