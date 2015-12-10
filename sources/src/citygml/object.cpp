@@ -22,27 +22,27 @@ namespace citygml {
 
     std::string Object::getAttribute(const std::string& name) const
     {
-        std::map< std::string, std::string >::const_iterator elt = m_attributes.find( name );
-        return elt != m_attributes.end() ? elt->second : "";
+        AttributesMap::const_iterator elt = m_attributes.find( name );
+        return elt != m_attributes.end() ? elt->second.asString() : "";
     }
 
-    const AttributesMap&Object::getAttributes() const
+    const AttributesMap& Object::getAttributes() const
     {
         return m_attributes;
     }
 
-    AttributesMap&Object::getAttributes()
+    AttributesMap& Object::getAttributes()
     {
         return m_attributes;
     }
 
-    void Object::setAttribute(const std::string& name, const std::string& value, bool overwrite)
+    void Object::setAttribute(const std::string& name, const std::string& value, AttributeType type, bool overwrite)
     {
         if ( !overwrite )
         {
             if ( m_attributes.count(name) > 1 ) return;
         }
-        m_attributes[ name ] = value;
+        m_attributes[ name ] = AttributeValue(value, type);
     }
 
     std::ostream& operator<<( std::ostream& os, const Object& o )
