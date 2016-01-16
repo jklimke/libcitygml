@@ -82,6 +82,11 @@ SET(SOURCES
   src/parser/implicitgeometryelementparser.cpp
   src/parser/addressparser.cpp
 )
+if(UNIX)
+  if (APPLE)
+    set_source_files_properties(src/citygml/tesselator.cpp PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations") # for warnings: 'glu*' is deprecated...
+  endif (APPLE)
+endif(UNIX)
 
 SET(PUBLIC_HEADER
   ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h
