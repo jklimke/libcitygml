@@ -289,6 +289,11 @@ class GeoTransform {
 
 namespace citygml {
 
+	GeoCoordinateTransformer::GeoCoordinateTransformer(const std::string& destSRS, std::shared_ptr<CityGMLLogger> logger)
+	{
+		m_destinationSRS = destSRS;
+		m_logger = logger;
+	}
 
     void GeoCoordinateTransformer::transformToDestinationSRS(CityModel* model) {
         CITYGML_LOG_WARN(m_logger, "Coordinate transformation to " << m_destinationSRS << " requested, but libcitygml was build without GDAL. The coordinates will not be transformed.");
