@@ -261,7 +261,7 @@ namespace citygml
             xerces_init_mutex.unlock();
         }
         catch (const xercesc::XMLException& e) {
-            CITYGML_LOG_ERROR(logger, "Could not initialize xercesc XMLPlatformUtils, a XML Exception occured : " << toStdString(e.getMessage()));
+            CITYGML_LOG_ERROR(logger, "Could not initialize xercesc XMLPlatformUtils, a XML Exception occurred : " << toStdString(e.getMessage()));
             return false;
         }
 
@@ -289,15 +289,15 @@ namespace citygml
         }
         catch ( const xercesc::XMLException& e )
         {
-            CITYGML_LOG_ERROR(logger, "XML Exception occured: " << toStdString(e.getMessage()));
+            CITYGML_LOG_ERROR(logger, "XML Exception occurred: " << toStdString(e.getMessage()));
         }
         catch ( const xercesc::SAXParseException& e )
         {
-            CITYGML_LOG_ERROR(logger, "SAXParser Exception occured: " << toStdString(e.getMessage()));
+            CITYGML_LOG_ERROR(logger, "SAXParser Exception occurred: " << toStdString(e.getMessage()));
         }
         catch ( const std::exception& e )
         {
-            CITYGML_LOG_ERROR(logger, "Unexpected Exception occured: " << e.what());
+            CITYGML_LOG_ERROR(logger, "Unexpected Exception occurred: " << e.what());
         }
 #endif
 
