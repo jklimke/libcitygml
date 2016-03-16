@@ -32,10 +32,12 @@ namespace citygml {
     private:
         static void initializeTypeIDTypeMap();
         static void initializeAttributesSet();
+        static AttributeType getAttributeType(const NodeType::XMLNode& node);
 
         CityObject* m_model;
         std::function<void(CityObject*)> m_callback;
         std::string m_lastAttributeName;
+        AttributeType m_lastAttributeType;
 
         // The nodes that are valid CityObjects
         static std::mutex initializedTypeIDMutex;
@@ -44,6 +46,7 @@ namespace citygml {
 
         static std::mutex initializedAttributeSetMutex;
         static std::unordered_set<int> attributesSet;
+        static std::unordered_map<int, AttributeType> attributeTypeMap;
         static bool attributesSetInitialized;
 
         void parseGeometryForLODLevel(int lod);

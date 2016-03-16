@@ -1,14 +1,11 @@
 #pragma once
 
 #include <string>
-#include <map>
 
 #include <citygml/citygml_api.h>
+#include <citygml/attributesmap.h>
 
 namespace citygml {
-
-    typedef std::map< std::string, std::string > AttributesMap;
-
     /**
      * @brief The base object associated with an unique id and a set of attributes (key-value pairs)
      */
@@ -27,7 +24,7 @@ namespace citygml {
 
         virtual ~Object() {}
 
-        void setAttribute(const std::string& name, const std::string& value, bool overwrite = true );
+        void setAttribute(const std::string& name, const std::string& value, AttributeType type = AttributeType::String, bool overwrite = true );
 
     protected:
 
