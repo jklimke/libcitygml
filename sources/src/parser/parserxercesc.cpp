@@ -203,6 +203,11 @@ namespace citygml
 
     class StdLogger : public CityGMLLogger {
     public:
+
+        StdLogger(LOGLEVEL level = LOGLEVEL::LL_ERROR):CityGMLLogger(level){
+
+        };
+
         virtual void log(LOGLEVEL level, const std::string& message, const char* file, int line) const
         {
             std::ostream& stream = level == LOGLEVEL::LL_ERROR ? std::cerr : std::cout;
@@ -234,12 +239,7 @@ namespace citygml
             }
 
             stream << " " << message << std::endl;
-        }
-
-        virtual bool isEnabledFor(LOGLEVEL) const
-        {
-            return true;
-        }
+        }     
     };
 
     std::mutex xerces_init_mutex;

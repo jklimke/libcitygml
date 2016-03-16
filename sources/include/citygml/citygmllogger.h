@@ -9,20 +9,34 @@ namespace citygml {
     class LIBCITYGML_EXPORT CityGMLLogger {
     public:
         enum class LOGLEVEL {
-            LL_ERROR,
-            LL_WARNING,
-            LL_INFO,
-            LL_DEBUG,
-            LL_TRACE
+            LL_ERROR = 4,
+            LL_WARNING = 3,
+            LL_INFO = 2,
+            LL_DEBUG = 1,
+            LL_TRACE = 0
         };
+
+        CityGMLLogger(LOGLEVEL level = LOGLEVEL::LL_ERROR):m_logLevel(level){}
 
         /**
          * @brief logs a message. Might be called from different threads.
          */
         virtual void log(LOGLEVEL level, const std::string& message, const char* file=nullptr, int line=-1) const = 0;
 
-        virtual bool isEnabledFor(LOGLEVEL level) const = 0;
+        virtual bool isEnabledFor(LOGLEVEL level) const {
+            return level >= getLogLevel();
+        };
 
+        virtual LOGLEVEL getLogLevel() const{
+            return m_logLevel;
+        };
+
+        virtual LOGLEVEL setLogLevel(LOGLEVEL level) {
+            return m_logLevel = level;
+        };
+    private:
+
+        LOGLEVEL m_logLevel;
     };
 
     /**

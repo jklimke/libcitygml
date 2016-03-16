@@ -48,6 +48,7 @@
 
 class CityGMLOSGPluginLogger : public citygml::CityGMLLogger {
 public:
+
     virtual void log(LOGLEVEL level, const std::string& message, const char* file, int line) const
     {
         std::ostream& stream = getLogStreamFor(level);
@@ -63,10 +64,6 @@ public:
         stream << " " << message << std::endl;
     }
 
-    virtual bool isEnabledFor(LOGLEVEL) const
-    {
-        return true;
-    }
 private:
     std::ostream& getLogStreamFor(LOGLEVEL level) const {
         switch(level) {
