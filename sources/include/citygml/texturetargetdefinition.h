@@ -46,7 +46,7 @@ namespace citygml {
 
     protected:
         TextureTargetDefinition(const std::string& targetID, std::shared_ptr<Texture> appearance, const std::string& id);
-        std::vector<std::shared_ptr<TextureCoordinates>> m_coordinatesList;
-        std::unordered_map<std::string, std::shared_ptr<TextureCoordinates>> m_idTexCoordMap;
+        std::vector<std::shared_ptr<TextureCoordinates> > m_coordinatesList;
+        std::unordered_map<std::string, std::shared_ptr<TextureCoordinates> > m_idTexCoordMap;
     };
 }

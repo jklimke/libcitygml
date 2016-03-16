@@ -30,7 +30,7 @@ namespace citygml {
         virtual Object* getObject() override;
 
     private:
-        std::vector<std::shared_ptr<Appearance>> m_surfaceDataList;
+        std::vector<std::shared_ptr<Appearance> > m_surfaceDataList;
         std::shared_ptr<Object> m_appearanceObj;
         std::string m_theme;
     };

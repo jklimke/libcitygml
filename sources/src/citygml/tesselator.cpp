@@ -80,7 +80,7 @@ const std::vector<unsigned int>& Tesselator::getIndices() const
     return _outIndices;
 }
 
-void Tesselator::addContour(const std::vector<TVec3d>& pts, std::vector<std::vector<TVec2f>> textureCoordinatesLists )
+void Tesselator::addContour(const std::vector<TVec3d>& pts, std::vector<std::vector<TVec2f> > textureCoordinatesLists )
 {
     unsigned int len = pts.size();
     if ( len < 3 ) return;

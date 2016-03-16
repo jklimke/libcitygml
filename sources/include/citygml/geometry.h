@@ -80,10 +80,10 @@ namespace citygml {
 
         unsigned int m_lod;
 
-        std::vector<std::shared_ptr<Geometry>> m_childGeometries;
+        std::vector<std::shared_ptr<Geometry> > m_childGeometries;
 
-        std::vector<std::shared_ptr<Polygon>> m_polygons;
-        std::vector<std::shared_ptr<LineString>> m_lineStrings;
+        std::vector<std::shared_ptr<Polygon> > m_polygons;
+        std::vector<std::shared_ptr<LineString> > m_lineStrings;
     };
 
     std::ostream& operator<<( std::ostream& os, const citygml::Geometry& s );

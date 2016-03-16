@@ -36,7 +36,7 @@ namespace citygml {
 
         std::shared_ptr<CityGMLLogger> m_logger;
         std::vector<GeometryRequest> m_geometryRequests;
-        std::unordered_map<std::string, std::shared_ptr<Geometry>> m_sharedGeometries;
+        std::unordered_map<std::string, std::shared_ptr<Geometry> > m_sharedGeometries;
     };
 
 }

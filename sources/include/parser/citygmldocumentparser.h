@@ -64,7 +64,7 @@ namespace citygml {
         bool checkCurrentElementUnownOrUnexpected_start(const std::string& name);
         bool checkCurrentElementUnownOrUnexpected_end(const std::string& name);
 
-        std::stack<std::shared_ptr<ElementParser>> m_parserStack;
+        std::stack<std::shared_ptr<ElementParser> > m_parserStack;
 
         /**
          * @brief The currently active parser (the one on which startElement or endElement was called last)

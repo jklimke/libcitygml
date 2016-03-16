@@ -66,7 +66,7 @@ namespace citygml {
     {
         // Currently TextureCoordinates sharing via xlink is not supported (every TextureTargetDefinition is the
         // sole owner of its TextureCoordinate objects... if this ever changes use an unordered_set for the texture coordinates
-        std::vector<std::shared_ptr<TextureCoordinates>> coordinatesList;
+        std::vector<std::shared_ptr<TextureCoordinates> > coordinatesList;
 
         bool textureCoordinatesVerticesMismatch = false;
 

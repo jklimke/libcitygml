@@ -39,7 +39,7 @@ namespace citygml {
 
         TransformationMatrix     m_matrix;
         TVec3d                   m_referencePoint;
-        std::vector<std::shared_ptr<Geometry>>   m_geometries;
+        std::vector<std::shared_ptr<Geometry> >   m_geometries;
         std::string              m_srsName;
     };
 }

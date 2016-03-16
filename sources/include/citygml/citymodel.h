@@ -16,7 +16,7 @@ namespace citygml {
     class CityObject;
     class CityGMLFactory;
 
-    typedef std::vector<std::unique_ptr<CityObject>> CityObjects;
+    typedef std::vector<std::unique_ptr<CityObject> > CityObjects;
     typedef std::vector<const CityObject*> ConstCityObjects;
     typedef std::map< CityObject::CityObjectsType, std::vector<const CityObject*> > CityObjectsMap;
 

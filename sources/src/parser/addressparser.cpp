@@ -44,7 +44,7 @@ namespace citygml {
 
         auto k_rootElements = std::unordered_set<NodeType::XMLNode>();
         auto k_subElements = std::unordered_set<NodeType::XMLNode>();
-        auto k_dataElements = std::unordered_map<NodeType::XMLNode, std::function<void(Address*, const std::string&)>>();
+        auto k_dataElements = std::unordered_map<NodeType::XMLNode, std::function<void(Address*, const std::string&)> >();
 
         std::mutex g_nodeSetMutex;
         bool g_nodeSetsInitialized = false;

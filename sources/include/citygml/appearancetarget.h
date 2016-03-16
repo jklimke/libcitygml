@@ -22,7 +22,7 @@ namespace citygml {
     class AppearanceTarget : public citygml::Object {
     public:
 
-        void addTargetDefinition(std::shared_ptr<AppearanceTargetDefinition<Appearance>> targetDef);
+        void addTargetDefinition(std::shared_ptr<AppearanceTargetDefinition<Appearance> > targetDef);
         void addTargetDefinition(std::shared_ptr<TextureTargetDefinition> targetDef);
         void addTargetDefinition(std::shared_ptr<MaterialTargetDefinition> targetDef);
 
@@ -44,11 +44,11 @@ namespace citygml {
 
 
     private:
-        std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition>> m_themeMatMapFront;
-        std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition>> m_themeMatMapBack;
+        std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition> > m_themeMatMapFront;
+        std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition> > m_themeMatMapBack;
 
-        std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition>> m_themeTexMapFront;
-        std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition>> m_themeTexMapBack;
+        std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition> > m_themeTexMapFront;
+        std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition> > m_themeTexMapBack;
 
     };
 }

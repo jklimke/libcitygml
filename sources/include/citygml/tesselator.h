@@ -59,7 +59,7 @@ public:
 
     // Tesselation result access
     const std::vector<TVec3d> getVertices() const;
-    const std::vector<std::vector<TVec2f>>& getTexCoords() const { return _texCoordsLists; }
+    const std::vector<std::vector<TVec2f> >& getTexCoords() const { return _texCoordsLists; }
     const std::vector<unsigned int>& getIndices() const;
 
 private:
@@ -75,7 +75,7 @@ private:
     GLenum  _curMode;
 
     std::list<TVec3d> _vertices;
-    std::vector<std::vector<TVec2f>> _texCoordsLists;
+    std::vector<std::vector<TVec2f> > _texCoordsLists;
     std::list<unsigned int> _indices;
     std::vector<unsigned int> _outIndices;
 

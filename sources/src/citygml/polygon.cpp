@@ -157,8 +157,8 @@ namespace citygml {
         return coords->getCoords();
     }
 
-    std::vector<std::vector<TVec2f>> Polygon::getTexCoordListsForRing(const LinearRing& ring, const std::vector<std::string>& themesFront, const std::vector<std::string>& themesBack) {
-        std::vector<std::vector<TVec2f>> texCoordsLists;
+    std::vector<std::vector<TVec2f> > Polygon::getTexCoordListsForRing(const LinearRing& ring, const std::vector<std::string>& themesFront, const std::vector<std::string>& themesBack) {
+        std::vector<std::vector<TVec2f> > texCoordsLists;
 
         for (const std::string& theme : themesFront) {
             texCoordsLists.push_back(getTexCoordsForRingAndTheme(ring, theme, true));
@@ -200,7 +200,7 @@ namespace citygml {
             return;
         }
 
-        const std::vector<std::vector<TVec2f>>& texCoordLists = tesselator.getTexCoords();
+        const std::vector<std::vector<TVec2f> >& texCoordLists = tesselator.getTexCoords();
 
         for (size_t i = 0; i < themesFront.size(); i++) {
             assert(texCoordLists.at(i).size() == m_vertices.size());

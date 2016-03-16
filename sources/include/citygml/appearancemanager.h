@@ -55,9 +55,9 @@ namespace citygml {
 
 
     protected:
-        std::unordered_map<std::string, std::shared_ptr<Appearance>> m_appearancesMap;
-        std::vector<std::shared_ptr<MaterialTargetDefinition>> m_materialTargetDefinitions;
-        std::vector<std::shared_ptr<TextureTargetDefinition>> m_texTargetDefinitions;
+        std::unordered_map<std::string, std::shared_ptr<Appearance> > m_appearancesMap;
+        std::vector<std::shared_ptr<MaterialTargetDefinition> > m_materialTargetDefinitions;
+        std::vector<std::shared_ptr<TextureTargetDefinition> > m_texTargetDefinitions;
         std::unordered_set<std::string> m_themes;
         std::unordered_map<std::string, AppearanceTarget*> m_appearanceTargetsMap;
         std::shared_ptr<CityGMLLogger> m_logger;

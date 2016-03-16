@@ -106,12 +106,12 @@ namespace citygml {
         TVec3d computeNormal();
 
         std::vector<TVec3d> m_vertices;
-        std::unordered_map<std::string, std::vector<TVec2f>> m_themeToFrontTexCoordsMap;
-        std::unordered_map<std::string, std::vector<TVec2f>> m_themeToBackTexCoordsMap;
+        std::unordered_map<std::string, std::vector<TVec2f> > m_themeToFrontTexCoordsMap;
+        std::unordered_map<std::string, std::vector<TVec2f> > m_themeToBackTexCoordsMap;
         std::vector<unsigned int> m_indices;
 
         std::unique_ptr<LinearRing> m_exteriorRing;
-        std::vector<std::unique_ptr<LinearRing>> m_interiorRings;
+        std::vector<std::unique_ptr<LinearRing> > m_interiorRings;
 
         bool m_negNormal;
         bool m_finished;

@@ -105,9 +105,9 @@ namespace citygml {
     protected:
         CityObjectsType m_type;
 
-        std::vector<std::unique_ptr<Geometry>> m_geometries;
-        std::vector<std::unique_ptr<ImplicitGeometry>> m_implicitGeometries;
-        std::vector<std::unique_ptr<CityObject>> m_children;
+        std::vector<std::unique_ptr<Geometry> > m_geometries;
+        std::vector<std::unique_ptr<ImplicitGeometry> > m_implicitGeometries;
+        std::vector<std::unique_ptr<CityObject> > m_children;
         std::unique_ptr<Address> m_address;
     };
 
