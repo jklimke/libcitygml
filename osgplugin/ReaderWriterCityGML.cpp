@@ -395,9 +395,12 @@ void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, Cit
         setMaterial(stateset, p, settings);
         setTexture(stateset, geom, p, settings);
 
-        if (settings._storeGeomIDs) {
-            geom->addDescription(p.getId());
-        }
+#if OSG_VERSION_GREATER_OR_EQUAL(3,3,2)
+            if (settings._storeGeomIDs) {
+                geom->addDescription(p.getId());
+            }
+#endif
+
 
         geometryContainer->addDrawable( geom );
     }
