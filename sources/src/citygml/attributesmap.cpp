@@ -103,6 +103,7 @@ int AttributeValue::asInteger(int defaultValue) const
 std::ostream& operator<<(std::ostream& os, const AttributeValue& o)
 {
     os << o.asString();
+    return os;
 }
 
 } // namespace citygml
