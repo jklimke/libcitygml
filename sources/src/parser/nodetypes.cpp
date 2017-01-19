@@ -263,6 +263,8 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, FloorSurface )
                 INITIALIZE_NODE( BLDG, InteriorWallSurface )
                 INITIALIZE_NODE( BLDG, CeilingSurface )
+                INITIALIZE_NODE( BLDG, OuterCeilingSurface )
+                INITIALIZE_NODE( BLDG, OuterFloorSurface )
                 INITIALIZE_NODE( BLDG, BuildingFurniture )
                 INITIALIZE_NODE( BLDG, RoofType)
 
@@ -640,6 +642,8 @@ namespace citygml {
     DEFINE_NODE( BLDG, FloorSurface )
     DEFINE_NODE( BLDG, InteriorWallSurface )
     DEFINE_NODE( BLDG, CeilingSurface )
+    DEFINE_NODE( BLDG, OuterCeilingSurface )
+    DEFINE_NODE( BLDG, OuterFloorSurface )
     DEFINE_NODE( BLDG, BuildingFurniture )
     DEFINE_NODE( BLDG, RoofType)
 

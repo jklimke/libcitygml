@@ -92,6 +92,10 @@ namespace citygml {
             return "InteriorWall";
         case GeometryType::GT_Ceiling:
             return "Ceiling";
+        case GeometryType::GT_OuterCeiling:
+            return "OuterCeiling";
+        case GeometryType::GT_OuterFloor:
+            return "OuterFloor";
         default:
             return "Unknown";
         }

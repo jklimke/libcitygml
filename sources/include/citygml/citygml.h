@@ -44,7 +44,7 @@ namespace citygml
     class Material;
     class AppearanceManager;
 
-    typedef unsigned int CityObjectsTypeMask;
+    typedef EnumClassBitmask<CityObject::CityObjectsType> CityObjectsTypeMask;
 
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ namespace citygml
     {
     public:
         ParserParams()
-            : objectsMask( CityObject::CityObjectsType::COT_All )
+            : objectsMask(CityObject::CityObjectsType::COT_All)
             , minLOD( 0 )
             , maxLOD( 4 )
             , optimize( false )
