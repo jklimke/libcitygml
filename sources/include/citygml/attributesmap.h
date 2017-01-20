@@ -31,6 +31,7 @@ public:
     AttributeValue(const std::string& value, AttributeType type=AttributeType::String);
     AttributeValue(double value);
     AttributeValue(int value);
+    
 
     void setType(AttributeType type);
     AttributeType getType() const;

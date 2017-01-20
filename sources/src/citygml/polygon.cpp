@@ -134,7 +134,7 @@ namespace citygml {
             m_exteriorRing->removeDuplicateVertices( texTargetDefinitions, logger );
         }
 
-        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
+        for ( auto& ring : m_interiorRings )
         {
             ring->removeDuplicateVertices( texTargetDefinitions, logger );
         }
@@ -186,7 +186,7 @@ namespace citygml {
             m_exteriorRing->forgetVertices();
         }
 
-        for ( std::unique_ptr<LinearRing>& ring : m_interiorRings )
+        for ( auto& ring : m_interiorRings )
         {
             tesselator.addContour( ring->getVertices(), getTexCoordListsForRing(*ring, themesFront, themesBack) );
             ring->forgetVertices();
