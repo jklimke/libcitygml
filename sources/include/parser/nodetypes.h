@@ -206,6 +206,8 @@ namespace citygml {
         NODETYPE( BLDG, FloorSurface )
         NODETYPE( BLDG, InteriorWallSurface )
         NODETYPE( BLDG, CeilingSurface )
+        NODETYPE( BLDG, OuterCeilingSurface )
+        NODETYPE( BLDG, OuterFloorSurface )
         NODETYPE( BLDG, BuildingFurniture )
 
         NODETYPE( BLDG, CityFurniture )

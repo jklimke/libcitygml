@@ -1,8 +1,8 @@
+#include <citygml/cityobject.h>
 #include <citygml/citygmlfactory.h>
 #include <citygml/appearancemanager.h>
 #include <citygml/polygonmanager.h>
 #include <citygml/geometrymanager.h>
-#include <citygml/cityobject.h>
 #include <citygml/appearancetarget.h>
 #include <citygml/polygon.h>
 #include <citygml/linestring.h>
@@ -54,6 +54,10 @@ namespace citygml {
             return Geometry::GeometryType::GT_InteriorWall;
         case CityObject::CityObjectsType::COT_CeilingSurface:
             return Geometry::GeometryType::GT_Ceiling;
+        case CityObject::CityObjectsType::COT_OuterCeilingSurface:
+            return Geometry::GeometryType::GT_OuterCeiling;
+        case CityObject::CityObjectsType::COT_OuterFloorSurface:
+            return Geometry::GeometryType::GT_OuterFloor;
         default:
             return Geometry::GeometryType::GT_Unknown;
         }

@@ -30,7 +30,7 @@ namespace citygml {
     std::mutex CityObjectElementParser::initializedTypeIDMutex;
     std::mutex CityObjectElementParser::initializedAttributeSetMutex;
 
-    #define HANDLE_TYPE( prefix, elementName ) std::pair<int, CityObject::CityObjectsType>(NodeType::prefix ## _ ## elementName ## Node.typeID(), CityObject::COT_ ## elementName)
+    #define HANDLE_TYPE( prefix, elementName ) std::pair<int, CityObject::CityObjectsType>(NodeType::prefix ## _ ## elementName ## Node.typeID(), CityObject::CityObjectsType::COT_## elementName)
     #define HANDLE_GROUP_TYPE( prefix, elementName, enumtype ) std::pair<int, CityObject::CityObjectsType>(NodeType::prefix ## _ ## elementName ## Node.typeID(), enumtype)
     #define HANDLE_ATTR( prefix, elementName ) NodeType::prefix ## _ ## elementName ## Node.typeID()
 
@@ -73,9 +73,9 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, PlantCover));
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, SolitaryVegetationObject));
                 typeIDTypeMap.insert(HANDLE_TYPE(WTR, WaterBody));
-                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterSurface, CityObject::COT_WaterBody));
-                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterGroundSurface, CityObject::COT_WaterBody));
-                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterClosureSurface, CityObject::COT_WaterBody));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterSurface, CityObject::CityObjectsType::COT_WaterBody));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterGroundSurface, CityObject::CityObjectsType::COT_WaterBody));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(WTR, WaterClosureSurface, CityObject::CityObjectsType::COT_WaterBody));
                 typeIDTypeMap.insert(HANDLE_TYPE(LUSE, LandUse));
                 typeIDTypeMap.insert(HANDLE_TYPE(SUB, Tunnel));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, Bridge));
@@ -89,6 +89,8 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, FloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, InteriorWallSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, OuterCeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, OuterFloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(GRP, CityObjectGroup));
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefFeature));
 

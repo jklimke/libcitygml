@@ -5,7 +5,7 @@
 
 #include <citygml/featureobject.h>
 #include <citygml/citygml_api.h>
-
+#include <citygml/enum_type_bitmask.h>
 class Tesselator;
 
 namespace citygml {
@@ -22,47 +22,52 @@ namespace citygml {
     {
     public:
 
-        enum CityObjectsType {
-            COT_GenericCityObject           = 1 << 0,
-            COT_Building                    = 1 << 1,
-            COT_Room                        = 1 << 2,
-            COT_BuildingInstallation        = 1 << 3,
-            COT_BuildingFurniture           = 1 << 4,
-            COT_Door                        = 1 << 5,
-            COT_Window                      = 1 << 6,
-            COT_CityFurniture               = 1 << 7,
-            COT_Track                       = 1 << 8,
-            COT_Road                        = 1 << 9,
-            COT_Railway                     = 1 << 10,
-            COT_Square                      = 1 << 11,
-            COT_PlantCover                  = 1 << 12,
-            COT_SolitaryVegetationObject    = 1 << 13,
-            COT_WaterBody                   = 1 << 14,
-            COT_ReliefFeature               = 1 << 15,
-            COT_LandUse                     = 1 << 16,
-            COT_Tunnel						= 1 << 17,
-            COT_Bridge						= 1 << 18,
-            COT_BridgeConstructionElement	= 1 << 19,
-            COT_BridgeInstallation			= 1 << 20,
-            COT_BridgePart                  = 1 << 21,
-            COT_BuildingPart                = 1 << 22,
+        enum class CityObjectsType : uint64_t {
+            COT_GenericCityObject           = 1ll,
+            COT_Building                    = 1ll<< 1,
+            COT_Room                        = 1ll<< 2,
+            COT_BuildingInstallation        = 1ll<< 3,
+            COT_BuildingFurniture           = 1ll<< 4,
+            COT_Door                        = 1ll<< 5,
+            COT_Window                      = 1ll<< 6,
+            COT_CityFurniture               = 1ll<< 7,
+            COT_Track                       = 1ll<< 8,
+            COT_Road                        = 1ll<< 9,
+            COT_Railway                     = 1ll<< 10,
+            COT_Square                      = 1ll<< 11,
+            COT_PlantCover                  = 1ll<< 12,
+            COT_SolitaryVegetationObject    = 1ll<< 13,
+            COT_WaterBody                   = 1ll<< 14,
+            COT_ReliefFeature               = 1ll<< 15,
+            COT_LandUse                     = 1ll<< 16,
+            COT_Tunnel						= 1ll<< 17,
+            COT_Bridge						= 1ll<< 18,
+            COT_BridgeConstructionElement	= 1ll<< 19,
+            COT_BridgeInstallation			= 1ll<< 20,
+            COT_BridgePart                  = 1ll<< 21,
+            COT_BuildingPart                = 1ll<< 22,
 
-            COT_WallSurface                 = 1 << 23,
-            COT_RoofSurface                 = 1 << 24,
-            COT_GroundSurface               = 1 << 25,
-            COT_ClosureSurface              = 1 << 26,
-            COT_FloorSurface                = 1 << 27,
-            COT_InteriorWallSurface         = 1 << 28,
-            COT_CeilingSurface              = 1 << 29,
-            COT_CityObjectGroup             = 1 << 30,
+            COT_WallSurface                 = 1ll<< 23,
+            COT_RoofSurface                 = 1ll<< 24,
+            COT_GroundSurface               = 1ll<< 25,
+            COT_ClosureSurface              = 1ll<< 26,
+            COT_FloorSurface                = 1ll<< 27,
+            COT_InteriorWallSurface         = 1ll<< 28,
+            COT_CeilingSurface              = 1ll<< 29,
+            COT_CityObjectGroup             = 1ll<< 30,
+            COT_OuterCeilingSurface         = 1ll<< 31,
+            COT_OuterFloorSurface           = 1ll<< 32,
+            
 
             // covers all supertypes of tran::_TransportationObject that are not Track, Road, Railway or Square...
             // there are to many for to few bits to explicitly enumerate them. However Track, Road, Railway or Square should be used most of the time
-            COT_TransportationObject        = 1 << 31,
+            COT_TransportationObject        = 1ll<< 33,
 
-            COT_All                         = 0xFFFFFFFF
+            COT_All                         = 0xFFFFFFFFFFFFFFFFll
         };
-
+        
+        
+        
         CityObject( const std::string& id, CityObjectsType type );
 
         // Get the object type
@@ -115,4 +120,10 @@ namespace citygml {
 
     std::string cityObjectsTypeToString(const CityObject::CityObjectsType& t);
     CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid);
+    
+    
+    
 }
+
+ENUM_CLASS_BITWISE_OPERATORS_DEFS(citygml::CityObject::CityObjectsType);
+

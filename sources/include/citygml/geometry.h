@@ -32,7 +32,9 @@ namespace citygml {
             GT_Closure          = 1 << 4,
             GT_Floor            = 1 << 5,
             GT_InteriorWall     = 1 << 6,
-            GT_Ceiling          = 1 << 7
+            GT_Ceiling          = 1 << 7,
+            GT_OuterCeiling     = 1 << 8,
+            GT_OuterFloor       = 1 << 9
         };
 
         unsigned int getLOD() const;
