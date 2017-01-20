@@ -256,10 +256,10 @@ namespace citygml {
         }
 
         if ( ring->isExterior() ) {
-            m_exteriorRing = std::unique_ptr<LinearRing>(ring);
+            m_exteriorRing = std::shared_ptr<LinearRing>(ring);
         }
         else {
-            m_interiorRings.push_back( std::unique_ptr<LinearRing>(ring) );
+            m_interiorRings.push_back( std::shared_ptr<LinearRing>(ring) );
         }
     }
 
