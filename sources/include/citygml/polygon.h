@@ -84,6 +84,18 @@ namespace citygml {
 
         void finish(Tesselator& tesselator , bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
+        const std::shared_ptr<LinearRing> exteriorRing(){
+            return m_exteriorRing;
+        }
+
+        const std::shared_ptr<LinearRing> exteriorRing() const{
+            return m_exteriorRing;
+        }
+
+        const std::vector<std::shared_ptr<LinearRing> >& interiorRings() const{
+            return m_interiorRings;
+        }
+
         virtual ~Polygon();
 
     protected:
@@ -110,8 +122,8 @@ namespace citygml {
         std::unordered_map<std::string, std::vector<TVec2f> > m_themeToBackTexCoordsMap;
         std::vector<unsigned int> m_indices;
 
-        std::unique_ptr<LinearRing> m_exteriorRing;
-        std::vector<std::unique_ptr<LinearRing> > m_interiorRings;
+        std::shared_ptr<LinearRing> m_exteriorRing;
+        std::vector<std::shared_ptr<LinearRing> > m_interiorRings;
 
         bool m_negNormal;
         bool m_finished;

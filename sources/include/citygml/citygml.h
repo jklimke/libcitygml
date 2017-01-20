@@ -77,8 +77,7 @@ namespace citygml
         unsigned int minLOD;
         unsigned int maxLOD;
         bool optimize;
-        bool pruneEmptyObjects;
-        bool tesselate;
+        bool pruneEmptyObjects;        
         std::string destSRS;
     };
 
