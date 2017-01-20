@@ -84,12 +84,16 @@ namespace citygml {
 
         void finish(Tesselator& tesselator , bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
-        const std::shared_ptr<LinearRing> exteriorRing(){
+        std::shared_ptr<LinearRing> exteriorRing(){
             return m_exteriorRing;
         }
 
         const std::shared_ptr<LinearRing> exteriorRing() const{
             return m_exteriorRing;
+        }
+
+        std::vector<std::shared_ptr<LinearRing> >& interiorRings() {
+            return m_interiorRings;
         }
 
         const std::vector<std::shared_ptr<LinearRing> >& interiorRings() const{
