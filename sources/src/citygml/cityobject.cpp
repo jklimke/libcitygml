@@ -65,7 +65,7 @@ namespace citygml {
 
     void CityObject::addImplictGeometry(ImplicitGeometry* implictGeom)
     {
-        m_implicitGeometries.push_back(std::unique_ptr<ImplicitGeometry>(implictGeom));
+		m_implicitGeometries.push_back(std::unique_ptr<ImplicitGeometry>(implictGeom));
     }
 
     unsigned int CityObject::getChildCityObjectsCount() const
@@ -85,7 +85,11 @@ namespace citygml {
 
     void CityObject::addChildCityObject(CityObject* cityObj)
     {
-        m_children.push_back(std::unique_ptr<CityObject>(cityObj));
+		// don't add empty nodes as children
+		if(cityObj!=NULL)
+		{
+            m_children.push_back(std::unique_ptr<CityObject>(cityObj));
+		}
     }
 
     const Address* CityObject::address() const
