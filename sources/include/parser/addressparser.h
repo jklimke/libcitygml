@@ -1,6 +1,9 @@
 #pragma once
 
+#include <functional>
+
 #include <parser/citygmlelementparser.h>
+
 
 namespace citygml {
 
