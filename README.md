@@ -6,8 +6,28 @@ libcitygml
 
 libcitygml is a small and easy to use open source C++ library for parsing CityGML files in such a way that data can be easily exploited by 3D rendering applications (geometry data are tesselated and optimized for rendering during parsing). For instance, it can be used to develop readers of CityGML files in many 3D based applications (OpenGL, OpenSceneGraph, ...) Most metadata are not lost, they are available through a per-node hashmap.
 
+The project also contains a loader plugin for [OpenSceneGraph](http://www.openscenegraph.org/). It enables OpenSceneGraph (if installed) to read citygml documents for easy rendering and further graphical optimization.
+
 libcitygml was initally developed by the 3D team of BRGM (the French leading public institution involved in the Earth Science field for the sustainable management of natural resources and surface and subsurface risks) for the research project DeepCity3D. It is now conducted as a Github open source project.
 
 It was moved to github due to inactivity of the project on google code (https://code.google.com/p/libcitygml/).
+
+
+How to Setup
+============
+
+The project is based on the CMAKE build system and should be pretty straight forward to setup.
+
+Dependencies:
+
+The XercesC xml parsing library is the only requirement compiling and using libcitygml.
+
+GDAL is required if coordinate transformations should be applied during paring.
+
+OpenSceneGraph is required for building the plugin.
+
+
+
+
 
 
