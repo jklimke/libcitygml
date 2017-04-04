@@ -76,7 +76,13 @@ int main( int argc, char **argv )
     file.open( argv[fargc], std::ifstream::in );
      std::shared_ptr<const citygml::CityModel> city = citygml::load( file, params );
 #else
-    std::shared_ptr<const citygml::CityModel> city = citygml::load( argv[fargc], params );
+
+    std::shared_ptr<const citygml::CityModel> city;
+    try{
+        city = citygml::load( argv[fargc], params );
+    }catch(const std::runtime_error& e){
+        
+    }
 #endif
 
     time_t end;
