@@ -38,6 +38,7 @@ Tesselator::Tesselator(std::shared_ptr<citygml::CityGMLLogger> logger )
 {
     _logger = logger;
     _tobj = gluNewTess();
+    _keepVertices = false;
 
     gluTessCallback( _tobj, GLU_TESS_VERTEX_DATA, (GLU_TESS_CALLBACK)&vertexDataCallback );
     gluTessCallback( _tobj, GLU_TESS_BEGIN_DATA, (GLU_TESS_CALLBACK)&beginCallback );
@@ -78,6 +79,16 @@ const std::vector<TVec3d> Tesselator::getVertices() const
 const std::vector<unsigned int>& Tesselator::getIndices() const
 {
     return _outIndices;
+}
+
+void Tesselator::setKeepVertices(bool value)
+{
+    _keepVertices = value;
+}
+
+bool Tesselator::keepVertices() const
+{
+    return _keepVertices;
 }
 
 void Tesselator::addContour(const std::vector<TVec3d>& pts, std::vector<std::vector<TVec2f> > textureCoordinatesLists )

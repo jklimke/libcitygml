@@ -70,6 +70,7 @@ namespace citygml
             , optimize( false )
             , pruneEmptyObjects( false )
             , destSRS( "" )
+            , keepVertices ( false )
         { }
 
     public:
@@ -79,6 +80,7 @@ namespace citygml
         bool optimize;
         bool pruneEmptyObjects;
         bool tesselate;
+        bool keepVertices;
         std::string destSRS;
     };
 

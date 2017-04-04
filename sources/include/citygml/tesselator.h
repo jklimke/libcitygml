@@ -62,6 +62,9 @@ public:
     const std::vector<std::vector<TVec2f> >& getTexCoords() const { return _texCoordsLists; }
     const std::vector<unsigned int>& getIndices() const;
 
+    void setKeepVertices(bool val);
+    bool keepVertices() const;
+
 private:
     typedef void (APIENTRY *GLU_TESS_CALLBACK)();
     static void CALLBACK beginCallback( GLenum, void* );
@@ -81,6 +84,8 @@ private:
 
     std::vector<unsigned int> _curIndices;
     std::shared_ptr<citygml::CityGMLLogger> _logger;
+
+    bool _keepVertices;
 };
 
 #endif // __TESSELATOR_H__

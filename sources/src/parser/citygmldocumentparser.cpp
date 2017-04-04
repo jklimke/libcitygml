@@ -118,6 +118,7 @@ namespace citygml {
 
         if (m_rootModel != nullptr) {
             Tesselator tesselator(m_logger);
+            tesselator.setKeepVertices(m_parserParams.keepVertices);
 
             CITYGML_LOG_INFO(m_logger, "Start postprocessing of the citymodel.");
             m_rootModel->finish(tesselator, m_parserParams.optimize, m_logger);
