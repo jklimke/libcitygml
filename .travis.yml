@@ -7,7 +7,7 @@ before_install:
   - echo $LANG
   - echo $LC_ALL
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-script: mkdir build && cd build && cmake ../ && make
+script: mkdir build && cd build && cmake -DLIBCITYGML_OSGPLUGIN=ON ../ && make
 addons:
   apt:
     sources:
@@ -22,3 +22,4 @@ addons:
       - cmake
       - g++-4.8
       - gcc-4.8
+      - libopenscenegraph-dev
