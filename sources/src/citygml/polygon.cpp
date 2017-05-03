@@ -183,13 +183,19 @@ namespace citygml {
         if (m_exteriorRing != nullptr) {
 
             tesselator.addContour( m_exteriorRing->getVertices(), getTexCoordListsForRing(*m_exteriorRing, themesFront, themesBack));
-            m_exteriorRing->forgetVertices();
+            if (!tesselator.keepVertices())
+            {
+                m_exteriorRing->forgetVertices();                
+            }
         }
 
         for ( auto& ring : m_interiorRings )
         {
             tesselator.addContour( ring->getVertices(), getTexCoordListsForRing(*ring, themesFront, themesBack) );
-            ring->forgetVertices();
+            if (!tesselator.keepVertices())
+            {
+                ring->forgetVertices();                
+            }
         }
 
         tesselator.compute();
