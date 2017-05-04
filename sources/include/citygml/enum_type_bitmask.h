@@ -1,6 +1,8 @@
 #pragma once
 
 #include <type_traits>
+#include <istream>
+#include <ostream>
 
 template <typename T>
 class EnumClassBitmask
@@ -30,7 +32,10 @@ public:
    bool operator==(const EnumClassBitmask& r) { return underlying_type(t) == underlying_type(r.t); }
    bool operator==(const T& r) { return underlying_type(t) == underlying_type(r); }
 
-    const EnumClassBitmask& setFromUnderlyingType(underlying_type value) { t = T(value); return *this; }
+   const EnumClassBitmask& setFromUnderlyingType(underlying_type value) { t = T(value); return *this; }
+
+   friend std::istream& operator>> (std::istream &is, EnumClassBitmask& r) { underlying_type tmp;  is >> tmp; r.t = static_cast<T>(tmp);  return is; }
+   friend std::ostream& operator<< (std::ostream &os, const EnumClassBitmask& r) { os << static_cast<underlying_type>(r.t); return os; }
 };
 
 #define ENUM_CLASS_BITWISE_OPERATORS(type_name) \
