@@ -47,7 +47,7 @@ private:
     bool printDescriptionOfIntersectedDrawable(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa) {
 
         osgUtil::LineSegmentIntersector::Intersections intersections;
-        #if OSG_VERSION_GREATER_OR_EQUAL(3,3,2)
+        #if(OSG_VERSION_GREATER_OR_EQUAL(3,3,2))
 
             if (!aa.computeIntersections(ea, intersections)) {
                 return false;
@@ -63,7 +63,7 @@ private:
             return false;
         }
 
-#if OSG_VERSION_GREATER_OR_EQUAL(3,3,2)
+#if(OSG_VERSION_GREATER_OR_EQUAL(3,3,2))
 
         if (firstIntersection.drawable->getNumDescriptions() == 0) {
             std::cout << "Intersected drawable has no description:" << std::endl;
