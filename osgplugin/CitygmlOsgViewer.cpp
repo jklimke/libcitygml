@@ -47,9 +47,21 @@ private:
     bool printDescriptionOfIntersectedDrawable(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa) {
 
         osgUtil::LineSegmentIntersector::Intersections intersections;
-        if (!aa.computeIntersections(ea, intersections)) {
-            return false;
-        }
+        #if OSG_VERSION_GREATER_OR_EQUAL(3,3,2)
+
+            if (!aa.computeIntersections(ea, intersections)) {
+                return false;
+            }
+        #else
+            osgViewer::View* view = ev ? dynamic_cast<osgViewer::View*>(ea->getActionAdapter()) : nullptr;
+            if (view && view->computeIntersections(*event, ev->getNodePath(), intersections)){
+                if(intersections.empty()){
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        #endif
 
 
         osgUtil::LineSegmentIntersector::Intersection firstIntersection = *intersections.begin();
@@ -57,6 +69,8 @@ private:
         if (firstIntersection.drawable == nullptr) {
             return false;
         }
+
+#if OSG_VERSION_GREATER_OR_EQUAL(3,3,2)
 
         if (firstIntersection.drawable->getNumDescriptions() == 0) {
             std::cout << "Intersected drawable has no description:" << std::endl;
@@ -67,6 +81,9 @@ private:
         for (const std::string& desc : firstIntersection.drawable->getDescriptions()) {
             std::cout << "  " << desc << std::endl;
         }
+#else
+        std::cout << firstIntersection.drawable->getName()<< std::endl;
+#endif
         std::cout << std::endl;
 
         return true;
