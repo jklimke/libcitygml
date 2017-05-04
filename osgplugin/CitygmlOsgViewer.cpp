@@ -53,14 +53,7 @@ private:
                 return false;
             }
         #else
-            osgViewer::View* view = ev ? dynamic_cast<osgViewer::View*>(ea->getActionAdapter()) : nullptr;
-            if (view && view->computeIntersections(*event, ev->getNodePath(), intersections)){
-                if(intersections.empty()){
-                    return false;
-                }
-            }else{
-                return false;
-            }
+           return false;
         #endif
 
 
