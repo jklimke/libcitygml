@@ -1,3 +1,4 @@
+#include <osg/Version>
 #include <osgViewer/Viewer>
 #include <osgDB/Registry>
 #include <osgDB/ReadFile>
