@@ -13,11 +13,11 @@ IF( LIBCITYGML_DYNAMIC )
   ADD_DEFINITIONS( -DLIBCITYGML_DYNAMIC )
 ENDIF( LIBCITYGML_DYNAMIC )
 
-configure_file(include/citygml/citygml_api.h.in ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h)
+configure_file(include/citygml/citygml_api.h.in ${PROJECT_BINARY_DIR}/include/citygml/citygml_api.h)
 
 SET(EXPORT_HEADER_FILE_NAME ${PROJECT_BINARY_DIR}/include/citygml/citygml_export.h)
 
-INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR}/sources/include
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include
                         ${XERCESC_INCLUDE}
                         ${ICONV_INCLUDE_DIR}
                         ${GLU_INCLUDE_PATH}
@@ -90,8 +90,8 @@ if(UNIX)
 endif(UNIX)
 
 SET(PUBLIC_HEADER
-  ${CMAKE_BINARY_DIR}/include/citygml/citygml_api.h
-  ${CMAKE_BINARY_DIR}/include/citygml/citygml_export.h
+  ${PROJECT_BINARY_DIR}/include/citygml/citygml_api.h
+  ${PROJECT_BINARY_DIR}/include/citygml/citygml_export.h
   include/citygml/attributesmap.h
   include/citygml/enum_type_bitmask.h
   include/citygml/citygmllogger.h
