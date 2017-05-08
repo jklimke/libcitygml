@@ -1,29 +1,51 @@
 include(GenerateExportHeader)
+
 SET( target citygml )
+
+FIND_PACKAGE( OpenGL REQUIRED )
+
+# gdal library
+OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library so that it supports coordinates transformations." ON)
+
+FIND_PACKAGE( Xerces REQUIRED )
+
+IF( LIBCITYGML_USE_GDAL )
+  FIND_PACKAGE( GDAL REQUIRED )
+  ADD_DEFINITIONS( -DUSE_GDAL )
+ELSE( LIBCITYGML_USE_GDAL )
+  SET( GDAL_INCLUDE_DIR "" )
+  SET( GDAL_LIBRARY "" )
+ENDIF( LIBCITYGML_USE_GDAL )
+
+OPTION(LIBCITYGML_DEBUG_POSTFIX "Set to on to add \"d\" postfix to targets" ON)
+IF( LIBCITYGML_DEBUG_POSTFIX )
+  SET(CMAKE_DEBUG_POSTFIX  "d")
+ELSE( LIBCITYGML_DEBUG_POSTFIX )
+  UNSET(CMAKE_DEBUG_POSTFIX)
+ENDIF( LIBCITYGML_DEBUG_POSTFIX )
+
+# Dynamic vs Static Linking
+OPTION(LIBCITYGML_DYNAMIC "Set to ON to build libcitygml for dynamic linking.  Use OFF for static." ON)
+IF   (LIBCITYGML_DYNAMIC)
+  SET(LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC "SHARED")
+  ADD_DEFINITIONS( -DLIBCITYGML_DYNAMIC )
+ELSE (LIBCITYGML_DYNAMIC)
+  SET(LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC "STATIC")
+  ADD_DEFINITIONS( -DLIBCITYGML_STATIC )
+ENDIF(LIBCITYGML_DYNAMIC)
 
 ADD_DEFINITIONS( -DCITYGML_LIBRARY )
 
 ADD_DEFINITIONS( -DLIBCITYGML_BUILD )
 
-IF( LIBCITYGML_STATIC )
-  ADD_DEFINITIONS( -DLIBCITYGML_STATIC )
-ENDIF( LIBCITYGML_STATIC )
+configure_file("${CMAKE_MODULE_PATH}/citygml_api.h.in" ${CMAKE_CURRENT_SOURCE_DIR}/include/citygml/citygml_api.h)
 
-IF( LIBCITYGML_DYNAMIC )
-  ADD_DEFINITIONS( -DLIBCITYGML_DYNAMIC )
-ENDIF( LIBCITYGML_DYNAMIC )
+SET(EXPORT_HEADER_FILE_NAME ${CMAKE_CURRENT_SOURCE_DIR}/include/citygml/citygml_export.h)
 
-configure_file(include/citygml/citygml_api.h.in ${PROJECT_BINARY_DIR}/include/citygml/citygml_api.h)
-
-SET(EXPORT_HEADER_FILE_NAME ${PROJECT_BINARY_DIR}/include/citygml/citygml_export.h)
-
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include
+INCLUDE_DIRECTORIES(    ${CMAKE_CURRENT_SOURCE_DIR}/include
                         ${XERCESC_INCLUDE}
-                        ${ICONV_INCLUDE_DIR}
                         ${GLU_INCLUDE_PATH}
-                        ${GDAL_INCLUDE_DIR}
-                        ${CMAKE_BINARY_DIR}/include
-                        ${PROJECT_BINARY_DIR}/include)
+                        ${GDAL_INCLUDE_DIR})
 
 SET(SOURCES
   src/citygml/attributesmap.cpp
@@ -90,8 +112,8 @@ if(UNIX)
 endif(UNIX)
 
 SET(PUBLIC_HEADER
-  ${PROJECT_BINARY_DIR}/include/citygml/citygml_api.h
-  ${PROJECT_BINARY_DIR}/include/citygml/citygml_export.h
+  include/citygml/citygml_api.h
+  include/citygml/citygml_export.h
   include/citygml/attributesmap.h
   include/citygml/enum_type_bitmask.h
   include/citygml/citygmllogger.h
@@ -125,7 +147,7 @@ SET(PUBLIC_HEADER
 SET(HEADERS
   ${PUBLIC_HEADER}
 
-  include/citygml/citygml_api.h.in
+  ${CMAKE_MODULE_PATH}/citygml_api.h.in
 
   include/citygml/tesselator.h
   include/citygml/utils.h
@@ -169,8 +191,8 @@ ADD_LIBRARY( ${target} ${LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC} ${SOURCES} $
 
 
 generate_export_header(citygml
-                        EXPORT_MACRO_NAME LIBCITYGML_EXPORT
-                        EXPORT_FILE_NAME ${EXPORT_HEADER_FILE_NAME})
+                       EXPORT_MACRO_NAME LIBCITYGML_EXPORT
+                       EXPORT_FILE_NAME ${EXPORT_HEADER_FILE_NAME})
 
 TARGET_LINK_LIBRARIES( ${target} ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} ${GDAL_LIBRARY} )
 
@@ -178,6 +200,16 @@ set_target_properties( ${target} PROPERTIES
     VERSION ${META_VERSION}
     SOVERSION ${META_VERSION_MAJOR}
 )
+
+if(NOT DEFINED BIN_INSTALL_DIR)
+    set(BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin")
+endif(NOT DEFINED BIN_INSTALL_DIR)
+if(NOT DEFINED LIB_INSTALL_DIR)
+    set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+endif(NOT DEFINED LIB_INSTALL_DIR)
+if(NOT DEFINED INCLUDE_INSTALL_DIR)
+    set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include/citygml")
+endif(NOT DEFINED INCLUDE_INSTALL_DIR)
 
 INSTALL(
     TARGETS ${target}
@@ -189,18 +221,18 @@ INSTALL(
 
 # FIXME: Do not run for OS X framework
 INSTALL(
-    FILES        
+    FILES
       ${PUBLIC_HEADER}
     DESTINATION  ${INCLUDE_INSTALL_DIR}
 )
 
 INSTALL(
-    FILES        
+    FILES
       ${EXPORT_HEADER_FILE_NAME}
-    DESTINATION  
+    DESTINATION
       ${INCLUDE_INSTALL_DIR}
 )
-      
+
 
 configure_file(citygml.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc)
 
