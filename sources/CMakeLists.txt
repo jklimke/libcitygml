@@ -1,13 +1,16 @@
 include(GenerateExportHeader)
 
+IF (NOT DEFINED CMAKE_MODULE_PATH)
+  GET_FILENAME_COMPONENT(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMakeModules" ABSOLUTE)
+ENDIF (NOT DEFINED CMAKE_MODULE_PATH)
+
 SET( target citygml )
 
 FIND_PACKAGE( OpenGL REQUIRED )
+FIND_PACKAGE( Xerces REQUIRED )
 
 # gdal library
 OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library so that it supports coordinates transformations." ON)
-
-FIND_PACKAGE( Xerces REQUIRED )
 
 IF( LIBCITYGML_USE_GDAL )
   FIND_PACKAGE( GDAL REQUIRED )
