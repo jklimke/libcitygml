@@ -8,7 +8,7 @@ set(META_VERSION_PATCH       "5")
 
 set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
 
-SET( CMAKE_MODULE_PATH "${libcitygml_SOURCE_DIR}/CMakeModules/;${CMAKE_MODULE_PATH}" )
+SET( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules" )
 
 IF(WIN32)
 
@@ -79,16 +79,6 @@ IF(MSVC_IDE)
     SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/bin)
 ENDIF(MSVC_IDE)
 
-SET(CMAKE_DEBUG_POSTFIX  "d")
-
-# Dynamic vs Static Linking
-OPTION(LIBCITYGML_DYNAMIC "Set to ON to build libcitygml for dynamic linking.  Use OFF for static." ON)
-IF   (LIBCITYGML_DYNAMIC)
-    SET(LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC "SHARED")
-ELSE (LIBCITYGML_DYNAMIC)
-    SET(LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC "STATIC")
-ENDIF(LIBCITYGML_DYNAMIC)
-
 SET(OUTPUT_BINDIR ${PROJECT_BINARY_DIR}/bin)
 MAKE_DIRECTORY(${OUTPUT_BINDIR})
 SET(EXECUTABLE_OUTPUT_PATH ${OUTPUT_BINDIR})
@@ -125,28 +115,13 @@ endif(NOT DEFINED LOCALE_INSTALL_DIR)
   # SET( CMAKE_BUILD_TYPE "Release" )
 # ENDIF( DEBUG_BUILD )
 
-OPTION(LIBCITYGML_STATIC_CRT "Set to ON to link libcitygml with the multithread CRT static library (instead of DLL)." ON)
-
-# gdal library
-OPTION(LIBCITYGML_USE_GDAL "Set to ON to build libcitygml with GDAL library so that it supports coordinates transformations." ON)
-
-
-FIND_PACKAGE( Xerces REQUIRED )
-
-IF( LIBCITYGML_USE_GDAL )
-  FIND_PACKAGE( GDAL REQUIRED )
-  ADD_DEFINITIONS( -DUSE_GDAL )
-ELSE( LIBCITYGML_USE_GDAL )
-  SET( GDAL_INCLUDE_DIR "" )
-  SET( GDAL_LIBRARY "" )
-ENDIF( LIBCITYGML_USE_GDAL )
-
-FIND_PACKAGE( OpenGL REQUIRED )
-#FIND_PACKAGE( GLU REQUIRED ) # deprecated, GLU is now found with FindOpenGL
-
 IF( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )
 ENDIF( COMMAND cmake_policy )
+
+IF(MSVC)
+    OPTION(LIBCITYGML_STATIC_CRT "Set to ON to link libcitygml with the multithread CRT static library (instead of DLL)." ON)
+ENDIF(MSVC)
 
 IF( MSVC AND LIBCITYGML_STATIC_CRT )
   #We statically link to reduce dependancies
@@ -179,59 +154,66 @@ ENDIF(LIBCITYGML_TESTS)
 #-----------------------------------------------------------------------------
 ### uninstall target
 #-----------------------------------------------------------------------------
-CONFIGURE_FILE(
-  "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/cmake_uninstall.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-  IMMEDIATE @ONLY)
-ADD_CUSTOM_TARGET(uninstall
-  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+OPTION(LIBCITYGML_UNINSTALL "Set to ON to generate libcitygml uninstall project." OFF)
+IF (LIBCITYGML_UNINSTALL)
+  CONFIGURE_FILE(
+    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+  ADD_CUSTOM_TARGET(uninstall
+    "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+ENDIF(LIBCITYGML_UNINSTALL)
 
-# Create debian package
-option(BUILD_DEBIAN_PACKAGE  "Creates a debian package" ON)
-if(BUILD_DEBIAN_PACKAGE)
-    # set project description for packaging
-    set(META_PROJECT_NAME        "libcitygml")
-    set(META_PROJECT_SUMMARY     "Open source C++ library for parsing CityGML files")
-    set(META_PROJECT_DESCRIPTION "libcitygml is a small and easy to use open source C++ library for parsing
-                                  CityGML files in such a way that data can be easily exploited by 3D
-                                  rendering applications (geometry data are tesselated and optimized for
-                                  rendering during parsing). For instance, it can be used to develop readers
-                                  of CityGML files in many 3D based applications (OpenGL, OpenSceneGraph, ...)
-                                  Most metadata are not lost, they are available through a per-node hashmap.
+#-----------------------------------------------------------------------------
+### Create debian package if linux
+#-----------------------------------------------------------------------------
+IF(UNIX AND NOT APPLE)
+  option(BUILD_DEBIAN_PACKAGE  "Creates a debian package" ON)
+  if(BUILD_DEBIAN_PACKAGE)
+      # set project description for packaging
+      set(META_PROJECT_NAME        "libcitygml")
+      set(META_PROJECT_SUMMARY     "Open source C++ library for parsing CityGML files")
+      set(META_PROJECT_DESCRIPTION "libcitygml is a small and easy to use open source C++ library for parsing
+                                    CityGML files in such a way that data can be easily exploited by 3D
+                                    rendering applications (geometry data are tesselated and optimized for
+                                    rendering during parsing). For instance, it can be used to develop readers
+                                    of CityGML files in many 3D based applications (OpenGL, OpenSceneGraph, ...)
+                                    Most metadata are not lost, they are available through a per-node hashmap.
 
-                                  CityGML (City Geography Markup Language) is an XML-based schema for the
-                                  modelling and exchange of georeferenced 3D city and landscape models that
-                                  is quickly being adopted on an international level.")
-    set(META_AUTHOR_ORGANIZATION "3D Content Logistics")
-    set(META_AUTHOR_DOMAIN       "https://github.com/jklimke/libcitygml.git")
-    set(META_AUTHOR_MAINTAINER   "Marcel Pursche <marcel.pursche@3dcontentlogistics.com>")
+                                    CityGML (City Geography Markup Language) is an XML-based schema for the
+                                    modelling and exchange of georeferenced 3D city and landscape models that
+                                    is quickly being adopted on an international level.")
+      set(META_AUTHOR_ORGANIZATION "3D Content Logistics")
+      set(META_AUTHOR_DOMAIN       "https://github.com/jklimke/libcitygml.git")
+      set(META_AUTHOR_MAINTAINER   "Marcel Pursche <marcel.pursche@3dcontentlogistics.com>")
 
-    # Package information
-    string(TOLOWER ${META_PROJECT_NAME} package_name)          # Package name
-    set(CPACK_PACKAGE_NAME                  "${META_PROJECT_NAME}")
-    set(CPACK_PACKAGE_VENDOR                "${META_AUTHOR_ORGANIZATION}")
-    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "${META_PROJECT_SUMMARY}")
-    set(CPACK_PACKAGE_DESCRIPTION           "${META_PROJECT_DESCRIPTION}")
-    set(CPACK_PACKAGE_VERSION               "${META_VERSION}")
-    set(CPACK_PACKAGE_VERSION_MAJOR         "${META_VERSION_MAJOR}")
-    set(CPACK_PACKAGE_VERSION_MINOR         "${META_VERSION_MINOR}")
-    set(CPACK_PACKAGE_VERSION_PATCH         "${META_VERSION_PATCH}")
-    set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/LICENSE")
-    set(CPACK_PACKAGE_RELOCATABLE           OFF)
+      # Package information
+      string(TOLOWER ${META_PROJECT_NAME} package_name)          # Package name
+      set(CPACK_PACKAGE_NAME                  "${META_PROJECT_NAME}")
+      set(CPACK_PACKAGE_VENDOR                "${META_AUTHOR_ORGANIZATION}")
+      set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "${META_PROJECT_SUMMARY}")
+      set(CPACK_PACKAGE_DESCRIPTION           "${META_PROJECT_DESCRIPTION}")
+      set(CPACK_PACKAGE_VERSION               "${META_VERSION}")
+      set(CPACK_PACKAGE_VERSION_MAJOR         "${META_VERSION_MAJOR}")
+      set(CPACK_PACKAGE_VERSION_MINOR         "${META_VERSION_MINOR}")
+      set(CPACK_PACKAGE_VERSION_PATCH         "${META_VERSION_PATCH}")
+      set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/LICENSE")
+      set(CPACK_PACKAGE_RELOCATABLE           OFF)
 
-    # Debian package information
-    set(CPACK_DEBIAN_PACKAGE_NAME           "${package_name}")
-    set(CPACK_DEBIAN_PACKAGE_VERSION        "${CPACK_PACKAGE_VERSION}")
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER     "${META_AUTHOR_MAINTAINER}")
-    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION    "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
-    set(CPACK_DEBIAN_PACKAGE_SECTION        "Development")
-    set(CPACK_DEBIAN_PACKAGE_PRIORITY       "optional")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libgdal1h (>= 1.10.1), libxerces-c3.1 (>= 3.1.1-5)")
-    set(CPACK_DEBIAN_PACKAGE_CONFLICTS      "libcitygml0, libcitygml0-dev")
-    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE       "${META_AUTHOR_DOMAIN}")
-    set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA  "${CMAKE_CURRENT_SOURCE_DIR}/debian_scripts/postinst;")
-    
-    set(CPACK_GENERATOR "DEB")
+      # Debian package information
+      set(CPACK_DEBIAN_PACKAGE_NAME           "${package_name}")
+      set(CPACK_DEBIAN_PACKAGE_VERSION        "${CPACK_PACKAGE_VERSION}")
+      set(CPACK_DEBIAN_PACKAGE_MAINTAINER     "${META_AUTHOR_MAINTAINER}")
+      set(CPACK_DEBIAN_PACKAGE_DESCRIPTION    "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}")
+      set(CPACK_DEBIAN_PACKAGE_SECTION        "Development")
+      set(CPACK_DEBIAN_PACKAGE_PRIORITY       "optional")
+      set(CPACK_DEBIAN_PACKAGE_DEPENDS        "libgdal1h (>= 1.10.1), libxerces-c3.1 (>= 3.1.1-5)")
+      set(CPACK_DEBIAN_PACKAGE_CONFLICTS      "libcitygml0, libcitygml0-dev")
+      set(CPACK_DEBIAN_PACKAGE_HOMEPAGE       "${META_AUTHOR_DOMAIN}")
+      set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA  "${CMAKE_CURRENT_SOURCE_DIR}/debian_scripts/postinst;")
 
-    include(CPack)
-endif()
+      set(CPACK_GENERATOR "DEB")
+
+      include(CPack)
+  endif()
+ENDIF()
