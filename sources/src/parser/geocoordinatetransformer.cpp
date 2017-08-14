@@ -136,6 +136,24 @@ namespace citygml {
 
         if (!model->getEnvelope().srsName().empty()) {
             transformation.setSourceSRS(model->getEnvelope().srsName());
+            if (model->getEnvelope().validBounds()) {
+                if (transformation.valid()) {
+                    TVec3d lowerBound = model->getEnvelope().getLowerBound();
+                    TVec3d upperBound = model->getEnvelope().getUpperBound();
+
+                    transformation.transform(lowerBound);
+                    transformation.transform(upperBound);
+
+                    Envelope* newEnvelope = new Envelope(m_destinationSRS);
+                    newEnvelope->setLowerBound(lowerBound);
+                    newEnvelope->setUpperBound(upperBound);
+
+                    model->setEnvelope(newEnvelope);
+                }
+                else {
+                    CITYGML_LOG_WARN(m_logger, "No valid spatial reference system is given for CityModel with id '" << model->getId() << "'. Envelope (Bounding Box) is not transformed.");
+                }
+            }
         }
 
         for (unsigned int i = 0; i < model->getNumRootCityObjects(); i++) {
