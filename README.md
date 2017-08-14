@@ -32,10 +32,11 @@ Test Data Attribution
 
 Overview over the testing data within the "data" directory:
 
-|Dataset| Attribution| Source |
-| data/b1_lod2_cs_w_sem.gml | |[https://www.citygml.org](https://www.citygml.org/samplefiles/) |
-| data/b1_lod2_s.gml | |[https://www.citygml.org](https://www.citygml.org/samplefiles/) |
-| data/berlin_open_data_sample_data.gml | Berlin Partner für Wirtschaft und Technologie GmbH | [Berlin Partner Download Portal](http://www.businesslocationcenter.de/berlin3d-downloadportal/?lang=en) |
+| Dataset                               | Attribution                                               | Source                                                                                                    |
+| -------------------------             |:---------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:| 
+| data/b1_lod2_cs_w_sem.gml             | https://www.citygml.org/samplefiles/building/             | [https://www.citygml.org](https://www.citygml.org/samplefiles/)                                           |
+| data/b1_lod2_s.gml                    | https://www.citygml.org/samplefiles/building/             | [https://www.citygml.org](https://www.citygml.org/samplefiles/)                                           |
+| data/berlin_open_data_sample_data.gml | Berlin Partner für Wirtschaft und Technologie GmbH        | [Berlin Partner Download Portal](http://www.businesslocationcenter.de/berlin3d-downloadportal/?lang=en)   |
 
 
 
