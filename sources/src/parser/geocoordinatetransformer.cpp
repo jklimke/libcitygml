@@ -58,7 +58,7 @@ public:
             return;
         }
 
-        m_transformation->Transform( 1, &p.x, &p.y );
+        m_transformation->Transform( 1, &p.x, &p.y, &p.z );
     }
 
     void transform( TVec2d &p ) const
