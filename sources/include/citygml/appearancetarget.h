@@ -19,7 +19,7 @@ namespace citygml {
      *
      * Ensures that there is only one texture and material per theme
      */
-    class AppearanceTarget : public citygml::Object {
+    class LIBCITYGML_EXPORT AppearanceTarget : public citygml::Object {
     public:
 
         void addTargetDefinition(std::shared_ptr<AppearanceTargetDefinition<Appearance> > targetDef);

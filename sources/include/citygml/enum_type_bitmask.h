@@ -4,8 +4,10 @@
 #include <istream>
 #include <ostream>
 
+#include <citygml/citygml_api.h>
+
 template <typename T>
-class EnumClassBitmask
+class LIBCITYGML_EXPORT EnumClassBitmask
 {
 private:
     T t;
@@ -39,15 +41,15 @@ public:
 };
 
 #define ENUM_CLASS_BITWISE_OPERATORS(type_name) \
-/*constexpr*/ type_name operator|(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) | std::underlying_type<type_name>::type(r)); } \
-/*constexpr*/ type_name operator&(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) & std::underlying_type<type_name>::type(r)); } \
-/*constexpr*/ type_name operator^(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) ^ std::underlying_type<type_name>::type(r)); } \
-/*constexpr*/ type_name operator~(type_name l) { return type_name(~std::underlying_type<type_name>::type(l)); }
+/*constexpr*/ LIBCITYGML_EXPORT type_name operator|(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) | std::underlying_type<type_name>::type(r)); } \
+/*constexpr*/ LIBCITYGML_EXPORT type_name operator&(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) & std::underlying_type<type_name>::type(r)); } \
+/*constexpr*/ LIBCITYGML_EXPORT type_name operator^(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) ^ std::underlying_type<type_name>::type(r)); } \
+/*constexpr*/ LIBCITYGML_EXPORT type_name operator~(type_name l) { return type_name(~std::underlying_type<type_name>::type(l)); }
 
 #define ENUM_CLASS_BITWISE_OPERATORS_DEFS(type_name) \
-/*constexpr*/ type_name operator|(type_name l, type_name r); \
-/*constexpr*/ type_name operator&(type_name l, type_name r); \
-/*constexpr*/ type_name operator^(type_name l, type_name r);\
-/*constexpr*/ type_name operator~(type_name l);
+/*constexpr*/ LIBCITYGML_EXPORT type_name operator|(type_name l, type_name r); \
+/*constexpr*/ LIBCITYGML_EXPORT type_name operator&(type_name l, type_name r); \
+/*constexpr*/ LIBCITYGML_EXPORT type_name operator^(type_name l, type_name r);\
+/*constexpr*/ LIBCITYGML_EXPORT type_name operator~(type_name l);
 
 

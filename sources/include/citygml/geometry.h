@@ -88,6 +88,6 @@ namespace citygml {
         std::vector<std::shared_ptr<LineString> > m_lineStrings;
     };
 
-    std::ostream& operator<<( std::ostream& os, const citygml::Geometry& s );
+    LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream& os, const citygml::Geometry& s );
 
 }

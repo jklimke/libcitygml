@@ -30,6 +30,7 @@
   #include <GL/glu.h>
 #endif
 
+#include <citygml/citygml_api.h>
 #include <citygml/vecs.hpp>
 #include <vector>
 #include <list>
@@ -40,7 +41,7 @@ namespace citygml {
 }
 
 // GLU based polygon tesselator
-class Tesselator
+class LIBCITYGML_EXPORT Tesselator
 {
 public:
     Tesselator( std::shared_ptr<citygml::CityGMLLogger> logger );

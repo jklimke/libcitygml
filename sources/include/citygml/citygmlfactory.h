@@ -28,7 +28,7 @@ namespace citygml {
     class MaterialTargetDefinition;
     class TextureTargetDefinition;
 
-    class CityGMLFactory {
+    class LIBCITYGML_EXPORT CityGMLFactory {
     public:
         CityGMLFactory(std::shared_ptr<CityGMLLogger> logger);
 

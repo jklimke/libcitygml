@@ -5,13 +5,15 @@
 #include <unordered_map>
 #include <vector>
 
+#include <citygml/citygml_api.h>
+
 namespace citygml {
 
     class ImplicitGeometry;
     class Geometry;
     class CityGMLLogger;
 
-    class GeometryManager {
+    class LIBCITYGML_EXPORT GeometryManager {
     public:
         GeometryManager(std::shared_ptr<CityGMLLogger> logger);
 

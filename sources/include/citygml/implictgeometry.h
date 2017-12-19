@@ -12,7 +12,7 @@ namespace citygml {
     class Geometry;
     class CityGMLFactory;
 
-    class ImplicitGeometry : public Object
+    class LIBCITYGML_EXPORT ImplicitGeometry : public Object
     {
         friend class CityGMLFactory;
     public:

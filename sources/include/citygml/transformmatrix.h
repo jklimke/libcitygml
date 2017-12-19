@@ -4,7 +4,7 @@
 #include <memory>
 
 namespace citygml {
-    class TransformationMatrix : public Object
+    class LIBCITYGML_EXPORT TransformationMatrix : public Object
     {
     public:
         TransformationMatrix();
