@@ -15,7 +15,7 @@ namespace citygml {
     /**
      * @brief The TextureCoordinates class describes a mapping of texture coordinates to the vertices of a linear ring
      */
-    class TextureCoordinates : public Object {
+    class LIBCITYGML_EXPORT TextureCoordinates : public Object {
     public:
         TextureCoordinates(std::string id, std::string targetID);
 

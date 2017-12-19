@@ -61,5 +61,5 @@ namespace citygml {
         std::vector<std::string> m_themes;
     };
 
-    std::ostream& operator<<( std::ostream&, const citygml::CityModel & );
+    LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream&, const citygml::CityModel & );
 }

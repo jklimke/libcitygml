@@ -9,7 +9,7 @@ namespace citygml {
 
     class Envelope;
 
-    class FeatureObject : public Object {
+    class LIBCITYGML_EXPORT FeatureObject : public Object {
     public:
         FeatureObject(const std::string& gmlID);
 

@@ -40,10 +40,10 @@ namespace citygml {
             COT_WaterBody                   = 1ll<< 14,
             COT_ReliefFeature               = 1ll<< 15,
             COT_LandUse                     = 1ll<< 16,
-            COT_Tunnel						= 1ll<< 17,
-            COT_Bridge						= 1ll<< 18,
-            COT_BridgeConstructionElement	= 1ll<< 19,
-            COT_BridgeInstallation			= 1ll<< 20,
+            COT_Tunnel                      = 1ll<< 17,
+            COT_Bridge                      = 1ll<< 18,
+            COT_BridgeConstructionElement   = 1ll<< 19,
+            COT_BridgeInstallation          = 1ll<< 20,
             COT_BridgePart                  = 1ll<< 21,
             COT_BuildingPart                = 1ll<< 22,
 
@@ -57,7 +57,7 @@ namespace citygml {
             COT_CityObjectGroup             = 1ll<< 30,
             COT_OuterCeilingSurface         = 1ll<< 31,
             COT_OuterFloorSurface           = 1ll<< 32,
-            
+
 
             // covers all supertypes of tran::_TransportationObject that are not Track, Road, Railway or Square...
             // there are to many for to few bits to explicitly enumerate them. However Track, Road, Railway or Square should be used most of the time
@@ -65,9 +65,7 @@ namespace citygml {
 
             COT_All                         = 0xFFFFFFFFFFFFFFFFll
         };
-        
-        
-        
+
         CityObject( const std::string& id, CityObjectsType type );
 
         // Get the object type
@@ -116,13 +114,11 @@ namespace citygml {
         std::unique_ptr<Address> m_address;
     };
 
-    std::ostream& operator<<( std::ostream& os, const CityObject& o );
+    LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream& os, const CityObject& o );
 
-    std::string cityObjectsTypeToString(const CityObject::CityObjectsType& t);
-    CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid);
-    
-    
-    
+    LIBCITYGML_EXPORT std::string cityObjectsTypeToString(const CityObject::CityObjectsType& t);
+    LIBCITYGML_EXPORT CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid);
+
 }
 
 ENUM_CLASS_BITWISE_OPERATORS_DEFS(citygml::CityObject::CityObjectsType);

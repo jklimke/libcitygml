@@ -33,6 +33,6 @@ namespace citygml {
         AttributesMap m_attributes;
     };
 
-    std::ostream& operator<<( std::ostream&, const citygml::Object& );
+    LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream&, const citygml::Object& );
 
 }

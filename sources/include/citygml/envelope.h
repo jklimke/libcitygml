@@ -41,5 +41,5 @@ namespace citygml {
         std::string m_srsName;
     };
 
-    std::ostream& operator<<( std::ostream&, const citygml::Envelope& );
+    LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream&, const citygml::Envelope& );
 }

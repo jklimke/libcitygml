@@ -21,7 +21,7 @@ namespace citygml {
     class TextureTargetDefinition;
 
 
-    class AppearanceManager
+    class LIBCITYGML_EXPORT AppearanceManager
     {
     public:
         AppearanceManager(std::shared_ptr<CityGMLLogger> logger );

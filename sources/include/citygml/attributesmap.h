@@ -31,7 +31,7 @@ public:
     AttributeValue(const std::string& value, AttributeType type=AttributeType::String);
     AttributeValue(double value);
     AttributeValue(int value);
-    
+
 
     void setType(AttributeType type);
     AttributeType getType() const;
@@ -48,7 +48,7 @@ private:
     std::string m_value;
 };
 
-std::ostream& operator<<(std::ostream& os, const AttributeValue& o);
+LIBCITYGML_EXPORT std::ostream& operator<<(std::ostream& os, const AttributeValue& o);
 
 typedef std::map<std::string, AttributeValue> AttributesMap;
 

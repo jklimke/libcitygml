@@ -60,7 +60,7 @@ namespace citygml
     // tesselate: convert the interior & exteriors polygons to triangles
     // destSRS: the SRS (WKT, EPSG, OGC URN, etc.) where the coordinates must be transformed, default ("") is no transformation
 
-    class ParserParams
+    class LIBCITYGML_EXPORT ParserParams
     {
     public:
         ParserParams()

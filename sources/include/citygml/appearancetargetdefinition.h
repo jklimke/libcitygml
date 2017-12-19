@@ -23,7 +23,7 @@ namespace citygml {
      * @brief defines the association between an Appearance object and an AppearanceTarget object
      */
     template<class T>
-    class AppearanceTargetDefinition : public Object {
+    class LIBCITYGML_EXPORT AppearanceTargetDefinition : public Object {
     public:
         AppearanceTargetDefinition(const std::string& targetID, std::shared_ptr<T> appearance, const std::string& id) : Object(id), m_targetID(targetID), m_appearance(appearance) {}
 

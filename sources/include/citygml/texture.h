@@ -17,10 +17,10 @@ namespace citygml {
         enum class WrapMode
         {
             WM_NONE,        // the resulting color is fully transparent
-            WM_WRAP,		// the texture is repeated
-            WM_MIRROR,		// the texture is repeated and mirrored
-            WM_CLAMP,		// the texture is clamped to its edges
-            WM_BORDER		// the resulting color is specified by the borderColor element (RGBA)
+            WM_WRAP,        // the texture is repeated
+            WM_MIRROR,      // the texture is repeated and mirrored
+            WM_CLAMP,       // the texture is clamped to its edges
+            WM_BORDER       // the resulting color is specified by the borderColor element (RGBA)
         };
 
         std::string getUrl() const;
