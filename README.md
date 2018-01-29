@@ -13,7 +13,7 @@ libcitygml
 공간정보기술(주) 연구소 <link>http://www.git.co.kr/  
 
 
-연구기관
+라이브러리
 ---
 
 libcitygml(GNU LESSER GENERAL PUBLIC LICENSE Version 2.1) <link>https://github.com/jklimke/libcitygml
