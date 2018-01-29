@@ -93,6 +93,7 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, OuterFloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(GRP, CityObjectGroup));
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefFeature));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, IntBuildingInstallation));
 
                 typeIDTypeMapInitialized = true;
             }
