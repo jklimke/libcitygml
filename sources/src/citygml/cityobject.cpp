@@ -210,7 +210,7 @@ namespace citygml {
         case CityObject::CityObjectsType::COT_TransportationObject:
             return "TransportationObject";
         case CityObject::CityObjectsType::COT_IntBuildingInstallation:
-			return "IntBuildingInstallation";
+	    return "IntBuildingInstallation";
         default:
             return "Unknown";
         }
@@ -256,7 +256,7 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_OuterCeilingSurface), CityObject::CityObjectsType::COT_OuterCeilingSurface},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_OuterFloorSurface), CityObject::CityObjectsType::COT_OuterFloorSurface},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_TransportationObject), CityObject::CityObjectsType::COT_TransportationObject},
-		 {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_IntBuildingInstallation), CityObject::CityObjectsType::COT_IntBuildingInstallation}
+	 {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_IntBuildingInstallation), CityObject::CityObjectsType::COT_IntBuildingInstallation}
     };
 
     CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid)
