@@ -62,6 +62,9 @@ namespace citygml {
             // covers all supertypes of tran::_TransportationObject that are not Track, Road, Railway or Square...
             // there are to many for to few bits to explicitly enumerate them. However Track, Road, Railway or Square should be used most of the time
             COT_TransportationObject        = 1ll<< 33,
+            
+           	// ADD Buildding model 
+			COT_IntBuildingInstallation		= 1ll<< 34,
 
             COT_All                         = 0xFFFFFFFFFFFFFFFFll
         };
