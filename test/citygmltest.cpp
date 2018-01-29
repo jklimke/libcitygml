@@ -32,7 +32,7 @@ void usage()
     std::cout << "  -filter <mask>  CityGML objects to parse (default:All)" << std::endl
         << "                  The mask is composed of:" << std::endl
         << "                   GenericCityObject, Building, Room," << std::endl
-        << "                   BuildingInstallation, BuildingFurniture, Door, Window, " << std::endl
+        << "                   BuildingInstallation, BuildingFurniture, IntBuildingInstallation, Door, Window, " << std::endl
         << "                   CityFurniture, Track, Road, Railway, Square, PlantCover," << std::endl
         << "                   SolitaryVegetationObject, WaterBody, TINRelief, LandUse," << std::endl
         << "                   Tunnel, Bridge, BridgeConstructionElement," << std::endl
