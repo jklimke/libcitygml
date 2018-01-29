@@ -11,7 +11,7 @@ libcitygml
 
 감사합니다.
 
-libcitygml <link>https://github.com/jklimke/libcitygml
-	         <License> GNU LESSER GENERAL PUBLIC LICENSE Version 2.1
+libcitygml Link : <link>https://github.com/jklimke/libcitygml
+	   License : GNU LESSER GENERAL PUBLIC LICENSE Version 2.1
   
 공간정보기술(주) 연구소 <link>http://www.git.co.kr/
