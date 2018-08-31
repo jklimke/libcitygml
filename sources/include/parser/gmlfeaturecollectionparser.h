@@ -26,6 +26,7 @@ namespace citygml {
 
     private:
         Envelope* m_bounds;
+        bool m_srsSRSOverride;
 
 
     };

@@ -62,6 +62,7 @@ int main( int argc, char **argv )
         if ( param == "-log" ) { log = true; fargc = i+1; }
         //if ( param == "-filter" ) { if ( i == argc - 1 ) usage(); params.objectsMask = argv[i+1]; i++; fargc = i+1; }
         if ( param == "-destsrs" ) { if ( i == argc - 1 ) usage(); params.destSRS = argv[i+1]; i++; fargc = i+1; }
+        if ( param == "-srcsrs" ) { if ( i == argc - 1 ) usage(); params.srcSRS = argv[i+1]; i++; fargc = i+1; }
     }
 
     if ( argc - fargc < 1 ) usage();
