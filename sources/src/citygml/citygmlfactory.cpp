@@ -64,9 +64,9 @@ namespace citygml {
 
     }
 
-    Geometry* CityGMLFactory::createGeometry(const std::string& id, const CityObject::CityObjectsType& cityObjType, unsigned int lod)
+    Geometry* CityGMLFactory::createGeometry(const std::string& id, const CityObject::CityObjectsType& cityObjType, unsigned int lod, std::string srsName)
     {
-        Geometry* geom = new Geometry(id, mapCityObjectsTypeToGeometryType(cityObjType), lod);
+        Geometry* geom = new Geometry(id, mapCityObjectsTypeToGeometryType(cityObjType), lod, srsName);
         appearanceTargetCreated(geom);
         return geom;
     }
