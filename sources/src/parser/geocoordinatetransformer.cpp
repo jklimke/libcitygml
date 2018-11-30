@@ -242,6 +242,7 @@ namespace citygml {
 
     void GeoCoordinateTransformer::transform(Geometry& obj, GeoTransform& parentTransformation) {
         GeoTransform transformation = parentTransformation;
+        transformation.setSourceSRS(parentTransformation.sourceURN());
 
         // If geometry has a different SRS or object SRS is not defined
         if (!obj.getSRSName().empty() && !transformation.hasSourceSRS(obj.getSRSName())) {
