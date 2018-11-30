@@ -20,11 +20,11 @@ namespace citygml {
         : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_bounds = nullptr;
-        m_srsSRSOverride = false;
+        m_sourceSRSOverride = false;
         std::string paramsSrcSRS = documentParser.getParserParams().srcSRS;
         if (!paramsSrcSRS.empty()) {
             m_bounds = new Envelope(paramsSrcSRS);
-            m_srsSRSOverride = true;
+            m_sourceSRSOverride = true;
         }
     }
 
@@ -40,7 +40,7 @@ namespace citygml {
             return true;
         } else if (node == NodeType::GML_EnvelopeNode) {
 
-            if (m_srsSRSOverride) {
+            if (m_sourceSRSOverride) {
                 return true;
             }
             if (m_bounds != nullptr) {
@@ -93,6 +93,14 @@ namespace citygml {
         return getFeatureObject();
     }
 
+    const Envelope& GMLFeatureCollectionElementParser::getEnvelope() const
+    {
+        return *m_bounds;
+    }
 
+    bool GMLFeatureCollectionElementParser::getSourceSRSOverride() const
+    {
+        return m_sourceSRSOverride;
+    }
 
 }
