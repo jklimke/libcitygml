@@ -19,6 +19,8 @@ namespace citygml {
 
         std::shared_ptr<const CityModel> getModel();
 
+        const ParserParams getParserParams() const;
+
         // Methods used by CityGMLElementParser
 
         void setCurrentElementParser(ElementParser* parser);

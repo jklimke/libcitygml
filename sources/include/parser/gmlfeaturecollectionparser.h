@@ -24,8 +24,12 @@ namespace citygml {
         // GMLObjectElementParser interface
         virtual Object* getObject() override;
 
+        const Envelope& getEnvelope() const;
+        bool getSourceSRSOverride() const;
+
     private:
         Envelope* m_bounds;
+        bool m_sourceSRSOverride;
 
 
     };
