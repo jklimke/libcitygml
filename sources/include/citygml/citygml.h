@@ -59,6 +59,7 @@ namespace citygml
     // pruneEmptyObjects: remove the objects which do not contains any geometrical entity
     // tesselate: convert the interior & exteriors polygons to triangles
     // destSRS: the SRS (WKT, EPSG, OGC URN, etc.) where the coordinates must be transformed, default ("") is no transformation
+    // srsSRS: the SRS (WKT, EPSG, OGC URN, etc.) to overrride the SRS in the CityGML data (if any), default ("") means no override or use included SRS
 
     class LIBCITYGML_EXPORT ParserParams
     {
@@ -70,6 +71,7 @@ namespace citygml
             , optimize( false )
             , pruneEmptyObjects( false )
             , destSRS( "" )
+            , srcSRS( "" )
             , keepVertices ( false )
         { }
 
@@ -82,6 +84,7 @@ namespace citygml
         bool tesselate;
         bool keepVertices;
         std::string destSRS;
+        std::string srcSRS;
     };
 
     LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( std::istream& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);

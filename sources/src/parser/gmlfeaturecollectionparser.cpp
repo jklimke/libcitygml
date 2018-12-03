@@ -1,6 +1,7 @@
 #include "parser/gmlfeaturecollectionparser.h"
 
 #include "parser/attributes.h"
+#include "parser/citygmldocumentparser.h"
 #include "parser/parserutils.hpp"
 #include "parser/nodetypes.h"
 
@@ -19,6 +20,12 @@ namespace citygml {
         : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_bounds = nullptr;
+        m_sourceSRSOverride = false;
+        std::string paramsSrcSRS = documentParser.getParserParams().srcSRS;
+        if (!paramsSrcSRS.empty()) {
+            m_bounds = new Envelope(paramsSrcSRS);
+            m_sourceSRSOverride = true;
+        }
     }
 
     bool GMLFeatureCollectionElementParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
@@ -33,6 +40,9 @@ namespace citygml {
             return true;
         } else if (node == NodeType::GML_EnvelopeNode) {
 
+            if (m_sourceSRSOverride) {
+                return true;
+            }
             if (m_bounds != nullptr) {
                 CITYGML_LOG_WARN(m_logger, "Duplicate definition of " << NodeType::GML_EnvelopeNode << " at " << getDocumentLocation());
                 return true;
@@ -83,6 +93,14 @@ namespace citygml {
         return getFeatureObject();
     }
 
+    const Envelope& GMLFeatureCollectionElementParser::getEnvelope() const
+    {
+        return *m_bounds;
+    }
 
+    bool GMLFeatureCollectionElementParser::getSourceSRSOverride() const
+    {
+        return m_sourceSRSOverride;
+    }
 
 }
