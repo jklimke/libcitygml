@@ -20,7 +20,7 @@ The project is based on the CMAKE build system and should be pretty straight for
 
 Dependencies:
 
-The XercesC xml parsing library is the only requirement compiling and using libcitygml.
+The XercesC xml parsing library is the only requirement compiling and using libcitygml. Please use a version > 3.1 compiled with an SDK that is compatible with C++11.
 
 GDAL is required if coordinate transformations should be applied during paring.
 
