@@ -240,7 +240,14 @@ namespace citygml {
         //}
     }
 
-    void GeoCoordinateTransformer::transform(Geometry& obj, GeoTransform& transformation) {
+    void GeoCoordinateTransformer::transform(Geometry& obj, GeoTransform& parentTransformation) {
+        GeoTransform transformation = parentTransformation;
+        transformation.setSourceSRS(parentTransformation.sourceURN());
+
+        // If geometry has a different SRS or object SRS is not defined
+        if (!obj.getSRSName().empty() && !transformation.hasSourceSRS(obj.getSRSName())) {
+            transformation.setSourceSRS(obj.getSRSName());
+        }
 
         if (!transformation.valid()) {
             CITYGML_LOG_WARN(m_logger, "No valid spatial reference system is given for Geometry with id '" << obj.getId() << "'. Child Polygons are not transformed"
