@@ -49,6 +49,12 @@ namespace citygml {
             CITYGML_LOG_WARN(m_logger, "Expected end tag <" << NodeType::CORE_CityModelNode.name() << "> got <" << node.name() << "> at " << getDocumentLocation());
         }
 
+        if (getSourceSRSOverride()) {
+            Envelope *envelope = new Envelope(getEnvelope().srsName());
+            envelope->setLowerBound(m_model->getEnvelope().getLowerBound());
+            envelope->setUpperBound(m_model->getEnvelope().getUpperBound());
+            m_model->setEnvelope(envelope);
+        }
         m_callback(m_model);
         return true;
     }

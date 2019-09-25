@@ -238,6 +238,12 @@ namespace citygml {
 
     bool CityObjectElementParser::parseElementEndTag(const NodeType::XMLNode&, const std::string&)
     {
+        if (getSourceSRSOverride()) {
+            Envelope *envelope = new Envelope(getEnvelope().srsName());
+            envelope->setLowerBound(m_model->getEnvelope().getLowerBound());
+            envelope->setUpperBound(m_model->getEnvelope().getUpperBound());
+            m_model->setEnvelope(envelope);
+        }
         m_callback(m_model);
         m_model = nullptr;
         return true;

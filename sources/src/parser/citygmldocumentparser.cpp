@@ -30,6 +30,11 @@ namespace citygml {
         return m_rootModel;
     }
 
+    const ParserParams CityGMLDocumentParser::getParserParams() const
+    {
+        return m_parserParams;
+    }
+
     void CityGMLDocumentParser::setCurrentElementParser(ElementParser* parser)
     {
         m_parserStack.push(std::shared_ptr<ElementParser>(parser));

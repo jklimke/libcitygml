@@ -59,6 +59,10 @@ namespace citygml {
         unsigned int lod() const;
         void setLod(unsigned int lod);
 
+        // Access the srs of the implicit geometry
+        std::string getSRSName() const;
+        void setSRSName(const std::string& srsName);
+
         void addPolygon(std::shared_ptr<Polygon> );
         void addLineString(std::shared_ptr<LineString>);
 
@@ -74,13 +78,15 @@ namespace citygml {
 
 
     protected:
-        Geometry( const std::string& id, GeometryType type = GeometryType::GT_Unknown, unsigned int lod = 0 );
+        Geometry( const std::string& id, GeometryType type = GeometryType::GT_Unknown, unsigned int lod = 0, std::string srsName = "" );
 
         bool m_finished;
 
         GeometryType m_type;
 
         unsigned int m_lod;
+
+        std::string m_srsName;
 
         std::vector<std::shared_ptr<Geometry> > m_childGeometries;
 
