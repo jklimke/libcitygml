@@ -16,7 +16,7 @@ addons:
     packages:
       - libxerces-c-dev
       - libxerces-c3.1
-      - libgdal1h
+      - libgdal1i
       - libgdal-dev
       - cmake-data
       - cmake
