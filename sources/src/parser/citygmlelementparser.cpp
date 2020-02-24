@@ -37,8 +37,11 @@ namespace citygml {
             // This might happen if an container element that usally contains a child element links to an exting object using XLink an thus
             // uses a combined start/end element: e.g.: <surfaceMember xlink:href="#..."/>
             // For such elements a child parser must only be created if there is no xlink attribute.
-            CITYGML_LOG_ERROR(m_logger, "CityGMLElementParser::endElement called on unbound " << elementParserName() << " object for element <" << node << "> at " << getDocumentLocation());
-            throw std::runtime_error("CityGMLElementParser::endElement called on unbound CityGMLElementParser object.");
+            //CITYGML_LOG_ERROR(m_logger, "CityGMLElementParser::endElement called on unbound " << elementParserName() << " object for element <" << node << "> at " << getDocumentLocation());
+            //throw std::runtime_error("CityGMLElementParser::endElement called on unbound CityGMLElementParser object.");
+
+			m_documentParser.removeCurrentElementParser(this); // ignore (probably) empty node
+			return parseElementEndTag(node, characters);
         }
 
         if (m_boundElement == node) {
