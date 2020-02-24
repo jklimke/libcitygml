@@ -13,6 +13,7 @@
 #include <osg/BlendFunc>
 #include <osg/BlendColor>
 #include <osg/Material>
+#include <osg/CullFace>
 #include <osg/Texture2D>
 #include <osg/TexGen>
 #include <osg/TexMat>
@@ -122,6 +123,15 @@ public:
     std::string _theme;
 };
 
+class wallRoofObj
+{
+
+public:
+    osg::Vec3Array* verticesWall = nullptr;
+    osg::Vec3Array* verticesRoof = nullptr;
+    std::vector<GLuint> indicesWall;
+    std::vector<GLuint> indicesRoof;
+};
 class ReaderWriterCityGML : public osgDB::ReaderWriter
 {
 public:
@@ -156,7 +166,12 @@ private:
 
     ReadResult readCity(std::shared_ptr<const citygml::CityModel>, CityGMLSettings& ) const;
     bool createCityObject(const citygml::CityObject&, CityGMLSettings&, osg::Group*, const osg::Vec3d& offset = osg::Vec3d(0.0, 0.0, 0.0), unsigned int minimumLODToConsider = 0) const;
+    bool createSingleCityObject(const citygml::CityObject&, CityGMLSettings&, wallRoofObj &wr, const osg::Vec3d& offset = osg::Vec3d(0.0, 0.0, 0.0), unsigned int minimumLODToConsider = 0) const;
+
+    void createSingleOsgGeometryFromCityGMLGeometry(const citygml::CityObject& object,const citygml::Geometry& geometry, CityGMLSettings& settings, wallRoofObj &wr, const osg::Vec3d& offset) const;
+
 };
+
 
 // Register with Registry to instantiate the above reader/writer.
 REGISTER_OSGPLUGIN( citygml, ReaderWriterCityGML )
@@ -189,6 +204,15 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( const std::string
     std::streambuf* cerrsb = std::cerr.rdbuf( osg::notify(osg::NOTICE).rdbuf() );
 
     osg::notify(osg::NOTICE) << "Parsing CityGML file " << fileName << "..." << std::endl;
+#ifdef WIN32
+    if (fileName[0] == '/')
+    {
+        //xerces on windows wants \ as a start to figure out that it is an absolute path
+        fileName[0] = '\\';
+        if(fileName[1]=='/')
+            fileName[1] = '\\';
+    }
+#endif
 
     std::shared_ptr<const citygml::CityModel> city = citygml::load( fileName, settings._params, m_logger );
 
@@ -199,6 +223,7 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( const std::string
 
         // Let osg calculate the normals
         osgUtil::SmoothingVisitor sv;
+        sv.setCreaseAngle(osg::PI_2);
         rr.getNode()->accept(sv);
     }
 
@@ -259,8 +284,73 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readCity(std::shared_ptr<co
         TVec3d lb = city->getEnvelope().getLowerBound();
         offset = osg::Vec3d(lb.x, lb.y, lb.z);
     }
+    if (!settings._useMaxLODOnly)
+    {
+        for (unsigned int i = 0; i < roots.size(); ++i) createCityObject(*roots[i], settings, root, offset);
+    }
+    else
+    {
+        osg::Geode* geode = new osg::Geode();
+        osg::Geometry* wallGeom = new osg::Geometry;
+        osg::Geometry* roofGeom = new osg::Geometry;
 
-    for ( unsigned int i = 0; i < roots.size(); ++i ) createCityObject( *roots[i], settings, root, offset );
+        wallRoofObj wr;
+        // Vertices
+        wr.verticesWall = new osg::Vec3Array;
+        wr.verticesRoof = new osg::Vec3Array;
+        wr.indicesWall.reserve(5000);
+        wr.indicesRoof.reserve(5000);
+        wr.verticesWall->reserve(5000);
+        wr.verticesRoof->reserve(5000);
+
+        wallGeom->setVertexArray(wr.verticesWall);
+        roofGeom->setVertexArray(wr.verticesRoof);
+        for (unsigned int i = 0; i < roots.size(); ++i) createSingleCityObject(*roots[i], settings, wr, offset);
+
+        // Indices
+        osg::DrawElementsUInt* indicesW = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, wr.indicesWall.begin(), wr.indicesWall.end());
+        wallGeom->addPrimitiveSet(indicesW);
+        osg::DrawElementsUInt* indicesR = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, wr.indicesRoof.begin(), wr.indicesRoof.end());
+        roofGeom->addPrimitiveSet(indicesR);
+
+        // Appearance
+
+        osg::ref_ptr<osg::StateSet> stateset = roofGeom->getOrCreateStateSet();
+
+
+        osg::Material* material = new osg::Material;
+        material->setColorMode(osg::Material::OFF);
+        material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.2f, 0.2f, 0.2f, 1.0f));
+        material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        material->setShininess(osg::Material::FRONT_AND_BACK, 128.f * 0.5f);
+        material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.1f, 0.1f, 0.1f,1.0f));
+        stateset->setAttributeAndModes(material, osg::StateAttribute::ON);
+        stateset->setMode(GL_LIGHTING, osg::StateAttribute::ON); osg::CullFace* cullFace = new osg::CullFace();
+        cullFace->setMode(osg::CullFace::BACK);
+        stateset->setAttributeAndModes(cullFace, osg::StateAttribute::ON);
+
+
+        stateset = wallGeom->getOrCreateStateSet();
+
+
+        material = new osg::Material;
+        material->setColorMode(osg::Material::OFF);
+        material->setDiffuse(osg::Material::FRONT_AND_BACK, osg::Vec4(0.9f, 0.9f, 0.9f, 1.0f));
+        material->setSpecular(osg::Material::FRONT_AND_BACK, osg::Vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        material->setEmission(osg::Material::FRONT_AND_BACK, osg::Vec4(0.2f, 0.2f, 0.2f, 1.0f));
+        material->setShininess(osg::Material::FRONT_AND_BACK, 128.f * 0.5f);
+        material->setAmbient(osg::Material::FRONT_AND_BACK, osg::Vec4(0.5f, 0.5f, 0.5f, 1.0f));
+        stateset->setAttributeAndModes(material, osg::StateAttribute::ON);
+        stateset->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+        stateset->setMode(GL_LIGHTING, osg::StateAttribute::ON); cullFace = new osg::CullFace();
+        cullFace->setMode(osg::CullFace::BACK);
+        stateset->setAttributeAndModes(cullFace, osg::StateAttribute::ON);
+
+        geode->addDrawable(wallGeom);
+        geode->addDrawable(roofGeom);
+        root->addChild(geode);
+    }
 
 
     osg::notify(osg::NOTICE) << "Done." << std::endl;
@@ -411,6 +501,58 @@ void createOsgGeometryFromCityGMLGeometry(const citygml::Geometry& geometry, Cit
     }
 }
 
+void ReaderWriterCityGML::createSingleOsgGeometryFromCityGMLGeometry(const citygml::CityObject& object, const citygml::Geometry& geometry, CityGMLSettings& settings, wallRoofObj &wr, const osg::Vec3d& offset) const
+{
+    for (unsigned int j = 0; j < geometry.getPolygonsCount(); j++)
+    {
+        const citygml::Polygon& p = *geometry.getPolygon(j);
+
+        if (p.getIndices().size() == 0) continue;
+
+        const std::vector<TVec3d>& vert = p.getVertices();
+
+        if (object.getType() == citygml::CityObject::CityObjectsType::COT_RoofSurface)
+        {
+            GLuint startIndex = wr.verticesRoof->size();
+            for (const auto& i : p.getIndices())
+            {
+                wr.indicesRoof.push_back(i+startIndex);
+            }
+
+            for (unsigned int k = 0; k < vert.size(); k++)
+            {
+                TVec3d v = vert[k];
+                osg::Vec3d pt = osg::Vec3d(v.x, v.y, v.z) - offset;
+                wr.verticesRoof->push_back(pt);
+            }
+        }
+        if (object.getType() == citygml::CityObject::CityObjectsType::COT_WallSurface)
+        {
+            GLuint startIndex = wr.verticesWall->size();
+            for (const auto& i : p.getIndices())
+            {
+                wr.indicesWall.push_back(i + startIndex);
+            }
+
+            for (unsigned int k = 0; k < vert.size(); k++)
+            {
+                TVec3d v = vert[k];
+                osg::Vec3d pt = osg::Vec3d(v.x, v.y, v.z) - offset;
+                wr.verticesWall->push_back(pt);
+            }
+        }
+
+
+        // Indices
+        osg::DrawElementsUInt* indices = new osg::DrawElementsUInt(osg::PrimitiveSet::TRIANGLES, p.getIndices().begin(), p.getIndices().end());
+    }
+
+    // Parse child geoemtries
+    for (unsigned int i = 0; i < geometry.getGeometriesCount(); i++) {
+        createSingleOsgGeometryFromCityGMLGeometry(object, geometry.getGeometry(i), settings, wr, offset);
+    }
+}
+
 bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, CityGMLSettings& settings, osg::Group* parent, const osg::Vec3d& offset , unsigned int minimumLODToConsider) const
 {
     // Skip objects without geometry
@@ -481,6 +623,38 @@ bool ReaderWriterCityGML::createCityObject(const citygml::CityObject& object, Ci
 
     for ( unsigned int i = 0; i < object.getChildCityObjectsCount(); ++i )
         createCityObject( object.getChildCityObject(i), settings, grp, offset, highestLOD);
+
+    return true;
+}
+
+bool ReaderWriterCityGML::createSingleCityObject(const citygml::CityObject& object, CityGMLSettings& settings, wallRoofObj& wr, const osg::Vec3d& offset, unsigned int minimumLODToConsider) const
+{
+    osg::ref_ptr<osg::Vec4Array> roof_color = new osg::Vec4Array;
+    roof_color->push_back(osg::Vec4(0.9f, 0.1f, 0.1f, 1.0f));
+
+    unsigned int highestLOD = ReaderWriterCityGML::getHighestLodForObject(object);
+
+    for (unsigned int i = 0; i < object.getGeometriesCount(); i++)
+    {
+        const citygml::Geometry& geometry = object.getGeometry(i);
+
+        const unsigned int currentLOD = geometry.getLOD();
+
+        if (settings._useMaxLODOnly && (currentLOD < highestLOD || currentLOD < minimumLODToConsider)) {
+            continue;
+        }
+
+        createSingleOsgGeometryFromCityGMLGeometry(object,geometry, settings, wr, offset);
+    }
+
+
+    // Manage transparency for windows
+    if (object.getType() == citygml::CityObject::CityObjectsType::COT_Window)
+    {
+    }
+
+    for (unsigned int i = 0; i < object.getChildCityObjectsCount(); ++i)
+        createSingleCityObject(object.getChildCityObject(i), settings, wr, offset, highestLOD);
 
     return true;
 }
