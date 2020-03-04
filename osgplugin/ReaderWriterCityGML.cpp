@@ -130,7 +130,7 @@ class materialArrays
 {
 
 public:
-    materialArrays::materialArrays(int sizehint = 3)
+    materialArrays(int sizehint = 3)
     {
         texCoords = new osg::Vec2Array;
         vertices = new osg::Vec3Array;
@@ -140,7 +140,7 @@ public:
         texCoords->reserve(sizehint);
         texture = nullptr;
     }
-    materialArrays::~materialArrays()
+    ~materialArrays()
     {
     }
     osg::Texture2D* texture;
