@@ -16,15 +16,15 @@ It was moved to github due to inactivity of the project on google code (https://
 How to Setup
 ============
 
-The project is based on the CMAKE build system and should be pretty straight forward to setup.
+# The project is based on the CMAKE build system and should be pretty straight forward to setup.
 
-Dependencies:
+# Dependencies:
 
-The XercesC xml parsing library is the only requirement compiling and using libcitygml. Please use a version > 3.1 compiled with an SDK that is compatible with C++11.
+# The XercesC xml parsing library is the only requirement compiling and using libcitygml. Please use a version > 3.1 compiled with an SDK that is compatible with C++11.
 
-GDAL is required if coordinate transformations should be applied during paring.
+# GDAL is required if coordinate transformations should be applied during paring.
 
-OpenSceneGraph is required for building the plugin.
+# OpenSceneGraph is required for building the plugin.
 
 Test Data Attribution
 =====================
