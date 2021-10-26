@@ -292,6 +292,8 @@ namespace citygml {
                    || node == NodeType::APP_AppearanceMemberNode) {
 
             setParserForNextElement(new AppearanceElementParser(m_documentParser, m_factory, m_logger));
+        } else if (node == NodeType::DEM_TinNode) {
+            parseGeometryForLODLevel(std::stoi(m_model->getAttribute("dem:lod")));
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
                    || node == NodeType::BLDG_Lod1SolidNode
@@ -302,8 +304,7 @@ namespace citygml {
                    || node == NodeType::TRANS_Lod1MultiSurfaceNode
                    || node == NodeType::WTR_Lod1MultiCurveNode
                    || node == NodeType::WTR_Lod1MultiSurfaceNode
-                   || node == NodeType::WTR_Lod1SolidNode
-                   || node == NodeType::DEM_TinNode) {
+                   || node == NodeType::WTR_Lod1SolidNode) {
 
             parseGeometryForLODLevel(1);
         } else if (node == NodeType::BLDG_Lod2MultiCurveNode
