@@ -290,7 +290,8 @@ namespace citygml {
                    || node == NodeType::DEM_TINReliefNode
                    || node == NodeType::DEM_MassPointReliefNode
                    || node == NodeType::DEM_BreaklineReliefNode
-                   || node == NodeType::DEM_RasterReliefNode) {
+                   || node == NodeType::DEM_RasterReliefNode
+                   || node == NodeType::DEM_GridNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -302,8 +303,7 @@ namespace citygml {
                    || node == NodeType::DEM_TinNode
                    || node == NodeType::DEM_ReliefPointsNode
                    || node == NodeType::DEM_RidgeOrValleyLinesNode
-                   || node == NodeType::DEM_BreaklinesNode
-                   || node == NodeType::DEM_GridNode) {
+                   || node == NodeType::DEM_BreaklinesNode) {
             
             parseGeometryForLODLevel(std::stoi(m_model->getAttribute("dem:lod")));
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
