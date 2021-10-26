@@ -96,6 +96,8 @@ namespace citygml {
             return "OuterCeiling";
         case GeometryType::GT_OuterFloor:
             return "OuterFloor";
+        case GeometryType::GT_Tin:
+            return "Tin";
         default:
             return "Unknown";
         }

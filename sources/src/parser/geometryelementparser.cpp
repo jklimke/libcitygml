@@ -60,6 +60,7 @@ namespace citygml {
                 geometryTypeIDSet.insert(NodeType::GML_PolyhedralSurfaceNode.typeID());
                 geometryTypeIDSet.insert(NodeType::GML_SurfaceNode.typeID());
 				geometryTypeIDSet.insert(NodeType::GML_MultiCurveNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_MultiPointNode.typeID());
                 geometryTypeIDSetInitialized = true;
 
             }
@@ -138,7 +139,7 @@ namespace citygml {
             };
 
             setParserForNextElement(new SequenceParser(m_documentParser, m_logger, patchParserFactory, node));
-
+            return true;
         }
 
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);

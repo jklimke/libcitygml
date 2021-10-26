@@ -34,7 +34,8 @@ namespace citygml {
             GT_InteriorWall     = 1 << 6,
             GT_Ceiling          = 1 << 7,
             GT_OuterCeiling     = 1 << 8,
-            GT_OuterFloor       = 1 << 9
+            GT_OuterFloor       = 1 << 9,
+            GT_Tin              = 1 << 10,
         };
 
         unsigned int getLOD() const;
