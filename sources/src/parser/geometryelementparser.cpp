@@ -138,7 +138,7 @@ namespace citygml {
             };
 
             setParserForNextElement(new SequenceParser(m_documentParser, m_logger, patchParserFactory, node));
-
+            return true;
         }
 
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);

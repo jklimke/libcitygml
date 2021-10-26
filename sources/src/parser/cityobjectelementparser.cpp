@@ -93,6 +93,8 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, OuterFloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(GRP, CityObjectGroup));
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefFeature));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefComponent));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, TINRelief));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, IntBuildingInstallation));
 
                 typeIDTypeMapInitialized = true;
@@ -280,7 +282,9 @@ namespace citygml {
                    || node == NodeType::GRP_ParentNode
                    || node == NodeType::TRANS_TrafficAreaNode
                    || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
-                   || node == NodeType::WTR_BoundedByNode) {
+                   || node == NodeType::WTR_BoundedByNode
+                   || node == NodeType::DEM_ReliefComponentNode
+                   || node == NodeType::DEM_TINReliefNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -298,7 +302,8 @@ namespace citygml {
                    || node == NodeType::TRANS_Lod1MultiSurfaceNode
                    || node == NodeType::WTR_Lod1MultiCurveNode
                    || node == NodeType::WTR_Lod1MultiSurfaceNode
-                   || node == NodeType::WTR_Lod1SolidNode) {
+                   || node == NodeType::WTR_Lod1SolidNode
+                   || node == NodeType::DEM_TinNode) {
 
             parseGeometryForLODLevel(1);
         } else if (node == NodeType::BLDG_Lod2MultiCurveNode
@@ -380,7 +385,6 @@ namespace citygml {
                    || node == NodeType::CORE_ExternalReferenceNode
                    || node == NodeType::GML_MultiPointNode
                    || node == NodeType::GRP_GeometryNode
-                   || node == NodeType::DEM_ReliefComponentNode
                    || node == NodeType::GEN_Lod0GeometryNode
                    || node == NodeType::GEN_Lod0ImplicitRepresentationNode
                    || node == NodeType::GEN_Lod0TerrainIntersectionNode
@@ -504,6 +508,8 @@ namespace citygml {
                     || node == NodeType::LUSE_Lod3MultiSurfaceNode
                     || node == NodeType::LUSE_Lod4MultiSurfaceNode
                     || node == NodeType::DEM_ReliefComponentNode
+                    || node == NodeType::DEM_TINReliefNode
+                    || node == NodeType::DEM_TinNode
                     || node == NodeType::GEN_Lod0GeometryNode
                     || node == NodeType::GEN_Lod0ImplicitRepresentationNode
                     || node == NodeType::GEN_Lod0TerrainIntersectionNode

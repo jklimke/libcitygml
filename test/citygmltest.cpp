@@ -120,9 +120,9 @@ int main( int argc, char **argv )
     if ( log )
     {
         std::cout << std::endl << "Objects hierarchy:" << std::endl;
-//        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
+        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
 
-//        for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( roots[ i ], 2 );
+        for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( roots[ i ], 2 );
     }
 
     std::cout << "Done." << std::endl;
@@ -132,6 +132,8 @@ int main( int argc, char **argv )
 
 void analyzeObject( const citygml::CityObject* object, unsigned int indent )
 {
+    std::cout
+    << object->getTypeAsString();
 //    for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
 //        std::cout << "Object " << citygml::getCityObjectsClassName( object->getType() ) << ": " << object->getId() << std::endl;
 
