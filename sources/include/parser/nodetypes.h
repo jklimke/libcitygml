@@ -146,9 +146,11 @@ namespace citygml {
         NODETYPE( GML, Shell )
         NODETYPE( GML, PolyhedralSurface )
         NODETYPE( GML, Surface )
-        NODETYPE( GML, PolygonPatch)
+        NODETYPE( GML, PolygonPatch )
 
         NODETYPE( GML, LineString )
+        
+        NODETYPE( GML, RectifiedGridCoverage )
 
         // BLDG
         NODETYPE( BLDG, Building )

@@ -95,6 +95,9 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefFeature));
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefComponent));
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, TINRelief));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, MassPointRelief));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, BreaklineRelief));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, RasterRelief));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, IntBuildingInstallation));
 
                 typeIDTypeMapInitialized = true;
@@ -284,7 +287,10 @@ namespace citygml {
                    || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
                    || node == NodeType::WTR_BoundedByNode
                    || node == NodeType::DEM_ReliefComponentNode
-                   || node == NodeType::DEM_TINReliefNode) {
+                   || node == NodeType::DEM_TINReliefNode
+                   || node == NodeType::DEM_MassPointReliefNode
+                   || node == NodeType::DEM_BreaklineReliefNode
+                   || node == NodeType::DEM_RasterReliefNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -292,7 +298,13 @@ namespace citygml {
                    || node == NodeType::APP_AppearanceMemberNode) {
 
             setParserForNextElement(new AppearanceElementParser(m_documentParser, m_factory, m_logger));
-        } else if (node == NodeType::DEM_TinNode) {
+        } else if (node == NodeType::DEM_ExtentNode
+                   || node == NodeType::DEM_TinNode
+                   || node == NodeType::DEM_ReliefPointsNode
+                   || node == NodeType::DEM_RidgeOrValleyLinesNode
+                   || node == NodeType::DEM_BreaklinesNode
+                   || node == NodeType::DEM_GridNode) {
+            
             parseGeometryForLODLevel(std::stoi(m_model->getAttribute("dem:lod")));
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
@@ -391,7 +403,8 @@ namespace citygml {
                    || node == NodeType::GEN_Lod0TerrainIntersectionNode
                    || node == NodeType::TRANS_Lod0NetworkNode
                    || node == NodeType::WTR_Lod0MultiCurveNode
-                   || node == NodeType::WTR_Lod0MultiSurfaceNode) {
+                   || node == NodeType::WTR_Lod0MultiSurfaceNode
+                   || node == NodeType::GML_RectifiedGridCoverageNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger, node));
             return true;
@@ -510,7 +523,14 @@ namespace citygml {
                     || node == NodeType::LUSE_Lod4MultiSurfaceNode
                     || node == NodeType::DEM_ReliefComponentNode
                     || node == NodeType::DEM_TINReliefNode
+                    || node == NodeType::DEM_MassPointReliefNode
+                    || node == NodeType::DEM_BreaklineReliefNode
+                    || node == NodeType::DEM_RasterReliefNode
                     || node == NodeType::DEM_TinNode
+                    || node == NodeType::DEM_ReliefPointsNode
+                    || node == NodeType::DEM_RidgeOrValleyLinesNode
+                    || node == NodeType::DEM_BreaklinesNode
+                    || node == NodeType::DEM_GridNode
                     || node == NodeType::GEN_Lod0GeometryNode
                     || node == NodeType::GEN_Lod0ImplicitRepresentationNode
                     || node == NodeType::GEN_Lod0TerrainIntersectionNode

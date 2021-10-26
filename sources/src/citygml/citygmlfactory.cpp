@@ -58,6 +58,8 @@ namespace citygml {
             return Geometry::GeometryType::GT_OuterCeiling;
         case CityObject::CityObjectsType::COT_OuterFloorSurface:
             return Geometry::GeometryType::GT_OuterFloor;
+        case CityObject::CityObjectsType::COT_TINRelief:
+            return Geometry::GeometryType::GT_Tin;
         default:
             return Geometry::GeometryType::GT_Unknown;
         }

@@ -587,9 +587,11 @@ namespace citygml {
     DEFINE_NODE( GML, Shell )
     DEFINE_NODE( GML, PolyhedralSurface )
     DEFINE_NODE( GML, Surface )
-    DEFINE_NODE( GML, PolygonPatch)
+    DEFINE_NODE( GML, PolygonPatch )
 
-    DEFINE_NODE( GML, LineString)
+    DEFINE_NODE( GML, LineString )
+
+    DEFINE_NODE( GML, RectifiedGridCoverage )
 
     // BLDG
     DEFINE_NODE( BLDG, Building )
