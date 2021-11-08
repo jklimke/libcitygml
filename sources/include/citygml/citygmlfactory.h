@@ -19,6 +19,7 @@ namespace citygml {
     class ImplicitGeometry;
     class Polygon;
     class LineString;
+    class RectifiedGridCoverage;
 
     class Appearance;
     class Texture;
@@ -32,6 +33,7 @@ namespace citygml {
     public:
         CityGMLFactory(std::shared_ptr<CityGMLLogger> logger);
 
+        RectifiedGridCoverage* createRectifiedGridCoverage(std::string const& id);
         CityModel* createCityModel(const std::string& id);
         CityObject* createCityObject(const std::string& id, CityObject::CityObjectsType type);
         Geometry* createGeometry(const std::string& id, const CityObject::CityObjectsType& cityObjType = CityObject::CityObjectsType::COT_All, unsigned int lod = 0, std::string srsName = "");

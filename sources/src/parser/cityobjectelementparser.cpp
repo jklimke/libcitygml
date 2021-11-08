@@ -409,8 +409,7 @@ namespace citygml {
                    || node == NodeType::CORE_ExternalReferenceNode
                    || node == NodeType::GML_MultiPointNode
                    || node == NodeType::GRP_GeometryNode
-                   || node == NodeType::TRANS_Lod0NetworkNode
-                   || node == NodeType::GML_RectifiedGridCoverageNode) {
+                   || node == NodeType::TRANS_Lod0NetworkNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger, node));
             return true;

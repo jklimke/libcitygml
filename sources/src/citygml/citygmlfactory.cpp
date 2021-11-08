@@ -15,6 +15,7 @@
 #include <citygml/citymodel.h>
 #include <citygml/implictgeometry.h>
 #include <citygml/citygmllogger.h>
+#include <citygml/rectifiedgridcoverage.hpp>
 
 namespace citygml {
 
@@ -24,6 +25,10 @@ namespace citygml {
         m_polygonManager = std::unique_ptr<PolygonManager>(new PolygonManager(logger));
         m_geometryManager = std::unique_ptr<GeometryManager>(new GeometryManager(logger));
         m_logger = logger;
+    }
+
+    RectifiedGridCoverage* CityGMLFactory::createRectifiedGridCoverage(std::string const& id) {
+        return new RectifiedGridCoverage(id);
     }
 
     CityModel* CityGMLFactory::createCityModel(const std::string& id)
