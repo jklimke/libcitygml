@@ -20,14 +20,12 @@ namespace citygml {
     class LIBCITYGML_EXPORT RectifiedGridCoverage : public FeatureObject
     {
         friend class CityGMLFactory;
-        
-    protected:
-        RectifiedGridCoverage(std::string const& id = "RectifiedGridCoverage");
+    public:
         
         class Parser : public GMLFeatureCollectionElementParser
         {
         public:
-            Parser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(RectifiedGridCoverage*)> callback);
+            Parser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(RectifiedGridCoverage *)> callback);
             
             // ElementParser interface
             virtual std::string elementParserName() const override;
@@ -45,8 +43,11 @@ namespace citygml {
             
         private:
             std::function<void(RectifiedGridCoverage*)> m_callback;
-            RectifiedGridCoverage* m_model;
+            RectifiedGridCoverage * m_model;
         };
+        
+    protected:
+        RectifiedGridCoverage(std::string const& id = "RectifiedGridCoverage");
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream& os, const RectifiedGridCoverage& o );

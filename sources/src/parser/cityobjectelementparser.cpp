@@ -10,6 +10,7 @@
 #include "parser/delayedchoiceelementparser.h"
 #include "parser/linestringelementparser.h"
 #include "parser/addressparser.h"
+#include "citygml/rectifiedgridcoverage.hpp"
 
 #include <citygml/citygmlfactory.h>
 #include <citygml/citygmllogger.h>
@@ -273,6 +274,11 @@ namespace citygml {
         } else if (attributesSet.count(node.typeID()) > 0 || node == NodeType::GEN_ValueNode) {
 
             return true;
+        } else if (node == NodeType::GML_RectifiedGridCoverageNode) {
+            
+            setParserForNextElement(new RectifiedGridCoverage::Parser(m_documentParser, m_factory, m_logger, [this](RectifiedGridCoverage * rectifiedGridCoverage) {
+                m_model->setRectifiedGridCoverage(rectifiedGridCoverage);
+            }));
         } else if (node == NodeType::BLDG_BoundedByNode
                    || node == NodeType::BLDG_OuterBuildingInstallationNode
                    || node == NodeType::BLDG_InteriorBuildingInstallationNode
@@ -291,7 +297,8 @@ namespace citygml {
                    || node == NodeType::DEM_MassPointReliefNode
                    || node == NodeType::DEM_BreaklineReliefNode
                    || node == NodeType::DEM_RasterReliefNode
-                   || node == NodeType::DEM_GridNode) {
+                   || node == NodeType::DEM_GridNode
+                   || node == NodeType::CORE_GeneralizesToNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -405,8 +412,7 @@ namespace citygml {
                    || node == NodeType::GEN_Lod4ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(4);
-        } else if (node == NodeType::CORE_GeneralizesToNode
-                   || node == NodeType::CORE_ExternalReferenceNode
+        } else if (node == NodeType::CORE_ExternalReferenceNode
                    || node == NodeType::GML_MultiPointNode
                    || node == NodeType::GRP_GeometryNode
                    || node == NodeType::TRANS_Lod0NetworkNode) {

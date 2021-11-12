@@ -24,7 +24,7 @@ namespace citygml {
     RectifiedGridCoverage::RectifiedGridCoverage(std::string const& id) : FeatureObject(id) {
     }
 
-    RectifiedGridCoverage::Parser::Parser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(RectifiedGridCoverage*)> callback)
+    RectifiedGridCoverage::Parser::Parser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(RectifiedGridCoverage *)> callback)
         : GMLFeatureCollectionElementParser(documentParser, factory, logger)
     {
         m_callback = callback;

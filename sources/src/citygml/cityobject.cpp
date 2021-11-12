@@ -98,6 +98,14 @@ namespace citygml {
         m_address = std::move(address);
     }
 
+RectifiedGridCoverage const* CityObject::rectifiedGridCoverage() const {
+    return m_rectifiedGridCoverage.get();
+}
+
+void CityObject::setRectifiedGridCoverage(RectifiedGridCoverage * rectifiedGridCoverage) {
+    m_rectifiedGridCoverage = std::unique_ptr<RectifiedGridCoverage>(rectifiedGridCoverage);
+}
+
     void CityObject::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         for (std::unique_ptr<Geometry>& geom : m_geometries) {
