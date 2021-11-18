@@ -78,6 +78,7 @@ SET(SOURCES
   src/citygml/linestring.cpp
   src/citygml/address.cpp
   src/citygml/rectifiedgridcoverage.cpp
+  src/citygml/externalreference.cpp
 
   src/parser/nodetypes.cpp
   src/parser/attributes.cpp
@@ -147,6 +148,7 @@ SET(PUBLIC_HEADER
   include/citygml/linestring.h
   include/citygml/address.h
   include/citygml/rectifiedgridcoverage.hpp
+  include/citygml/externalreference.h
 )
 
 SET(HEADERS
