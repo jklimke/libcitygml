@@ -15,9 +15,13 @@ namespace citygml {
     union LIBCITYGML_EXPORT ExternalObjectReference {
         std::string name;
         std::string uri;
+        
+        ExternalObjectReference();
+        ~ExternalObjectReference();
     };
 
     class LIBCITYGML_EXPORT ExternalReference: public Object {
+        friend class CityGMLFactory;
     public:
         class Parser: public GMLObjectElementParser {
         public:
@@ -38,13 +42,14 @@ namespace citygml {
             virtual Object* getObject() override;
             
         private:
-            std::unique_ptr<ExternalReference> model;
+            std::shared_ptr<ExternalReference> model;
             std::function<void(ExternalReference *)> callback;
         };
         
-        ExternalReference() = default;
-        ~ExternalReference() noexcept override;                    // Destructor
         
+    protected:
+        ExternalReference(std::string const& id);
+//        ~ExternalReference() noexcept override;                    // Destructor
         std::string informationSystem;
         ExternalObjectReference externalObject;
     };

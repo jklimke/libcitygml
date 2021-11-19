@@ -412,8 +412,12 @@ namespace citygml {
                    || node == NodeType::GEN_Lod4ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(4);
-        } else if (node == NodeType::CORE_ExternalReferenceNode
-                   || node == NodeType::GML_MultiPointNode
+        } else if (node == NodeType::CORE_ExternalReferenceNode){
+            
+            setParserForNextElement(new ExternalReference::Parser(m_documentParser, m_factory, m_logger, [this](ExternalReference * externalReference){
+                m_model->setExternalReference(externalReference);
+            }));
+        } else if (node == NodeType::GML_MultiPointNode
                    || node == NodeType::GRP_GeometryNode
                    || node == NodeType::TRANS_Lod0NetworkNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");

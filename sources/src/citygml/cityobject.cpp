@@ -106,6 +106,14 @@ void CityObject::setRectifiedGridCoverage(RectifiedGridCoverage * rectifiedGridC
     m_rectifiedGridCoverage = std::unique_ptr<RectifiedGridCoverage>(rectifiedGridCoverage);
 }
 
+ExternalReference const* CityObject::externalReference() const {
+    return m_externalReference.get();
+}
+
+void CityObject::setExternalReference(ExternalReference * externalReference) {
+    m_externalReference = std::unique_ptr<ExternalReference>(externalReference);
+}
+
     void CityObject::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         for (std::unique_ptr<Geometry>& geom : m_geometries) {

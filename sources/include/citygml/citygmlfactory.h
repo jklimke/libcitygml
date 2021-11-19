@@ -2,6 +2,7 @@
 
 #include <citygml/geometry.h>
 #include <citygml/cityobject.h>
+#include "citygml/externalreference.h"
 
 #include <memory>
 
@@ -40,6 +41,7 @@ namespace citygml {
 
         std::shared_ptr<Polygon> createPolygon(const std::string& id);
         std::shared_ptr<LineString> createLineString(const std::string& id);
+        std::shared_ptr<ExternalReference> createExternalReference(const std::string& id);
 
         /**
          * @brief requests a polygon for a Geometry object that will be added later
