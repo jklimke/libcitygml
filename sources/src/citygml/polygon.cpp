@@ -243,8 +243,9 @@ namespace citygml {
         if (optimize) {
             removeDuplicateVerticesInRings(logger);
         }
-
-        computeIndices(tesselator, logger);
+        
+        
+//        computeIndices(tesselator, logger);
 
     }
 
