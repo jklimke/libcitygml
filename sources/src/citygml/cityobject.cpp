@@ -114,20 +114,20 @@ void CityObject::setExternalReference(ExternalReference * externalReference) {
     m_externalReference = std::unique_ptr<ExternalReference>(externalReference);
 }
 
-    void CityObject::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    void CityObject::finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger)
     {
         for (std::unique_ptr<Geometry>& geom : m_geometries) {
-            geom->finish(tesselator, optimize, logger);
+            geom->finish(tesselator, optimize, tesselate, logger);
         }
 
         for (std::unique_ptr<ImplicitGeometry>& implictGeom : m_implicitGeometries) {
             for (int i = 0; i < implictGeom->getGeometriesCount(); i++) {
-                implictGeom->getGeometry(i).finish(tesselator, optimize, logger);
+                implictGeom->getGeometry(i).finish(tesselator, optimize, tesselate, logger);
             }
         }
 
         for (std::unique_ptr<CityObject>& child : m_children) {
-            child->finish(tesselator, optimize, logger);
+            child->finish(tesselator, optimize, tesselate, logger);
         }
     }
 

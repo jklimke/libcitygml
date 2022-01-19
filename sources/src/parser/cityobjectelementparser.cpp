@@ -10,7 +10,8 @@
 #include "parser/delayedchoiceelementparser.h"
 #include "parser/linestringelementparser.h"
 #include "parser/addressparser.h"
-#include "citygml/rectifiedgridcoverage.hpp"
+#include "parser/rectifiedgridcoverageparser.h"
+#include "parser/externalreferenceparser.h"
 
 #include <citygml/citygmlfactory.h>
 #include <citygml/citygmllogger.h>
@@ -276,7 +277,7 @@ namespace citygml {
             return true;
         } else if (node == NodeType::GML_RectifiedGridCoverageNode) {
             
-            setParserForNextElement(new RectifiedGridCoverage::Parser(m_documentParser, m_factory, m_logger, [this](RectifiedGridCoverage * rectifiedGridCoverage) {
+            setParserForNextElement(new RectifiedGridCoverageParser(m_documentParser, m_factory, m_logger, [this](RectifiedGridCoverage * rectifiedGridCoverage) {
                 m_model->setRectifiedGridCoverage(rectifiedGridCoverage);
             }));
         } else if (node == NodeType::BLDG_BoundedByNode
@@ -414,7 +415,7 @@ namespace citygml {
             parseImplicitGeometryForLODLevel(4);
         } else if (node == NodeType::CORE_ExternalReferenceNode){
             
-            setParserForNextElement(new ExternalReference::Parser(m_documentParser, m_factory, m_logger, [this](ExternalReference * externalReference){
+            setParserForNextElement(new ExternalReferenceParser(m_documentParser, m_factory, m_logger, [this](ExternalReference * externalReference){
                 m_model->setExternalReference(externalReference);
             }));
         } else if (node == NodeType::GML_MultiPointNode

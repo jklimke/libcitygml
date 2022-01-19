@@ -68,7 +68,8 @@ int main( int argc, char **argv )
     if ( argc - fargc < 1 ) usage();
 
     std::cout << "Parsing CityGML file " << argv[fargc] << " using libcitygml v." << LIBCITYGML_VERSIONSTR << "..." << std::endl;
-
+    params.optimize = false;
+    params.tesselate = false;
     time_t start;
     time( &start );
 

@@ -120,7 +120,7 @@ namespace citygml {
         ExternalReference const* externalReference() const;
         void setExternalReference(ExternalReference * externalReference);
 
-        void finish(Tesselator& tesselator, bool optimize, std::shared_ptr<citygml::CityGMLLogger> logger);
+        void finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<citygml::CityGMLLogger> logger);
 
         virtual ~CityObject();
 

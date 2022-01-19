@@ -231,7 +231,7 @@ namespace citygml {
         }
     }
 
-    void Polygon::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    void Polygon::finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger)
     {
         if (m_finished) {
             // This may happen as Polygons can be shared between geometries
@@ -244,9 +244,9 @@ namespace citygml {
             removeDuplicateVerticesInRings(logger);
         }
         
-        
-//        computeIndices(tesselator, logger);
-
+        if (tesselate) {
+            computeIndices(tesselator, logger);
+        }
     }
 
     void Polygon::addRing( LinearRing* ring )
