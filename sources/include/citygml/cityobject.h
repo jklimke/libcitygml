@@ -19,7 +19,6 @@ namespace citygml {
     class CityGMLLogger;
     class AppearanceManager;
     class Address;
-//    class RectifiedGridCoverage;
 
     class LIBCITYGML_EXPORT CityObject : public FeatureObject
     {
