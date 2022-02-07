@@ -2,6 +2,7 @@
 
 #include <citygml/geometry.h>
 #include <citygml/cityobject.h>
+#include <citygml/externalreference.h>
 
 #include <memory>
 
@@ -19,6 +20,7 @@ namespace citygml {
     class ImplicitGeometry;
     class Polygon;
     class LineString;
+    class RectifiedGridCoverage;
 
     class Appearance;
     class Texture;
@@ -35,9 +37,11 @@ namespace citygml {
         CityModel* createCityModel(const std::string& id);
         CityObject* createCityObject(const std::string& id, CityObject::CityObjectsType type);
         Geometry* createGeometry(const std::string& id, const CityObject::CityObjectsType& cityObjType = CityObject::CityObjectsType::COT_All, unsigned int lod = 0, std::string srsName = "");
+        RectifiedGridCoverage* createRectifiedGridCoverage(std::string const& id);
 
         std::shared_ptr<Polygon> createPolygon(const std::string& id);
         std::shared_ptr<LineString> createLineString(const std::string& id);
+        std::shared_ptr<ExternalReference> createExternalReference(const std::string& id);
 
         /**
          * @brief requests a polygon for a Geometry object that will be added later

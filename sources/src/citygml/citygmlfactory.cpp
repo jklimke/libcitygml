@@ -15,6 +15,7 @@
 #include <citygml/citymodel.h>
 #include <citygml/implictgeometry.h>
 #include <citygml/citygmllogger.h>
+#include <citygml/rectifiedgridcoverage.h>
 
 namespace citygml {
 
@@ -24,6 +25,10 @@ namespace citygml {
         m_polygonManager = std::unique_ptr<PolygonManager>(new PolygonManager(logger));
         m_geometryManager = std::unique_ptr<GeometryManager>(new GeometryManager(logger));
         m_logger = logger;
+    }
+
+    RectifiedGridCoverage* CityGMLFactory::createRectifiedGridCoverage(std::string const& id) {
+        return new RectifiedGridCoverage(id);
     }
 
     CityModel* CityGMLFactory::createCityModel(const std::string& id)
@@ -88,7 +93,12 @@ namespace citygml {
     {
         LineString* lineString = new LineString(id);
         return std::shared_ptr<LineString>(lineString);
+    }
 
+    std::shared_ptr<ExternalReference> CityGMLFactory::createExternalReference(const std::string& id)
+    {
+        ExternalReference * externalReference = new ExternalReference(id);
+        return std::shared_ptr<ExternalReference>(externalReference);
     }
 
     void CityGMLFactory::requestSharedPolygonForGeometry(Geometry* geom, const std::string& polygonId)

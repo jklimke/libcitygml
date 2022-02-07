@@ -82,7 +82,7 @@ namespace citygml {
 
         void addRing( LinearRing* );
 
-        void finish(Tesselator& tesselator , bool optimize, std::shared_ptr<CityGMLLogger> logger);
+        void finish(Tesselator& tesselator , bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger);
 
         std::shared_ptr<LinearRing> exteriorRing(){
             return m_exteriorRing;

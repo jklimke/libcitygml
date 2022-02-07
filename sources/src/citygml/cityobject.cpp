@@ -98,20 +98,36 @@ namespace citygml {
         m_address = std::move(address);
     }
 
-    void CityObject::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    RectifiedGridCoverage const* CityObject::rectifiedGridCoverage() const {
+        return m_rectifiedGridCoverage.get();
+    }
+
+    void CityObject::setRectifiedGridCoverage(RectifiedGridCoverage * rectifiedGridCoverage) {
+        m_rectifiedGridCoverage = std::unique_ptr<RectifiedGridCoverage>(rectifiedGridCoverage);
+    }
+
+    ExternalReference const* CityObject::externalReference() const {
+        return m_externalReference.get();
+    }
+
+    void CityObject::setExternalReference(ExternalReference * externalReference) {
+        m_externalReference = std::unique_ptr<ExternalReference>(externalReference);
+    }
+
+    void CityObject::finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger)
     {
         for (std::unique_ptr<Geometry>& geom : m_geometries) {
-            geom->finish(tesselator, optimize, logger);
+            geom->finish(tesselator, optimize, tesselate, logger);
         }
 
         for (std::unique_ptr<ImplicitGeometry>& implictGeom : m_implicitGeometries) {
             for (int i = 0; i < implictGeom->getGeometriesCount(); i++) {
-                implictGeom->getGeometry(i).finish(tesselator, optimize, logger);
+                implictGeom->getGeometry(i).finish(tesselator, optimize, tesselate, logger);
             }
         }
 
         for (std::unique_ptr<CityObject>& child : m_children) {
-            child->finish(tesselator, optimize, logger);
+            child->finish(tesselator, optimize, tesselate, logger);
         }
     }
 

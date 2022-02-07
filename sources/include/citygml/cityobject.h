@@ -6,6 +6,8 @@
 #include <citygml/featureobject.h>
 #include <citygml/citygml_api.h>
 #include <citygml/enum_type_bitmask.h>
+#include <citygml/rectifiedgridcoverage.h>
+#include <citygml/externalreference.h>
 class Tesselator;
 
 namespace citygml {
@@ -108,8 +110,16 @@ namespace citygml {
         // Access address
         const Address* address() const;
         void setAddress(std::unique_ptr<Address>&& address);
+        
+        // Access rectifiedGridCoverage
+        RectifiedGridCoverage const* rectifiedGridCoverage() const;
+        void setRectifiedGridCoverage(RectifiedGridCoverage * rectifiedGridCoverage);
+        
+        // Access externalReference
+        ExternalReference const* externalReference() const;
+        void setExternalReference(ExternalReference * externalReference);
 
-        void finish(Tesselator& tesselator, bool optimize, std::shared_ptr<citygml::CityGMLLogger> logger);
+        void finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<citygml::CityGMLLogger> logger);
 
         virtual ~CityObject();
 
@@ -120,6 +130,8 @@ namespace citygml {
         std::vector<std::unique_ptr<ImplicitGeometry> > m_implicitGeometries;
         std::vector<std::unique_ptr<CityObject> > m_children;
         std::unique_ptr<Address> m_address;
+        std::unique_ptr<RectifiedGridCoverage> m_rectifiedGridCoverage;
+        std::unique_ptr<ExternalReference> m_externalReference;
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream& os, const CityObject& o );

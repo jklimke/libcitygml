@@ -10,6 +10,8 @@
 #include "parser/delayedchoiceelementparser.h"
 #include "parser/linestringelementparser.h"
 #include "parser/addressparser.h"
+#include "parser/rectifiedgridcoverageparser.h"
+#include "parser/externalreferenceparser.h"
 
 #include <citygml/citygmlfactory.h>
 #include <citygml/citygmllogger.h>
@@ -273,6 +275,11 @@ namespace citygml {
         } else if (attributesSet.count(node.typeID()) > 0 || node == NodeType::GEN_ValueNode) {
 
             return true;
+        } else if (node == NodeType::GML_RectifiedGridCoverageNode) {
+            
+            setParserForNextElement(new RectifiedGridCoverageParser(m_documentParser, m_factory, m_logger, [this](RectifiedGridCoverage * rectifiedGridCoverage) {
+                m_model->setRectifiedGridCoverage(rectifiedGridCoverage);
+            }));
         } else if (node == NodeType::BLDG_BoundedByNode
                    || node == NodeType::BLDG_OuterBuildingInstallationNode
                    || node == NodeType::BLDG_InteriorBuildingInstallationNode
@@ -291,7 +298,8 @@ namespace citygml {
                    || node == NodeType::DEM_MassPointReliefNode
                    || node == NodeType::DEM_BreaklineReliefNode
                    || node == NodeType::DEM_RasterReliefNode
-                   || node == NodeType::DEM_GridNode) {
+                   || node == NodeType::DEM_GridNode
+                   || node == NodeType::CORE_GeneralizesToNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -306,6 +314,11 @@ namespace citygml {
                    || node == NodeType::DEM_BreaklinesNode) {
             
             parseGeometryForLODLevel(std::stoi(m_model->getAttribute("dem:lod")));
+        } else if (node == NodeType::GEN_Lod0TerrainIntersectionNode
+                   || node == NodeType::WTR_Lod0MultiCurveNode
+                   || node == NodeType::WTR_Lod0MultiSurfaceNode) {
+            
+            parseGeometryForLODLevel(0);
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
                    || node == NodeType::BLDG_Lod1SolidNode
@@ -355,7 +368,10 @@ namespace citygml {
                    || node == NodeType::WTR_Lod4SurfaceNode) {
 
             parseGeometryForLODLevel(4);
-        } else if (node == NodeType::GEN_Lod1GeometryNode
+        } else if (node == NodeType::GEN_Lod0GeometryNode) {
+            parseGeometryPropertyElementForLODLevel(0, attributes.getCityGMLIDAttribute());
+        }
+        else if (node == NodeType::GEN_Lod1GeometryNode
                    || node == NodeType::FRN_Lod1GeometryNode
                    || node == NodeType::VEG_Lod1GeometryNode) {
             parseGeometryPropertyElementForLODLevel(1, attributes.getCityGMLIDAttribute());
@@ -374,6 +390,9 @@ namespace citygml {
                    || node == NodeType::BLDG_Lod4GeometryNode
                    || node == NodeType::VEG_Lod4GeometryNode) {
             parseGeometryPropertyElementForLODLevel(4, attributes.getCityGMLIDAttribute());
+        } else if (node == NodeType::GEN_Lod0ImplicitRepresentationNode) {
+          
+            parseImplicitGeometryForLODLevel(0);
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
                    || node == NodeType::FRN_Lod1ImplicitRepresentationNode
                    || node == NodeType::GEN_Lod1ImplicitRepresentationNode) {
@@ -394,17 +413,14 @@ namespace citygml {
                    || node == NodeType::GEN_Lod4ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(4);
-        } else if (node == NodeType::CORE_GeneralizesToNode
-                   || node == NodeType::CORE_ExternalReferenceNode
-                   || node == NodeType::GML_MultiPointNode
+        } else if (node == NodeType::CORE_ExternalReferenceNode){
+            
+            setParserForNextElement(new ExternalReferenceParser(m_documentParser, m_factory, m_logger, [this](ExternalReference * externalReference){
+                m_model->setExternalReference(externalReference);
+            }));
+        } else if (node == NodeType::GML_MultiPointNode
                    || node == NodeType::GRP_GeometryNode
-                   || node == NodeType::GEN_Lod0GeometryNode
-                   || node == NodeType::GEN_Lod0ImplicitRepresentationNode
-                   || node == NodeType::GEN_Lod0TerrainIntersectionNode
-                   || node == NodeType::TRANS_Lod0NetworkNode
-                   || node == NodeType::WTR_Lod0MultiCurveNode
-                   || node == NodeType::WTR_Lod0MultiSurfaceNode
-                   || node == NodeType::GML_RectifiedGridCoverageNode) {
+                   || node == NodeType::TRANS_Lod0NetworkNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger, node));
             return true;

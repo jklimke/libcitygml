@@ -77,6 +77,8 @@ SET(SOURCES
   src/citygml/geometrymanager.cpp
   src/citygml/linestring.cpp
   src/citygml/address.cpp
+  src/citygml/rectifiedgridcoverage.cpp
+  src/citygml/externalreference.cpp
 
   src/parser/nodetypes.cpp
   src/parser/attributes.cpp
@@ -98,11 +100,13 @@ SET(SOURCES
   src/parser/citymodelelementparser.cpp
   src/parser/cityobjectelementparser.cpp
   src/parser/appearanceelementparser.cpp
+  src/parser/externalreferenceparser.cpp
   src/parser/materialelementparser.cpp
   src/parser/textureelementparser.cpp
   src/parser/georeferencedtextureelementparser.cpp
   src/parser/geometryelementparser.cpp
   src/parser/polygonelementparser.cpp
+  src/parser/rectifiedgridcoverageparser.cpp
   src/parser/linestringelementparser.cpp
   src/parser/linearringelementparser.cpp
   src/parser/implicitgeometryelementparser.cpp
@@ -145,6 +149,8 @@ SET(PUBLIC_HEADER
   include/citygml/citygmlfactory.h
   include/citygml/linestring.h
   include/citygml/address.h
+  include/citygml/rectifiedgridcoverage.h
+  include/citygml/externalreference.h
 )
 
 SET(HEADERS
@@ -179,11 +185,13 @@ SET(HEADERS
   include/parser/citymodelelementparser.h
   include/parser/cityobjectelementparser.h
   include/parser/appearanceelementparser.h
+  include/parser/externalreferenceparser.h
   include/parser/materialelementparser.h
   include/parser/textureelementparser.h
   include/parser/georeferencedtextureelementparser.h
   include/parser/geometryelementparser.h
   include/parser/polygonelementparser.h
+  include/parser/rectifiedgridcoverageparser.h
   include/parser/linestringelementparser.h
   include/parser/linearringelementparser.h
   include/parser/implicitgeometryelementparser.h
