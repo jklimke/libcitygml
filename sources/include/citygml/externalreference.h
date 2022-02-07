@@ -1,10 +1,3 @@
-//
-//  ExternalReference.h
-//  libcitygml
-//
-//  Created by 松本青空 on 2021/11/12.
-//
-
 #pragma once
 
 #include <citygml/object.h>

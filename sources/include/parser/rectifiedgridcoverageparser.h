@@ -1,21 +1,13 @@
-//
-//  rectifiedgridcoverageparser.h
-//  citygml
-//
-//  Created by 松本青空 on 2022/01/18.
-//
-
 #pragma once
 
-#include <parser/gmlfeaturecollectionparser.h>
+#include "parser/gmlfeaturecollectionparser.h"
 
-#include <citygml/rectifiedgridcoverage.hpp>
+#include <citygml/rectifiedgridcoverage.h>
 
 
 namespace citygml {
 
-    class RectifiedGridCoverageParser : public GMLFeatureCollectionElementParser
-    {
+    class RectifiedGridCoverageParser : public GMLFeatureCollectionElementParser {
     public:
         RectifiedGridCoverageParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(RectifiedGridCoverage *)> callback);
         

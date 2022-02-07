@@ -1,10 +1,3 @@
-//
-//  externalreferenceparser.h
-//  libcitygml
-//
-//  Created by 松本青空 on 2022/01/18.
-//
-
 #pragma once
 
 #include "parser/gmlobjectparser.h"

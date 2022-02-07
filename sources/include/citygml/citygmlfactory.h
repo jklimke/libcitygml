@@ -34,10 +34,10 @@ namespace citygml {
     public:
         CityGMLFactory(std::shared_ptr<CityGMLLogger> logger);
 
-        RectifiedGridCoverage* createRectifiedGridCoverage(std::string const& id);
         CityModel* createCityModel(const std::string& id);
         CityObject* createCityObject(const std::string& id, CityObject::CityObjectsType type);
         Geometry* createGeometry(const std::string& id, const CityObject::CityObjectsType& cityObjType = CityObject::CityObjectsType::COT_All, unsigned int lod = 0, std::string srsName = "");
+        RectifiedGridCoverage* createRectifiedGridCoverage(std::string const& id);
 
         std::shared_ptr<Polygon> createPolygon(const std::string& id);
         std::shared_ptr<LineString> createLineString(const std::string& id);
