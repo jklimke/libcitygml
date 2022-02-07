@@ -5,7 +5,7 @@
 //  Created by 松本青空 on 2021/11/15.
 //
 
-#include "citygml/externalreference.h"
+#include <citygml/externalreference.h>
 
 namespace citygml {
 ExternalObjectReference::ExternalObjectReference() {

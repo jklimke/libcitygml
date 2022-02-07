@@ -2,7 +2,7 @@
 
 #include <citygml/geometry.h>
 #include <citygml/cityobject.h>
-#include "citygml/externalreference.h"
+#include <citygml/externalreference.h>
 
 #include <memory>
 
