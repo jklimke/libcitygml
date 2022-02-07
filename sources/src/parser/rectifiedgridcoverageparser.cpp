@@ -1,10 +1,3 @@
-//
-//  rectifiedgridcoverageparser.cpp
-//  citygml
-//
-//  Created by 松本青空 on 2022/01/18.
-//
-
 #include "parser/rectifiedgridcoverageparser.h"
 
 #include "parser/nodetypes.h"
@@ -89,5 +82,4 @@ namespace citygml {
     {
         return m_model;
     }
-
 }

@@ -15,7 +15,7 @@
 #include <citygml/citymodel.h>
 #include <citygml/implictgeometry.h>
 #include <citygml/citygmllogger.h>
-#include <citygml/rectifiedgridcoverage.hpp>
+#include <citygml/rectifiedgridcoverage.h>
 
 namespace citygml {
 

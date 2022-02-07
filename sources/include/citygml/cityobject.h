@@ -6,8 +6,8 @@
 #include <citygml/featureobject.h>
 #include <citygml/citygml_api.h>
 #include <citygml/enum_type_bitmask.h>
-#include "citygml/rectifiedgridcoverage.hpp"
-#include "citygml/externalreference.h"
+#include <citygml/rectifiedgridcoverage.h>
+#include <citygml/externalreference.h>
 class Tesselator;
 
 namespace citygml {

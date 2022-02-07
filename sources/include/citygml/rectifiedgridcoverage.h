@@ -1,10 +1,3 @@
-//
-//  rectifiedgridcoverage.hpp
-//  citygml
-//
-//  Created by 松本青空 on 2021/10/29.
-//
-
 #pragma once
 
 #include <citygml/featureobject.h>

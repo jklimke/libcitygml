@@ -149,7 +149,7 @@ SET(PUBLIC_HEADER
   include/citygml/citygmlfactory.h
   include/citygml/linestring.h
   include/citygml/address.h
-  include/citygml/rectifiedgridcoverage.hpp
+  include/citygml/rectifiedgridcoverage.h
   include/citygml/externalreference.h
 )
 
