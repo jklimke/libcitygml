@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "parser/gmlobjectparser.h"
 #include <citygml/externalreference.h>
 

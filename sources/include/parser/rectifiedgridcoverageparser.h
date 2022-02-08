@@ -1,7 +1,7 @@
 #pragma once
 
+#include <functional>
 #include "parser/gmlfeaturecollectionparser.h"
-
 #include <citygml/rectifiedgridcoverage.h>
 
 
