@@ -38,6 +38,7 @@ namespace citygml {
         std::function<void(CityObject*)> m_callback;
         std::string m_lastAttributeName;
         AttributeType m_lastAttributeType;
+        AttributesMap* m_genericAttributeSet;
 
         // The nodes that are valid CityObjects
         static std::mutex initializedTypeIDMutex;

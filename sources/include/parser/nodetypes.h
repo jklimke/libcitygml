@@ -81,7 +81,9 @@ namespace citygml {
         NODETYPE( GEN, IntAttribute )
         NODETYPE( GEN, DateAttribute )
         NODETYPE( GEN, UriAttribute )
+        NODETYPE( GEN, MeasureAttribute )
         NODETYPE( GEN, Value )
+        NODETYPE( GEN, GenericAttributeSet )
 
         NODETYPE( GEN, Lod0Geometry )
         NODETYPE( GEN, Lod1Geometry )

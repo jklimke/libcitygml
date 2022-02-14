@@ -124,7 +124,9 @@ namespace citygml {
                 INITIALIZE_NODE( GEN, IntAttribute )
                 INITIALIZE_NODE( GEN, DateAttribute )
                 INITIALIZE_NODE( GEN, UriAttribute )
+                INITIALIZE_NODE( GEN, MeasureAttribute )
                 INITIALIZE_NODE( GEN, Value )
+                INITIALIZE_NODE( GEN, GenericAttributeSet)
 
                 INITIALIZE_NODE( GEN, Lod0Geometry )
                 INITIALIZE_NODE( GEN, Lod1Geometry )
@@ -502,7 +504,9 @@ namespace citygml {
     DEFINE_NODE( GEN, IntAttribute )
     DEFINE_NODE( GEN, DateAttribute )
     DEFINE_NODE( GEN, UriAttribute )
+    DEFINE_NODE( GEN, MeasureAttribute )
     DEFINE_NODE( GEN, Value )
+    DEFINE_NODE( GEN, GenericAttributeSet )
 
     DEFINE_NODE( GEN, Lod0Geometry )
     DEFINE_NODE( GEN, Lod1Geometry )
