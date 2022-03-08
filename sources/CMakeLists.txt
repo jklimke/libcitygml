@@ -244,6 +244,11 @@ INSTALL(
       ${INCLUDE_INSTALL_DIR}
 )
 
+if (LIBCITYGML_DEBUG_POSTFIX AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(LIBCITYGML_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+else()
+    set(LIBCITYGML_POSTFIX "")
+endif()
 
 configure_file(citygml.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc)
 
