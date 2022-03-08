@@ -37,7 +37,7 @@ void usage()
         << "                   SolitaryVegetationObject, WaterBody, TINRelief, LandUse," << std::endl
         << "                   Tunnel, Bridge, BridgeConstructionElement," << std::endl
         << "                   BridgeInstallation, BridgePart, All" << std::endl
-        << "                  and seperators |,&,~." << std::endl
+        << "                  and separators |,&,~." << std::endl
         << "                  Examples:" << std::endl
         << "                  \"All&~Track&~Room\" to parse everything but tracks & rooms" << std::endl
         << "                  \"Road&Railway\" to parse only roads & railways" << std::endl;
