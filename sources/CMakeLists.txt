@@ -205,7 +205,10 @@ generate_export_header(citygml
                        EXPORT_MACRO_NAME LIBCITYGML_EXPORT
                        EXPORT_FILE_NAME ${EXPORT_HEADER_FILE_NAME})
 
-TARGET_LINK_LIBRARIES( ${target} ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} ${GDAL_LIBRARY} )
+TARGET_LINK_LIBRARIES( ${target} PUBLIC ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} )
+if(GDAL_LIBRARY)
+    TARGET_LINK_LIBRARIES( ${target} PUBLIC ${GDAL_LIBRARY} )
+endif(GDAL_LIBRARY)
 
 set_target_properties( ${target} PROPERTIES
     VERSION ${META_VERSION}
@@ -222,19 +225,49 @@ if(NOT DEFINED INCLUDE_INSTALL_DIR)
     set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include/citygml")
 endif(NOT DEFINED INCLUDE_INSTALL_DIR)
 
+if(WIN32)
+  set(CONFIG_INSTALL_DIR "cmake")
+else()
+  set(CONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/citygml")
+endif()
+
 INSTALL(
     TARGETS ${target}
+    EXPORT citygmlConfigInternal
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}
     LIBRARY DESTINATION ${LIB_INSTALL_DIR}
     ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT "runtime"
+)
+INSTALL(
+    EXPORT citygmlConfigInternal
+    DESTINATION "${CONFIG_INSTALL_DIR}"
+    NAMESPACE "citygml::"
+    COMPONENT "development"
 )
 
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/citygmlConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/citygmlConfig.cmake"
+  INSTALL_DESTINATION "${CONFIG_INSTALL_DIR}")
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/citygmlConfigVersion.cmake
+  VERSION "${META_VERSION}"
+  COMPATIBILITY SameMajorVersion)
+INSTALL(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/citygmlConfig.cmake
+          ${CMAKE_CURRENT_BINARY_DIR}/citygmlConfigVersion.cmake
+    DESTINATION "${CONFIG_INSTALL_DIR}"
+    COMPONENT "development"
+)
 
 # FIXME: Do not run for OS X framework
 INSTALL(
     FILES
       ${PUBLIC_HEADER}
     DESTINATION  ${INCLUDE_INSTALL_DIR}
+    COMPONENT "development"
 )
 
 INSTALL(
@@ -242,6 +275,7 @@ INSTALL(
       ${EXPORT_HEADER_FILE_NAME}
     DESTINATION
       ${INCLUDE_INSTALL_DIR}
+    COMPONENT "development"
 )
 
 if (LIBCITYGML_DEBUG_POSTFIX AND CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -252,5 +286,9 @@ endif()
 
 configure_file(citygml.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+INSTALL(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc 
+    DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
+    COMPONENT "development"
+)
 
