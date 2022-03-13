@@ -206,9 +206,9 @@ generate_export_header(citygml
                        EXPORT_FILE_NAME ${EXPORT_HEADER_FILE_NAME})
 
 TARGET_LINK_LIBRARIES( ${target} PUBLIC ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} )
-if(GDAL_LIBRARY)
+if(LIBCITYGML_USE_GDAL)
     TARGET_LINK_LIBRARIES( ${target} PUBLIC ${GDAL_LIBRARY} )
-endif(GDAL_LIBRARY)
+endif(LIBCITYGML_USE_GDAL)
 
 set_target_properties( ${target} PROPERTIES
     VERSION ${META_VERSION}
@@ -282,6 +282,12 @@ if (LIBCITYGML_DEBUG_POSTFIX AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(LIBCITYGML_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 else()
     set(LIBCITYGML_POSTFIX "")
+endif()
+
+set(PKG_CONFIG_REQUIRES "xerces-c glu")
+
+if (LIBCITYGML_USE_GDAL)
+    set(PKG_CONFIG_REQUIRES "${PKG_CONFIG_REQUIRES} gdal")
 endif()
 
 configure_file(citygml.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc)
