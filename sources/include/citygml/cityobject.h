@@ -73,7 +73,7 @@ namespace citygml {
            	// ADD Buildding model 
 			COT_IntBuildingInstallation		= 1ll<< 34,
 
-            COT_All                         = 0xFFFFFFFFFFFFFFFFll
+            COT_All                         = 0xFFFFFFFFFFFFFFFFull
         };
 
         CityObject( const std::string& id, CityObjectsType type );
