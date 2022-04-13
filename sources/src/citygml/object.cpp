@@ -40,7 +40,7 @@ namespace citygml {
     {
         if ( !overwrite )
         {
-            if ( m_attributes.count(name) > 1 ) return;
+            if ( m_attributes.count(name) >= 1 ) return;
         }
         m_attributes[ name ] = AttributeValue(value, type);
     }
