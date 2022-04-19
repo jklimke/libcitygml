@@ -475,7 +475,7 @@ namespace citygml {
 
             if (!m_lastAttributeName.empty()) {
                 if (m_genericAttributeSet != nullptr) {
-                    (*m_genericAttributeSet)[m_lastAttributeName] = AttributeValue(m_lastAttributeName, m_lastAttributeType);
+                    (*m_genericAttributeSet)[m_lastAttributeName] = AttributeValue(characters, m_lastAttributeType);
                 } else {
                     m_model->setAttribute(m_lastAttributeName, characters, m_lastAttributeType);
                 }
