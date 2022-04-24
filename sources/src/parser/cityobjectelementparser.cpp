@@ -399,7 +399,8 @@ namespace citygml {
                    || node == NodeType::BLDG_Lod4GeometryNode
                    || node == NodeType::VEG_Lod4GeometryNode) {
             parseGeometryPropertyElementForLODLevel(4, attributes.getCityGMLIDAttribute());
-        } else if (node == NodeType::GEN_Lod0ImplicitRepresentationNode) {
+        } else if (node == NodeType::GEN_Lod0ImplicitRepresentationNode
+                   || node == NodeType::BLDG_lod0RoofEdgeNode) {
           
             parseImplicitGeometryForLODLevel(0);
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
@@ -567,6 +568,7 @@ namespace citygml {
                     || node == NodeType::DEM_GridNode
                     || node == NodeType::GEN_Lod0GeometryNode
                     || node == NodeType::GEN_Lod0ImplicitRepresentationNode
+                    || node == NodeType::BLDG_lod0RoofEdgeNode
                     || node == NodeType::GEN_Lod0TerrainIntersectionNode
                     || node == NodeType::TRANS_Lod0NetworkNode
                     || node == NodeType::TRANS_TrafficAreaNode

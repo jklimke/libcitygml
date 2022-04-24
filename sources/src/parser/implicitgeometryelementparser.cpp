@@ -37,12 +37,11 @@ namespace citygml {
 
     bool ImplicitGeometryElementParser::handlesElement(const NodeType::XMLNode& node) const
     {
-        return node == NodeType::CORE_ImplicitGeometryNode;
+        return node == NodeType::CORE_ImplicitGeometryNode || node == NodeType::GML_MultiSurfaceNode;
     }
 
     bool ImplicitGeometryElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-
         if (!handlesElement(node)) {
             CITYGML_LOG_ERROR(m_logger, "Expected start tag of ImplicitGeometryObject but got <" << node.name() << "> at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
@@ -117,6 +116,27 @@ namespace citygml {
             CITYGML_LOG_INFO(m_logger, "Skipping ImplicitGeometry child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
+        } else if (node == NodeType::GML_SurfaceMemberNode) {
+             
+            std::vector<ElementParser*> parsers;
+
+            std::string id = attributes.getCityGMLIDAttribute();
+            std::function<void(std::shared_ptr<Polygon>)> callback1 = [id, this](std::shared_ptr<Polygon> p) {
+                Geometry* geom = m_factory.createGeometry(id, m_parentType, m_lodLevel);
+                geom->addPolygon(p);
+                m_model->addGeometry(m_factory.shareGeometry(geom));
+            };
+
+            std::function<void(Geometry*)> callback2 = [this](Geometry* geom) {
+                m_model->addGeometry(m_factory.shareGeometry(geom));
+            };
+
+            parsers.push_back(new PolygonElementParser(m_documentParser, m_factory, m_logger, callback1));
+            parsers.push_back(new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, callback2));
+
+            setParserForNextElement(new DelayedChoiceElementParser(m_documentParser, m_logger, parsers));
+
+            return true;
         }
 
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
@@ -139,6 +159,7 @@ namespace citygml {
             m_model->setReferencePoint(parseValue<TVec3d>(characters, m_logger, getDocumentLocation()));
             return true;
         } else if (   node == NodeType::CORE_RelativeGMLGeometryNode
+                   || node == NodeType::GML_SurfaceMemberNode
                    || node == NodeType::GML_PointNode
                    || node == NodeType::CORE_ReferencePointNode
                    || node == NodeType::GML_ReferencePointNode
