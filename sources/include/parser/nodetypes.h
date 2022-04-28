@@ -202,6 +202,8 @@ namespace citygml {
         NODETYPE( BLDG, Lod4TerrainIntersection )
         NODETYPE( BLDG, ConsistsOfBuildingPart )
 
+        NODETYPE( BLDG, Lod0RoofEdge )
+
         // BoundarySurfaceType
         NODETYPE( BLDG, WallSurface )
         NODETYPE( BLDG, RoofSurface )

@@ -42,7 +42,6 @@ namespace citygml {
 
     bool ImplicitGeometryElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-
         if (!handlesElement(node)) {
             CITYGML_LOG_ERROR(m_logger, "Expected start tag of ImplicitGeometryObject but got <" << node.name() << "> at " << getDocumentLocation());
             throw std::runtime_error("Unexpected start tag found.");
@@ -117,7 +116,7 @@ namespace citygml {
             CITYGML_LOG_INFO(m_logger, "Skipping ImplicitGeometry child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
             return true;
-        }
+        } 
 
         return GMLObjectElementParser::parseChildElementStartTag(node, attributes);
     }

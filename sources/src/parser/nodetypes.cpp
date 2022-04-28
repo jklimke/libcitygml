@@ -240,6 +240,8 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, Opening)
                 INITIALIZE_NODE( BLDG, ConsistsOfBuildingPart )
 
+                INITIALIZE_NODE( BLDG, Lod0RoofEdge )
+
                 // CityFurniture
                 INITIALIZE_NODE( FRN, Class )
                 INITIALIZE_NODE( FRN, Function )
@@ -623,6 +625,8 @@ namespace citygml {
     DEFINE_NODE( BLDG, RoomInstallation)
     DEFINE_NODE( BLDG, Opening)
     DEFINE_NODE( BLDG, ConsistsOfBuildingPart )
+
+    DEFINE_NODE(BLDG, Lod0RoofEdge)
 
     // CityFurniture
     DEFINE_NODE( FRN, Class )
