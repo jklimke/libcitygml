@@ -203,6 +203,7 @@ namespace citygml {
         NODETYPE( BLDG, ConsistsOfBuildingPart )
 
         NODETYPE( BLDG, Lod0RoofEdge )
+        NODETYPE( BLDG, Lod0FootPrint )
 
         // BoundarySurfaceType
         NODETYPE( BLDG, WallSurface )

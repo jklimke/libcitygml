@@ -326,6 +326,9 @@ namespace citygml {
         }else if(node == NodeType::BLDG_Lod0RoofEdgeNode){
 
             parseGeometryForLod0RoofEdgeNode();
+        } else if (node == NodeType::BLDG_Lod0FootPrintNode) {
+            
+            parseGeometryForLod0FootPrintNode();
         } else if (node == NodeType::GEN_Lod0TerrainIntersectionNode
                    || node == NodeType::WTR_Lod0MultiCurveNode
                    || node == NodeType::WTR_Lod0MultiSurfaceNode) {
@@ -571,6 +574,7 @@ namespace citygml {
                     || node == NodeType::GEN_Lod0GeometryNode
                     || node == NodeType::GEN_Lod0ImplicitRepresentationNode
                     || node == NodeType::BLDG_Lod0RoofEdgeNode
+                    || node == NodeType::BLDG_Lod0FootPrintNode
                     || node == NodeType::GEN_Lod0TerrainIntersectionNode
                     || node == NodeType::TRANS_Lod0NetworkNode
                     || node == NodeType::TRANS_TrafficAreaNode
@@ -616,6 +620,12 @@ namespace citygml {
 
     void CityObjectElementParser::parseGeometryForLod0RoofEdgeNode() {
         setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, 0, CityObject::CityObjectsType::COT_RoofSurface, [this](Geometry* geom) {
+            m_model->addGeometry(geom);
+            }));
+    }
+
+    void CityObjectElementParser::parseGeometryForLod0FootPrintNode() {
+        setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, 0, CityObject::CityObjectsType::COT_GroundSurface, [this](Geometry* geom) {
             m_model->addGeometry(geom);
             }));
     }

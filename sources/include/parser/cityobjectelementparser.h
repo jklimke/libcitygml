@@ -52,6 +52,7 @@ namespace citygml {
 
         void parseGeometryForLODLevel(int lod);
         void parseGeometryForLod0RoofEdgeNode();
+        void parseGeometryForLod0FootPrintNode();
         void parseImplicitGeometryForLODLevel(int lod);
         void parseGeometryPropertyElementForLODLevel(int lod, const std::string& id);
     };
