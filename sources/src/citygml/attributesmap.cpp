@@ -81,7 +81,7 @@ void AttributeValue::setValue(const AttributesMap& value)
     m_attribute_set = value;
 }
 
-std::string AttributeValue::asString() const
+const std::string & AttributeValue::asString() const
 {
     return m_value;
 }

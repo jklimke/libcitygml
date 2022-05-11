@@ -117,7 +117,7 @@ namespace citygml {
         m_lod = lod;
     }
 
-    std::string Geometry::getSRSName() const
+    const std::string& Geometry::getSRSName() const
     {
         return m_srsName;
     }
