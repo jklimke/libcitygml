@@ -20,7 +20,7 @@ namespace citygml {
         TextureCoordinates(std::string id, std::string targetID);
 
         bool targets(const LinearRing& ring) const;
-        std::string getTargetLinearRingID() const;
+        [[nodiscard]] const std::string & getTargetLinearRingID() const;
 
         const std::vector<TVec2f>& getCoords() const;
         void setCoords(std::vector<TVec2f> texCoords);
