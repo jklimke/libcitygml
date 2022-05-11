@@ -42,7 +42,7 @@ public:
     void setValue(double value);
     void setValue(int value);
 
-    std::string asString() const;
+    const std::string& asString() const;
     double asDouble(double defaultValue=0.0) const;
     int asInteger(int defaultValue=0) const;
 private:
