@@ -140,7 +140,7 @@ SET(PUBLIC_HEADER
   include/citygml/transformmatrix.h
   include/citygml/implictgeometry.h
   include/citygml/tesselator.h
-  include/citygml/texture.h
+        include/citygml/texture.h
   include/citygml/appearancetargetdefinition.h
   include/citygml/texturetargetdefinition.h
   include/citygml/materialtargetdefinition.h

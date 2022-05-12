@@ -17,7 +17,7 @@ namespace citygml {
     class LIBCITYGML_EXPORT Appearance : public Object, public std::enable_shared_from_this<Appearance>
     {
     public:
-        std::string getType() const;
+        const std::string & getType() const;
 
         bool getIsFront() const;
         void setIsFront(bool front);

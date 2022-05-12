@@ -9,7 +9,7 @@ namespace citygml {
 
     }
 
-    std::string Appearance::getType() const
+    const std::string & Appearance::getType() const
     {
         return m_typeString;
     }

@@ -13,7 +13,7 @@ namespace citygml {
 
     }
 
-    std::string Texture::getUrl() const
+    const std::string & Texture::getUrl() const
     {
         return m_url;
     }
