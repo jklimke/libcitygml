@@ -31,7 +31,7 @@ namespace citygml {
          * @brief the id of the target surface
          * @note The targetID must not be the id of the object on which the texture is applied at the end (may be passed down to the children of the target object)
          */
-        std::string getTargetID() const { return m_targetID; }
+        const std::string & getTargetID() const { return m_targetID; }
 
         std::shared_ptr<const T> getAppearance() const { return m_appearance; }
         std::shared_ptr<T> getAppearance() { return m_appearance; }
