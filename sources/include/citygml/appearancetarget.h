@@ -37,6 +37,7 @@ namespace citygml {
         std::vector<TextureTargetDefinition*> getTextureTargetDefinitions();
 
         std::vector<std::string> getAllTextureThemes(bool front) const;
+        std::vector<std::string> getAllMaterialThemes(bool front) const;
 
     protected:
         AppearanceTarget(const std::string& id);
@@ -49,6 +50,5 @@ namespace citygml {
 
         std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition> > m_themeTexMapFront;
         std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition> > m_themeTexMapBack;
-
     };
 }

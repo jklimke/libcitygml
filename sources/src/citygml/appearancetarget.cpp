@@ -118,6 +118,16 @@ namespace citygml {
         return themes;
     }
 
+    std::vector<std::string> AppearanceTarget::getAllMaterialThemes(bool front) const
+    {
+        auto& map = front ? m_themeMatMapFront : m_themeMatMapBack;
+        std::vector<std::string> themes;
+        for (const auto& pair : map) {
+            themes.push_back(pair.first);
+        }
+        return themes;
+    }
+
 
 
 }
