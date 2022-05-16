@@ -34,7 +34,7 @@ namespace citygml {
         std::shared_ptr<TextureTargetDefinition> getTextureTargetDefinitionForTheme(const std::string& theme, bool front);
         std::shared_ptr<const TextureTargetDefinition> getTextureTargetDefinitionForTheme(const std::string& theme, bool front) const;
 
-        std::vector<TextureTargetDefinition*> getTextureTargetDefinitions();
+        std::vector<TextureTargetDefinition*> getTextureTargetDefinitions() const;
 
         std::vector<std::string> getAllTextureThemes(bool front) const;
         std::vector<std::string> getAllMaterialThemes(bool front) const;
