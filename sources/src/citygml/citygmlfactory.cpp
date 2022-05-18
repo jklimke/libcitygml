@@ -16,6 +16,7 @@
 #include <citygml/implictgeometry.h>
 #include <citygml/citygmllogger.h>
 #include <citygml/rectifiedgridcoverage.h>
+#include <filesystem>
 
 namespace citygml {
 
@@ -25,6 +26,7 @@ namespace citygml {
         m_polygonManager = std::unique_ptr<PolygonManager>(new PolygonManager(logger));
         m_geometryManager = std::unique_ptr<GeometryManager>(new GeometryManager(logger));
         m_logger = logger;
+        m_codeLists = std::shared_ptr<CodeLists>(new CodeLists);
     }
 
     RectifiedGridCoverage* CityGMLFactory::createRectifiedGridCoverage(std::string const& id) {
@@ -185,5 +187,30 @@ namespace citygml {
     void CityGMLFactory::appearanceTargetCreated(AppearanceTarget* obj)
     {
         m_appearanceManager->addAppearanceTarget(obj);
+    }
+
+    const std::string CityGMLFactory::getCodeValue(const std::string& codeSpace, const std::string& gmlPath, int id)
+    {
+        const auto codeSpacePath = std::filesystem::absolute(gmlPath + "/../" + codeSpace).string();
+
+        if (m_codeLists->find(codeSpacePath) == m_codeLists->end()) {
+            if (!std::filesystem::exists(codeSpacePath)) {
+                CITYGML_LOG_ERROR(m_logger, "Can not find codelist file " << codeSpacePath);
+                throw std::runtime_error("Unexpected Error occurred while parsing xml file.");
+            }
+            CITYGML_LOG_INFO(m_logger, "parsing " << codeSpacePath);
+
+            CodeListParser handler;
+            const auto code_list = handler.parse(codeSpacePath);
+            m_codeLists->emplace(codeSpacePath, code_list);
+        }
+        
+        std::string codeValue;
+        if (m_codeLists->find(codeSpacePath) != m_codeLists->end()) {
+            const auto codeList = m_codeLists->find(codeSpacePath)->second;
+            if (codeList.find(id) != codeList.end()) codeValue = codeList.find(id)->second;
+        }
+
+        return codeValue;
     }
 }

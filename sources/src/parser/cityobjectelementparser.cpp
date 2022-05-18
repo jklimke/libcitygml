@@ -12,10 +12,12 @@
 #include "parser/addressparser.h"
 #include "parser/rectifiedgridcoverageparser.h"
 #include "parser/externalreferenceparser.h"
+#include <parser/citygmldocumentparser.h>
 
 #include <citygml/citygmlfactory.h>
 #include <citygml/citygmllogger.h>
 #include <citygml/address.h>
+#include <citygml/citymodel.h>
 
 #include <stdexcept>
 #include <iostream>
@@ -40,6 +42,9 @@ namespace citygml {
         : GMLFeatureCollectionElementParser(documentParser, factory, logger)
         , m_lastAttributeType(AttributeType::String)
         , m_genericAttributeSet(nullptr)
+        , m_lastCodeSpace("")
+        , m_lastCode("")
+        , m_lastAttributeName("")
     {
         m_callback = callback;
     }
@@ -446,6 +451,12 @@ namespace citygml {
                 m_model->setAddress(std::move(address));
             }));
             return true;
+        } else if (node == NodeType::URO_ExtendedAttributeNode || node == NodeType::URO_KeyValuePairNode) {
+            return true;
+        } else if (node == NodeType::URO_KeyNode) {
+            m_lastCodeSpace = attributes.getAttribute("codeSpace");
+        } else if (node == NodeType::URO_CodeValueNode ) {
+            m_lastCode =  attributes.getAttribute("codeSpace");
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
         }
@@ -597,7 +608,21 @@ namespace citygml {
                     || node == NodeType::WTR_BoundedByNode
                     || node == NodeType::BLDG_AddressNode
                     || node == NodeType::CORE_AddressNode
-                    || node == NodeType::CORE_XalAddressNode) {
+                    || node == NodeType::CORE_XalAddressNode
+                    || node == NodeType::URO_ExtendedAttributeNode
+                    || node == NodeType::URO_KeyValuePairNode) {
+
+            return true;
+        } else if (node == NodeType::URO_KeyNode) {
+            int code = stoi(characters);
+            m_lastAttributeName = m_factory.getCodeValue(m_lastCodeSpace, getDocumentLocation().getDocumentFileName(), code);
+
+            return true;
+        } else if (node == NodeType::URO_CodeValueNode) {
+            int code = stoi(characters);
+
+            const auto attributeValue = m_factory.getCodeValue(m_lastCode, getDocumentLocation().getDocumentFileName(), code);
+            m_model->setAttribute(m_lastAttributeName, attributeValue);
 
             return true;
         }

@@ -111,6 +111,7 @@ SET(SOURCES
   src/parser/linearringelementparser.cpp
   src/parser/implicitgeometryelementparser.cpp
   src/parser/addressparser.cpp
+  src/parser/codelisthandlerxerces.cpp
 )
 if(UNIX)
   if (APPLE)
@@ -196,6 +197,7 @@ SET(HEADERS
   include/parser/linearringelementparser.h
   include/parser/implicitgeometryelementparser.h
   include/parser/addressparser.h
+  include/parser/codelisthandlerxerces.h
 )
 
 ADD_LIBRARY( ${target} ${LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC} ${SOURCES} ${HEADERS} )

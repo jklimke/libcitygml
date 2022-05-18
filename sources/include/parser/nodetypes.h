@@ -390,6 +390,12 @@ namespace citygml {
         NODETYPE( APP, Theme )
         NODETYPE( APP, MimeType )
 
+        // URO
+        NODETYPE( URO, ExtendedAttribute )
+        NODETYPE( URO, KeyValuePair )
+        NODETYPE( URO, Key )
+        NODETYPE( URO, CodeValue )
+
     private:
         static void initializeNodeTypes();
 

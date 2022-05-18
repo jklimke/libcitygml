@@ -426,6 +426,12 @@ namespace citygml {
                 INITIALIZE_NODE( APP, Theme )
                 INITIALIZE_NODE( APP, MimeType )
 
+                // URO
+                INITIALIZE_NODE( URO, ExtendedAttribute )
+                INITIALIZE_NODE( URO, KeyValuePair )
+                INITIALIZE_NODE( URO, Key )
+                INITIALIZE_NODE( URO, CodeValue )
+
                 nodesInitialized = true;
             }
         }
@@ -813,4 +819,10 @@ namespace citygml {
     DEFINE_NODE( APP, IsFront )
     DEFINE_NODE( APP, Theme )
     DEFINE_NODE( APP, MimeType )
+
+    // URO
+    DEFINE_NODE( URO, ExtendedAttribute )
+    DEFINE_NODE( URO, KeyValuePair )
+    DEFINE_NODE( URO, Key )
+    DEFINE_NODE( URO, CodeValue )
 }

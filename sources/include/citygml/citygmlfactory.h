@@ -6,6 +6,8 @@
 
 #include <memory>
 
+#include <parser/codelisthandlerxerces.h>
+
 namespace citygml {
 
     class AppearanceManager;
@@ -66,6 +68,8 @@ namespace citygml {
 
         void closeFactory();
 
+        const std::string getCodeValue(const std::string& codeSpace, const std::string& gmlPath, int id);
+
         ~CityGMLFactory();
     protected:
         void appearanceTargetCreated(AppearanceTarget* obj);
@@ -74,6 +78,8 @@ namespace citygml {
         std::unique_ptr<AppearanceManager> m_appearanceManager;
         std::unique_ptr<PolygonManager> m_polygonManager;
         std::unique_ptr<GeometryManager> m_geometryManager;
+
+        std::shared_ptr<CodeLists> m_codeLists;
     };
 
 }
