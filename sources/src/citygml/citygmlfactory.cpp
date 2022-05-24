@@ -191,12 +191,12 @@ namespace citygml {
 
     const std::string CityGMLFactory::getCodeValue(const std::string& codeSpace, const std::string& gmlPath, int id)
     {
-        const auto codeSpacePath = std::filesystem::absolute(gmlPath + "/../" + codeSpace).string();
+        const auto codeSpacePath = std::filesystem::absolute(std::filesystem::path(gmlPath).parent_path().parent_path().string() + codeSpace).string();
 
         if (m_codeLists->find(codeSpacePath) == m_codeLists->end()) {
             if (!std::filesystem::exists(codeSpacePath)) {
                 CITYGML_LOG_ERROR(m_logger, "Can not find codelist file " << codeSpacePath);
-                throw std::runtime_error("Unexpected Error occurred while parsing xml file.");
+                throw std::runtime_error("Can not find codelist file. codeSpecPath = " + codeSpacePath);
             }
             CITYGML_LOG_INFO(m_logger, "parsing " << codeSpacePath);
 
