@@ -191,7 +191,9 @@ namespace citygml {
 
     const std::string CityGMLFactory::getCodeValue(const std::string& codeSpace, const std::string& gmlPath, int id)
     {
-        const auto codeSpacePath = std::filesystem::absolute(std::filesystem::path(gmlPath).parent_path().parent_path().string() + codeSpace).string();
+        const auto codeSpacePath =
+            std::filesystem::path(gmlPath)
+            .remove_filename().append(codeSpace).string();
 
         if (m_codeLists->find(codeSpacePath) == m_codeLists->end()) {
             if (!std::filesystem::exists(codeSpacePath)) {

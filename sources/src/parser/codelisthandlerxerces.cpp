@@ -19,8 +19,9 @@ const CodeList CodeListParser::parse(const std::string& filePath) const {
 
     SAX2XMLReader* parser = XMLReaderFactory::createXMLReader();
 
+    parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, false);
     try {
-        CodeListHandlerXerces  handler;
+        CodeListHandlerXerces handler;
         parser->setContentHandler(&handler);
         parser->parse(filePath.c_str());
         code_list = handler.getCodeList();
