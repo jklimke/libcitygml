@@ -7,7 +7,20 @@
 
 using namespace xercesc;
 
-const CodeList CodeListParser::parse(const std::string& filePath) const {
+namespace {
+    std::string toStdString(const XMLCh* const wstr) {
+        if (wstr == nullptr) {
+            return "";
+        }
+
+        char* tmp = XMLString::transcode(wstr);
+        std::string str(tmp);
+        XMLString::release(&tmp);
+        return str;
+    }
+}
+
+CodeList CodeListParser::parse(const std::string& filePath) const {
     CodeList code_list;
 
     try {
@@ -36,12 +49,9 @@ const CodeList CodeListParser::parse(const std::string& filePath) const {
 }
 
 CodeListHandlerXerces::CodeListHandlerXerces() :
-    m_definitionTagExists(false),
-    m_descriptionTagExists(false),
-    m_nameTagExists(false),
-    m_description(""),
-    m_name("")
-{ 
+    m_isParsingDefinition(false),
+    m_isParsingDescription(false),
+    m_isParsingName(false) {
 }
 
 CodeList CodeListHandlerXerces::getCodeList() {
@@ -49,40 +59,38 @@ CodeList CodeListHandlerXerces::getCodeList() {
 }
 
 void CodeListHandlerXerces::startElement(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname, const xercesc::Attributes& attrs) {
-    char* name = XMLString::transcode(localname);
+    const auto tagName = toStdString(qname);
 
-    if (std::string(name) == "Definition") m_definitionTagExists = true;
-    if (std::string(name) == "description" && m_definitionTagExists) m_descriptionTagExists = true;
-    if (std::string(name) == "name" && m_definitionTagExists) m_nameTagExists = true;
-
-    XMLString::release(&name);
+    if (tagName == "gml:Definition") {
+        m_isParsingDefinition = true;
+    } else if (tagName == "gml:description" && m_isParsingDefinition) {
+        m_isParsingDescription = true;
+    } else if (tagName == "gml:name" && m_isParsingDefinition) {
+        m_isParsingName = true;
+    }
 }
 
 void CodeListHandlerXerces::endElement(const XMLCh* const uri, const XMLCh* const localname, const XMLCh* const qname) {
-    char* name = XMLString::transcode(localname);
+    const auto tagName = toStdString(qname);
 
-    if (std::string(name) == "description") m_descriptionTagExists = false;
-    if (std::string(name) == "name") m_nameTagExists = false;
-
-    if (std::string(name) == "Definition") {
-        m_codeList[stoi(m_name)] = m_description;        
-        m_definitionTagExists = false;
+    if (tagName == "gml:description") {
+        m_isParsingDescription = false;
+    } else if (tagName == "gml:name") {
+        m_isParsingName = false;
+    } else if (tagName == "gml:Definition") {
+        m_codeList[m_name] = m_description;
+        m_isParsingDefinition = false;
         m_description = "";
         m_name = "";
     }
-    
-    XMLString::release(&name);
 }
 
 void CodeListHandlerXerces::characters(const XMLCh* const chars, const XMLSize_t length) {
-    XMLCh* buffer = new XMLCh[XMLString::stringLen(chars) + 1];
-    XMLString::copyString(buffer, chars);
-    XMLString::trim(buffer);
-    char* content = XMLString::transcode(buffer);
-    delete[] buffer;
+    const auto characters = toStdString(chars);
 
-    if (m_descriptionTagExists) m_description = std::string(content);
-    if (m_nameTagExists) m_name = std::string(content);
-
-    XMLString::release(&content);
+    if (m_isParsingDescription) {
+        m_description = characters;
+    } else if (m_isParsingName) {
+        m_name = characters;
+    }
 }

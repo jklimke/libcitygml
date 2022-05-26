@@ -189,7 +189,7 @@ namespace citygml {
         m_appearanceManager->addAppearanceTarget(obj);
     }
 
-    const std::string CityGMLFactory::getCodeValue(const std::string& codeSpace, const std::string& gmlPath, int id)
+    std::string CityGMLFactory::getCodeValue(const std::string& codeSpace, const std::string& gmlPath, const std::string& id)
     {
         const auto codeSpacePath =
             std::filesystem::path(gmlPath)
@@ -198,9 +198,9 @@ namespace citygml {
         if (m_codeLists->find(codeSpacePath) == m_codeLists->end()) {
             if (!std::filesystem::exists(codeSpacePath)) {
                 CITYGML_LOG_ERROR(m_logger, "Can not find codelist file " << codeSpacePath);
-                throw std::runtime_error("Can not find codelist file. codeSpecPath = " + codeSpacePath);
+                throw std::runtime_error("Can not find codelist file: " + codeSpacePath);
             }
-            CITYGML_LOG_INFO(m_logger, "parsing " << codeSpacePath);
+            CITYGML_LOG_INFO(m_logger, "Parsing " << codeSpacePath);
 
             CodeListParser handler;
             const auto code_list = handler.parse(codeSpacePath);
