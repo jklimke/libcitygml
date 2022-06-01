@@ -38,7 +38,9 @@ namespace citygml {
 
         const ConstCityObjects getAllCityObjectsOfType( CityObject::CityObjectsType type ) const;
 
-        /// idからCityObjectを返します。ない場合はnullptrを返します。
+        /**
+         * @brief Return a CityObject from ID. If not found, return nullptr.
+         */
         const CityObject* getCityObjectById(const std::string& id ) const;
 
         const std::string& getSRSName() const;
