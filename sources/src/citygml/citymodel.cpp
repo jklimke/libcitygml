@@ -88,7 +88,7 @@ namespace citygml
         return it->second;
     }
 
-    const CityObject* CityModel::getCityObjectFromId(const std::string& id) const {
+    const CityObject* CityModel::getCityObjectById(const std::string& id) const {
         if(m_idToCityObjMap.count(id) == 0){
             return nullptr;
         }
@@ -155,7 +155,7 @@ namespace citygml
 //            logger->log(CityGMLLogger::LOGLEVEL::LL_INFO, message);
 //        }
 //        デバッグ用アドレス出力
-        auto addr = this->getCityObjectFromId(u8"BLD_0772bfd9-fa36-4747-ad0f-1e57f883f745");
+        auto addr = this->getCityObjectById(u8"BLD_0772bfd9-fa36-4747-ad0f-1e57f883f745");
         std::ostringstream ss;
         ss << addr;
         ss << "***";
