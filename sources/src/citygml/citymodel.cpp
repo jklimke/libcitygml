@@ -147,19 +147,6 @@ namespace citygml
         for (auto& obj : m_roots) {
             addToIdToCityObjMapRecursive(obj.get());
         }
-
-        // デバッグ用Map出力
-        // TODO 後で消す
-//        for(auto& pair : m_idToCityObjMap){
-//            std::string message = pair.first + "****";
-//            logger->log(CityGMLLogger::LOGLEVEL::LL_INFO, message);
-//        }
-//        デバッグ用アドレス出力
-        auto addr = this->getCityObjectById(u8"BLD_0772bfd9-fa36-4747-ad0f-1e57f883f745");
-        std::ostringstream ss;
-        ss << addr;
-        ss << "***";
-        logger->log(CityGMLLogger::LOGLEVEL::LL_INFO, ss.str());
     }
 
     std::ostream& operator<<( std::ostream& out, const CityModel& model )
