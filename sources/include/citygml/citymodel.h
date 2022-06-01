@@ -19,6 +19,7 @@ namespace citygml {
     typedef std::vector<std::unique_ptr<CityObject> > CityObjects;
     typedef std::vector<const CityObject*> ConstCityObjects;
     typedef std::map< CityObject::CityObjectsType, std::vector<const CityObject*> > CityObjectsMap;
+    typedef std::map<std::string, const CityObject*> IdToCityObjMap;
 
     class LIBCITYGML_EXPORT CityModel : public FeatureObject
     {
@@ -37,6 +38,11 @@ namespace citygml {
 
         const ConstCityObjects getAllCityObjectsOfType( CityObject::CityObjectsType type ) const;
 
+        /**
+         * @brief Return a CityObject from ID. If not found, return nullptr.
+         */
+        const CityObject* getCityObjectById(const std::string& id ) const;
+
         const std::string& getSRSName() const;
 
         void finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger);
@@ -52,9 +58,13 @@ namespace citygml {
 
         void addToCityObjectsMapRecursive(const CityObject* cityObj);
 
+        void addToIdToCityObjMapRecursive(const CityObject* cityObj);
+
         CityObjects m_roots;
 
         CityObjectsMap m_cityObjectsMap;
+
+        IdToCityObjMap m_idToCityObjMap;
 
         std::string m_srsName;
 
