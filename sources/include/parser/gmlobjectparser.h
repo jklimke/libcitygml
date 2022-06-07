@@ -1,6 +1,8 @@
 #pragma once
 
 #include <parser/citygmlelementparser.h>
+#include "citygml/attributesmap.h"
+#include <vector>
 
 namespace citygml {
 
@@ -12,6 +14,11 @@ namespace citygml {
     class GMLObjectElementParser : public CityGMLElementParser {
     public:
         GMLObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger);
+        const AttributeType detectAttributeType(const std::string& characters);
+
+    private:
+        std::string m_lastCodeSpace;
+        std::shared_ptr<std::vector<AttributesMap>> m_attributeHierarchy;
 
     protected:
         // CityGMLElementParser interface

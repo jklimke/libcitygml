@@ -55,12 +55,14 @@ namespace citygml {
             return;
         }
 
-        const NodeType::XMLNode& node = NodeType::getXMLNodeFor(name);
+        NodeType::XMLNode node = NodeType::getXMLNodeFor(name);
 
         if (!node.valid()) {
-            CITYGML_LOG_WARN(m_logger, "Found start tag of unknown node <" << name << "> at " << getDocumentLocation() << ". Skip to next element.");
-            skipUnknownOrUnexpectedElement(name);
-            return;
+            size_t pos = name.find_first_of(":");
+            if (pos != std::string::npos) {
+                node.setName(name.substr(pos + 1));
+                node.setPrefix(name.substr(0, pos));
+            }
         }
 
         if (m_parserStack.empty()) {
@@ -84,11 +86,14 @@ namespace citygml {
             return;
         }
 
-        const NodeType::XMLNode& node = NodeType::getXMLNodeFor(name);
+        NodeType::XMLNode node = NodeType::getXMLNodeFor(name);
 
         if (!node.valid()) {
-            CITYGML_LOG_WARN(m_logger, "Found end tag of unknown node <" << name << "> at " << getDocumentLocation());
-            return;
+            size_t pos = name.find_first_of(":");
+            if (pos != std::string::npos) {
+                node.setName(name.substr(pos + 1));
+                node.setPrefix(name.substr(0, pos));
+            }
         }
 
         if (m_parserStack.empty()) {

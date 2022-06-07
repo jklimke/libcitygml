@@ -22,7 +22,8 @@ enum class AttributeType
     Date,
     Uri,
     Measure,
-    AttributeSet
+    AttributeSet,
+    Boolean
 };
 
 /**
