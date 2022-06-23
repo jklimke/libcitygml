@@ -9,6 +9,7 @@ namespace citygml {
     class DocumentLocation {
     public:
         virtual const std::string& getDocumentFileName() const = 0;
+        virtual const std::string& getDocumentFilePath() const = 0;
         virtual uint64_t getCurrentLine() const = 0;
         virtual uint64_t getCurrentColumn() const = 0;
     };

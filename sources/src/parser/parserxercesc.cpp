@@ -14,6 +14,7 @@
 * GNU Lesser General Public License for more details.
 */
 
+#include <filesystem>
 #include <citygml/citygml.h>
 #include <citygml/citygmllogger.h>
 
@@ -63,11 +64,10 @@ std::shared_ptr<XMLCh> toXercesString(const std::string& str) {
 
 class DocumentLocationXercesAdapter : public citygml::DocumentLocation {
 public:
-    explicit DocumentLocationXercesAdapter(const std::string& fileName)
-		: m_locator(nullptr)
-		, m_fileName(fileName)
-	{
-        
+    explicit DocumentLocationXercesAdapter(const std::string& filePath)
+        : m_locator(nullptr)
+        , m_filePath(filePath) {
+        m_fileName = std::filesystem::path(filePath).filename().replace_extension().string();
     }
 
     void setLocator(const xercesc::Locator* locator) {
@@ -79,6 +79,10 @@ public:
         return m_fileName;
     }
 
+    virtual const std::string& getDocumentFilePath() const {
+        return m_filePath;
+    }
+
     virtual uint64_t getCurrentLine() const {
         return m_locator != nullptr ? m_locator->getLineNumber() : 0;
     }
@@ -88,6 +92,7 @@ public:
 
 protected:
     const xercesc::Locator* m_locator;
+    std::string m_filePath;
     std::string m_fileName;
 };
 

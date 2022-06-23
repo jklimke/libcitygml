@@ -74,7 +74,7 @@ namespace citygml {
                 if (m_lastCodeSpace == "") {
                     getObject()->setAttribute(node.name(), characters, detectAttributeType(characters));
                 } else {
-                    const auto codeValue = m_factory.getCodeValue(m_lastCodeSpace, getDocumentLocation().getDocumentFileName(), characters);
+                    const auto codeValue = m_factory.getCodeValue(m_lastCodeSpace, getDocumentLocation().getDocumentFilePath(), characters);
                     getObject()->setAttribute(node.name(), codeValue, detectAttributeType(codeValue));
                 }
             } else { // have child tag
@@ -88,7 +88,7 @@ namespace citygml {
                 if (m_lastCodeSpace == "") {
                     parent_attributesMap[node.name()] = AttributeValue(characters, detectAttributeType(characters));
                 } else {
-                    const auto codeValue = m_factory.getCodeValue(m_lastCodeSpace, getDocumentLocation().getDocumentFileName(), characters);
+                    const auto codeValue = m_factory.getCodeValue(m_lastCodeSpace, getDocumentLocation().getDocumentFilePath(), characters);
                     parent_attributesMap[node.name()] = AttributeValue(codeValue, detectAttributeType(codeValue));
                 }
             } else { // have child tag

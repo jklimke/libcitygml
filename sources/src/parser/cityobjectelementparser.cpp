@@ -614,11 +614,11 @@ namespace citygml {
 
             return true;
         } else if (node == NodeType::URO_KeyNode) {
-            m_lastAttributeName = m_factory.getCodeValue(m_lastCodeSpace, getDocumentLocation().getDocumentFileName(), characters);
+            m_lastAttributeName = m_factory.getCodeValue(m_lastCodeSpace, getDocumentLocation().getDocumentFilePath(), characters);
 
             return true;
         } else if (node == NodeType::URO_CodeValueNode) {
-            const auto attributeValue = m_factory.getCodeValue(m_lastCode, getDocumentLocation().getDocumentFileName(), characters);
+            const auto attributeValue = m_factory.getCodeValue(m_lastCode, getDocumentLocation().getDocumentFilePath(), characters);
             m_model->setAttribute(m_lastAttributeName, attributeValue);
 
             return true;
