@@ -25,13 +25,13 @@ namespace citygml {
             CITYGML_LOG_ERROR(m_logger, "Expected start tag <" << NodeType::CORE_ExternalReferenceNode << "> but got <" << node.name() << "> at " << getDocumentLocation());
         }
         
-        model = m_factory.createExternalReference(attributes.getCityGMLIDAttribute());
+        model.reset(m_factory.createExternalReference(attributes.getCityGMLIDAttribute()));
         
         return true;
     }
 
     bool ExternalReferenceParser::parseElementEndTag(NodeType::XMLNode const& node, std::string const&) {
-        callback(model.get());
+        callback(model.release());
         return true;
     }
 
