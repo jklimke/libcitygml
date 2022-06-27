@@ -25,7 +25,7 @@ namespace citygml {
         virtual Object* getObject() override;
         
     private:
-        std::shared_ptr<ExternalReference> model;
+        std::unique_ptr<ExternalReference> model;
         std::function<void(ExternalReference *)> callback;
     };
 }
