@@ -97,10 +97,9 @@ namespace citygml {
         return std::shared_ptr<LineString>(lineString);
     }
 
-    std::shared_ptr<ExternalReference> CityGMLFactory::createExternalReference(const std::string& id)
+    ExternalReference* CityGMLFactory::createExternalReference(const std::string& id)
     {
-        ExternalReference * externalReference = new ExternalReference(id);
-        return std::shared_ptr<ExternalReference>(externalReference);
+        return new ExternalReference(id);
     }
 
     void CityGMLFactory::requestSharedPolygonForGeometry(Geometry* geom, const std::string& polygonId)
