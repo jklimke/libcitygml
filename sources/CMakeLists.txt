@@ -91,6 +91,7 @@ SET(SOURCES
   src/parser/elementparser.cpp
 
   src/parser/delayedchoiceelementparser.cpp
+  src/parser/unknownelementparser.cpp
   src/parser/skipelementparser.cpp
   src/parser/sequenceparser.cpp
 
@@ -177,6 +178,7 @@ SET(HEADERS
   include/parser/elementparser.h
 
   include/parser/delayedchoiceelementparser.h
+  include/parser/unknownelementparser.h
   include/parser/skipelementparser.h
   include/parser/sequenceparser.h
 

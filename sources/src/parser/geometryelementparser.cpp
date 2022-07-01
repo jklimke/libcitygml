@@ -69,8 +69,7 @@ namespace citygml {
         return geometryTypeIDSet.count(node.typeID()) > 0;
     }
 
-    bool GeometryElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
-    {
+    bool GeometryElementParser::parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes) {
 
         if (!handlesElement(node)) {
             CITYGML_LOG_ERROR(m_logger, "Expected start tag of GeometryObject but got <" << node.name() << "> at " << getDocumentLocation());

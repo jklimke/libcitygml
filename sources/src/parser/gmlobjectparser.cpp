@@ -10,9 +10,11 @@
 namespace citygml {
 
     GMLObjectElementParser::GMLObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger)
-        : CityGMLElementParser(documentParser, factory, logger),
-        m_lastCodeSpace(""),
-        m_attributeHierarchy(std::make_shared<std::vector<AttributesMap>>()) {
+        : CityGMLElementParser(documentParser, factory, logger)
+        ,m_lastCodeSpace("")
+        ,m_adeDataComingFlg(false)
+        ,m_attributeHierarchy(std::make_shared<std::vector<AttributesMap>>())
+        ,m_skipped_tag(std::make_shared<std::vector<std::string>>()) {
 
     }
 
@@ -30,17 +32,20 @@ namespace citygml {
             return true;
         }
 
+        if (node != NodeType::InvalidNode) return true;
+        
         size_t pos = node.name().find_first_of(":");
         if (pos != std::string::npos) {
             if (isupper(node.name().substr(pos + 1).at(0))) {// Ignore Tag start with capital letter
+                m_adeDataComingFlg = false;
                 return true;
             }
         }
-
         AttributesMap attributeSet;
         m_attributeHierarchy->push_back(attributeSet);
 
-        m_lastCodeSpace = attributes.getAttribute("codeSpace");
+        if(!m_adeDataComingFlg) m_lastCodeSpace = attributes.getAttribute("codeSpace");// ignore attributes because it's not correct one when m_adeDataComingFlg is true
+        m_adeDataComingFlg = false;
 
         return true;
     }
@@ -60,9 +65,18 @@ namespace citygml {
             return true;
         }
 
+        if (node != NodeType::InvalidNode) return true;
+
         size_t pos = node.name().find_first_of(":");
         if (pos != std::string::npos) {
             if (isupper(node.name().substr(pos + 1).at(0))) {// Ignore Tag start with capital letter
+                return true;
+            }
+        }
+
+        if (m_skipped_tag->size() != 0) {
+            if (m_skipped_tag->back() == node.name()) {
+                m_skipped_tag->pop_back();
                 return true;
             }
         }
@@ -124,5 +138,36 @@ namespace citygml {
         }
 
         return AttributeType::String;
+    }
+
+    void GMLObjectElementParser::setAdeDataComingFlg(bool flg) {
+        m_adeDataComingFlg = flg;
+    }
+
+    bool GMLObjectElementParser::getAdeDataComingFlg() {
+        return m_adeDataComingFlg;
+    }
+
+    bool GMLObjectElementParser::parseChildElementBothTag(const NodeType::XMLNode& node, const std::string& characters) { // Only called from UnknownElementParser::endElement
+
+        size_t pos = node.name().find_first_of(":");
+        if (pos != std::string::npos) {
+            if (isupper(node.name().substr(pos + 1).at(0))) {// Ignore Tag start with capital letter
+                return true;
+            }
+        }
+
+        if (m_attributeHierarchy->size() == 0) { // no parent tag
+            getObject()->setAttribute(node.name(), characters, detectAttributeType(characters));
+        }
+        else { // have parent tag
+            auto& parent_attributesMap = m_attributeHierarchy->back();
+            parent_attributesMap[node.name()] = AttributeValue(characters, detectAttributeType(characters));
+        }
+        return true;
+    }
+
+    void GMLObjectElementParser::setSkippedTag(std::string tag_name) {
+        m_skipped_tag->push_back(tag_name);
     }
 }

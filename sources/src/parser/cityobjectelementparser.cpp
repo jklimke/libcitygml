@@ -8,6 +8,7 @@
 #include "parser/polygonelementparser.h"
 #include "parser/skipelementparser.h"
 #include "parser/delayedchoiceelementparser.h"
+#include "parser/unknownelementparser.h"
 #include "parser/linestringelementparser.h"
 #include "parser/addressparser.h"
 #include "parser/rectifiedgridcoverageparser.h"
@@ -242,15 +243,14 @@ namespace citygml {
         initializeTypeIDTypeMap();
 
         auto it = typeIDTypeMap.find(node.typeID());
-
+       
         if (it == typeIDTypeMap.end()) {
-            CITYGML_LOG_ERROR(m_logger, "Expected start tag of CityObject but got <" << node.name() << "> at " << getDocumentLocation());
-            throw std::runtime_error("Unexpected start tag found.");
+            m_model = m_factory.createCityObject(attributes.getCityGMLIDAttribute(), CityObject::CityObjectsType::COT_Unknown);
+        } else {
+            m_model = m_factory.createCityObject(attributes.getCityGMLIDAttribute(), static_cast<CityObject::CityObjectsType>(it->second));
         }
-
-        m_model = m_factory.createCityObject(attributes.getCityGMLIDAttribute(), static_cast<CityObject::CityObjectsType>(it->second));
         return true;
-
+        
     }
 
     bool CityObjectElementParser::parseElementEndTag(const NodeType::XMLNode&, const std::string&)
@@ -457,7 +457,21 @@ namespace citygml {
             m_lastCodeSpace = attributes.getAttribute("codeSpace");
         } else if (node == NodeType::URO_CodeValueNode ) {
             m_lastCode =  attributes.getAttribute("codeSpace");
-        } else {
+        } else if(node == NodeType::InvalidNode) {
+            if (getAdeDataComingFlg()) {
+                return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
+            } else if (attributes.getAttribute("codeSpace") != "") {
+                return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
+            } else {
+                UnknownElementParser* dcep = new UnknownElementParser(m_documentParser, m_logger, {
+                    new GeometryElementParser(m_documentParser, m_factory, m_logger, 2, m_model->getType(), [this](Geometry* geom) { m_model->addGeometry(geom); }),
+                    new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) { m_model->addChildCityObject(obj); }),
+                    this
+                    });
+                dcep->setStockNode(node);
+                setParserForNextElement(dcep);
+            }
+        }else{
             return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
         }
 
@@ -622,6 +636,8 @@ namespace citygml {
             m_model->setAttribute(m_lastAttributeName, attributeValue);
 
             return true;
+        } else if (node == NodeType::InvalidNode) {
+            return GMLFeatureCollectionElementParser::parseChildElementEndTag(node, characters);
         }
 
         return GMLFeatureCollectionElementParser::parseChildElementEndTag(node, characters);

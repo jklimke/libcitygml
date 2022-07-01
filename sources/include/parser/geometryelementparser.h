@@ -18,6 +18,7 @@ namespace citygml {
         // ElementParser interface
         virtual std::string elementParserName() const override;
         virtual bool handlesElement(const NodeType::XMLNode &node) const override;
+
     protected:
         // CityGMLElementParser interface
         virtual bool parseElementStartTag(const NodeType::XMLNode& node, Attributes& attributes) override;

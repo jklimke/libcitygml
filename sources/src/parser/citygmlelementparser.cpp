@@ -41,7 +41,7 @@ namespace citygml {
             throw std::runtime_error("CityGMLElementParser::endElement called on unbound CityGMLElementParser object.");
         }
 
-        if (m_boundElement == node) {
+        if (m_boundElement.prefix() == node.prefix() && m_boundElement.name() == node.name()) {// for InvalidNode also
             m_documentParser.removeCurrentElementParser(this);
             return parseElementEndTag(node, characters);
         } else {

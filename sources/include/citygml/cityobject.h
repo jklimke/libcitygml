@@ -73,6 +73,8 @@ namespace citygml {
            	// ADD Buildding model 
 			COT_IntBuildingInstallation		= 1ll<< 34,
 
+            COT_Unknown                     = 1ll<< 40,
+
             COT_All                         = 0xFFFFFFFFFFFFFFFFull
         };
 
