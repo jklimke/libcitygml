@@ -84,8 +84,25 @@ namespace citygml
 
     const ConstCityObjects CityModel::getAllCityObjectsOfType( CityObject::CityObjectsType type ) const
     {
-        CityObjectsMap::const_iterator it = m_cityObjectsMap.find( type );
-        return it->second;
+        std::vector<CityObject::CityObjectsType> keys;
+        for (const auto& [key, _] : m_cityObjectsMap) {
+            if (static_cast<uint64_t>(key & type) != 0ull) {
+                keys.push_back(key);
+            }
+        }
+
+        if (keys.empty())
+            return {};
+
+        if (keys.size() == 1)
+            return m_cityObjectsMap.find(type)->second;
+
+        ConstCityObjects result;
+        for (const auto& key : keys) {
+            const auto city_objects = m_cityObjectsMap.find(key)->second;
+            result.insert(result.end(), city_objects.begin(), city_objects.end());
+        }
+        return result;
     }
 
     const CityObject* CityModel::getCityObjectById(const std::string& id) const {
