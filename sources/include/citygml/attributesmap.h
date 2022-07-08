@@ -54,7 +54,7 @@ public:
     AttributesMap& asAttributeSet();
     [[nodiscard]] const AttributesMap& asAttributeSet() const;
 
-    // AttributesMap の内容を分かりやすい形式の文字列にします。
+    // Returns formatted string of AttributesMap, includes recursive children.
     static std::string attributesMapToString(const AttributesMap& attributesMap);
 
 private:
