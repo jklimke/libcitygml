@@ -52,12 +52,19 @@ public:
     double asDouble(double defaultValue=0.0) const;
     int asInteger(int defaultValue=0) const;
     AttributesMap& asAttributeSet();
-    const AttributesMap& asAttributeSet() const;
+    [[nodiscard]] const AttributesMap& asAttributeSet() const;
+
+    // AttributesMap の内容を分かりやすい形式の文字列にします。
+    static std::string attributesMapToString(const AttributesMap& attributesMap);
+
 private:
     AttributeType m_type;
     std::string m_value;
     // Avoid using string field because of parse latency issue.
     AttributesMap m_attribute_set;
+
+    static std::string attributesMapToStringRecursive(const AttributesMap &attributesMap, int depth);
+    static std::string indent(int num);
 };
 
 LIBCITYGML_EXPORT std::ostream& operator<<(std::ostream& os, const AttributeValue& o);

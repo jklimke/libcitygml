@@ -123,7 +123,37 @@ const AttributesMap& AttributeValue::asAttributeSet() const
     return m_attribute_set;
 }
 
-std::ostream& operator<<(std::ostream& os, const AttributeValue& o)
+std::string AttributeValue::attributesMapToString(const AttributesMap &attributesMap) {
+    return attributesMapToStringRecursive(attributesMap, 0);
+}
+
+std::string AttributeValue::attributesMapToStringRecursive(const AttributesMap& attributesMap, int depth){
+    std::stringstream ss;
+    ss << indent(depth++) << u8"[\n";
+    for(auto& pair : attributesMap){
+        auto& key = pair.first;
+        auto& value = pair.second;
+        ss << indent(depth) << u8"{ " << key << u8" => ";
+        if(value.getType() == AttributeType::AttributeSet){
+            ss << u8"\n" << attributesMapToStringRecursive(value.asAttributeSet(), depth+1);
+            ss << indent(depth) << u8"}\n";
+        }else{
+            ss << value.asString() << u8" }\n";
+        }
+    }
+    ss << indent(--depth) << u8"]\n";
+    return ss.str();
+}
+
+std::string AttributeValue::indent(int num) {
+    std::stringstream ss;
+    for(int i=0; i<num; i++){
+        ss << "  ";
+    }
+    return ss.str();
+}
+
+    std::ostream& operator<<(std::ostream& os, const AttributeValue& o)
 {
     if (o.getType() == AttributeType::AttributeSet) {
         for (auto entry : o.asAttributeSet()) {
