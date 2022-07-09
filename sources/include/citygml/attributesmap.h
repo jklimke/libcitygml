@@ -54,8 +54,6 @@ public:
     AttributesMap& asAttributeSet();
     [[nodiscard]] const AttributesMap& asAttributeSet() const;
 
-    // Returns formatted string of AttributesMap, includes recursive children.
-    static std::string attributesMapToString(const AttributesMap& attributesMap);
 
 private:
     AttributeType m_type;
@@ -63,10 +61,9 @@ private:
     // Avoid using string field because of parse latency issue.
     AttributesMap m_attribute_set;
 
-    static std::string attributesMapToStringRecursive(const AttributesMap &attributesMap, int depth);
-    static std::string indent(int num);
 };
 
 LIBCITYGML_EXPORT std::ostream& operator<<(std::ostream& os, const AttributeValue& o);
+LIBCITYGML_EXPORT std::ostream& operator<<(std::ostream& os, const AttributesMap& o);
 
 } // namespace citygml
