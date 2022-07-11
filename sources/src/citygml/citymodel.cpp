@@ -94,8 +94,9 @@ namespace citygml
         if (keys.empty())
             return {};
 
-        if (keys.size() == 1)
-            return m_cityObjectsMap.find(type)->second;
+        if(keys.size() == 1){
+            return m_cityObjectsMap.find(keys[0])->second;
+        }
 
         ConstCityObjects result;
         for (const auto& key : keys) {
