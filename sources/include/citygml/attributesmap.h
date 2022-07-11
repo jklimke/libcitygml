@@ -52,14 +52,18 @@ public:
     double asDouble(double defaultValue=0.0) const;
     int asInteger(int defaultValue=0) const;
     AttributesMap& asAttributeSet();
-    const AttributesMap& asAttributeSet() const;
+    [[nodiscard]] const AttributesMap& asAttributeSet() const;
+
+
 private:
     AttributeType m_type;
     std::string m_value;
     // Avoid using string field because of parse latency issue.
     AttributesMap m_attribute_set;
+
 };
 
 LIBCITYGML_EXPORT std::ostream& operator<<(std::ostream& os, const AttributeValue& o);
+LIBCITYGML_EXPORT std::ostream& operator<<(std::ostream& os, const AttributesMap& o);
 
 } // namespace citygml

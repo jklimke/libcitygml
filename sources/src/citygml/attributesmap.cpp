@@ -123,14 +123,54 @@ const AttributesMap& AttributeValue::asAttributeSet() const
     return m_attribute_set;
 }
 
+
+// AttributesMap to string
+namespace{
+
+    std::string indent(int num) {
+        std::stringstream ss;
+        for(int i=0; i<num; i++){
+            ss << "  ";
+        }
+        return ss.str();
+    }
+
+    std::string attributesMapToStringRecursive(const AttributesMap& attributesMap, int depth){
+        std::stringstream ss;
+        ss << indent(depth++) << u8"[\n";
+        for(auto& pair : attributesMap){
+            auto& key = pair.first;
+            auto& value = pair.second;
+            ss << indent(depth) << u8"{ " << key << u8" => ";
+            if(value.getType() == AttributeType::AttributeSet){
+                ss << u8"\n" << attributesMapToStringRecursive(value.asAttributeSet(), depth+1);
+                ss << indent(depth) << u8"}\n";
+            }else{
+                ss << value.asString() << u8" }\n";
+            }
+        }
+        ss << indent(--depth) << u8"]\n";
+        return ss.str();
+    }
+
+    std::string attributesMapToString(const AttributesMap &attributesMap) {
+        return attributesMapToStringRecursive(attributesMap, 0);
+    }
+}
+
+
 std::ostream& operator<<(std::ostream& os, const AttributeValue& o)
 {
     if (o.getType() == AttributeType::AttributeSet) {
-        for (auto entry : o.asAttributeSet()) {
-            os << "{" << entry.first << ": " << entry.second << ",";
-        }
+        os << attributesMapToString(o.asAttributeSet());
+        return os;
     }
     os << o.asString();
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const AttributesMap& o){
+    os << attributesMapToString(o);
     return os;
 }
 
