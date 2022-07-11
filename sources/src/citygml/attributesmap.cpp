@@ -126,12 +126,13 @@ const AttributesMap& AttributeValue::asAttributeSet() const
 
 // AttributesMap to string
 namespace{
-    std::string attributesMapToString(const AttributesMap &attributesMap);
-    std::string attributesMapToStringRecursive(const AttributesMap& attributesMap, int depth);
-    std::string indent(int num);
 
-    std::string attributesMapToString(const AttributesMap &attributesMap) {
-        return attributesMapToStringRecursive(attributesMap, 0);
+    std::string indent(int num) {
+        std::stringstream ss;
+        for(int i=0; i<num; i++){
+            ss << "  ";
+        }
+        return ss.str();
     }
 
     std::string attributesMapToStringRecursive(const AttributesMap& attributesMap, int depth){
@@ -152,12 +153,8 @@ namespace{
         return ss.str();
     }
 
-    std::string indent(int num) {
-        std::stringstream ss;
-        for(int i=0; i<num; i++){
-            ss << "  ";
-        }
-        return ss.str();
+    std::string attributesMapToString(const AttributesMap &attributesMap) {
+        return attributesMapToStringRecursive(attributesMap, 0);
     }
 }
 
