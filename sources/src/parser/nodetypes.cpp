@@ -457,7 +457,23 @@ namespace citygml {
             }
         }
 
-        return InvalidNode;
+        std::string nodeName = lowerName;
+
+        size_t pos = nodeName.find_first_of(":");
+        if (pos != std::string::npos) {
+            nodeName = nodeName.substr(pos + 1);
+        } else {
+            // node has no prefix... try with core prefix
+            return getXMLNodeFor("core:" + name);
+        }
+
+        auto it = nodeNameTypeMap.find(nodeName);
+
+        if (it == nodeNameTypeMap.end()) {
+            return InvalidNode;
+        } else {
+            return *it->second;
+        }
     }
 
 #define DEFINE_NODE( prefix, elementname ) NodeType::XMLNode NodeType::prefix ## _ ## elementname ## Node;
