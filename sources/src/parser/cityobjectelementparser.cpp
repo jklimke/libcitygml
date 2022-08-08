@@ -39,13 +39,14 @@ namespace citygml {
     #define HANDLE_GROUP_TYPE( prefix, elementName, enumtype ) std::pair<int, CityObject::CityObjectsType>(NodeType::prefix ## _ ## elementName ## Node.typeID(), enumtype)
     #define HANDLE_ATTR( prefix, elementName ) NodeType::prefix ## _ ## elementName ## Node.typeID()
 
-    CityObjectElementParser::CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (CityObject*)> callback)
+    CityObjectElementParser::CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, const ParserParams& parserParams, std::function<void (CityObject*)> callback)
         : GMLFeatureCollectionElementParser(documentParser, factory, logger)
         , m_lastAttributeType(AttributeType::String)
         , m_genericAttributeSet(nullptr)
         , m_lastCodeSpace("")
         , m_lastCode("")
         , m_lastAttributeName("")
+        , m_parserParams(parserParams)
     {
         m_callback = callback;
     }
@@ -314,7 +315,7 @@ namespace citygml {
                    || node == NodeType::DEM_RasterReliefNode
                    || node == NodeType::DEM_GridNode
                    || node == NodeType::CORE_GeneralizesToNode) {
-            setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
+            setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, m_parserParams, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
         } else if (node == NodeType::APP_AppearanceNode // Compatibility with CityGML 1.0 (in CityGML 2 CityObjects can only contain appearanceMember elements)
@@ -464,8 +465,8 @@ namespace citygml {
                 return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
             } else {
                 UnknownElementParser* dcep = new UnknownElementParser(m_documentParser, m_logger, {
-                    new GeometryElementParser(m_documentParser, m_factory, m_logger, 2, m_model->getType(), [this](Geometry* geom) { m_model->addGeometry(geom); }),
-                    new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) { m_model->addChildCityObject(obj); }),
+                    MakeGeometryElementParser(2, m_model->getType()),
+                    new CityObjectElementParser(m_documentParser, m_factory, m_logger, m_parserParams, [this](CityObject* obj) { m_model->addChildCityObject(obj); }),
                     this
                     });
                 dcep->setStockNode(node);
@@ -651,21 +652,15 @@ namespace citygml {
 
     void CityObjectElementParser::parseGeometryForLODLevel(int lod)
     {
-        setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, lod, m_model->getType(), [this](Geometry* geom) {
-            m_model->addGeometry(geom);
-        }));
+        setParserForNextElement(MakeGeometryElementParser(lod, m_model->getType()));
     }
 
     void CityObjectElementParser::parseGeometryForLod0RoofEdgeNode() {
-        setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, 0, CityObject::CityObjectsType::COT_RoofSurface, [this](Geometry* geom) {
-            m_model->addGeometry(geom);
-            }));
+        setParserForNextElement(MakeGeometryElementParser(0, CityObject::CityObjectsType::COT_RoofSurface));
     }
 
-    void CityObjectElementParser::parseGeometryForLod0FootPrintNode() {
-        setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, 0, CityObject::CityObjectsType::COT_GroundSurface, [this](Geometry* geom) {
-            m_model->addGeometry(geom);
-            }));
+    void CityObjectElementParser::parseGeometryForLod0FootPrintNode() {\
+        setParserForNextElement(MakeGeometryElementParser(0, CityObject::CityObjectsType::COT_GroundSurface));
     }
 
     void CityObjectElementParser::parseImplicitGeometryForLODLevel(int lod)
@@ -688,11 +683,20 @@ namespace citygml {
                                                                        geom->addLineString(l);
                                                                        m_model->addGeometry(geom);
                                                                    }),
-            new GeometryElementParser(m_documentParser, m_factory, m_logger, lod, m_model->getType(), [this](Geometry* geom) {
-                                                                       m_model->addGeometry(geom);
-                                                                   })
+            MakeGeometryElementParser(lod, m_model->getType())
         }));
 
+    }
+
+    ElementParser *CityObjectElementParser::MakeGeometryElementParser(int lodLevel,
+                                                                      CityObject::CityObjectsType parentType) {
+        if(m_parserParams.ignoreGeometries){
+            return new SkipElementParser(m_documentParser, m_logger);
+        }else{
+            return new GeometryElementParser(m_documentParser, m_factory, m_logger, lodLevel, parentType, [this](Geometry* geom) {
+                m_model->addGeometry(geom);
+            });
+        }
     }
 
 }

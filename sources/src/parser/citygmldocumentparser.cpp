@@ -66,7 +66,7 @@ namespace citygml {
         }
 
         if (m_parserStack.empty()) {
-            m_parserStack.push(std::unique_ptr<CityModelElementParser>(new CityModelElementParser(*this, *m_factory, m_logger, [this](CityModel* cityModel) {
+            m_parserStack.push(std::unique_ptr<CityModelElementParser>(new CityModelElementParser(*this, *m_factory, m_logger, m_parserParams, [this](CityModel* cityModel) {
                 this->m_rootModel = std::unique_ptr<CityModel>(cityModel);
             })));
         }

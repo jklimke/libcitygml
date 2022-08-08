@@ -74,6 +74,7 @@ namespace citygml
             , destSRS( "" )
             , srcSRS( "" )
             , keepVertices ( false )
+            , ignoreGeometries( false )
         { }
 
     public:
@@ -84,6 +85,7 @@ namespace citygml
         bool pruneEmptyObjects;
         bool tesselate;
         bool keepVertices;
+        bool ignoreGeometries;
         std::string destSRS;
         std::string srcSRS;
     };

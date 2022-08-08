@@ -13,7 +13,7 @@ namespace citygml {
 
     class CityObjectElementParser : public GMLFeatureCollectionElementParser {
     public:
-        CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(CityObject*)> callback);
+        CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger,const ParserParams& parserParams, std::function<void(CityObject*)> callback);
 
         // ElementParser interface
         virtual std::string elementParserName() const override;
@@ -57,9 +57,17 @@ namespace citygml {
         void parseImplicitGeometryForLODLevel(int lod);
         void parseGeometryPropertyElementForLODLevel(int lod, const std::string& id);
 
+        /**
+         * @brief
+         * When m_parserParams.ignoreGeometries is false, returns new GeometryElementParser.
+         * When m_parserParams.ignoreGeometries is true , returns new SkipElementParser.
+         */
+        ElementParser* MakeGeometryElementParser(int lodLevel, CityObject::CityObjectsType parentType);
+
         std::string m_lastCodeSpace;
         std::string m_lastCode;
 
+        const ParserParams& m_parserParams;
     };
 
 }

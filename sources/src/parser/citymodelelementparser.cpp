@@ -5,6 +5,7 @@
 #include "parser/documentlocation.h"
 #include "parser/cityobjectelementparser.h"
 #include "parser/appearanceelementparser.h"
+#include "parser/skipelementparser.h"
 
 #include <citygml/citymodel.h>
 #include <citygml/citygmllogger.h>
@@ -15,8 +16,9 @@
 
 namespace citygml {
 
-    CityModelElementParser::CityModelElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (CityModel*)> callback)
+    CityModelElementParser::CityModelElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, const ParserParams& parserParams, std::function<void (CityModel*)> callback)
         : GMLFeatureCollectionElementParser(documentParser, factory, logger)
+        , m_parserParams(parserParams)
     {
         m_callback = callback;
         m_model = nullptr;
@@ -67,14 +69,16 @@ namespace citygml {
         }
 
         if (node == NodeType::CORE_CityObjectMemberNode) {
-            setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
+            setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, m_parserParams, [this](CityObject* obj) {
                                         this->m_model->addRootObject(obj);
                                     }));
             return true;
         } else if (node == NodeType::APP_AppearanceNode // Compatibility with CityGML 1.0 (in CityGML 2 CityObjects can only contain appearanceMember elements)
                    || node == NodeType::APP_AppearanceMemberNode) {
-
-            setParserForNextElement(new AppearanceElementParser(m_documentParser, m_factory, m_logger));
+            auto nextParser = m_parserParams.ignoreGeometries ?
+                                        (ElementParser*) new SkipElementParser(m_documentParser, m_logger) :
+                                        (ElementParser*) new AppearanceElementParser(m_documentParser, m_factory, m_logger);
+            setParserForNextElement(nextParser);
             return true;
         } else {
             return GMLFeatureCollectionElementParser::parseChildElementStartTag(node, attributes);
