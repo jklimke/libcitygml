@@ -3,6 +3,7 @@
 #include <parser/gmlfeaturecollectionparser.h>
 
 #include <functional>
+#include "citygml/citygml.h"
 
 namespace citygml {
 
@@ -10,7 +11,7 @@ namespace citygml {
 
     class CityModelElementParser : public GMLFeatureCollectionElementParser {
     public:
-        CityModelElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void(CityModel*)> callback);
+        CityModelElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, const ParserParams& parserParams, std::function<void(CityModel*)> callback);
 
         // ElementParser interface
         virtual std::string elementParserName() const override;
@@ -30,6 +31,7 @@ namespace citygml {
     private:
         std::function<void(CityModel*)> m_callback;
         CityModel* m_model;
+        const ParserParams& m_parserParams;
     };
 
 }
