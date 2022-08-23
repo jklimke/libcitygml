@@ -127,6 +127,7 @@ public:
 
     // ContentHandler interface
     virtual void startElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname, const xercesc::Attributes& attrs) override {
+        m_lastcharacters = "";
         AttributesXercesAdapter attributes(attrs, m_documentLocation, m_logger);
         CityGMLDocumentParser::startElement(toStdString(qname), attributes);
     }
