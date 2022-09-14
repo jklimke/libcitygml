@@ -52,6 +52,9 @@ namespace citygml {
 
         ~CityModel();
 
+        const std::string& getGmlPath() const;
+        void setGmlPath(const std::string& gmlPath);
+
     protected:
 
         CityModel( const std::string& id = "CityModel");
@@ -69,6 +72,8 @@ namespace citygml {
         std::string m_srsName;
 
         std::vector<std::string> m_themes;
+
+        std::string m_gmlPath;
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream&, const citygml::CityModel & );

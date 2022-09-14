@@ -14,6 +14,9 @@
 
 #include <stdexcept>
 
+#include <filesystem>
+
+
 namespace citygml {
 
     CityModelElementParser::CityModelElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, const ParserParams& parserParams, std::function<void (CityModel*)> callback)
@@ -42,6 +45,13 @@ namespace citygml {
         }
 
         m_model = m_factory.createCityModel(attributes.getCityGMLIDAttribute());
+
+        std::filesystem::path path = getDocumentLocation().getDocumentFilePath();
+        if (path.is_relative()) {
+            path = std::filesystem::absolute(path);
+        }
+
+        m_model->setGmlPath(path.u8string());
         return true;
     }
 

@@ -177,4 +177,12 @@ namespace citygml
         return out;
     }
 
+    const std::string& CityModel::getGmlPath() const {
+        return m_gmlPath;
+    }
+
+    void CityModel::setGmlPath(const std::string& gml_path) {
+        m_gmlPath = gml_path;
+    }
+
 }
