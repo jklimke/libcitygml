@@ -33,12 +33,33 @@ namespace citygml {
         unsigned int len = size();
         if ( len < 3 ) return TVec3d();
 
+        // Convert latitude, longitude to diff of X, diff of Y from the first point, which X, Y is in rectangular coordinate system.
+        // Assuming Earth is a ball which radian is 6378137m.
+        auto vec_xyz = std::vector<TVec3d>();
+        vec_xyz.reserve(len);
+        constexpr double r = 6378137;
+        constexpr double pi2 = 3.141592653589 * 2.0;
+        const auto ref_lat = m_vertices[0].x / pi2;
+        const auto ref_lon = m_vertices[0].y / pi2;
+        const auto sin_ref_lat = std::sin(ref_lat);
+        const auto cos_ref_lat = std::cos(ref_lat);
+        const auto cos_ref_lon = std::cos(ref_lon);
+        for (unsigned int i=0; i < len; i++){
+            const auto sin_lat = std::sin(m_vertices[i].x / pi2);
+            const auto cos_lat = std::cos(m_vertices[i].x / pi2);
+            const auto cos_lon = std::cos(m_vertices[i].y / pi2);
+            const auto diff_y = r * (sin_lat - sin_ref_lat);
+            const auto diff_x = r * (cos_lat * cos_lon - cos_ref_lat * cos_ref_lon);
+            vec_xyz.emplace_back(diff_y, diff_x, m_vertices[i].z);
+        }
+
+        // Calculate normal.
         // Tampieri, F. 1992. Newell's method for computing the plane equation of a polygon. In Graphics Gems III, pp.231-232.
         TVec3d n( 0., 0., 0. );
         for ( unsigned int i = 0; i < len; i++ )
         {
-            const TVec3d& current = m_vertices[i];
-            const TVec3d& next = m_vertices[ ( i + 1 ) % len];
+            const TVec3d& current = vec_xyz[i];
+            const TVec3d& next = vec_xyz[ ( i + 1 ) % len];
 
             n.x += ( current.y - next.y ) * ( current.z + next.z );
             n.y += ( current.z - next.z ) * ( current.x + next.x );
