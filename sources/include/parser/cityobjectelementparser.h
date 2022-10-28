@@ -50,6 +50,7 @@ namespace citygml {
         static bool attributesSetInitialized;
 
         void parseGeometryForLODLevel(int lod);
+        void parseGeometryForLODLevel(int lod, CityObject::CityObjectsType parentType);
         void parseImplicitGeometryForLODLevel(int lod);
         void parseGeometryPropertyElementForLODLevel(int lod, const std::string& id);
     };
