@@ -314,7 +314,9 @@ namespace citygml {
                    || node == NodeType::DEM_BreaklinesNode) {
             
             parseGeometryForLODLevel(std::stoi(m_model->getAttribute("dem:lod")));
-        } else if (node == NodeType::GEN_Lod0TerrainIntersectionNode
+        } else if (node == NodeType::BLDG_Lod0FootPrintNode
+                   || node == NodeType::BLDG_Lod0RoofEdgeNode
+                   || node == NodeType::GEN_Lod0TerrainIntersectionNode
                    || node == NodeType::WTR_Lod0MultiCurveNode
                    || node == NodeType::WTR_Lod0MultiSurfaceNode) {
             
@@ -480,6 +482,8 @@ namespace citygml {
                     || node == NodeType::BLDG_OpeningNode
                     || node == NodeType::APP_AppearanceNode
                     || node == NodeType::APP_AppearanceMemberNode
+                    || node == NodeType::BLDG_Lod0FootPrintNode
+                    || node == NodeType::BLDG_Lod0RoofEdgeNode
                     || node == NodeType::BLDG_Lod1MultiCurveNode
                     || node == NodeType::BLDG_Lod1MultiSurfaceNode
                     || node == NodeType::BLDG_Lod1SolidNode
