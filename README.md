@@ -37,6 +37,7 @@ Overview over the testing data within the "data" directory:
 | data/b1_lod2_cs_w_sem.gml             | https://www.citygml.org/samplefiles/building/             | [https://www.citygml.org](https://www.citygml.org/samplefiles/)                                           |
 | data/b1_lod2_s.gml                    | https://www.citygml.org/samplefiles/building/             | [https://www.citygml.org](https://www.citygml.org/samplefiles/)                                           |
 | data/berlin_open_data_sample_data.gml | Berlin Partner für Wirtschaft und Technologie GmbH        | [Berlin Partner Download Portal](http://www.businesslocationcenter.de/berlin3d-downloadportal/?lang=en)   |
+| data/FZK-Haus-LoD0-KIT-IAI-KHH-B36-V1.gml | Institute for Automation and Applied Computer Science (IAI) / Karlsruhe Institute of Technology (KIT) | https://www.citygmlwiki.org/index.php?title=FZK_Haus |
 
 
 
