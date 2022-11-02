@@ -171,19 +171,19 @@ namespace citygml {
         return texCoordsLists;
     }
 
-    void Polygon::createIndicesWithTesselation(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger)
+    void Polygon::createIndicesWithTesselation(TesselatorBase* tesselator, std::shared_ptr<CityGMLLogger> logger)
     {
         TVec3d normal = computeNormal();
 
         std::vector<std::string> themesFront = getAllTextureThemes(true);
         std::vector<std::string> themesBack = getAllTextureThemes(false);
 
-        tesselator.init(normal);
+        tesselator->init(normal);
 
         if (m_exteriorRing != nullptr) {
 
-            tesselator.addContour( m_exteriorRing->getVertices(), getTexCoordListsForRing(*m_exteriorRing, themesFront, themesBack));
-            if (!tesselator.keepVertices())
+            tesselator->addContour( m_exteriorRing->getVertices(), getTexCoordListsForRing(*m_exteriorRing, themesFront, themesBack));
+            if (!tesselator->keepVertices())
             {
                 m_exteriorRing->forgetVertices();                
             }
@@ -191,22 +191,22 @@ namespace citygml {
 
         for ( auto& ring : m_interiorRings )
         {
-            tesselator.addContour( ring->getVertices(), getTexCoordListsForRing(*ring, themesFront, themesBack) );
-            if (!tesselator.keepVertices())
+            tesselator->addContour( ring->getVertices(), getTexCoordListsForRing(*ring, themesFront, themesBack) );
+            if (!tesselator->keepVertices())
             {
                 ring->forgetVertices();                
             }
         }
 
-        tesselator.compute();
-        m_vertices = tesselator.getVertices();
-        m_indices = tesselator.getIndices();
+        tesselator->compute();
+        m_vertices = tesselator->getVertices();
+        m_indices = tesselator->getIndices();
 
         if (m_vertices.empty()) {
             return;
         }
 
-        const std::vector<std::vector<TVec2f> >& texCoordLists = tesselator.getTexCoords();
+        const std::vector<std::vector<TVec2f> >& texCoordLists = tesselator->getTexCoords();
 
         for (size_t i = 0; i < themesFront.size(); i++) {
             assert(texCoordLists.at(i).size() == m_vertices.size());
@@ -219,7 +219,7 @@ namespace citygml {
         }
     }
 
-    void Polygon::computeIndices(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger )
+    void Polygon::computeIndices(TesselatorBase* tesselator, std::shared_ptr<CityGMLLogger> logger )
     {
         m_indices.clear();
         m_vertices.clear();
@@ -231,7 +231,7 @@ namespace citygml {
         }
     }
 
-    void Polygon::finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger)
+    void Polygon::finish(TesselatorBase* tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         if (m_finished) {
             // This may happen as Polygons can be shared between geometries
@@ -244,7 +244,7 @@ namespace citygml {
             removeDuplicateVerticesInRings(logger);
         }
         
-        if (tesselate) {
+        if (tesselator != nullptr) {
             computeIndices(tesselator, logger);
         }
     }

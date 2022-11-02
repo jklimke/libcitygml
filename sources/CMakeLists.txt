@@ -6,7 +6,11 @@ ENDIF (NOT DEFINED CMAKE_MODULE_PATH)
 
 SET( target citygml )
 
-FIND_PACKAGE( OpenGL REQUIRED )
+IF( LIBCITYGML_USE_OPENGL)
+  FIND_PACKAGE( OpenGL REQUIRED )
+ELSE( LIBCITYGML_USE_OPENGL )
+  SET( GLU_INCLUDE_PATH "" )
+ENDIF( LIBCITYGML_USE_OPENGL )
 FIND_PACKAGE( Xerces REQUIRED )
 
 # gdal library
@@ -53,7 +57,7 @@ INCLUDE_DIRECTORIES(    ${CMAKE_CURRENT_SOURCE_DIR}/include
 SET(SOURCES
   src/citygml/attributesmap.cpp
   src/citygml/citymodel.cpp
-  src/citygml/tesselator.cpp
+  src/citygml/tesselatorbase.cpp
   src/citygml/object.cpp
   src/citygml/featureobject.cpp
   src/citygml/appearance.cpp
@@ -112,9 +116,12 @@ SET(SOURCES
   src/parser/implicitgeometryelementparser.cpp
   src/parser/addressparser.cpp
 )
+
 if(UNIX)
   if (APPLE)
-    set_source_files_properties(src/citygml/tesselator.cpp PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations") # for warnings: 'glu*' is deprecated...
+    if (LIBCITYGML_USE_OPENGL)
+      set_source_files_properties(src/citygml/tesselator.cpp PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations") # for warnings: 'glu*' is deprecated...
+    endif (LIBCITYGML_USE_OPENGL)
   endif (APPLE)
 endif(UNIX)
 
@@ -139,7 +146,7 @@ SET(PUBLIC_HEADER
   include/citygml/citygml.h
   include/citygml/transformmatrix.h
   include/citygml/implictgeometry.h
-  include/citygml/tesselator.h
+  include/citygml/tesselatorbase.h
   include/citygml/texture.h
   include/citygml/appearancetargetdefinition.h
   include/citygml/texturetargetdefinition.h
@@ -153,12 +160,24 @@ SET(PUBLIC_HEADER
   include/citygml/externalreference.h
 )
 
+
+if(LIBCITYGML_USE_OPENGL) 
+  SET(SOURCES 
+    ${SOURCES} 
+    src/citygml/tesselator.cpp
+  )
+
+  SET(PUBLIC_HEADER 
+    ${PUBLIC_HEADER} 
+    include/citygml/tesselator.h
+  )
+endif(LIBCITYGML_USE_OPENGL)
+
 SET(HEADERS
   ${PUBLIC_HEADER}
 
   ${CMAKE_MODULE_PATH}/citygml_api.h.in
 
-  include/citygml/tesselator.h
   include/citygml/utils.h
   include/citygml/appearancemanager.h
   include/citygml/polygonmanager.h
@@ -205,7 +224,10 @@ generate_export_header(citygml
                        EXPORT_MACRO_NAME LIBCITYGML_EXPORT
                        EXPORT_FILE_NAME ${EXPORT_HEADER_FILE_NAME})
 
-TARGET_LINK_LIBRARIES( ${target} PUBLIC ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} )
+TARGET_LINK_LIBRARIES( ${target} PUBLIC ${XERCESC_LIBRARIES} )
+if(LIBCITYGML_USE_OPENGL)
+  TARGET_LINK_LIBRARIES( ${target} PUBLIC ${OPENGL_LIBRARIES} )
+endif(LIBCITYGML_USE_OPENGL)
 if(LIBCITYGML_USE_GDAL)
     TARGET_LINK_LIBRARIES( ${target} PUBLIC ${GDAL_LIBRARY} )
 endif(LIBCITYGML_USE_GDAL)
@@ -284,7 +306,11 @@ else()
     set(LIBCITYGML_POSTFIX "")
 endif()
 
-set(PKG_CONFIG_REQUIRES "xerces-c glu")
+set(PKG_CONFIG_REQUIRES "xerces-c")
+
+if(LIBCITYGML_USE_OPENGL)
+  set(PKG_CONFIG_REQUIRES "${PKG_CONFIG_REQUIRES} glu")
+  endif(LIBCITYGML_USE_OPENGL)
 
 if (LIBCITYGML_USE_GDAL)
     set(PKG_CONFIG_REQUIRES "${PKG_CONFIG_REQUIRES} gdal")

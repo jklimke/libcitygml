@@ -14,11 +14,12 @@
 
 namespace citygml {
 
-    CityGMLDocumentParser::CityGMLDocumentParser(const ParserParams& params, std::shared_ptr<CityGMLLogger> logger)
+    CityGMLDocumentParser::CityGMLDocumentParser(const ParserParams& params, std::shared_ptr<CityGMLLogger> logger, std::unique_ptr<TesselatorBase> tesselator)
     {
         m_logger = logger;
         m_factory = std::unique_ptr<CityGMLFactory>(new CityGMLFactory(logger));
         m_parserParams = params;
+        m_tesselator = std::move(tesselator);
         m_activeParser = nullptr;
         m_currentElementUnknownOrUnexpected = false;
         m_unknownElementOrUnexpectedElementDepth = 0;
@@ -122,12 +123,14 @@ namespace citygml {
         m_factory->closeFactory();
 
         if (m_rootModel != nullptr) {
-            Tesselator tesselator(m_logger);
-            tesselator.setKeepVertices(m_parserParams.keepVertices);
 
-            CITYGML_LOG_INFO(m_logger, "Start postprocessing of the citymodel.");
-            m_rootModel->finish(tesselator, m_parserParams.optimize, m_parserParams.tesselate, m_logger);
-            CITYGML_LOG_INFO(m_logger, "Finished postprocessing of the citymodel.");
+            if(m_tesselator != nullptr) {
+                m_tesselator->setKeepVertices(m_parserParams.keepVertices);
+
+                CITYGML_LOG_INFO(m_logger, "Start postprocessing of the citymodel.");
+                m_rootModel->finish(m_tesselator.get(), m_parserParams.optimize, m_parserParams.tesselate, m_logger);
+                CITYGML_LOG_INFO(m_logger, "Finished postprocessing of the citymodel.");
+            }
 
             m_rootModel->setThemes(m_factory->getAllThemes());
 

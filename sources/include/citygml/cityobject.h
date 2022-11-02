@@ -8,7 +8,7 @@
 #include <citygml/enum_type_bitmask.h>
 #include <citygml/rectifiedgridcoverage.h>
 #include <citygml/externalreference.h>
-class Tesselator;
+class TesselatorBase;
 
 namespace citygml {
 
@@ -119,7 +119,7 @@ namespace citygml {
         ExternalReference const* externalReference() const;
         void setExternalReference(ExternalReference * externalReference);
 
-        void finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<citygml::CityGMLLogger> logger);
+        void finish(TesselatorBase* tesselator, bool optimize, std::shared_ptr<citygml::CityGMLLogger> logger);
 
         virtual ~CityObject();
 

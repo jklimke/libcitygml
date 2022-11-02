@@ -135,6 +135,9 @@ IF( MSVC AND LIBCITYGML_STATIC_CRT )
   ENDFOREACH( flag_var )
 ENDIF( MSVC AND LIBCITYGML_STATIC_CRT )
 
+
+OPTION(LIBCITYGML_USE_OPENGL "Set to OFF to prevent use of GL libraries. Tesselator won't be compiled." ON)
+
 # core
 ADD_SUBDIRECTORY( sources )
 

@@ -22,6 +22,8 @@ Dependencies:
 
 The XercesC xml parsing library is the only requirement compiling and using libcitygml. Please use a version > 3.1 compiled with an SDK that is compatible with C++11.
 
+OpenGL is required if you want to use the tesselator provided in the project. Otherwise, you can provide another implementation by inheriting TesselatorBase, or not use tesselation.
+
 GDAL is required if coordinate transformations should be applied during paring.
 
 OpenSceneGraph is required for building the plugin.

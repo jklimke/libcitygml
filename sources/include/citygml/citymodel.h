@@ -8,6 +8,8 @@
 #include <citygml/cityobject.h>
 #include <citygml/featureobject.h>
 
+class TesselatorBase;
+
 namespace citygml {
 
     class AppearanceManager;
@@ -39,7 +41,7 @@ namespace citygml {
 
         const std::string& getSRSName() const;
 
-        void finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger);
+        void finish(TesselatorBase* tesselator, bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger);
 
         std::vector<std::string> themes() const;
         void setThemes(std::vector<std::string> themes);

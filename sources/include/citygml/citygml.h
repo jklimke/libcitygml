@@ -31,10 +31,7 @@
 #include <citygml/vecs.hpp>
 #include <citygml/cityobject.h>
 #include <citygml/envelope.h>
-
-
-class Tesselator;
-
+class TesselatorBase;
 namespace citygml
 {
     class CityModel;
@@ -88,8 +85,8 @@ namespace citygml
         std::string srcSRS;
     };
 
-    LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( std::istream& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);
+    LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( std::istream& stream, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger = nullptr);
 
-    LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( const std::string& fileName, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger = nullptr);
+    LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( const std::string& fileName, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger = nullptr);
 
 }
