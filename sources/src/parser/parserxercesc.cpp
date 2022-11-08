@@ -311,7 +311,9 @@ namespace citygml
     {
         if (!logger) {
             logger = std::make_shared<StdLogger>();
-            tesselator->setLogger(logger);
+            if(tesselator) {
+                tesselator->setLogger(logger);
+            }
         }
 
         if (!initXerces(logger)) {
@@ -326,7 +328,9 @@ namespace citygml
     {
         if (!logger) {
             logger = std::make_shared<StdLogger>();
-            tesselator->setLogger(logger);
+            if(tesselator) {
+                tesselator->setLogger(logger);
+            }
         }
 
         if (!initXerces(logger)) {
