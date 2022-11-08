@@ -319,6 +319,12 @@ namespace citygml {
                    || node == NodeType::WTR_Lod0MultiSurfaceNode) {
             
             parseGeometryForLODLevel(0);
+        } else if (node == NodeType::BLDG_Lod0FootPrintNode) {
+            // for Lod0 footprint, we must explicitly set the City Object Type, because the parent type is "Building", and it doesn't allow to discriminate between the ground and roof surface
+            parseGeometryForLODLevel(0, CityObject::CityObjectsType::COT_GroundSurface);
+        } else if (node == NodeType::BLDG_Lod0RoofEdgeNode) {
+            // for Lod0 roof edge, we must explicitly set the City Object Type, because the parent type is "Building", and it doesn't allow to discriminate between the ground and roof surface
+            parseGeometryForLODLevel(0, CityObject::CityObjectsType::COT_RoofSurface);
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
                    || node == NodeType::BLDG_Lod1SolidNode
@@ -480,6 +486,8 @@ namespace citygml {
                     || node == NodeType::BLDG_OpeningNode
                     || node == NodeType::APP_AppearanceNode
                     || node == NodeType::APP_AppearanceMemberNode
+                    || node == NodeType::BLDG_Lod0FootPrintNode
+                    || node == NodeType::BLDG_Lod0RoofEdgeNode
                     || node == NodeType::BLDG_Lod1MultiCurveNode
                     || node == NodeType::BLDG_Lod1MultiSurfaceNode
                     || node == NodeType::BLDG_Lod1SolidNode
@@ -584,12 +592,17 @@ namespace citygml {
     {
         return m_model;
     }
-
-    void CityObjectElementParser::parseGeometryForLODLevel(int lod)
+    
+    void CityObjectElementParser::parseGeometryForLODLevel(int lod, CityObject::CityObjectsType parentType)
     {
-        setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, lod, m_model->getType(), [this](Geometry* geom) {
+        setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, lod, parentType, [this](Geometry* geom) {
             m_model->addGeometry(geom);
         }));
+    }
+    
+    void CityObjectElementParser::parseGeometryForLODLevel(int lod)
+    {
+        parseGeometryForLODLevel(lod, m_model->getType());
     }
 
     void CityObjectElementParser::parseImplicitGeometryForLODLevel(int lod)
