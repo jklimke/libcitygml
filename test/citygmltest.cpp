@@ -22,7 +22,6 @@
 #include <citygml/citymodel.h>
 #include <citygml/cityobject.h>
 #include <citygml/geometry.h>
-#include <citygml/tesselatorbase.h>
 #ifdef LIBCITYGML_USE_OPENGL
 #include <citygml/tesselator.h>
 #endif //LIBCITYGML_USE_OPENGL

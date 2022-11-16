@@ -31,7 +31,8 @@
 #include <citygml/vecs.hpp>
 #include <citygml/cityobject.h>
 #include <citygml/envelope.h>
-class TesselatorBase;
+#include <citygml/tesselatorbase.h>
+
 namespace citygml
 {
     class CityModel;
