@@ -22,11 +22,12 @@
 #include <citygml/citymodel.h>
 #include <citygml/cityobject.h>
 #include <citygml/geometry.h>
+
 #ifdef LIBCITYGML_USE_OPENGL
 #include <citygml/tesselator.h>
 #endif //LIBCITYGML_USE_OPENGL
 
-void analyzeObject( const citygml::CityObject*, unsigned int );
+void analyzeObject( const citygml::CityObject&, unsigned int );
 
 void usage()
 {
@@ -129,9 +130,8 @@ int main( int argc, char **argv )
     if ( log )
     {
         std::cout << std::endl << "Objects hierarchy:" << std::endl;
-//        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
-
-//        for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( roots[ i ], 2 );
+        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
+        for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( *(roots[ i ]), 2 );
     }
 
     std::cout << "Done." << std::endl;
@@ -139,11 +139,49 @@ int main( int argc, char **argv )
     return EXIT_SUCCESS;
 }
 
-void analyzeObject( const citygml::CityObject* object, unsigned int indent )
-{
-//    for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
-//        std::cout << "Object " << citygml::getCityObjectsClassName( object->getType() ) << ": " << object->getId() << std::endl;
+void printIndent(unsigned int indent) {
+  for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
+}
 
-//    for ( unsigned int i = 0; i < object->getChildCount(); i++ )
-//        analyzeObject( object->getChild(i), indent+1 );
+void printGeometry( const citygml::Geometry& geometry, unsigned int indent ) 
+{
+  printIndent(indent);
+  std::cout << "Geometry for LOD" << geometry.getLOD() << ", type: " << geometry.getTypeAsString() << std::endl;
+  
+  if(geometry.getLineStringCount() > 0)
+  {
+    printIndent(indent+1);
+    std::cout << "Linestrings:" << geometry.getLineStringCount() << std::endl;
+  }
+  
+  if(geometry.getPolygonsCount() > 0)
+  {
+    printIndent(indent+1);
+    std::cout << "Polygons:" << geometry.getPolygonsCount() << std::endl;
+  }
+  
+  if(geometry.getGeometriesCount() >0)
+  {
+    printIndent(indent+1);
+    std::cout << "SubGeometries:" << std::endl;
+    for( unsigned int i = 0; i < geometry.getGeometriesCount(); i++ )
+    {
+      printGeometry(geometry.getGeometry(i), indent+1);
+    }
+  }
+}
+
+void analyzeObject( const citygml::CityObject& object, unsigned int indent )
+{
+   printIndent(indent);
+   std::cout << "Object " << object.getTypeAsString() << ": " << object.getId() << std::endl;
+   
+   
+   for ( unsigned int i = 0; i < object.getGeometriesCount(); i++ ) 
+   {
+       printGeometry( object.getGeometry(i), indent+1 );
+   }
+
+   for ( unsigned int i = 0; i < object.getChildCityObjectsCount(); i++ )
+       analyzeObject( object.getChildCityObject(i), indent+1 );
 }

@@ -175,7 +175,9 @@ namespace citygml {
                 INITIALIZE_NODE( GML, Surface )
                 INITIALIZE_NODE( GML, PolygonPatch)
                 INITIALIZE_NODE( GML, LineString)
-
+                
+                INITIALIZE_NODE( BLDG, Lod0FootPrint )
+                INITIALIZE_NODE( BLDG, Lod0RoofEdge )
                 INITIALIZE_NODE( BLDG, Lod1Solid )
                 INITIALIZE_NODE( BLDG, Lod2Solid )
                 INITIALIZE_NODE( BLDG, Lod3Solid )
@@ -548,7 +550,9 @@ namespace citygml {
     DEFINE_NODE( GML, PosList )
     DEFINE_NODE( GML, OrientableSurface )
     DEFINE_NODE( GML, LinearRing )
-
+    
+    DEFINE_NODE( BLDG, Lod0FootPrint )
+    DEFINE_NODE( BLDG, Lod0RoofEdge )
     DEFINE_NODE( BLDG, Lod1Solid )
     DEFINE_NODE( BLDG, Lod2Solid )
     DEFINE_NODE( BLDG, Lod3Solid )
