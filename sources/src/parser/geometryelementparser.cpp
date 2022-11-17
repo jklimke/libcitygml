@@ -61,6 +61,8 @@ namespace citygml {
                 geometryTypeIDSet.insert(NodeType::GML_SurfaceNode.typeID());
 				geometryTypeIDSet.insert(NodeType::GML_MultiCurveNode.typeID());
                 geometryTypeIDSet.insert(NodeType::GML_MultiPointNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_MultiGeometryNode.typeID());
+
                 geometryTypeIDSetInitialized = true;
 
             }
@@ -97,16 +99,17 @@ namespace citygml {
     }
 
 
-
     bool GeometryElementParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
+        
         if (m_model == nullptr) {
             throw std::runtime_error("GeometryElementParser::parseChildElementStartTag called before GeometryElementParser::parseElementStartTag");
         }
 
         if (node == NodeType::GML_InteriorNode
          || node == NodeType::GML_ExteriorNode
-         || node == NodeType::GML_SolidMemberNode) {
+         || node == NodeType::GML_SolidMemberNode
+         || node == NodeType::GML_GeometryMemberNode) {
 
             setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* child) {
                                         m_model->addGeometry(child);
@@ -157,7 +160,8 @@ namespace citygml {
          || node == NodeType::GML_SurfaceMemberNode
          || node == NodeType::GML_BaseSurfaceNode
          || node == NodeType::GML_PatchesNode
-         || node == NodeType::GML_TrianglePatchesNode)  {
+         || node == NodeType::GML_TrianglePatchesNode
+         || node == NodeType::GML_GeometryMemberNode)  {
             return true;
         }
 

@@ -221,6 +221,10 @@ namespace citygml {
                 INITIALIZE_NODE( GML, Interior )
                 INITIALIZE_NODE( GML, Exterior )
 
+                INITIALIZE_NODE( GML, MultiGeometry )
+                INITIALIZE_NODE(GML, GeometryMember )
+
+
                 // BLDG
                 INITIALIZE_NODE( BLDG, Building )
                 INITIALIZE_NODE( BLDG, BuildingPart )
@@ -613,6 +617,9 @@ namespace citygml {
     DEFINE_NODE( GML, LineString )
 
     DEFINE_NODE( GML, RectifiedGridCoverage )
+
+    DEFINE_NODE(GML, MultiGeometry)
+    DEFINE_NODE(GML, GeometryMember)
 
     // BLDG
     DEFINE_NODE( BLDG, Building )

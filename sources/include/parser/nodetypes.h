@@ -157,6 +157,9 @@ namespace citygml {
         
         NODETYPE( GML, RectifiedGridCoverage )
 
+        NODETYPE(GML, MultiGeometry)
+        NODETYPE(GML, GeometryMember)
+
         // BLDG
         NODETYPE( BLDG, Building )
         NODETYPE( BLDG, BuildingPart )
