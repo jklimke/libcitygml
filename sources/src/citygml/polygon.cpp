@@ -2,7 +2,7 @@
 #include <citygml/appearance.h>
 #include <citygml/texture.h>
 #include <citygml/texturecoordinates.h>
-#include <citygml/tesselator.h>
+#include <citygml/tesselatorbase.h>
 #include <citygml/citygmllogger.h>
 #include <citygml/texturetargetdefinition.h>
 #include <citygml/materialtargetdefinition.h>

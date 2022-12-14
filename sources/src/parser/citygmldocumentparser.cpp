@@ -8,7 +8,7 @@
 #include <citygml/citygmllogger.h>
 #include <citygml/citygmlfactory.h>
 #include <citygml/citymodel.h>
-#include <citygml/tesselator.h>
+#include <citygml/tesselatorbase.h>
 
 #include <stdexcept>
 
