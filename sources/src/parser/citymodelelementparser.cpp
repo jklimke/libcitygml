@@ -46,7 +46,7 @@ namespace citygml {
 
         m_model = m_factory.createCityModel(attributes.getCityGMLIDAttribute());
 
-        std::filesystem::path path = getDocumentLocation().getDocumentFilePath();
+        std::filesystem::path path = std::filesystem::u8path(getDocumentLocation().getDocumentFilePath());
         if (path.is_relative()) {
             path = std::filesystem::absolute(path);
         }

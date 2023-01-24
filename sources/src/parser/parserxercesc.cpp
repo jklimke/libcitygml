@@ -67,7 +67,7 @@ public:
     explicit DocumentLocationXercesAdapter(const std::string& filePath)
         : m_locator(nullptr)
         , m_filePath(filePath) {
-        m_fileName = std::filesystem::path(filePath).filename().replace_extension().string();
+        m_fileName = std::filesystem::u8path(filePath).filename().replace_extension().u8string();
     }
 
     void setLocator(const xercesc::Locator* locator) {

@@ -191,11 +191,11 @@ namespace citygml {
     std::string CityGMLFactory::getCodeValue(const std::string& codeSpace, const std::string& gmlPath, const std::string& id)
     {
         const auto codeSpacePath =
-            std::filesystem::path(gmlPath)
-            .remove_filename().append(codeSpace).string();
+            std::filesystem::u8path(gmlPath)
+            .remove_filename().append(codeSpace).u8string();
 
         if (m_codeLists->find(codeSpacePath) == m_codeLists->end()) {
-            if (!std::filesystem::exists(codeSpacePath)) {
+            if (!std::filesystem::exists(std::filesystem::u8path(codeSpacePath))) {
                 CITYGML_LOG_ERROR(m_logger, "Can not find codelist file " << codeSpacePath);
                 throw std::runtime_error("Can not find codelist file: " + codeSpacePath);
             }
