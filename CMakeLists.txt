@@ -145,11 +145,12 @@ IF   (LIBCITYGML_OSGPLUGIN)
 ENDIF(LIBCITYGML_OSGPLUGIN)
 
 # test
-OPTION(LIBCITYGML_TESTS "Set to ON to build libcitygml tests programs." ON)
-IF   (LIBCITYGML_TESTS)
-  ADD_SUBDIRECTORY( test )
-ENDIF(LIBCITYGML_TESTS)
-
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+  OPTION(LIBCITYGML_TESTS "Set to ON to build libcitygml tests programs." ON)
+  IF   (LIBCITYGML_TESTS)
+    ADD_SUBDIRECTORY( test )
+  ENDIF(LIBCITYGML_TESTS)
+endif()
 
 #-----------------------------------------------------------------------------
 ### uninstall target
