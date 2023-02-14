@@ -6,7 +6,7 @@ ENDIF (NOT DEFINED CMAKE_MODULE_PATH)
 
 SET( target citygml )
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if( NOT(IOS OR ANDROID) )
   FIND_PACKAGE( OpenGL REQUIRED )
   FIND_PACKAGE( Xerces REQUIRED )
 endif()
@@ -52,7 +52,7 @@ INCLUDE_DIRECTORIES(    ${CMAKE_CURRENT_SOURCE_DIR}/include
                         ${GLU_INCLUDE_PATH}
                         ${GDAL_INCLUDE_DIR})
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if( NOT(IOS OR ANDROID) )
   SET(SOURCES
     src/citygml/attributesmap.cpp
     src/citygml/citymodel.cpp
@@ -160,7 +160,7 @@ endif(UNIX)
 
 
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if( NOT(IOS OR ANDROID) )
     SET(PUBLIC_HEADER
       include/citygml/citygml_api.h
       include/citygml/citygml_export.h
@@ -297,7 +297,7 @@ generate_export_header(citygml
                        EXPORT_MACRO_NAME LIBCITYGML_EXPORT
                        EXPORT_FILE_NAME ${EXPORT_HEADER_FILE_NAME})
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if( NOT(IOS OR ANDROID) )
   TARGET_LINK_LIBRARIES( ${target} PUBLIC ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} )
 endif()
 
@@ -379,7 +379,7 @@ else()
     set(LIBCITYGML_POSTFIX "")
 endif()
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if( NOT(IOS OR ANDROID) )
   set(PKG_CONFIG_REQUIRES "xerces-c glu")
 else()
   set(PKG_CONFIG_REQUIRES "glu")

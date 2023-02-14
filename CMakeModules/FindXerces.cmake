@@ -6,7 +6,7 @@
 #  XERCESC_LIBRARY - Link these to use Xerces-C
 #  XERCESC_VERSION - Xerces-C found version
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+if( NOT(IOS OR ANDROID) )
     IF (XERCESC_INCLUDE AND XERCESC_LIBRARY)
     # in cache already
     SET(XERCESC_FIND_QUIETLY TRUE)
