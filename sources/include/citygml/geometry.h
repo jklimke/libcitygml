@@ -7,7 +7,7 @@
 #include <citygml/citygml_api.h>
 #include <citygml/appearancetarget.h>
 
-class Tesselator;
+class TesselatorBase;
 
 namespace citygml {
 
@@ -73,7 +73,7 @@ namespace citygml {
          * @param tesselator the tesselator to be used for tesselation
          * @param mergePolygons determines wether all polygons are merged into one
          */
-        void finish(Tesselator& tesselator, bool optimize, bool tesselate, std::shared_ptr<CityGMLLogger> logger);
+        void finish(TesselatorBase* tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
         ~Geometry();
 

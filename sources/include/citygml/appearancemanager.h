@@ -8,8 +8,6 @@
 #include <citygml/object.h>
 #include <citygml/vecs.hpp>
 
-class Tesselator;
-
 namespace citygml {
 
     class CityGMLLogger;

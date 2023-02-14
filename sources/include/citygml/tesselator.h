@@ -31,40 +31,30 @@
 #endif
 
 #include <citygml/citygml_api.h>
+#include <citygml/tesselatorbase.h>
 #include <citygml/vecs.hpp>
-#include <vector>
-#include <list>
-#include <memory>
 
 namespace citygml {
     class CityGMLLogger;
 }
 
 // GLU based polygon tesselator
-class LIBCITYGML_EXPORT Tesselator
+class LIBCITYGML_EXPORT Tesselator: public TesselatorBase
 {
 public:
-    Tesselator( std::shared_ptr<citygml::CityGMLLogger> logger );
+    Tesselator( std::shared_ptr<citygml::CityGMLLogger> logger, GLenum winding_rule = GLU_TESS_WINDING_ODD);
     ~Tesselator();
 
-    void init(const TVec3d& normal, GLenum winding_rule = GLU_TESS_WINDING_ODD );
+    void init(const TVec3d& normal) override;
 
     /**
      * @brief Add a new contour - add the exterior ring first, then interiors
      * @param textureCoordinatesLists a list of texture coordinates lists for the countour. Each list contains one texture coordinate for each vertex.
      */
-    void addContour(const std::vector<TVec3d>&, std::vector<std::vector<TVec2f> > textureCoordinatesLists);
+    void addContour(const std::vector<TVec3d>&, std::vector<std::vector<TVec2f> > textureCoordinatesLists) override;
 
     // Let's tesselate!
-    void compute();
-
-    // Tesselation result access
-    const std::vector<TVec3d> getVertices() const;
-    const std::vector<std::vector<TVec2f> >& getTexCoords() const { return _texCoordsLists; }
-    const std::vector<unsigned int>& getIndices() const;
-
-    void setKeepVertices(bool val);
-    bool keepVertices() const;
+    void compute() override;
 
 private:
     typedef void (APIENTRY *GLU_TESS_CALLBACK)();
@@ -77,16 +67,7 @@ private:
 private:
     GLUtesselator *_tobj;
     GLenum  _curMode;
-
-    std::list<TVec3d> _vertices;
-    std::vector<std::vector<TVec2f> > _texCoordsLists;
-    std::list<unsigned int> _indices;
-    std::vector<unsigned int> _outIndices;
-
-    std::vector<unsigned int> _curIndices;
-    std::shared_ptr<citygml::CityGMLLogger> _logger;
-
-    bool _keepVertices;
+    GLenum _windingRule;
 };
 
 #endif // __TESSELATOR_H__

@@ -15,7 +15,7 @@ namespace citygml {
 
     class CityGMLDocumentParser {
     public:
-        CityGMLDocumentParser(const ParserParams& params, std::shared_ptr<CityGMLLogger> logger);
+        CityGMLDocumentParser(const ParserParams& params, std::shared_ptr<CityGMLLogger> logger, std::unique_ptr<TesselatorBase> tesselator);
 
         std::shared_ptr<const CityModel> getModel();
 
@@ -79,6 +79,8 @@ namespace citygml {
         std::unique_ptr<CityGMLFactory> m_factory;
         std::shared_ptr<CityModel> m_rootModel;
         ParserParams m_parserParams;
+
+        std::unique_ptr<TesselatorBase> m_tesselator;
 
         bool m_currentElementUnknownOrUnexpected;
         int m_unknownElementOrUnexpectedElementDepth;

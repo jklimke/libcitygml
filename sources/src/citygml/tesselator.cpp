@@ -34,11 +34,9 @@
 #include <assert.h>
 #include <algorithm>
 
-Tesselator::Tesselator(std::shared_ptr<citygml::CityGMLLogger> logger )
+Tesselator::Tesselator(std::shared_ptr<citygml::CityGMLLogger> logger, GLenum winding_rule): TesselatorBase(logger), _windingRule(winding_rule)
 {
-    _logger = logger;
     _tobj = gluNewTess();
-    _keepVertices = false;
 
     gluTessCallback( _tobj, GLU_TESS_VERTEX_DATA, (GLU_TESS_CALLBACK)&vertexDataCallback );
     gluTessCallback( _tobj, GLU_TESS_BEGIN_DATA, (GLU_TESS_CALLBACK)&beginCallback );
@@ -47,18 +45,13 @@ Tesselator::Tesselator(std::shared_ptr<citygml::CityGMLLogger> logger )
     gluTessCallback( _tobj, GLU_TESS_ERROR_DATA, (GLU_TESS_CALLBACK)&errorCallback );
 }
 
-void Tesselator::init( const TVec3d& normal, GLenum winding_rule )
+void Tesselator::init( const TVec3d& normal)
 {
+    TesselatorBase::init(normal);
     gluTessBeginPolygon( _tobj, this );
 
-    gluTessProperty( _tobj, GLU_TESS_WINDING_RULE, winding_rule );
+    gluTessProperty( _tobj, GLU_TESS_WINDING_RULE, _windingRule);
     gluTessNormal( _tobj, normal.x, normal.y, normal.z );
-
-    _vertices.clear();
-    _indices.clear();
-    _curIndices.clear();
-    _texCoordsLists.clear();
-    _outIndices.clear();
 }
 
 Tesselator::~Tesselator()
@@ -71,80 +64,20 @@ void Tesselator::compute()
     gluTessEndPolygon( _tobj );
 }
 
-const std::vector<TVec3d> Tesselator::getVertices() const
-{
-    return std::vector<TVec3d>(_vertices.begin(), _vertices.end());
-}
-
-const std::vector<unsigned int>& Tesselator::getIndices() const
-{
-    return _outIndices;
-}
-
-void Tesselator::setKeepVertices(bool value)
-{
-    _keepVertices = value;
-}
-
-bool Tesselator::keepVertices() const
-{
-    return _keepVertices;
-}
-
 void Tesselator::addContour(const std::vector<TVec3d>& pts, std::vector<std::vector<TVec2f> > textureCoordinatesLists )
 {
-    unsigned int len = pts.size();
-    if ( len < 3 ) return;
-
-    for (size_t i = 0; i < textureCoordinatesLists.size(); i++) {
-
-        std::vector<TVec2f>& texCoords = textureCoordinatesLists.at(i);
-
-
-
-        if (texCoords.size() != pts.size()) {
-            if (!texCoords.empty()) {
-                CITYGML_LOG_ERROR(_logger, "Invalid call to 'addContour'. The number of texture coordinates in list " << i << " (" << texCoords.size() << ") "
-                             "does not match the number of vertices (" << pts.size() << "). The texture coordinates list will be resized which may cause invalid texture coordinates.");
-            }
-
-            texCoords.resize(pts.size(), TVec2f(0.f, 0.f));
-        }
-    }
-
-    for (size_t i = 0; i < std::max(_texCoordsLists.size(), textureCoordinatesLists.size()); i++) {
-
-        if (i >= _texCoordsLists.size()) {
-            std::vector<TVec2f> texCoords(_vertices.size(), TVec2f(0.f, 0.f));
-            texCoords.insert(texCoords.end(), textureCoordinatesLists.at(i).begin(), textureCoordinatesLists.at(i).end());
-            _texCoordsLists.push_back(texCoords);
-        } else if (i >= textureCoordinatesLists.size()) {
-            _texCoordsLists.at(i).resize(_texCoordsLists.at(i).size() + pts.size(), TVec2f(0.f, 0.f));
-        } else {
-            _texCoordsLists.at(i).insert(_texCoordsLists.at(i).end(), textureCoordinatesLists.at(i).begin(), textureCoordinatesLists.at(i).end());
-        }
-
-    }
-
     unsigned int pos = _vertices.size();
+    TesselatorBase::addContour(pts, textureCoordinatesLists);
 
     gluTessBeginContour( _tobj );
 
+    unsigned int len = pts.size();
     for ( unsigned int i = 0; i < len; i++ )
     {
-        _vertices.push_back( pts[i] );
-        _indices.push_back(pos + i);
-
-        gluTessVertex( _tobj, &(_vertices.back()[0]), &_indices.back() );
+        gluTessVertex( _tobj, &(_vertices[pos + i][0]), &_indices[pos + i] );
     }
 
     gluTessEndContour( _tobj );
-
-#ifndef NDEBUG
-    for (size_t i = 0; i < _texCoordsLists.size(); i++) {
-        assert(_texCoordsLists.at(i).size() == _vertices.size());
-    }
-#endif
 }
 
 void CALLBACK Tesselator::beginCallback( GLenum which, void* userData )
