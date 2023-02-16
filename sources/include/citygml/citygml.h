@@ -69,12 +69,12 @@ namespace citygml
             , minLOD( 0 )
             , maxLOD( 4 )
             , optimize( false )
+            , pruneEmptyObjects(false)
             , tesselate( true )
-            , pruneEmptyObjects( false )
-            , destSRS( "" )
-            , srcSRS( "" )
             , keepVertices ( false )
             , ignoreGeometries( false )
+            , destSRS("")
+            , srcSRS("")
         { }
 
     public:
