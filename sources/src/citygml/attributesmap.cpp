@@ -81,6 +81,12 @@ void AttributeValue::setValue(const AttributesMap& value)
     m_attribute_set = value;
 }
 
+void AttributeValue::setValue(bool value) {
+    m_type = AttributeType::Boolean;
+
+    if (value) m_value = "true"; else m_value = "false";
+}
+
 const std::string & AttributeValue::asString() const
 {
     return m_value;
@@ -123,6 +129,12 @@ const AttributesMap& AttributeValue::asAttributeSet() const
     return m_attribute_set;
 }
 
+bool AttributeValue::asBoolean() const {
+    if (m_value == "true") return true;
+    if (m_value == "false") return false;
+    
+    throw std::runtime_error("Invalid Boolean value set in AttributeValue.");
+}
 
 // AttributesMap to string
 namespace{

@@ -47,12 +47,14 @@ public:
     void setValue(double value);
     void setValue(int value);
     void setValue(const AttributesMap& value);
+    void setValue(bool value);
 
     const std::string & asString() const;
     double asDouble(double defaultValue=0.0) const;
     int asInteger(int defaultValue=0) const;
     AttributesMap& asAttributeSet();
     [[nodiscard]] const AttributesMap& asAttributeSet() const;
+    bool asBoolean() const;
 
 
 private:
