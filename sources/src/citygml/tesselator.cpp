@@ -61,6 +61,7 @@ Tesselator::~Tesselator()
 
 void Tesselator::compute()
 {
+    processContours();
     gluTessEndPolygon( _tobj );
 }
 
@@ -69,15 +70,30 @@ void Tesselator::addContour(const std::vector<TVec3d>& pts, std::vector<std::vec
     unsigned int pos = _vertices.size();
     TesselatorBase::addContour(pts, textureCoordinatesLists);
 
-    gluTessBeginContour( _tobj );
-
     unsigned int len = pts.size();
-    for ( unsigned int i = 0; i < len; i++ )
-    {
-        gluTessVertex( _tobj, &(_vertices[pos + i][0]), &_indices[pos + i] );
-    }
+    // Add contour to queue, and process later.
+    ContourRef contour(pos, len);
+    _contourQueue.push_back(contour);
+}
 
-    gluTessEndContour( _tobj );
+void Tesselator::processContours()
+{
+    _originalVertices = _vertices;
+
+    for (const ContourRef& contour : _contourQueue)
+    {
+        gluTessBeginContour( _tobj );
+
+        for ( unsigned int i = 0; i < contour.length; i++ )
+        {
+            void* data = reinterpret_cast<void*>(static_cast<uintptr_t>(_indices[contour.index + i]));
+            gluTessVertex( _tobj, &(_originalVertices[contour.index + i][0]), data );
+        }
+
+        gluTessEndContour( _tobj );
+    }
+    _contourQueue.clear();
+    _originalVertices.clear();
 }
 
 void CALLBACK Tesselator::beginCallback( GLenum which, void* userData )
@@ -89,7 +105,7 @@ void CALLBACK Tesselator::beginCallback( GLenum which, void* userData )
 void CALLBACK Tesselator::vertexDataCallback( GLvoid *data, void* userData )
 {
     Tesselator *tess = static_cast<Tesselator*>(userData);
-    unsigned int index = *reinterpret_cast<unsigned int*>(data);
+    unsigned int index = static_cast<unsigned int>(reinterpret_cast<uintptr_t>(data));
 
     assert(index < tess->_vertices.size());
 
@@ -113,8 +129,8 @@ void CALLBACK Tesselator::combineCallback( GLdouble coords[3], void* vertex_data
             TVec2f newTexCoord(0,0);
 
             for (int i = 0; i < 4; i++) {
-                if (vertex_data[i] != nullptr) {
-                    unsigned int vertexIndex = *reinterpret_cast<unsigned int*>(vertex_data[i]);
+                if (weight[i] > 0.0f) {
+                    unsigned int vertexIndex = static_cast<unsigned int>(reinterpret_cast<uintptr_t>(vertex_data[i]));
                     newTexCoord = newTexCoord + weight[i] * texcords.at(vertexIndex);
                 }
             }
@@ -126,7 +142,7 @@ void CALLBACK Tesselator::combineCallback( GLdouble coords[3], void* vertex_data
         }
     }
 
-    *outData = &tess->_indices.back();
+    *outData = reinterpret_cast<void*>(static_cast<uintptr_t>(tess->_indices.back()));
 }
 
 void CALLBACK Tesselator::endCallback( void* userData )
