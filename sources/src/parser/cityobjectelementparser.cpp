@@ -339,7 +339,7 @@ namespace citygml {
                    || node == NodeType::WTR_Lod0MultiCurveNode
                    || node == NodeType::WTR_Lod0MultiSurfaceNode) {
             
-            parseGeometryForLODLevel(0);
+            parseGeometryPropertyElementForLODLevel(0, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
                    || node == NodeType::BLDG_Lod1SolidNode
@@ -352,7 +352,7 @@ namespace citygml {
                    || node == NodeType::WTR_Lod1MultiSurfaceNode
                    || node == NodeType::WTR_Lod1SolidNode) {
 
-            parseGeometryForLODLevel(1);
+            parseGeometryPropertyElementForLODLevel(1, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::BLDG_Lod2MultiCurveNode
                    || node == NodeType::BLDG_Lod2MultiSurfaceNode
                    || node == NodeType::BLDG_Lod2SolidNode
@@ -364,7 +364,7 @@ namespace citygml {
                    || node == NodeType::WTR_Lod2SolidNode
                    || node == NodeType::WTR_Lod2SurfaceNode) {
 
-            parseGeometryForLODLevel(2);
+            parseGeometryPropertyElementForLODLevel(2, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::BLDG_Lod3MultiCurveNode
                    || node == NodeType::BLDG_Lod3MultiSurfaceNode
                    || node == NodeType::BLDG_Lod3SolidNode
@@ -376,7 +376,7 @@ namespace citygml {
                    || node == NodeType::WTR_Lod3SolidNode
                    || node == NodeType::WTR_Lod3SurfaceNode) {
 
-            parseGeometryForLODLevel(3);
+            parseGeometryPropertyElementForLODLevel(3, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::BLDG_Lod4MultiCurveNode
                    || node == NodeType::BLDG_Lod4MultiSurfaceNode
                    || node == NodeType::BLDG_Lod4SolidNode
@@ -388,7 +388,7 @@ namespace citygml {
                    || node == NodeType::WTR_Lod4SolidNode
                    || node == NodeType::WTR_Lod4SurfaceNode) {
 
-            parseGeometryForLODLevel(4);
+            parseGeometryPropertyElementForLODLevel(4, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::GEN_Lod0GeometryNode) {
             parseGeometryPropertyElementForLODLevel(0, attributes.getCityGMLIDAttribute());
         }
