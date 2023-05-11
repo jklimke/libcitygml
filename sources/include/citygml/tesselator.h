@@ -57,6 +57,8 @@ public:
     void compute() override;
 
 private:
+    void processContours();
+
     typedef void (APIENTRY *GLU_TESS_CALLBACK)();
     static void CALLBACK beginCallback( GLenum, void* );
     static void CALLBACK vertexDataCallback( GLvoid*, void* );
@@ -65,9 +67,18 @@ private:
     static void CALLBACK errorCallback(GLenum, void*);
 
 private:
+    // 
+    struct ContourRef {
+        ContourRef(unsigned int index, unsigned int length) : index(index), length(length) {}
+        unsigned int index;
+        unsigned int length;
+    };
+
     GLUtesselator *_tobj;
-    GLenum  _curMode;
+    GLenum _curMode;
     GLenum _windingRule;
+    std::vector<TVec3d> _originalVertices;
+    std::vector<ContourRef> _contourQueue;
 };
 
 #endif // __TESSELATOR_H__
