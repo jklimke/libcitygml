@@ -132,6 +132,7 @@ namespace citygml {
         NODETYPE( GML, MultiCurve )
         NODETYPE( GML, MultiSurface )
         NODETYPE( GML, MultiSolid )
+        NODETYPE( GML, MultiGeometry )
 
         NODETYPE( GML, CompositeCurve )
         NODETYPE( GML, CompositeSurface )
