@@ -202,6 +202,7 @@ namespace citygml {
                 INITIALIZE_NODE( GML, MultiCurve )
                 INITIALIZE_NODE( GML, MultiSurface )
                 INITIALIZE_NODE( GML, MultiSolid )
+                INITIALIZE_NODE( GML, MultiGeometry )
 
                 INITIALIZE_NODE( GML, CompositeCurve )
                 INITIALIZE_NODE( GML, CompositeSurface )
@@ -577,6 +578,7 @@ namespace citygml {
     DEFINE_NODE( GML, MultiCurve )
     DEFINE_NODE( GML, MultiSurface )
     DEFINE_NODE( GML, MultiSolid )
+    DEFINE_NODE( GML, MultiGeometry )
 
     DEFINE_NODE( GML, CompositeCurve )
     DEFINE_NODE( GML, CompositeSurface )

@@ -61,6 +61,7 @@ namespace citygml {
                 geometryTypeIDSet.insert(NodeType::GML_SurfaceNode.typeID());
 				geometryTypeIDSet.insert(NodeType::GML_MultiCurveNode.typeID());
                 geometryTypeIDSet.insert(NodeType::GML_MultiPointNode.typeID());
+                geometryTypeIDSet.insert(NodeType::GML_MultiGeometryNode.typeID());
                 geometryTypeIDSetInitialized = true;
 
             }
