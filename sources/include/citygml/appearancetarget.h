@@ -36,6 +36,7 @@ namespace citygml {
 
         std::vector<TextureTargetDefinition*> getTextureTargetDefinitions();
 
+        std::vector<std::string> getAllMaterialThemes(bool front) const;
         std::vector<std::string> getAllTextureThemes(bool front) const;
 
     protected:
