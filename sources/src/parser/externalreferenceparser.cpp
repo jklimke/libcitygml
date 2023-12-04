@@ -17,7 +17,7 @@ namespace citygml {
     }
 
     bool ExternalReferenceParser::handlesElement(NodeType::XMLNode const& node) const {
-        return (node.typeID() == NodeType::CORE_ExternalReferenceNode.typeID()|| node.typeID() == NodeType::CORE_InformationSystemNode.typeID());
+        return (node.typeID() == NodeType::CORE_ExternalReferenceNode.typeID() || node.typeID() == NodeType::CORE_InformationSystemNode.typeID());
     }
 
     bool ExternalReferenceParser::parseElementStartTag(NodeType::XMLNode const& node, Attributes & attributes) {

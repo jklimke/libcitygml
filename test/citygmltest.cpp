@@ -22,6 +22,7 @@
 #include <citygml/citymodel.h>
 #include <citygml/cityobject.h>
 #include <citygml/geometry.h>
+#include <citygml/implictgeometry.h>
 
 #ifdef LIBCITYGML_USE_OPENGL
 #include <citygml/tesselator.h>
@@ -171,6 +172,17 @@ void printGeometry( const citygml::Geometry& geometry, unsigned int indent )
   }
 }
 
+
+void printImplicitGeometry( const citygml::ImplicitGeometry& implicitGeometry, unsigned int indent ) 
+{
+    printIndent(indent);
+    std::cout << "Reference point " << implicitGeometry.getReferencePoint() << std::endl;
+    for ( unsigned int i = 0; i < implicitGeometry.getGeometriesCount(); i++ ) 
+    {
+        printGeometry( implicitGeometry.getGeometry(i), indent+1 );
+    }
+}
+
 void analyzeObject( const citygml::CityObject& object, unsigned int indent )
 {
    printIndent(indent);
@@ -180,6 +192,10 @@ void analyzeObject( const citygml::CityObject& object, unsigned int indent )
    for ( unsigned int i = 0; i < object.getGeometriesCount(); i++ ) 
    {
        printGeometry( object.getGeometry(i), indent+1 );
+   }
+   for ( unsigned int i = 0; i < object.getImplicitGeometryCount(); i++ ) 
+   {
+       printImplicitGeometry( object.getImplicitGeometry(i), indent+1 );
    }
 
    for ( unsigned int i = 0; i < object.getChildCityObjectsCount(); i++ )
