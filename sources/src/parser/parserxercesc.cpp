@@ -65,10 +65,10 @@ std::shared_ptr<XMLCh> toXercesString(const std::string& str) {
 class DocumentLocationXercesAdapter : public citygml::DocumentLocation {
 public:
     explicit DocumentLocationXercesAdapter(const std::string& fileName)
-		: m_locator(nullptr)
-		, m_fileName(fileName)
-	{
-        
+        : m_locator(nullptr)
+        , m_fileName(fileName)
+    {
+
     }
 
     void setLocator(const xercesc::Locator* locator) {
@@ -124,6 +124,8 @@ public:
     // ContentHandler interface
     virtual void startElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname, const xercesc::Attributes& attrs) override {
         AttributesXercesAdapter attributes(attrs, m_documentLocation, m_logger);
+        // We need to empty m_lastcharacters here, because if a tag is empty, characters(...) will never be called and this variable will contain wrong values
+        m_lastcharacters = "";
         CityGMLDocumentParser::startElement(toStdString(qname), attributes);
     }
 
@@ -133,7 +135,7 @@ public:
     }
 
     virtual void characters(const XMLCh* const chars, const XMLSize_t) override {
-        m_lastcharacters = toStdString(chars);
+        m_lastcharacters += toStdString(chars);
     }
 
     virtual void startDocument() override {
@@ -240,7 +242,7 @@ namespace citygml
             }
 
             stream << " " << message << std::endl;
-        }     
+        }
     };
 
     std::mutex xerces_init_mutex;
