@@ -150,6 +150,7 @@ ENDIF(LIBCITYGML_OSGPLUGIN)
 # test
 OPTION(LIBCITYGML_TESTS "Set to ON to build libcitygml tests programs." ON)
 IF   (LIBCITYGML_TESTS)
+  enable_testing()
   ADD_SUBDIRECTORY( test )
 ENDIF(LIBCITYGML_TESTS)
 
@@ -220,3 +221,5 @@ IF(UNIX AND NOT APPLE)
       include(CPack)
   endif()
 ENDIF()
+
+
