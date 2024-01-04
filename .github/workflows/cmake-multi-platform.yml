@@ -45,13 +45,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install Packages for Ubuntu
-      if: startsWith(matrix.config.os, 'ubuntu')
-      run:  sudo apt-get update && sudo apt-get install -y --fix-missing libxerces-c-dev libxerces-c3.2 libgdal30 libgdal-dev libopenscenegraph-dev 
-    
-    #  - name: Install deps windows
-    #  if: startsWith(matrix.config.os, 'windows')
-    #  run:  choco install ninja cmake
+    - name: Install Packages for Ubuntu      
+      run:  sudo apt-get update && sudo apt-get install -y --fix-missing libxerces-c-dev libxerces-c3.2 libgdal30 libgdal-dev libopenscenegraph-dev     
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
