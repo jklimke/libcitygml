@@ -1,4 +1,5 @@
 #include "parser/citygmldocumentparser.h"
+#include "parser/delayedchoiceelementparser.h"
 #include "parser/documentlocation.h"
 #include "parser/nodetypes.h"
 #include "parser/elementparser.h"
@@ -99,6 +100,15 @@ namespace citygml {
 
         m_activeParser = m_parserStack.top();
         CITYGML_LOG_TRACE(m_logger, "Invoke " << m_activeParser->elementParserName() << "::endElement for <" << node << "> at " << getDocumentLocation());
+        
+        if(std::dynamic_pointer_cast<DelayedChoiceElementParser>(m_activeParser) != nullptr) {
+            // We try to close a DelayedChoiceElementParser:
+            // this means no node has been found that contains any of the delayed choice nodes
+            // This is not directly an error: this needs to be treated as an empty node
+            CITYGML_LOG_DEBUG(m_logger, "End tag found while the active parser is a DelayedChoiceElementParser. This probably means the node is empty. The close node is: <" << node << "> at " << getDocumentLocation());
+            removeCurrentElementParser(m_activeParser.get());
+            m_activeParser = m_parserStack.top();
+        }
         if (!m_activeParser->endElement(node, characters)) {
             CITYGML_LOG_ERROR(m_logger, "Active parser " << m_activeParser->elementParserName() << " reports end tag <" << node << "> at " << getDocumentLocation() << " as "
                               << "unknown, but it seems as if the corresponding start tag was not reported as unknown. Please check the parser implementation."
