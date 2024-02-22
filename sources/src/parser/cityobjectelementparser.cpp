@@ -313,7 +313,12 @@ namespace citygml {
                    || node == NodeType::DEM_RidgeOrValleyLinesNode
                    || node == NodeType::DEM_BreaklinesNode) {
             
-            parseGeometryForLODLevel(std::stoi(m_model->getAttribute("dem:lod")));
+            std::string lod = m_model->getAttribute("dem:lod");
+            if (!lod.empty()) {
+                parseGeometryForLODLevel(std::stoi(lod));
+            } else {
+                parseGeometryForLODLevel(0);
+            }
         } else if (node == NodeType::GEN_Lod0TerrainIntersectionNode
                    || node == NodeType::WTR_Lod0MultiCurveNode
                    || node == NodeType::WTR_Lod0MultiSurfaceNode) {
