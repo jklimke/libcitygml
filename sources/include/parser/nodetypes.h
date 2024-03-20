@@ -99,6 +99,15 @@ namespace citygml {
         NODETYPE( GEN, Lod3ImplicitRepresentation )
         NODETYPE( GEN, Lod4ImplicitRepresentation )
 
+        NODETYPE( GEN, GenericOccupiedSpace )
+        NODETYPE( GEN, GenericUnoccupiedSpace )
+        NODETYPE( GEN, GenericLogicalSpace )
+
+        NODETYPE( GEN, AdeOfAbstractSpace )
+        NODETYPE( GEN, Area )
+        NODETYPE( GEN, SpaceType )
+        NODETYPE( GEN, Volume )
+
         // TEX
         // NODETYPE( GML, TexturedSurface ) // Deprecated
 

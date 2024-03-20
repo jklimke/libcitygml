@@ -56,6 +56,9 @@ namespace citygml {
 
             if (!typeIDTypeMapInitialized) {
                 typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericCityObject));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericOccupiedSpace, CityObject::CityObjectsType::COT_Space));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericUnoccupiedSpace, CityObject::CityObjectsType::COT_Space));
+                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericLogicalSpace, CityObject::CityObjectsType::COT_Space));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Building));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingPart));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Room));
@@ -143,6 +146,10 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(GEN, Class));
                 attributesSet.insert(HANDLE_ATTR(GEN, Function));
                 attributesSet.insert(HANDLE_ATTR(GEN, Usage));
+                attributesSet.insert(HANDLE_ATTR(GEN, AdeOfAbstractSpace));
+                attributesSet.insert(HANDLE_ATTR(GEN, Area));
+                attributesSet.insert(HANDLE_ATTR(GEN, SpaceType));
+                attributesSet.insert(HANDLE_ATTR(GEN, Volume));
                 attributesSet.insert(HANDLE_ATTR(LUSE, Class));
                 attributesSet.insert(HANDLE_ATTR(LUSE, Function));
                 attributesSet.insert(HANDLE_ATTR(LUSE, Usage));
@@ -185,6 +192,10 @@ namespace citygml {
                 attributeTypeMap[HANDLE_ATTR(GEN, Class)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(GEN, Function)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(GEN, Usage)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GEN, AdeOfAbstractSpace)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GEN, Area)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GEN, SpaceType)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(GEN, Volume)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(LUSE, Class)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(LUSE, Function)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(LUSE, Usage)] = AttributeType::String;
@@ -299,7 +310,10 @@ namespace citygml {
                    || node == NodeType::DEM_BreaklineReliefNode
                    || node == NodeType::DEM_RasterReliefNode
                    || node == NodeType::DEM_GridNode
-                   || node == NodeType::CORE_GeneralizesToNode) {
+                   || node == NodeType::CORE_GeneralizesToNode
+                   || node == NodeType::GEN_GenericOccupiedSpaceNode
+                   || node == NodeType::GEN_GenericUnoccupiedSpaceNode
+                   || node == NodeType::GEN_GenericLogicalSpaceNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -584,7 +598,10 @@ namespace citygml {
                     || node == NodeType::WTR_BoundedByNode
                     || node == NodeType::BLDG_AddressNode
                     || node == NodeType::CORE_AddressNode
-                    || node == NodeType::CORE_XalAddressNode) {
+                    || node == NodeType::CORE_XalAddressNode
+                    || node == NodeType::GEN_GenericOccupiedSpaceNode
+                    || node == NodeType::GEN_GenericUnoccupiedSpaceNode
+                    || node == NodeType::GEN_GenericLogicalSpaceNode) {
 
             return true;
         }

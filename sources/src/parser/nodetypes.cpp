@@ -142,6 +142,15 @@ namespace citygml {
                 INITIALIZE_NODE( GEN, Lod3ImplicitRepresentation )
                 INITIALIZE_NODE( GEN, Lod4ImplicitRepresentation )
 
+                INITIALIZE_NODE( GEN, GenericOccupiedSpace )
+                INITIALIZE_NODE( GEN, GenericUnoccupiedSpace )
+                INITIALIZE_NODE( GEN, GenericLogicalSpace )
+
+                INITIALIZE_NODE( GEN, AdeOfAbstractSpace )
+                INITIALIZE_NODE( GEN, Area )
+                INITIALIZE_NODE( GEN, SpaceType )
+                INITIALIZE_NODE( GEN, Volume )
+
                 // TEX
                 // INITIALIZE_NODE( GML, TexturedSurface ) // Deprecated
 
@@ -522,6 +531,15 @@ namespace citygml {
     DEFINE_NODE( GEN, Lod2ImplicitRepresentation )
     DEFINE_NODE( GEN, Lod3ImplicitRepresentation )
     DEFINE_NODE( GEN, Lod4ImplicitRepresentation )
+
+    DEFINE_NODE( GEN, GenericOccupiedSpace )
+    DEFINE_NODE( GEN, GenericUnoccupiedSpace )
+    DEFINE_NODE( GEN, GenericLogicalSpace )
+
+    DEFINE_NODE( GEN, AdeOfAbstractSpace )
+    DEFINE_NODE( GEN, Area )
+    DEFINE_NODE( GEN, SpaceType )
+    DEFINE_NODE( GEN, Volume )
 
     // TEX
     // DEFINE_NODE( GML, TexturedSurface ) // Deprecated
