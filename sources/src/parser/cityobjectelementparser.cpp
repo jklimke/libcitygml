@@ -146,7 +146,6 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(GEN, Class));
                 attributesSet.insert(HANDLE_ATTR(GEN, Function));
                 attributesSet.insert(HANDLE_ATTR(GEN, Usage));
-                attributesSet.insert(HANDLE_ATTR(GEN, AdeOfAbstractSpace));
                 attributesSet.insert(HANDLE_ATTR(GEN, Area));
                 attributesSet.insert(HANDLE_ATTR(GEN, SpaceType));
                 attributesSet.insert(HANDLE_ATTR(GEN, Volume));
@@ -192,7 +191,6 @@ namespace citygml {
                 attributeTypeMap[HANDLE_ATTR(GEN, Class)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(GEN, Function)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(GEN, Usage)] = AttributeType::String;
-                attributeTypeMap[HANDLE_ATTR(GEN, AdeOfAbstractSpace)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(GEN, Area)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(GEN, SpaceType)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(GEN, Volume)] = AttributeType::String;
@@ -366,7 +364,13 @@ namespace citygml {
                    || node == NodeType::LUSE_Lod2MultiSurfaceNode
                    || node == NodeType::TRANS_Lod2MultiSurfaceNode
                    || node == NodeType::WTR_Lod2SolidNode
-                   || node == NodeType::WTR_Lod2SurfaceNode) {
+                   || node == NodeType::WTR_Lod2SurfaceNode
+                   || node == NodeType::GEN_Lod0MultiCurveNode
+                   || node == NodeType::GEN_Lod2MultiCurveNode
+                   || node == NodeType::GEN_Lod3MultiCurveNode
+                   || node == NodeType::GEN_Lod0MultiSurfaceNode
+                   || node == NodeType::GEN_Lod2MultiSurfaceNode
+                   || node == NodeType::GEN_Lod3MultiSurfaceNode) {
 
             parseGeometryForLODLevel(2);
         } else if (node == NodeType::BLDG_Lod3MultiCurveNode
@@ -601,7 +605,13 @@ namespace citygml {
                     || node == NodeType::CORE_XalAddressNode
                     || node == NodeType::GEN_GenericOccupiedSpaceNode
                     || node == NodeType::GEN_GenericUnoccupiedSpaceNode
-                    || node == NodeType::GEN_GenericLogicalSpaceNode) {
+                    || node == NodeType::GEN_GenericLogicalSpaceNode
+                    || node == NodeType::GEN_Lod0MultiCurveNode
+                    || node == NodeType::GEN_Lod2MultiCurveNode
+                    || node == NodeType::GEN_Lod3MultiCurveNode
+                    || node == NodeType::GEN_Lod0MultiSurfaceNode
+                    || node == NodeType::GEN_Lod2MultiSurfaceNode
+                    || node == NodeType::GEN_Lod3MultiSurfaceNode) {
 
             return true;
         }

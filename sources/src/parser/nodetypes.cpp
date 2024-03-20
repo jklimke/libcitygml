@@ -146,7 +146,6 @@ namespace citygml {
                 INITIALIZE_NODE( GEN, GenericUnoccupiedSpace )
                 INITIALIZE_NODE( GEN, GenericLogicalSpace )
 
-                INITIALIZE_NODE( GEN, AdeOfAbstractSpace )
                 INITIALIZE_NODE( GEN, Area )
                 INITIALIZE_NODE( GEN, SpaceType )
                 INITIALIZE_NODE( GEN, Volume )
@@ -536,7 +535,13 @@ namespace citygml {
     DEFINE_NODE( GEN, GenericUnoccupiedSpace )
     DEFINE_NODE( GEN, GenericLogicalSpace )
 
-    DEFINE_NODE( GEN, AdeOfAbstractSpace )
+    DEFINE_NODE( GEN, Lod0MultiCurve )
+    DEFINE_NODE( GEN, Lod2MultiCurve )
+    DEFINE_NODE( GEN, Lod3MultiCurve )
+    DEFINE_NODE( GEN, Lod0MultiSurface )
+    DEFINE_NODE( GEN, Lod2MultiSurface )
+    DEFINE_NODE( GEN, Lod3MultiSurface )
+
     DEFINE_NODE( GEN, Area )
     DEFINE_NODE( GEN, SpaceType )
     DEFINE_NODE( GEN, Volume )
