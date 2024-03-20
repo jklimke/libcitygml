@@ -304,6 +304,9 @@ namespace citygml {
                    || node == NodeType::GRP_ParentNode
                    || node == NodeType::TRANS_TrafficAreaNode
                    || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
+                   || node == NodeType::TRANS_IntersectionNode
+                   || node == NodeType::TRANS_SectionNode
+                   || node == NodeType::TRANS_WaterwayNode
                    || node == NodeType::WTR_BoundedByNode
                    || node == NodeType::DEM_ReliefComponentNode
                    || node == NodeType::DEM_TINReliefNode
@@ -587,6 +590,9 @@ namespace citygml {
                     || node == NodeType::TRANS_Lod0NetworkNode
                     || node == NodeType::TRANS_TrafficAreaNode
                     || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
+                    || node == NodeType::TRANS_IntersectionNode
+                    || node == NodeType::TRANS_SectionNode
+                    || node == NodeType::TRANS_WaterwayNode
                     || node == NodeType::TRANS_Lod1MultiSurfaceNode
                     || node == NodeType::TRANS_Lod2MultiSurfaceNode
                     || node == NodeType::TRANS_Lod3MultiSurfaceNode
