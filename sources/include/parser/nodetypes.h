@@ -104,6 +104,7 @@ namespace citygml {
         NODETYPE( GEN, GenericOccupiedSpace )
         NODETYPE( GEN, GenericUnoccupiedSpace )
         NODETYPE( GEN, GenericLogicalSpace )
+        NODETYPE( GEN, GenericThematicSurface )
 
         NODETYPE( GEN, Lod0MultiCurve )
         NODETYPE( GEN, Lod2MultiCurve )

@@ -59,6 +59,7 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericOccupiedSpace, CityObject::CityObjectsType::COT_Space));
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericUnoccupiedSpace, CityObject::CityObjectsType::COT_Space));
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericLogicalSpace, CityObject::CityObjectsType::COT_Space));
+                typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericThematicSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Building));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingPart));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Room));
@@ -318,6 +319,7 @@ namespace citygml {
                    || node == NodeType::GEN_GenericOccupiedSpaceNode
                    || node == NodeType::GEN_GenericUnoccupiedSpaceNode
                    || node == NodeType::GEN_GenericLogicalSpaceNode
+                   || node == NodeType::GEN_GenericThematicSurfaceNode
                    || node == NodeType::CORE_BoundaryNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
@@ -616,6 +618,7 @@ namespace citygml {
                     || node == NodeType::GEN_GenericOccupiedSpaceNode
                     || node == NodeType::GEN_GenericUnoccupiedSpaceNode
                     || node == NodeType::GEN_GenericLogicalSpaceNode
+                    || node == NodeType::GEN_GenericThematicSurfaceNode
                     || node == NodeType::GEN_Lod0MultiCurveNode
                     || node == NodeType::GEN_Lod2MultiCurveNode
                     || node == NodeType::GEN_Lod3MultiCurveNode

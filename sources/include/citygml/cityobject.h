@@ -74,9 +74,10 @@ namespace citygml {
 			COT_IntBuildingInstallation		= 1ll<< 34,
 
             COT_Space                       = 1ll<< 40,
-            COT_Intersection                = 1ll<< 41,
-            COT_Section                     = 1ll<< 42,
-            COT_Waterway                    = 1ll<< 43,
+            COT_GenericThematicSurface      = 1ll<< 41,
+            COT_Intersection                = 1ll<< 42,
+            COT_Section                     = 1ll<< 43,
+            COT_Waterway                    = 1ll<< 44,
 
             COT_All                         = 0xFFFFFFFFFFFFFFFFll
         };
