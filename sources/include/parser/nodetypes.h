@@ -62,6 +62,8 @@ namespace citygml {
         NODETYPE( CORE, MimeType)
         NODETYPE( CORE, LibraryObject)
 
+        NODETYPE( CORE, Boundary )
+
         // GRP
         NODETYPE( GRP, CityObjectGroup )
         NODETYPE( GRP, GroupMember )

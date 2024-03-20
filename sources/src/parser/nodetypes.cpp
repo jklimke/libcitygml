@@ -105,6 +105,8 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, MimeType)
                 INITIALIZE_NODE( CORE, LibraryObject)
 
+                INITIALIZE_NODE( CORE, Boundary)
+
                 // GRP
                 INITIALIZE_NODE( GRP, CityObjectGroup )
                 INITIALIZE_NODE( GRP, GroupMember )
@@ -496,6 +498,8 @@ namespace citygml {
     DEFINE_NODE( CORE, ReferencePoint)
     DEFINE_NODE( CORE, MimeType)
     DEFINE_NODE( CORE, LibraryObject)
+
+    DEFINE_NODE( CORE, Boundary)
 
     // GRP
     DEFINE_NODE( GRP, CityObjectGroup )

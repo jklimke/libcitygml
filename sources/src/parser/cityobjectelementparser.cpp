@@ -317,7 +317,8 @@ namespace citygml {
                    || node == NodeType::CORE_GeneralizesToNode
                    || node == NodeType::GEN_GenericOccupiedSpaceNode
                    || node == NodeType::GEN_GenericUnoccupiedSpaceNode
-                   || node == NodeType::GEN_GenericLogicalSpaceNode) {
+                   || node == NodeType::GEN_GenericLogicalSpaceNode
+                   || node == NodeType::CORE_BoundaryNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -620,7 +621,8 @@ namespace citygml {
                     || node == NodeType::GEN_Lod3MultiCurveNode
                     || node == NodeType::GEN_Lod0MultiSurfaceNode
                     || node == NodeType::GEN_Lod2MultiSurfaceNode
-                    || node == NodeType::GEN_Lod3MultiSurfaceNode) {
+                    || node == NodeType::GEN_Lod3MultiSurfaceNode
+                    || node == NodeType::CORE_BoundaryNode) {
 
             return true;
         }
