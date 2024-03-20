@@ -233,8 +233,12 @@ namespace citygml {
             return "TransportationObject";
         case CityObject::CityObjectsType::COT_IntBuildingInstallation:
 	        return "IntBuildingInstallation";
-        case CityObject::CityObjectsType::COT_Space:
-	        return "Space";
+        case CityObject::CityObjectsType::COT_GenericOccupiedSpace:
+	        return "GenericOccupiedSpace";
+        case CityObject::CityObjectsType::COT_GenericUnoccupiedSpace:
+	        return "GenericUnoccupiedSpace";
+        case CityObject::CityObjectsType::COT_GenericLogicalSpace:
+	        return "GenericLogicalSpace";
         default:
             return "Unknown";
         }
@@ -284,7 +288,9 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_OuterFloorSurface), CityObject::CityObjectsType::COT_OuterFloorSurface},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_TransportationObject), CityObject::CityObjectsType::COT_TransportationObject},
 	     {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_IntBuildingInstallation), CityObject::CityObjectsType::COT_IntBuildingInstallation},
-         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Space), CityObject::CityObjectsType::COT_Space}
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_GenericOccupiedSpace), CityObject::CityObjectsType::COT_GenericOccupiedSpace},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_GenericUnoccupiedSpace), CityObject::CityObjectsType::COT_GenericUnoccupiedSpace},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_GenericLogicalSpace), CityObject::CityObjectsType::COT_GenericLogicalSpace}
     };
 
     CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid)

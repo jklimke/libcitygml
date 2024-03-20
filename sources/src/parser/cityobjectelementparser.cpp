@@ -56,9 +56,9 @@ namespace citygml {
 
             if (!typeIDTypeMapInitialized) {
                 typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericCityObject));
-                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericOccupiedSpace, CityObject::CityObjectsType::COT_Space));
-                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericUnoccupiedSpace, CityObject::CityObjectsType::COT_Space));
-                typeIDTypeMap.insert(HANDLE_GROUP_TYPE(GEN, GenericLogicalSpace, CityObject::CityObjectsType::COT_Space));
+                typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericOccupiedSpace));
+                typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericUnoccupiedSpace));
+                typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericLogicalSpace));
                 typeIDTypeMap.insert(HANDLE_TYPE(GEN, GenericThematicSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Building));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingPart));
