@@ -72,6 +72,9 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Road));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Railway));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Square));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Intersection));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Section));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Waterway));
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, TransportationComplex, CityObject::CityObjectsType::COT_TransportationObject));
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, TrafficArea, CityObject::CityObjectsType::COT_TransportationObject));
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, AuxiliaryTrafficArea, CityObject::CityObjectsType::COT_TransportationObject));

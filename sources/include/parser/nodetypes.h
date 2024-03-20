@@ -318,6 +318,9 @@ namespace citygml {
         NODETYPE( TRANS, Road )
         NODETYPE( TRANS, Railway )
         NODETYPE( TRANS, Square )
+        NODETYPE( TRANS, Intersection )
+        NODETYPE( TRANS, Section )
+        NODETYPE( TRANS, Waterway )
 
         NODETYPE( TRANS, Usage )
         NODETYPE( TRANS, Function )

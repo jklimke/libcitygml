@@ -350,6 +350,9 @@ namespace citygml {
                 INITIALIZE_NODE( TRANS, Road )
                 INITIALIZE_NODE( TRANS, Railway )
                 INITIALIZE_NODE( TRANS, Square )
+                INITIALIZE_NODE( TRANS, Intersection )
+                INITIALIZE_NODE( TRANS, Section )
+                INITIALIZE_NODE( TRANS, Waterway )
 
                 INITIALIZE_NODE( TRANS, Usage )
                 INITIALIZE_NODE( TRANS, Function )
@@ -751,6 +754,9 @@ namespace citygml {
     DEFINE_NODE( TRANS, Road )
     DEFINE_NODE( TRANS, Railway )
     DEFINE_NODE( TRANS, Square )
+    DEFINE_NODE( TRANS, Intersection )
+    DEFINE_NODE( TRANS, Section )
+    DEFINE_NODE( TRANS, Waterway )
 
     DEFINE_NODE( TRANS, Usage )
     DEFINE_NODE( TRANS, Function )

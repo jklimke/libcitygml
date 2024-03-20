@@ -183,6 +183,12 @@ namespace citygml {
             return "Railway";
         case CityObject::CityObjectsType::COT_Square:
             return "Square";
+        case CityObject::CityObjectsType::COT_Intersection:
+            return "Intersection";
+        case CityObject::CityObjectsType::COT_Section:
+            return "Section";
+        case CityObject::CityObjectsType::COT_Waterway:
+            return "Waterway";
         case CityObject::CityObjectsType::COT_PlantCover:
             return "PlantCover";
         case CityObject::CityObjectsType::COT_SolitaryVegetationObject:
@@ -253,6 +259,9 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Road), CityObject::CityObjectsType::COT_Road},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Railway), CityObject::CityObjectsType::COT_Railway},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Square), CityObject::CityObjectsType::COT_Square},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Intersection), CityObject::CityObjectsType::COT_Intersection},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Section), CityObject::CityObjectsType::COT_Section},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Waterway), CityObject::CityObjectsType::COT_Waterway},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_PlantCover), CityObject::CityObjectsType::COT_PlantCover},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_SolitaryVegetationObject), CityObject::CityObjectsType::COT_SolitaryVegetationObject},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_WaterBody), CityObject::CityObjectsType::COT_WaterBody},
