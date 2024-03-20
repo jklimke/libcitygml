@@ -105,6 +105,8 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, MimeType)
                 INITIALIZE_NODE( CORE, LibraryObject)
 
+                INITIALIZE_NODE( CORE, Boundary)
+
                 // GRP
                 INITIALIZE_NODE( GRP, CityObjectGroup )
                 INITIALIZE_NODE( GRP, GroupMember )
@@ -141,6 +143,15 @@ namespace citygml {
                 INITIALIZE_NODE( GEN, Lod2ImplicitRepresentation )
                 INITIALIZE_NODE( GEN, Lod3ImplicitRepresentation )
                 INITIALIZE_NODE( GEN, Lod4ImplicitRepresentation )
+
+                INITIALIZE_NODE( GEN, GenericOccupiedSpace )
+                INITIALIZE_NODE( GEN, GenericUnoccupiedSpace )
+                INITIALIZE_NODE( GEN, GenericLogicalSpace )
+                INITIALIZE_NODE( GEN, GenericThematicSurface )
+
+                INITIALIZE_NODE( GEN, Area )
+                INITIALIZE_NODE( GEN, SpaceType )
+                INITIALIZE_NODE( GEN, Volume )
 
                 // TEX
                 // INITIALIZE_NODE( GML, TexturedSurface ) // Deprecated
@@ -271,6 +282,8 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, BuildingFurniture )
                 INITIALIZE_NODE( BLDG, RoofType)
                 INITIALIZE_NODE( BLDG, IntBuildingInstallation)
+                INITIALIZE_NODE( BLDG, BuildingConstructiveElement)
+                INITIALIZE_NODE( BLDG, BuildingRoom)
 
                 INITIALIZE_NODE( BLDG, CityFurniture )
 
@@ -338,14 +351,20 @@ namespace citygml {
                 INITIALIZE_NODE( TRANS, TransportationComplex )
                 INITIALIZE_NODE( TRANS, TrafficArea )
                 INITIALIZE_NODE( TRANS, AuxiliaryTrafficArea )
+                INITIALIZE_NODE( TRANS, TrafficSpace )
+                INITIALIZE_NODE( TRANS, AuxiliaryTrafficSpace )
                 INITIALIZE_NODE( TRANS, Track )
                 INITIALIZE_NODE( TRANS, Road )
                 INITIALIZE_NODE( TRANS, Railway )
                 INITIALIZE_NODE( TRANS, Square )
+                INITIALIZE_NODE( TRANS, Intersection )
+                INITIALIZE_NODE( TRANS, Section )
+                INITIALIZE_NODE( TRANS, Waterway )
 
                 INITIALIZE_NODE( TRANS, Usage )
                 INITIALIZE_NODE( TRANS, Function )
                 INITIALIZE_NODE( TRANS, SurfaceMaterial )
+                INITIALIZE_NODE( TRANS, Granularity )
 
                 INITIALIZE_NODE( TRANS, Lod0Network )
                 INITIALIZE_NODE( TRANS, Lod1MultiSurface )
@@ -486,6 +505,8 @@ namespace citygml {
     DEFINE_NODE( CORE, MimeType)
     DEFINE_NODE( CORE, LibraryObject)
 
+    DEFINE_NODE( CORE, Boundary)
+
     // GRP
     DEFINE_NODE( GRP, CityObjectGroup )
     DEFINE_NODE( GRP, GroupMember )
@@ -522,6 +543,22 @@ namespace citygml {
     DEFINE_NODE( GEN, Lod2ImplicitRepresentation )
     DEFINE_NODE( GEN, Lod3ImplicitRepresentation )
     DEFINE_NODE( GEN, Lod4ImplicitRepresentation )
+
+    DEFINE_NODE( GEN, GenericOccupiedSpace )
+    DEFINE_NODE( GEN, GenericUnoccupiedSpace )
+    DEFINE_NODE( GEN, GenericLogicalSpace )
+    DEFINE_NODE( GEN, GenericThematicSurface )
+
+    DEFINE_NODE( GEN, Lod0MultiCurve )
+    DEFINE_NODE( GEN, Lod2MultiCurve )
+    DEFINE_NODE( GEN, Lod3MultiCurve )
+    DEFINE_NODE( GEN, Lod0MultiSurface )
+    DEFINE_NODE( GEN, Lod2MultiSurface )
+    DEFINE_NODE( GEN, Lod3MultiSurface )
+
+    DEFINE_NODE( GEN, Area )
+    DEFINE_NODE( GEN, SpaceType )
+    DEFINE_NODE( GEN, Volume )
 
     // TEX
     // DEFINE_NODE( GML, TexturedSurface ) // Deprecated
@@ -656,7 +693,9 @@ namespace citygml {
     DEFINE_NODE( BLDG, BuildingFurniture )
     DEFINE_NODE( BLDG, RoofType)
     DEFINE_NODE( BLDG, IntBuildingInstallation)
-        
+    DEFINE_NODE( BLDG, BuildingConstructiveElement)
+    DEFINE_NODE( BLDG, BuildingRoom)
+
     DEFINE_NODE( BLDG, CityFurniture )
 
     DEFINE_NODE( BLDG, Address)
@@ -724,14 +763,20 @@ namespace citygml {
     DEFINE_NODE( TRANS, TransportationComplex )
     DEFINE_NODE( TRANS, TrafficArea )
     DEFINE_NODE( TRANS, AuxiliaryTrafficArea )
+    DEFINE_NODE( TRANS, TrafficSpace )
+    DEFINE_NODE( TRANS, AuxiliaryTrafficSpace )
     DEFINE_NODE( TRANS, Track )
     DEFINE_NODE( TRANS, Road )
     DEFINE_NODE( TRANS, Railway )
     DEFINE_NODE( TRANS, Square )
+    DEFINE_NODE( TRANS, Intersection )
+    DEFINE_NODE( TRANS, Section )
+    DEFINE_NODE( TRANS, Waterway )
 
     DEFINE_NODE( TRANS, Usage )
     DEFINE_NODE( TRANS, Function )
     DEFINE_NODE( TRANS, SurfaceMaterial )
+    DEFINE_NODE( TRANS, Granularity )
 
     DEFINE_NODE( TRANS, Lod0Network )
     DEFINE_NODE( TRANS, Lod1MultiSurface )
