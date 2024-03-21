@@ -66,6 +66,7 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingInstallation));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingFurniture));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingConstructiveElement));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingRoom));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Door));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Window));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CityFurniture));

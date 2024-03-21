@@ -171,6 +171,8 @@ namespace citygml {
             return "BuildingFurniture";
         case CityObject::CityObjectsType::COT_BuildingConstructiveElement:
             return "BuildingConstructiveElement";
+        case CityObject::CityObjectsType::COT_BuildingRoom:
+            return "BuildingRoom";
         case CityObject::CityObjectsType::COT_Door:
             return "Door";
         case CityObject::CityObjectsType::COT_Window:
@@ -259,6 +261,7 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_BuildingInstallation), CityObject::CityObjectsType::COT_BuildingInstallation},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_BuildingFurniture), CityObject::CityObjectsType::COT_BuildingFurniture},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_BuildingConstructiveElement), CityObject::CityObjectsType::COT_BuildingConstructiveElement},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_BuildingRoom), CityObject::CityObjectsType::COT_BuildingRoom},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Door), CityObject::CityObjectsType::COT_Door},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Window), CityObject::CityObjectsType::COT_Window},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_CityFurniture), CityObject::CityObjectsType::COT_CityFurniture},
