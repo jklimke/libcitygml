@@ -330,6 +330,7 @@ namespace citygml {
         NODETYPE( TRANS, Usage )
         NODETYPE( TRANS, Function )
         NODETYPE( TRANS, SurfaceMaterial )
+        NODETYPE( TRANS, Granularity )
 
         NODETYPE( TRANS, Lod0Network )
         NODETYPE( TRANS, Lod1MultiSurface )

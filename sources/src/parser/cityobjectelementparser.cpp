@@ -162,6 +162,7 @@ namespace citygml {
                 attributesSet.insert(HANDLE_ATTR(TRANS, Usage));
                 attributesSet.insert(HANDLE_ATTR(TRANS, Function));
                 attributesSet.insert(HANDLE_ATTR(TRANS, SurfaceMaterial));
+                attributesSet.insert(HANDLE_ATTR(TRANS, Granularity));
                 attributesSet.insert(HANDLE_ATTR(WTR, Class));
                 attributesSet.insert(HANDLE_ATTR(WTR, Function));
                 attributesSet.insert(HANDLE_ATTR(WTR, Usage));
@@ -207,6 +208,7 @@ namespace citygml {
                 attributeTypeMap[HANDLE_ATTR(TRANS, Usage)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(TRANS, Function)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(TRANS, SurfaceMaterial)] = AttributeType::String;
+                attributeTypeMap[HANDLE_ATTR(TRANS, Granularity)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(WTR, Class)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(WTR, Function)] = AttributeType::String;
                 attributeTypeMap[HANDLE_ATTR(WTR, Usage)] = AttributeType::String;

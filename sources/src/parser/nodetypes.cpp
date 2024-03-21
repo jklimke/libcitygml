@@ -362,6 +362,7 @@ namespace citygml {
                 INITIALIZE_NODE( TRANS, Usage )
                 INITIALIZE_NODE( TRANS, Function )
                 INITIALIZE_NODE( TRANS, SurfaceMaterial )
+                INITIALIZE_NODE( TRANS, Granularity )
 
                 INITIALIZE_NODE( TRANS, Lod0Network )
                 INITIALIZE_NODE( TRANS, Lod1MultiSurface )
@@ -771,6 +772,7 @@ namespace citygml {
     DEFINE_NODE( TRANS, Usage )
     DEFINE_NODE( TRANS, Function )
     DEFINE_NODE( TRANS, SurfaceMaterial )
+    DEFINE_NODE( TRANS, Granularity )
 
     DEFINE_NODE( TRANS, Lod0Network )
     DEFINE_NODE( TRANS, Lod1MultiSurface )
