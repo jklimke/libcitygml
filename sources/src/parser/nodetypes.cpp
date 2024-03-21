@@ -282,6 +282,7 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, BuildingFurniture )
                 INITIALIZE_NODE( BLDG, RoofType)
                 INITIALIZE_NODE( BLDG, IntBuildingInstallation)
+                INITIALIZE_NODE( BLDG, BuildingConstructiveElement)
 
                 INITIALIZE_NODE( BLDG, CityFurniture )
 
@@ -691,6 +692,7 @@ namespace citygml {
     DEFINE_NODE( BLDG, BuildingFurniture )
     DEFINE_NODE( BLDG, RoofType)
     DEFINE_NODE( BLDG, IntBuildingInstallation)
+    DEFINE_NODE( BLDG, BuildingConstructiveElement)
         
     DEFINE_NODE( BLDG, CityFurniture )
 
