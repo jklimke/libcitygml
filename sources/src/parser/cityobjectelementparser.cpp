@@ -301,6 +301,7 @@ namespace citygml {
                    || node == NodeType::BLDG_InteriorRoomNode
                    || node == NodeType::BLDG_OpeningNode
                    || node == NodeType::BLDG_ConsistsOfBuildingPartNode
+                   || node == NodeType::BLDG_BuildingPartNode
                    || node == NodeType::GRP_GroupMemberNode
                    || node == NodeType::GRP_ParentNode
                    || node == NodeType::TRANS_TrafficAreaNode
@@ -539,6 +540,7 @@ namespace citygml {
                     || node == NodeType::BLDG_Lod4MultiSurfaceNode
                     || node == NodeType::BLDG_Lod4SolidNode
                     || node == NodeType::BLDG_Lod4TerrainIntersectionNode
+                    || node == NodeType::BLDG_BuildingPartNode
                     || node == NodeType::GEN_Lod1GeometryNode
                     || node == NodeType::GEN_Lod2GeometryNode
                     || node == NodeType::GEN_Lod3GeometryNode
