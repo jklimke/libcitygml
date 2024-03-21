@@ -73,6 +73,18 @@ namespace citygml {
            	// ADD Buildding model 
 			COT_IntBuildingInstallation		= 1ll<< 34,
 
+            COT_GenericOccupiedSpace        = 1ll<< 40,
+            COT_GenericUnoccupiedSpace      = 1ll<< 41,
+            COT_GenericLogicalSpace         = 1ll<< 42,
+            COT_GenericThematicSurface      = 1ll<< 43,
+            COT_TrafficSpace                = 1ll<< 44,
+            COT_AuxiliaryTrafficSpace       = 1ll<< 45,
+            COT_Intersection                = 1ll<< 46,
+            COT_Section                     = 1ll<< 47,
+            COT_Waterway                    = 1ll<< 48,
+            COT_BuildingConstructiveElement = 1ll<< 49,
+            COT_BuildingRoom = 1ll<< 50,
+
             COT_All                         = 0xFFFFFFFFFFFFFFFFll
         };
 

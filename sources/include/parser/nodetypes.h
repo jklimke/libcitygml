@@ -62,6 +62,8 @@ namespace citygml {
         NODETYPE( CORE, MimeType)
         NODETYPE( CORE, LibraryObject)
 
+        NODETYPE( CORE, Boundary )
+
         // GRP
         NODETYPE( GRP, CityObjectGroup )
         NODETYPE( GRP, GroupMember )
@@ -98,6 +100,22 @@ namespace citygml {
         NODETYPE( GEN, Lod2ImplicitRepresentation )
         NODETYPE( GEN, Lod3ImplicitRepresentation )
         NODETYPE( GEN, Lod4ImplicitRepresentation )
+
+        NODETYPE( GEN, GenericOccupiedSpace )
+        NODETYPE( GEN, GenericUnoccupiedSpace )
+        NODETYPE( GEN, GenericLogicalSpace )
+        NODETYPE( GEN, GenericThematicSurface )
+
+        NODETYPE( GEN, Lod0MultiCurve )
+        NODETYPE( GEN, Lod2MultiCurve )
+        NODETYPE( GEN, Lod3MultiCurve )
+        NODETYPE( GEN, Lod0MultiSurface )
+        NODETYPE( GEN, Lod2MultiSurface )
+        NODETYPE( GEN, Lod3MultiSurface )
+
+        NODETYPE( GEN, Area )
+        NODETYPE( GEN, SpaceType )
+        NODETYPE( GEN, Volume )
 
         // TEX
         // NODETYPE( GML, TexturedSurface ) // Deprecated
@@ -215,6 +233,8 @@ namespace citygml {
         NODETYPE( BLDG, OuterFloorSurface )
         NODETYPE( BLDG, BuildingFurniture )
         NODETYPE( BLDG, IntBuildingInstallation)
+        NODETYPE( BLDG, BuildingConstructiveElement)
+        NODETYPE( BLDG, BuildingRoom)
             
         NODETYPE( BLDG, CityFurniture )
         NODETYPE( BLDG, Address)
@@ -299,14 +319,20 @@ namespace citygml {
         NODETYPE( TRANS, TransportationComplex )
         NODETYPE( TRANS, TrafficArea )
         NODETYPE( TRANS, AuxiliaryTrafficArea )
+        NODETYPE( TRANS, TrafficSpace )
+        NODETYPE( TRANS, AuxiliaryTrafficSpace )
         NODETYPE( TRANS, Track )
         NODETYPE( TRANS, Road )
         NODETYPE( TRANS, Railway )
         NODETYPE( TRANS, Square )
+        NODETYPE( TRANS, Intersection )
+        NODETYPE( TRANS, Section )
+        NODETYPE( TRANS, Waterway )
 
         NODETYPE( TRANS, Usage )
         NODETYPE( TRANS, Function )
         NODETYPE( TRANS, SurfaceMaterial )
+        NODETYPE( TRANS, Granularity )
 
         NODETYPE( TRANS, Lod0Network )
         NODETYPE( TRANS, Lod1MultiSurface )
