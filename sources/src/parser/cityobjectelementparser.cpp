@@ -79,6 +79,8 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, TransportationComplex, CityObject::CityObjectsType::COT_TransportationObject));
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, TrafficArea, CityObject::CityObjectsType::COT_TransportationObject));
                 typeIDTypeMap.insert(HANDLE_GROUP_TYPE(TRANS, AuxiliaryTrafficArea, CityObject::CityObjectsType::COT_TransportationObject));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, TrafficSpace));
+                typeIDTypeMap.insert(HANDLE_TYPE(TRANS, AuxiliaryTrafficSpace));
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, PlantCover));
                 typeIDTypeMap.insert(HANDLE_TYPE(VEG, SolitaryVegetationObject));
                 typeIDTypeMap.insert(HANDLE_TYPE(WTR, WaterBody));
@@ -306,6 +308,8 @@ namespace citygml {
                    || node == NodeType::GRP_ParentNode
                    || node == NodeType::TRANS_TrafficAreaNode
                    || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
+                   || node == NodeType::TRANS_TrafficSpaceNode
+                   || node == NodeType::TRANS_AuxiliaryTrafficSpaceNode
                    || node == NodeType::TRANS_IntersectionNode
                    || node == NodeType::TRANS_SectionNode
                    || node == NodeType::TRANS_WaterwayNode
@@ -595,6 +599,8 @@ namespace citygml {
                     || node == NodeType::TRANS_Lod0NetworkNode
                     || node == NodeType::TRANS_TrafficAreaNode
                     || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
+                    || node == NodeType::TRANS_TrafficSpaceNode
+                    || node == NodeType::TRANS_AuxiliaryTrafficSpaceNode
                     || node == NodeType::TRANS_IntersectionNode
                     || node == NodeType::TRANS_SectionNode
                     || node == NodeType::TRANS_WaterwayNode

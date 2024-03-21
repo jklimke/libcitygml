@@ -317,6 +317,8 @@ namespace citygml {
         NODETYPE( TRANS, TransportationComplex )
         NODETYPE( TRANS, TrafficArea )
         NODETYPE( TRANS, AuxiliaryTrafficArea )
+        NODETYPE( TRANS, TrafficSpace )
+        NODETYPE( TRANS, AuxiliaryTrafficSpace )
         NODETYPE( TRANS, Track )
         NODETYPE( TRANS, Road )
         NODETYPE( TRANS, Railway )
