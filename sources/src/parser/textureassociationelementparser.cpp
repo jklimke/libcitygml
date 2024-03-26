@@ -23,6 +23,9 @@ namespace citygml {
         : GMLObjectElementParser(documentParser, factory, logger)
     {
         m_model = texture;
+        if (m_model == nullptr) {
+            throw std::runtime_error("TextureAssociationElementParser constructed without a valid Texture.");
+        }
     }
 
     std::string TextureAssociationElementParser::elementParserName() const
@@ -52,10 +55,6 @@ namespace citygml {
 
     bool TextureAssociationElementParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
-        if (m_model == nullptr) {
-            throw std::runtime_error("TextureAssociationElementParser::parseChildElementStartTag called before TextureAssociationElementParser::parseElementStartTag");
-        }
-
         if (node == NodeType::APP_TextureParameterizationNode
             || node == NodeType::APP_TexCoordListNode
             || node == NodeType::APP_RingNode) {
@@ -79,10 +78,6 @@ namespace citygml {
 
     bool TextureAssociationElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
     {
-        if (m_model == nullptr) {
-            throw std::runtime_error("TextureAssociationElementParser::parseChildElementEndTag called before TextureAssociationElementParser::parseElementStartTag");
-        }
-
         if (node == NodeType::APP_TextureParameterizationNode) {
             // Do nothing (target and texture coords are set in child elements)
         } else if (node == NodeType::APP_TexCoordListNode) {
