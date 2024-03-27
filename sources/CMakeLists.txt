@@ -107,6 +107,7 @@ SET(SOURCES
   src/parser/externalreferenceparser.cpp
   src/parser/materialelementparser.cpp
   src/parser/textureelementparser.cpp
+  src/parser/textureassociationelementparser.cpp
   src/parser/georeferencedtextureelementparser.cpp
   src/parser/geometryelementparser.cpp
   src/parser/polygonelementparser.cpp
