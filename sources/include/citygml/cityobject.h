@@ -83,7 +83,10 @@ namespace citygml {
             COT_Section                     = 1ll<< 47,
             COT_Waterway                    = 1ll<< 48,
             COT_BuildingConstructiveElement = 1ll<< 49,
-            COT_BuildingRoom = 1ll<< 50,
+            COT_BuildingRoom                = 1ll<< 50,
+            COT_FillingSurface              = 1ll<< 51,
+            COT_WindowSurface               = 1ll<< 52,
+            COT_DoorSurface                 = 1ll<< 53,
 
             COT_All                         = 0xFFFFFFFFFFFFFFFFll
         };

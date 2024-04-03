@@ -106,6 +106,7 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, LibraryObject)
 
                 INITIALIZE_NODE( CORE, Boundary)
+                INITIALIZE_NODE( CORE, RelativeGeometry)
 
                 // GRP
                 INITIALIZE_NODE( GRP, CityObjectGroup )
@@ -268,6 +269,10 @@ namespace citygml {
                 INITIALIZE_NODE( FRN, Lod2ImplicitRepresentation )
                 INITIALIZE_NODE( FRN, Lod3ImplicitRepresentation )
                 INITIALIZE_NODE( FRN, Lod4ImplicitRepresentation )
+
+                INITIALIZE_NODE( CON, FillingSurface )
+                INITIALIZE_NODE( CON, WindowSurface )
+                INITIALIZE_NODE( CON, DoorSurface )
 
                 // BoundarySurfaceType
                 INITIALIZE_NODE( BLDG, WallSurface )
@@ -506,6 +511,7 @@ namespace citygml {
     DEFINE_NODE( CORE, LibraryObject)
 
     DEFINE_NODE( CORE, Boundary)
+    DEFINE_NODE( CORE, RelativeGeometry)
 
     // GRP
     DEFINE_NODE( GRP, CityObjectGroup )
@@ -679,6 +685,10 @@ namespace citygml {
     DEFINE_NODE( FRN, Lod2ImplicitRepresentation )
     DEFINE_NODE( FRN, Lod3ImplicitRepresentation )
     DEFINE_NODE( FRN, Lod4ImplicitRepresentation )
+
+    DEFINE_NODE( CON, FillingSurface )
+    DEFINE_NODE( CON, WindowSurface )
+    DEFINE_NODE( CON, DoorSurface )
 
     // BoundarySurfaceType
     DEFINE_NODE( BLDG, WallSurface )

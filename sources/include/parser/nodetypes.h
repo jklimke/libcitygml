@@ -63,6 +63,7 @@ namespace citygml {
         NODETYPE( CORE, LibraryObject)
 
         NODETYPE( CORE, Boundary )
+        NODETYPE( CORE, RelativeGeometry )
 
         // GRP
         NODETYPE( GRP, CityObjectGroup )
@@ -220,6 +221,10 @@ namespace citygml {
         NODETYPE( BLDG, Lod3TerrainIntersection )
         NODETYPE( BLDG, Lod4TerrainIntersection )
         NODETYPE( BLDG, ConsistsOfBuildingPart )
+
+        NODETYPE( CON, FillingSurface )
+        NODETYPE( CON, WindowSurface )
+        NODETYPE( CON, DoorSurface )
 
         // BoundarySurfaceType
         NODETYPE( BLDG, WallSurface )

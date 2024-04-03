@@ -95,6 +95,9 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeConstructionElement));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeInstallation));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgePart));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, FillingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, WindowSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, DoorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, WallSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, RoofSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, GroundSurface));
@@ -310,6 +313,7 @@ namespace citygml {
                    || node == NodeType::BLDG_BuildingPartNode
                    || node == NodeType::BLDG_BuildingConstructiveElementNode
                    || node == NodeType::BLDG_BuildingRoomNode
+                   || node == NodeType::BLDG_BuildingInstallationNode
                    || node == NodeType::GRP_GroupMemberNode
                    || node == NodeType::GRP_ParentNode
                    || node == NodeType::TRANS_TrafficAreaNode
@@ -331,7 +335,10 @@ namespace citygml {
                    || node == NodeType::GEN_GenericUnoccupiedSpaceNode
                    || node == NodeType::GEN_GenericLogicalSpaceNode
                    || node == NodeType::GEN_GenericThematicSurfaceNode
-                   || node == NodeType::CORE_BoundaryNode) {
+                   || node == NodeType::CORE_BoundaryNode
+                   || node == NodeType::CON_FillingSurfaceNode
+                   || node == NodeType::CON_WindowSurfaceNode
+                   || node == NodeType::CON_DoorSurfaceNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -548,6 +555,10 @@ namespace citygml {
                     || node == NodeType::BLDG_BuildingPartNode
                     || node == NodeType::BLDG_BuildingConstructiveElementNode
                     || node == NodeType::BLDG_BuildingRoomNode
+                    || node == NodeType::BLDG_BuildingInstallationNode
+                    || node == NodeType::CON_FillingSurfaceNode
+                    || node == NodeType::CON_WindowSurfaceNode
+                    || node == NodeType::CON_DoorSurfaceNode
                     || node == NodeType::GEN_Lod1GeometryNode
                     || node == NodeType::GEN_Lod2GeometryNode
                     || node == NodeType::GEN_Lod3GeometryNode
