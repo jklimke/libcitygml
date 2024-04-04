@@ -121,8 +121,6 @@ namespace citygml {
                 m_factory.requestSharedGeometryWithID(m_model, sharedGeomID);
             } else {
 
-                std::string id = attributes.getCityGMLIDAttribute();
-
                 setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* geom) {
                     m_model->addGeometry(m_factory.shareGeometry(geom));
                 }));
