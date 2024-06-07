@@ -74,6 +74,10 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Door));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Window));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CityFurniture));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Storey));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingSubdivision));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingRoom));
+                typeIDTypeMap.insert(HANDLE_TYPE(CORE, PointCloud));
                 typeIDTypeMap.insert(HANDLE_TYPE(FRN, CityFurniture));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Track));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Road));
@@ -328,6 +332,8 @@ namespace citygml {
                    || node == NodeType::BLDG_BuildingConstructiveElementNode
                    || node == NodeType::BLDG_BuildingRoomNode
                    || node == NodeType::BLDG_BuildingInstallationNode
+                   || node == NodeType::BLDG_BuildingSubdivisionNode
+                   || node == NodeType::BLDG_StoreyNode
                    || node == NodeType::GRP_GroupMemberNode
                    || node == NodeType::GRP_ParentNode
                    || node == NodeType::TRANS_TrafficAreaNode
@@ -352,7 +358,8 @@ namespace citygml {
                    || node == NodeType::CORE_BoundaryNode
                    || node == NodeType::CON_FillingSurfaceNode
                    || node == NodeType::CON_WindowSurfaceNode
-                   || node == NodeType::CON_DoorSurfaceNode) {
+                   || node == NodeType::CON_DoorSurfaceNode
+                   || node == NodeType::CORE_PointCloudNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -580,6 +587,8 @@ namespace citygml {
                     || node == NodeType::CON_FillingSurfaceNode
                     || node == NodeType::CON_WindowSurfaceNode
                     || node == NodeType::CON_DoorSurfaceNode
+                    || node == NodeType::BLDG_BuildingSubdivisionNode
+                    || node == NodeType::BLDG_StoreyNode
                     || node == NodeType::GEN_Lod1GeometryNode
                     || node == NodeType::GEN_Lod2GeometryNode
                     || node == NodeType::GEN_Lod3GeometryNode
@@ -611,6 +620,8 @@ namespace citygml {
                     || node == NodeType::FRN_Lod4TerrainIntersectionNode
                     || node == NodeType::FRN_Lod4ImplicitRepresentationNode
                     || node == NodeType::CORE_GeneralizesToNode
+                    || node == NodeType::CORE_BoundaryNode
+                    || node == NodeType::CORE_PointCloudNode
                     || node == NodeType::GML_MultiPointNode
                     || node == NodeType::GRP_GroupMemberNode
                     || node == NodeType::GRP_ParentNode

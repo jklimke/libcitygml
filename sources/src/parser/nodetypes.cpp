@@ -87,6 +87,7 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, CreationDate )
                 INITIALIZE_NODE( CORE, TerminationDate )
                 INITIALIZE_NODE( CORE, GeneralizesTo)
+                INITIALIZE_NODE( CORE, PointCloud)
 
                 INITIALIZE_NODE( CORE, ExternalReference)
                 INITIALIZE_NODE( CORE, InformationSystem)
@@ -209,6 +210,8 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, Lod2TerrainIntersection )
                 INITIALIZE_NODE( BLDG, Lod3TerrainIntersection )
                 INITIALIZE_NODE( BLDG, Lod4TerrainIntersection )
+                INITIALIZE_NODE( BLDG, BuildingSubdivision )
+                INITIALIZE_NODE( BLDG, Storey)
 
                 INITIALIZE_NODE( GML, MultiPoint )
                 INITIALIZE_NODE( GML, MultiCurve )
@@ -496,6 +499,7 @@ namespace citygml {
     DEFINE_NODE( CORE, CreationDate )
     DEFINE_NODE( CORE, TerminationDate )
     DEFINE_NODE( CORE, GeneralizesTo)
+    DEFINE_NODE( CORE, PointCloud)
 
     DEFINE_NODE( CORE, ExternalReference)
     DEFINE_NODE( CORE, InformationSystem)
@@ -620,6 +624,8 @@ namespace citygml {
     DEFINE_NODE( BLDG, Lod2TerrainIntersection )
     DEFINE_NODE( BLDG, Lod3TerrainIntersection )
     DEFINE_NODE( BLDG, Lod4TerrainIntersection )
+    DEFINE_NODE( BLDG, BuildingSubdivision )
+    DEFINE_NODE( BLDG, Storey )
 
     DEFINE_NODE( GML, MultiPoint )
     DEFINE_NODE( GML, MultiCurve )
