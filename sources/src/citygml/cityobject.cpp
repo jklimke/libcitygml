@@ -247,6 +247,16 @@ namespace citygml {
             return "WaterBody";
         case CityObject::CityObjectsType::COT_ReliefFeature:
             return "ReliefFeature";
+        case CityObject::CityObjectsType::COT_ReliefComponent:
+            return "ReliefComponent";
+        case CityObject::CityObjectsType::COT_TINRelief:
+            return "TINRelief";
+        case CityObject::CityObjectsType::COT_MassPointRelief:
+            return "MassPointRelief";
+        case CityObject::CityObjectsType::COT_BreaklineRelief:
+            return "BreaklineRelief";
+        case CityObject::CityObjectsType::COT_RasterRelief:
+            return "RasterRelief";
         case CityObject::CityObjectsType::COT_LandUse:
             return "LandUse";
         case CityObject::CityObjectsType::COT_Tunnel:
@@ -275,6 +285,8 @@ namespace citygml {
             return "InteriorWallSurface";
         case CityObject::CityObjectsType::COT_CeilingSurface:
             return "CeilingSurface";
+        case CityObject::CityObjectsType::COT_CityObjectGroup:
+            return "CityObjectGroup";
         case CityObject::CityObjectsType::COT_OuterCeilingSurface:
             return "OuterCeilingSurface";
         case CityObject::CityObjectsType::COT_OuterFloorSurface:
@@ -289,6 +301,18 @@ namespace citygml {
 	        return "GenericUnoccupiedSpace";
         case CityObject::CityObjectsType::COT_GenericLogicalSpace:
 	        return "GenericLogicalSpace";
+        case CityObject::CityObjectsType::COT_GenericThematicSurface:
+            return "GenericThematicSurface";
+        case CityObject::CityObjectsType::COT_TrafficSpace:
+            return "TrafficSpace";
+        case CityObject::CityObjectsType::COT_AuxiliaryTrafficSpace:
+            return "AuxiliaryTrafficSpace";
+        case CityObject::CityObjectsType::COT_BuildingSubdivision:
+            return "BuildingSubdivision";
+        case CityObject::CityObjectsType::COT_Storey:
+            return "Storey";
+        case CityObject::CityObjectsType::COT_PointCloud:
+            return "PointCloud";
         default:
             return "Unknown";
         }
