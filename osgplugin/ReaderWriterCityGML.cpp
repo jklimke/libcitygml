@@ -176,6 +176,21 @@ public:
 
     virtual ReadResult readNode( const std::string&, const osgDB::ReaderWriter::Options* ) const override;
     virtual ReadResult readNode( std::istream&, const osgDB::ReaderWriter::Options* ) const override;
+  virtual ReadResult readObject(const std::string& fileName, const osgDB::ReaderWriter::Options* options) const
+    {
+        ReadResult result = readNode(fileName, options);
+        osg::Node* node = result.getNode();
+        if (node) return node;
+        else return result;
+    }
+
+    virtual ReadResult readObject(std::istream& fin, const Options* options) const
+    {
+        ReadResult result = readNode(fin, options);
+        osg::Node* node = result.getNode();
+        if (node) return node;
+        else return result;
+    }
 
 private:
     std::shared_ptr<citygml::CityGMLLogger> m_logger;
