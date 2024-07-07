@@ -175,7 +175,9 @@ namespace citygml {
                 INITIALIZE_NODE( GML, Surface )
                 INITIALIZE_NODE( GML, PolygonPatch)
                 INITIALIZE_NODE( GML, LineString)
-
+                
+                INITIALIZE_NODE( BLDG, Lod0FootPrint )
+                INITIALIZE_NODE( BLDG, Lod0RoofEdge )
                 INITIALIZE_NODE( BLDG, Lod1Solid )
                 INITIALIZE_NODE( BLDG, Lod2Solid )
                 INITIALIZE_NODE( BLDG, Lod3Solid )
@@ -200,6 +202,7 @@ namespace citygml {
                 INITIALIZE_NODE( GML, MultiCurve )
                 INITIALIZE_NODE( GML, MultiSurface )
                 INITIALIZE_NODE( GML, MultiSolid )
+                INITIALIZE_NODE( GML, MultiGeometry )
 
                 INITIALIZE_NODE( GML, CompositeCurve )
                 INITIALIZE_NODE( GML, CompositeSurface )
@@ -548,7 +551,9 @@ namespace citygml {
     DEFINE_NODE( GML, PosList )
     DEFINE_NODE( GML, OrientableSurface )
     DEFINE_NODE( GML, LinearRing )
-
+    
+    DEFINE_NODE( BLDG, Lod0FootPrint )
+    DEFINE_NODE( BLDG, Lod0RoofEdge )
     DEFINE_NODE( BLDG, Lod1Solid )
     DEFINE_NODE( BLDG, Lod2Solid )
     DEFINE_NODE( BLDG, Lod3Solid )
@@ -573,6 +578,7 @@ namespace citygml {
     DEFINE_NODE( GML, MultiCurve )
     DEFINE_NODE( GML, MultiSurface )
     DEFINE_NODE( GML, MultiSolid )
+    DEFINE_NODE( GML, MultiGeometry )
 
     DEFINE_NODE( GML, CompositeCurve )
     DEFINE_NODE( GML, CompositeSurface )
@@ -587,9 +593,11 @@ namespace citygml {
     DEFINE_NODE( GML, Shell )
     DEFINE_NODE( GML, PolyhedralSurface )
     DEFINE_NODE( GML, Surface )
-    DEFINE_NODE( GML, PolygonPatch)
+    DEFINE_NODE( GML, PolygonPatch )
 
-    DEFINE_NODE( GML, LineString)
+    DEFINE_NODE( GML, LineString )
+
+    DEFINE_NODE( GML, RectifiedGridCoverage )
 
     // BLDG
     DEFINE_NODE( BLDG, Building )

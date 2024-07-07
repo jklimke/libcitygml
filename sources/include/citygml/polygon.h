@@ -11,7 +11,7 @@
 #include <citygml/linearring.h>
 #include <citygml/geometry.h>
 
-class Tesselator;
+class TesselatorBase;
 
 namespace citygml {
 
@@ -82,7 +82,7 @@ namespace citygml {
 
         void addRing( LinearRing* );
 
-        void finish(Tesselator& tesselator , bool optimize, std::shared_ptr<CityGMLLogger> logger);
+        void finish(TesselatorBase* tesselator , bool optimize, std::shared_ptr<CityGMLLogger> logger);
 
         std::shared_ptr<LinearRing> exteriorRing(){
             return m_exteriorRing;
@@ -112,9 +112,9 @@ namespace citygml {
          * @param tesselate if true the tesselator will be used to tesselate the linear rings
          * @param tesselator the Tesselator object
          */
-        void computeIndices(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
+        void computeIndices(TesselatorBase* tesselator, std::shared_ptr<CityGMLLogger> logger);
         void createSimpleIndices(std::shared_ptr<CityGMLLogger> logger);
-        void createIndicesWithTesselation(Tesselator& tesselator, std::shared_ptr<CityGMLLogger> logger);
+        void createIndicesWithTesselation(TesselatorBase* tesselator, std::shared_ptr<CityGMLLogger> logger);
         void removeDuplicateVerticesInRings(std::shared_ptr<CityGMLLogger> logger);
         std::vector<TVec2f> getTexCoordsForRingAndTheme(const LinearRing& ring, const std::string& theme, bool front);
         std::vector<std::vector<TVec2f> > getTexCoordListsForRing(const LinearRing& ring, const std::vector<std::string>& themesFront, const std::vector<std::string>& themesBack);

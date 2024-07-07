@@ -10,6 +10,8 @@
 #include "parser/delayedchoiceelementparser.h"
 #include "parser/linestringelementparser.h"
 #include "parser/addressparser.h"
+#include "parser/rectifiedgridcoverageparser.h"
+#include "parser/externalreferenceparser.h"
 
 #include <citygml/citygmlfactory.h>
 #include <citygml/citygmllogger.h>
@@ -94,6 +96,11 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, OuterFloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(GRP, CityObjectGroup));
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefFeature));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefComponent));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, TINRelief));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, MassPointRelief));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, BreaklineRelief));
+                typeIDTypeMap.insert(HANDLE_TYPE(DEM, RasterRelief));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, IntBuildingInstallation));
 
                 typeIDTypeMapInitialized = true;
@@ -269,6 +276,11 @@ namespace citygml {
         } else if (attributesSet.count(node.typeID()) > 0 || node == NodeType::GEN_ValueNode) {
 
             return true;
+        } else if (node == NodeType::GML_RectifiedGridCoverageNode) {
+            
+            setParserForNextElement(new RectifiedGridCoverageParser(m_documentParser, m_factory, m_logger, [this](RectifiedGridCoverage * rectifiedGridCoverage) {
+                m_model->setRectifiedGridCoverage(rectifiedGridCoverage);
+            }));
         } else if (node == NodeType::BLDG_BoundedByNode
                    || node == NodeType::BLDG_OuterBuildingInstallationNode
                    || node == NodeType::BLDG_InteriorBuildingInstallationNode
@@ -281,7 +293,14 @@ namespace citygml {
                    || node == NodeType::GRP_ParentNode
                    || node == NodeType::TRANS_TrafficAreaNode
                    || node == NodeType::TRANS_AuxiliaryTrafficAreaNode
-                   || node == NodeType::WTR_BoundedByNode) {
+                   || node == NodeType::WTR_BoundedByNode
+                   || node == NodeType::DEM_ReliefComponentNode
+                   || node == NodeType::DEM_TINReliefNode
+                   || node == NodeType::DEM_MassPointReliefNode
+                   || node == NodeType::DEM_BreaklineReliefNode
+                   || node == NodeType::DEM_RasterReliefNode
+                   || node == NodeType::DEM_GridNode
+                   || node == NodeType::CORE_GeneralizesToNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -289,6 +308,24 @@ namespace citygml {
                    || node == NodeType::APP_AppearanceMemberNode) {
 
             setParserForNextElement(new AppearanceElementParser(m_documentParser, m_factory, m_logger));
+        } else if (node == NodeType::DEM_ExtentNode
+                   || node == NodeType::DEM_TinNode
+                   || node == NodeType::DEM_ReliefPointsNode
+                   || node == NodeType::DEM_RidgeOrValleyLinesNode
+                   || node == NodeType::DEM_BreaklinesNode) {
+            
+            parseGeometryForLODLevel(std::stoi(m_model->getAttribute("dem:lod")));
+        } else if (node == NodeType::GEN_Lod0TerrainIntersectionNode
+                   || node == NodeType::WTR_Lod0MultiCurveNode
+                   || node == NodeType::WTR_Lod0MultiSurfaceNode) {
+            
+            parseGeometryForLODLevel(0);
+        } else if (node == NodeType::BLDG_Lod0FootPrintNode) {
+            // for Lod0 footprint, we must explicitly set the City Object Type, because the parent type is "Building", and it doesn't allow to discriminate between the ground and roof surface
+            parseGeometryForLODLevel(0, CityObject::CityObjectsType::COT_GroundSurface);
+        } else if (node == NodeType::BLDG_Lod0RoofEdgeNode) {
+            // for Lod0 roof edge, we must explicitly set the City Object Type, because the parent type is "Building", and it doesn't allow to discriminate between the ground and roof surface
+            parseGeometryForLODLevel(0, CityObject::CityObjectsType::COT_RoofSurface);
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
                    || node == NodeType::BLDG_Lod1SolidNode
@@ -338,7 +375,10 @@ namespace citygml {
                    || node == NodeType::WTR_Lod4SurfaceNode) {
 
             parseGeometryForLODLevel(4);
-        } else if (node == NodeType::GEN_Lod1GeometryNode
+        } else if (node == NodeType::GEN_Lod0GeometryNode) {
+            parseGeometryPropertyElementForLODLevel(0, attributes.getCityGMLIDAttribute());
+        }
+        else if (node == NodeType::GEN_Lod1GeometryNode
                    || node == NodeType::FRN_Lod1GeometryNode
                    || node == NodeType::VEG_Lod1GeometryNode) {
             parseGeometryPropertyElementForLODLevel(1, attributes.getCityGMLIDAttribute());
@@ -357,6 +397,9 @@ namespace citygml {
                    || node == NodeType::BLDG_Lod4GeometryNode
                    || node == NodeType::VEG_Lod4GeometryNode) {
             parseGeometryPropertyElementForLODLevel(4, attributes.getCityGMLIDAttribute());
+        } else if (node == NodeType::GEN_Lod0ImplicitRepresentationNode) {
+          
+            parseImplicitGeometryForLODLevel(0);
         } else if (node == NodeType::VEG_Lod1ImplicitRepresentationNode
                    || node == NodeType::FRN_Lod1ImplicitRepresentationNode
                    || node == NodeType::GEN_Lod1ImplicitRepresentationNode) {
@@ -377,17 +420,14 @@ namespace citygml {
                    || node == NodeType::GEN_Lod4ImplicitRepresentationNode) {
 
             parseImplicitGeometryForLODLevel(4);
-        } else if (node == NodeType::CORE_GeneralizesToNode
-                   || node == NodeType::CORE_ExternalReferenceNode
-                   || node == NodeType::GML_MultiPointNode
+        } else if (node == NodeType::CORE_ExternalReferenceNode){
+            
+            setParserForNextElement(new ExternalReferenceParser(m_documentParser, m_factory, m_logger, [this](ExternalReference * externalReference){
+                m_model->setExternalReference(externalReference);
+            }));
+        } else if (node == NodeType::GML_MultiPointNode
                    || node == NodeType::GRP_GeometryNode
-                   || node == NodeType::DEM_ReliefComponentNode
-                   || node == NodeType::GEN_Lod0GeometryNode
-                   || node == NodeType::GEN_Lod0ImplicitRepresentationNode
-                   || node == NodeType::GEN_Lod0TerrainIntersectionNode
-                   || node == NodeType::TRANS_Lod0NetworkNode
-                   || node == NodeType::WTR_Lod0MultiCurveNode
-                   || node == NodeType::WTR_Lod0MultiSurfaceNode) {
+                   || node == NodeType::TRANS_Lod0NetworkNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping CityObject child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger, node));
             return true;
@@ -447,6 +487,8 @@ namespace citygml {
                     || node == NodeType::BLDG_OpeningNode
                     || node == NodeType::APP_AppearanceNode
                     || node == NodeType::APP_AppearanceMemberNode
+                    || node == NodeType::BLDG_Lod0FootPrintNode
+                    || node == NodeType::BLDG_Lod0RoofEdgeNode
                     || node == NodeType::BLDG_Lod1MultiCurveNode
                     || node == NodeType::BLDG_Lod1MultiSurfaceNode
                     || node == NodeType::BLDG_Lod1SolidNode
@@ -505,6 +547,15 @@ namespace citygml {
                     || node == NodeType::LUSE_Lod3MultiSurfaceNode
                     || node == NodeType::LUSE_Lod4MultiSurfaceNode
                     || node == NodeType::DEM_ReliefComponentNode
+                    || node == NodeType::DEM_TINReliefNode
+                    || node == NodeType::DEM_MassPointReliefNode
+                    || node == NodeType::DEM_BreaklineReliefNode
+                    || node == NodeType::DEM_RasterReliefNode
+                    || node == NodeType::DEM_TinNode
+                    || node == NodeType::DEM_ReliefPointsNode
+                    || node == NodeType::DEM_RidgeOrValleyLinesNode
+                    || node == NodeType::DEM_BreaklinesNode
+                    || node == NodeType::DEM_GridNode
                     || node == NodeType::GEN_Lod0GeometryNode
                     || node == NodeType::GEN_Lod0ImplicitRepresentationNode
                     || node == NodeType::GEN_Lod0TerrainIntersectionNode
@@ -542,12 +593,17 @@ namespace citygml {
     {
         return m_model;
     }
-
-    void CityObjectElementParser::parseGeometryForLODLevel(int lod)
+    
+    void CityObjectElementParser::parseGeometryForLODLevel(int lod, CityObject::CityObjectsType parentType)
     {
-        setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, lod, m_model->getType(), [this](Geometry* geom) {
+        setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, lod, parentType, [this](Geometry* geom) {
             m_model->addGeometry(geom);
         }));
+    }
+    
+    void CityObjectElementParser::parseGeometryForLODLevel(int lod)
+    {
+        parseGeometryForLODLevel(lod, m_model->getType());
     }
 
     void CityObjectElementParser::parseImplicitGeometryForLODLevel(int lod)

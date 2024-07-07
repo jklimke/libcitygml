@@ -6,7 +6,11 @@ ENDIF (NOT DEFINED CMAKE_MODULE_PATH)
 
 SET( target citygml )
 
-FIND_PACKAGE( OpenGL REQUIRED )
+IF( LIBCITYGML_USE_OPENGL)
+  FIND_PACKAGE( OpenGL REQUIRED )
+ELSE( LIBCITYGML_USE_OPENGL )
+  SET( GLU_INCLUDE_PATH "" )
+ENDIF( LIBCITYGML_USE_OPENGL )
 FIND_PACKAGE( Xerces REQUIRED )
 
 # gdal library
@@ -53,7 +57,7 @@ INCLUDE_DIRECTORIES(    ${CMAKE_CURRENT_SOURCE_DIR}/include
 SET(SOURCES
   src/citygml/attributesmap.cpp
   src/citygml/citymodel.cpp
-  src/citygml/tesselator.cpp
+  src/citygml/tesselatorbase.cpp
   src/citygml/object.cpp
   src/citygml/featureobject.cpp
   src/citygml/appearance.cpp
@@ -77,6 +81,8 @@ SET(SOURCES
   src/citygml/geometrymanager.cpp
   src/citygml/linestring.cpp
   src/citygml/address.cpp
+  src/citygml/rectifiedgridcoverage.cpp
+  src/citygml/externalreference.cpp
 
   src/parser/nodetypes.cpp
   src/parser/attributes.cpp
@@ -98,19 +104,24 @@ SET(SOURCES
   src/parser/citymodelelementparser.cpp
   src/parser/cityobjectelementparser.cpp
   src/parser/appearanceelementparser.cpp
+  src/parser/externalreferenceparser.cpp
   src/parser/materialelementparser.cpp
   src/parser/textureelementparser.cpp
   src/parser/georeferencedtextureelementparser.cpp
   src/parser/geometryelementparser.cpp
   src/parser/polygonelementparser.cpp
+  src/parser/rectifiedgridcoverageparser.cpp
   src/parser/linestringelementparser.cpp
   src/parser/linearringelementparser.cpp
   src/parser/implicitgeometryelementparser.cpp
   src/parser/addressparser.cpp
 )
+
 if(UNIX)
   if (APPLE)
-    set_source_files_properties(src/citygml/tesselator.cpp PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations") # for warnings: 'glu*' is deprecated...
+    if (LIBCITYGML_USE_OPENGL)
+      set_source_files_properties(src/citygml/tesselator.cpp PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations") # for warnings: 'glu*' is deprecated...
+    endif (LIBCITYGML_USE_OPENGL)
   endif (APPLE)
 endif(UNIX)
 
@@ -135,7 +146,7 @@ SET(PUBLIC_HEADER
   include/citygml/citygml.h
   include/citygml/transformmatrix.h
   include/citygml/implictgeometry.h
-  include/citygml/tesselator.h
+  include/citygml/tesselatorbase.h
   include/citygml/texture.h
   include/citygml/appearancetargetdefinition.h
   include/citygml/texturetargetdefinition.h
@@ -145,14 +156,28 @@ SET(PUBLIC_HEADER
   include/citygml/citygmlfactory.h
   include/citygml/linestring.h
   include/citygml/address.h
+  include/citygml/rectifiedgridcoverage.h
+  include/citygml/externalreference.h
 )
+
+
+if(LIBCITYGML_USE_OPENGL) 
+  SET(SOURCES 
+    ${SOURCES} 
+    src/citygml/tesselator.cpp
+  )
+
+  SET(PUBLIC_HEADER 
+    ${PUBLIC_HEADER} 
+    include/citygml/tesselator.h
+  )
+endif(LIBCITYGML_USE_OPENGL)
 
 SET(HEADERS
   ${PUBLIC_HEADER}
 
   ${CMAKE_MODULE_PATH}/citygml_api.h.in
 
-  include/citygml/tesselator.h
   include/citygml/utils.h
   include/citygml/appearancemanager.h
   include/citygml/polygonmanager.h
@@ -179,11 +204,13 @@ SET(HEADERS
   include/parser/citymodelelementparser.h
   include/parser/cityobjectelementparser.h
   include/parser/appearanceelementparser.h
+  include/parser/externalreferenceparser.h
   include/parser/materialelementparser.h
   include/parser/textureelementparser.h
   include/parser/georeferencedtextureelementparser.h
   include/parser/geometryelementparser.h
   include/parser/polygonelementparser.h
+  include/parser/rectifiedgridcoverageparser.h
   include/parser/linestringelementparser.h
   include/parser/linearringelementparser.h
   include/parser/implicitgeometryelementparser.h
@@ -197,7 +224,13 @@ generate_export_header(citygml
                        EXPORT_MACRO_NAME LIBCITYGML_EXPORT
                        EXPORT_FILE_NAME ${EXPORT_HEADER_FILE_NAME})
 
-TARGET_LINK_LIBRARIES( ${target} ${XERCESC_LIBRARIES} ${OPENGL_LIBRARIES} ${GDAL_LIBRARY} )
+TARGET_LINK_LIBRARIES( ${target} PUBLIC ${XERCESC_LIBRARIES} )
+if(LIBCITYGML_USE_OPENGL)
+  TARGET_LINK_LIBRARIES( ${target} PUBLIC ${OPENGL_LIBRARIES} )
+endif(LIBCITYGML_USE_OPENGL)
+if(LIBCITYGML_USE_GDAL)
+    TARGET_LINK_LIBRARIES( ${target} PUBLIC ${GDAL_LIBRARY} )
+endif(LIBCITYGML_USE_GDAL)
 
 set_target_properties( ${target} PROPERTIES
     VERSION ${META_VERSION}
@@ -214,19 +247,49 @@ if(NOT DEFINED INCLUDE_INSTALL_DIR)
     set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include/citygml")
 endif(NOT DEFINED INCLUDE_INSTALL_DIR)
 
+if(WIN32)
+  set(CONFIG_INSTALL_DIR "cmake")
+else()
+  set(CONFIG_INSTALL_DIR "${LIB_INSTALL_DIR}/cmake/citygml")
+endif()
+
 INSTALL(
     TARGETS ${target}
+    EXPORT citygmlConfigInternal
     RUNTIME DESTINATION ${BIN_INSTALL_DIR}
     LIBRARY DESTINATION ${LIB_INSTALL_DIR}
     ARCHIVE DESTINATION ${LIB_INSTALL_DIR}
+    COMPONENT "runtime"
+)
+INSTALL(
+    EXPORT citygmlConfigInternal
+    DESTINATION "${CONFIG_INSTALL_DIR}"
+    NAMESPACE "citygml::"
+    COMPONENT "development"
 )
 
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/citygmlConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/citygmlConfig.cmake"
+  INSTALL_DESTINATION "${CONFIG_INSTALL_DIR}")
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/citygmlConfigVersion.cmake
+  VERSION "${META_VERSION}"
+  COMPATIBILITY SameMajorVersion)
+INSTALL(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/citygmlConfig.cmake
+          ${CMAKE_CURRENT_BINARY_DIR}/citygmlConfigVersion.cmake
+    DESTINATION "${CONFIG_INSTALL_DIR}"
+    COMPONENT "development"
+)
 
 # FIXME: Do not run for OS X framework
 INSTALL(
     FILES
       ${PUBLIC_HEADER}
     DESTINATION  ${INCLUDE_INSTALL_DIR}
+    COMPONENT "development"
 )
 
 INSTALL(
@@ -234,10 +297,30 @@ INSTALL(
       ${EXPORT_HEADER_FILE_NAME}
     DESTINATION
       ${INCLUDE_INSTALL_DIR}
+    COMPONENT "development"
 )
 
+if (LIBCITYGML_DEBUG_POSTFIX AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(LIBCITYGML_POSTFIX ${CMAKE_DEBUG_POSTFIX})
+else()
+    set(LIBCITYGML_POSTFIX "")
+endif()
+
+set(PKG_CONFIG_REQUIRES "xerces-c")
+
+if(LIBCITYGML_USE_OPENGL)
+  set(PKG_CONFIG_REQUIRES "${PKG_CONFIG_REQUIRES} glu")
+  endif(LIBCITYGML_USE_OPENGL)
+
+if (LIBCITYGML_USE_GDAL)
+    set(PKG_CONFIG_REQUIRES "${PKG_CONFIG_REQUIRES} gdal")
+endif()
 
 configure_file(citygml.pc.cmake ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
+INSTALL(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/citygml.pc 
+    DESTINATION ${LIB_INSTALL_DIR}/pkgconfig
+    COMPONENT "development"
+)
 

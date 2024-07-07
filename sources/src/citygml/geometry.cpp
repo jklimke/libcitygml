@@ -96,6 +96,8 @@ namespace citygml {
             return "OuterCeiling";
         case GeometryType::GT_OuterFloor:
             return "OuterFloor";
+        case GeometryType::GT_Tin:
+            return "Tin";
         default:
             return "Unknown";
         }
@@ -135,7 +137,7 @@ namespace citygml {
         m_lineStrings.push_back(l);
     }
 
-    void Geometry::finish(Tesselator& tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
+    void Geometry::finish(TesselatorBase* tesselator, bool optimize, std::shared_ptr<CityGMLLogger> logger)
     {
         // only need to finish geometry once
         if (m_finished) {

@@ -23,6 +23,7 @@
 #include <mutex>
 
 #include <citygml/citygml_api.h>
+#include "citygml/tesselatorbase.h"
 #include "parser/citygmldocumentparser.h"
 #include "parser/documentlocation.h"
 #include "parser/attributes.h"
@@ -64,10 +65,10 @@ std::shared_ptr<XMLCh> toXercesString(const std::string& str) {
 class DocumentLocationXercesAdapter : public citygml::DocumentLocation {
 public:
     explicit DocumentLocationXercesAdapter(const std::string& fileName)
-		: m_locator(nullptr)
-		, m_fileName(fileName)
-	{
-        
+        : m_locator(nullptr)
+        , m_fileName(fileName)
+    {
+
     }
 
     void setLocator(const xercesc::Locator* locator) {
@@ -116,13 +117,15 @@ protected:
 class CityGMLHandlerXerces : public xercesc::DefaultHandler, public citygml::CityGMLDocumentParser
 {
 public:
-    CityGMLHandlerXerces( const ParserParams& params, const std::string& fileName, std::shared_ptr<CityGMLLogger> logger)
-        : citygml::CityGMLDocumentParser(params, logger), m_documentLocation(DocumentLocationXercesAdapter(fileName)) {}
+    CityGMLHandlerXerces( const ParserParams& params, const std::string& fileName, std::shared_ptr<CityGMLLogger> logger, std::unique_ptr<TesselatorBase> tesselator)
+        : citygml::CityGMLDocumentParser(params, logger, std::move(tesselator)), m_documentLocation(DocumentLocationXercesAdapter(fileName)) {}
 
 
     // ContentHandler interface
     virtual void startElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname, const xercesc::Attributes& attrs) override {
         AttributesXercesAdapter attributes(attrs, m_documentLocation, m_logger);
+        // We need to empty m_lastcharacters here, because if a tag is empty, characters(...) will never be called and this variable will contain wrong values
+        m_lastcharacters = "";
         CityGMLDocumentParser::startElement(toStdString(qname), attributes);
     }
 
@@ -132,7 +135,7 @@ public:
     }
 
     virtual void characters(const XMLCh* const chars, const XMLSize_t) override {
-        m_lastcharacters = toStdString(chars);
+        m_lastcharacters += toStdString(chars);
     }
 
     virtual void startDocument() override {
@@ -239,7 +242,7 @@ namespace citygml
             }
 
             stream << " " << message << std::endl;
-        }     
+        }
     };
 
     std::mutex xerces_init_mutex;
@@ -269,11 +272,11 @@ namespace citygml
 
     }
 
-    std::shared_ptr<const CityModel> parse(xercesc::InputSource& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger, std::string filename = "") {
+    std::shared_ptr<const CityModel> parse(xercesc::InputSource& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger, std::unique_ptr<TesselatorBase> tesselator, std::string filename = "") {
 
 
 
-        CityGMLHandlerXerces handler( params, filename, logger );
+        CityGMLHandlerXerces handler( params, filename, logger, std::move(tesselator) );
 
         xercesc::SAX2XMLReader* parser = xercesc::XMLReaderFactory::createXMLReader();
         parser->setFeature(xercesc::XMLUni::fgSAX2CoreNameSpaces, false);
@@ -306,10 +309,13 @@ namespace citygml
         return handler.getModel();
     }
 
-    std::shared_ptr<const CityModel> load(std::istream& stream, const ParserParams& params, std::shared_ptr<CityGMLLogger> logger)
+    std::shared_ptr<const CityModel> load(std::istream& stream, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger)
     {
         if (!logger) {
             logger = std::make_shared<StdLogger>();
+            if(tesselator) {
+                tesselator->setLogger(logger);
+            }
         }
 
         if (!initXerces(logger)) {
@@ -317,13 +323,16 @@ namespace citygml
         }
 
         StdBinInputSource streamSource(stream);
-        return parse(streamSource, params, logger);
+        return parse(streamSource, params, logger, std::move(tesselator));
     }
 
-    std::shared_ptr<const CityModel> load( const std::string& fname, const ParserParams& params , std::shared_ptr<CityGMLLogger> logger)
+    std::shared_ptr<const CityModel> load( const std::string& fname, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger)
     {
         if (!logger) {
             logger = std::make_shared<StdLogger>();
+            if(tesselator) {
+                tesselator->setLogger(logger);
+            }
         }
 
         if (!initXerces(logger)) {
@@ -336,7 +345,7 @@ namespace citygml
         try {
 #endif
             xercesc::LocalFileInputSource fileSource(fileName.get());
-            return parse(fileSource, params, logger, fname);
+            return parse(fileSource, params, logger, std::move(tesselator), fname);
 #ifdef NDEBUG
         } catch (xercesc::XMLException& e) {
             CITYGML_LOG_ERROR(logger, "Error parsing file " << fname << ": " << e.getMessage());

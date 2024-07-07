@@ -42,6 +42,7 @@
 #include <citygml/polygon.h>
 #include <citygml/material.h>
 #include <citygml/texture.h>
+#include <citygml/tesselator.h>
 #include <citygml/citygmllogger.h>
 
 #include <algorithm>
@@ -248,7 +249,8 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( const std::string
     }
 #endif
 
-    std::shared_ptr<const citygml::CityModel> city = citygml::load( fileName, settings._params, m_logger );
+    std::unique_ptr<TesselatorBase> tesselator = std::unique_ptr<TesselatorBase>(new Tesselator(nullptr));
+    std::shared_ptr<const citygml::CityModel> city = citygml::load( fileName, settings._params, std::move(tesselator), m_logger );
 
     ReadResult rr = readCity( city, settings );
 
@@ -280,8 +282,8 @@ osgDB::ReaderWriter::ReadResult ReaderWriterCityGML::readNode( std::istream& fin
     std::streambuf* cerrsb = std::cerr.rdbuf( osg::notify(osg::NOTICE).rdbuf() );
 
     osg::notify(osg::NOTICE) << "Parsing CityGML stream..." << std::endl;
-
-    std::shared_ptr<const citygml::CityModel> city = citygml::load( fin, settings._params );
+    std::unique_ptr<TesselatorBase> tesselator = std::unique_ptr<TesselatorBase>(new Tesselator(nullptr));
+    std::shared_ptr<const citygml::CityModel> city = citygml::load( fin, settings._params, std::move(tesselator), m_logger);
 
     ReadResult rr = readCity( city, settings );
 

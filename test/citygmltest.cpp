@@ -21,8 +21,14 @@
 #include <citygml/citygml.h>
 #include <citygml/citymodel.h>
 #include <citygml/cityobject.h>
+#include <citygml/geometry.h>
+#include <citygml/implictgeometry.h>
 
-void analyzeObject( const citygml::CityObject*, unsigned int );
+#ifdef LIBCITYGML_USE_OPENGL
+#include <citygml/tesselator.h>
+#endif //LIBCITYGML_USE_OPENGL
+
+void analyzeObject( const citygml::CityObject&, unsigned int );
 
 void usage()
 {
@@ -37,7 +43,7 @@ void usage()
         << "                   SolitaryVegetationObject, WaterBody, TINRelief, LandUse," << std::endl
         << "                   Tunnel, Bridge, BridgeConstructionElement," << std::endl
         << "                   BridgeInstallation, BridgePart, All" << std::endl
-        << "                  and seperators |,&,~." << std::endl
+        << "                  and separators |,&,~." << std::endl
         << "                  Examples:" << std::endl
         << "                  \"All&~Track&~Room\" to parse everything but tracks & rooms" << std::endl
         << "                  \"Road&Railway\" to parse only roads & railways" << std::endl;
@@ -79,8 +85,13 @@ int main( int argc, char **argv )
 #else
 
     std::shared_ptr<const citygml::CityModel> city;
+#ifdef LIBCITYGML_USE_OPENGL
+    std::unique_ptr<TesselatorBase> tesselator = std::unique_ptr<TesselatorBase>(new Tesselator(nullptr));
+#else
+    std::unique_ptr<TesselatorBase> tesselator = nullptr;
+#endif // LIBCITYGML_USE_OPENGL
     try{
-        city = citygml::load( argv[fargc], params );
+        city = citygml::load( argv[fargc], params, std::move(tesselator) );
     }catch(const std::runtime_error& e){
         
     }
@@ -93,36 +104,35 @@ int main( int argc, char **argv )
 
     std::cout << "Done in " << difftime( end, start ) << " seconds." << std::endl;
 
-    /*
+    
     std::cout << "Analyzing the city objects..." << std::endl;
+    
+    const auto& cityObjects = city->getRootCityObjects();
 
-    citygml::CityObjectsMap::const_iterator it = cityObjectsMap.begin();
+    citygml::ConstCityObjects::const_iterator it = cityObjects.begin();
 
-    for ( ; it != cityObjectsMap.end(); ++it )
+    for ( ; it != cityObjects.end(); ++it )
     {
-        const citygml::CityObjects& v = it->second;
+        const citygml::CityObject& v = **it;
 
-        std::cout << ( log ? " Analyzing " : " Found " ) << v.size() << " " << citygml::getCityObjectsClassName( it->first ) << ( ( v.size() > 1 ) ? "s" : "" ) << "..." << std::endl;
+        //std::cout << ( log ? " Analyzing " : " Found " ) << v.size() << " " << v.getTypeAsString() << ( ( v.size() > 1 ) ? "s" : "" ) << "..." << std::endl;
 
-        if ( log )
-        {
-            for ( unsigned int i = 0; i < v.size(); i++ )
-            {
-                std::cout << "  + found object " << v[i]->getId();
-                if ( v[i]->getChildCount() > 0 ) std::cout << " with " << v[i]->getChildCount() << " children";
-                std::cout << " with " << v[i]->size() << " geometr" << ( ( v[i]->size() > 1 ) ? "ies" : "y" );
-                std::cout << std::endl;
-            }
-        }
+        // if ( log )
+        // {
+        //       std::cout << "  + found object " << v.getId();
+        //       if ( v.getChildCityObjectsCount() > 0 ) std::cout << " with " << v.getChildCityObjectsCount() << " children";
+        //       std::cout << " with " << v.getGeometriesCount() << " geometr" << ( ( v.getGeometriesCount() > 1 ) ? "ies" : "y" );
+        //       std::cout << " with " << v.getImplicitGeometryCount() << " implicit geometr" << ( ( v.getImplicitGeometryCount() > 1 ) ? "ies" : "y" );
+        //       std::cout << std::endl;
+        // }
     }
-    */
+    
 
     if ( log )
     {
         std::cout << std::endl << "Objects hierarchy:" << std::endl;
-//        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
-
-//        for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( roots[ i ], 2 );
+        const citygml::ConstCityObjects& roots = city->getRootCityObjects();
+        for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( *(roots[ i ]), 2 );
     }
 
     std::cout << "Done." << std::endl;
@@ -130,11 +140,64 @@ int main( int argc, char **argv )
     return EXIT_SUCCESS;
 }
 
-void analyzeObject( const citygml::CityObject* object, unsigned int indent )
-{
-//    for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
-//        std::cout << "Object " << citygml::getCityObjectsClassName( object->getType() ) << ": " << object->getId() << std::endl;
+void printIndent(unsigned int indent) {
+  for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
+}
 
-//    for ( unsigned int i = 0; i < object->getChildCount(); i++ )
-//        analyzeObject( object->getChild(i), indent+1 );
+void printGeometry( const citygml::Geometry& geometry, unsigned int indent ) 
+{
+  printIndent(indent);
+  std::cout << "Geometry for LOD" << geometry.getLOD() << ", type: " << geometry.getTypeAsString() << std::endl;
+  
+  if(geometry.getLineStringCount() > 0)
+  {
+    printIndent(indent+1);
+    std::cout << "Linestrings:" << geometry.getLineStringCount() << std::endl;
+  }
+  
+  if(geometry.getPolygonsCount() > 0)
+  {
+    printIndent(indent+1);
+    std::cout << "Polygons:" << geometry.getPolygonsCount() << std::endl;
+  }
+  
+  if(geometry.getGeometriesCount() >0)
+  {
+    printIndent(indent+1);
+    std::cout << "SubGeometries:" << std::endl;
+    for( unsigned int i = 0; i < geometry.getGeometriesCount(); i++ )
+    {
+      printGeometry(geometry.getGeometry(i), indent+1);
+    }
+  }
+}
+
+
+void printImplicitGeometry( const citygml::ImplicitGeometry& implicitGeometry, unsigned int indent ) 
+{
+    printIndent(indent);
+    std::cout << "Reference point " << implicitGeometry.getReferencePoint() << std::endl;
+    for ( unsigned int i = 0; i < implicitGeometry.getGeometriesCount(); i++ ) 
+    {
+        printGeometry( implicitGeometry.getGeometry(i), indent+1 );
+    }
+}
+
+void analyzeObject( const citygml::CityObject& object, unsigned int indent )
+{
+   printIndent(indent);
+   std::cout << "Object " << object.getTypeAsString() << ": " << object.getId() << std::endl;
+   
+   
+   for ( unsigned int i = 0; i < object.getGeometriesCount(); i++ ) 
+   {
+       printGeometry( object.getGeometry(i), indent+1 );
+   }
+   for ( unsigned int i = 0; i < object.getImplicitGeometryCount(); i++ ) 
+   {
+       printImplicitGeometry( object.getImplicitGeometry(i), indent+1 );
+   }
+
+   for ( unsigned int i = 0; i < object.getChildCityObjectsCount(); i++ )
+       analyzeObject( object.getChildCityObject(i), indent+1 );
 }

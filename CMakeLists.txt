@@ -1,10 +1,10 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0 FATAL_ERROR)
 
 PROJECT ( libcitygml )
 
 set(META_VERSION_MAJOR       "2")
-set(META_VERSION_MINOR       "2")
-set(META_VERSION_PATCH       "0")
+set(META_VERSION_MINOR       "5")
+set(META_VERSION_PATCH       "2")
 
 set(META_VERSION             "${META_VERSION_MAJOR}.${META_VERSION_MINOR}.${META_VERSION_PATCH}")
 
@@ -135,6 +135,9 @@ IF( MSVC AND LIBCITYGML_STATIC_CRT )
   ENDFOREACH( flag_var )
 ENDIF( MSVC AND LIBCITYGML_STATIC_CRT )
 
+
+OPTION(LIBCITYGML_USE_OPENGL "Set to OFF to prevent use of GL libraries. Tesselator won't be compiled." ON)
+
 # core
 ADD_SUBDIRECTORY( sources )
 
@@ -147,6 +150,7 @@ ENDIF(LIBCITYGML_OSGPLUGIN)
 # test
 OPTION(LIBCITYGML_TESTS "Set to ON to build libcitygml tests programs." ON)
 IF   (LIBCITYGML_TESTS)
+  enable_testing()
   ADD_SUBDIRECTORY( test )
 ENDIF(LIBCITYGML_TESTS)
 
@@ -217,3 +221,5 @@ IF(UNIX AND NOT APPLE)
       include(CPack)
   endif()
 ENDIF()
+
+
