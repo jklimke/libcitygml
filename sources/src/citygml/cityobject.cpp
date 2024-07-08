@@ -169,6 +169,10 @@ namespace citygml {
             return "BuildingInstallation";
         case CityObject::CityObjectsType::COT_BuildingFurniture:
             return "BuildingFurniture";
+        case CityObject::CityObjectsType::COT_BuildingConstructiveElement:
+            return "BuildingConstructiveElement";
+        case CityObject::CityObjectsType::COT_BuildingRoom:
+            return "BuildingRoom";
         case CityObject::CityObjectsType::COT_Door:
             return "Door";
         case CityObject::CityObjectsType::COT_Window:
@@ -183,6 +187,12 @@ namespace citygml {
             return "Railway";
         case CityObject::CityObjectsType::COT_Square:
             return "Square";
+        case CityObject::CityObjectsType::COT_Intersection:
+            return "Intersection";
+        case CityObject::CityObjectsType::COT_Section:
+            return "Section";
+        case CityObject::CityObjectsType::COT_Waterway:
+            return "Waterway";
         case CityObject::CityObjectsType::COT_PlantCover:
             return "PlantCover";
         case CityObject::CityObjectsType::COT_SolitaryVegetationObject:
@@ -226,7 +236,13 @@ namespace citygml {
         case CityObject::CityObjectsType::COT_TransportationObject:
             return "TransportationObject";
         case CityObject::CityObjectsType::COT_IntBuildingInstallation:
-	    return "IntBuildingInstallation";
+	        return "IntBuildingInstallation";
+        case CityObject::CityObjectsType::COT_GenericOccupiedSpace:
+	        return "GenericOccupiedSpace";
+        case CityObject::CityObjectsType::COT_GenericUnoccupiedSpace:
+	        return "GenericUnoccupiedSpace";
+        case CityObject::CityObjectsType::COT_GenericLogicalSpace:
+	        return "GenericLogicalSpace";
         default:
             return "Unknown";
         }
@@ -244,6 +260,8 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Room), CityObject::CityObjectsType::COT_Room},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_BuildingInstallation), CityObject::CityObjectsType::COT_BuildingInstallation},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_BuildingFurniture), CityObject::CityObjectsType::COT_BuildingFurniture},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_BuildingConstructiveElement), CityObject::CityObjectsType::COT_BuildingConstructiveElement},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_BuildingRoom), CityObject::CityObjectsType::COT_BuildingRoom},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Door), CityObject::CityObjectsType::COT_Door},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Window), CityObject::CityObjectsType::COT_Window},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_CityFurniture), CityObject::CityObjectsType::COT_CityFurniture},
@@ -251,6 +269,9 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Road), CityObject::CityObjectsType::COT_Road},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Railway), CityObject::CityObjectsType::COT_Railway},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Square), CityObject::CityObjectsType::COT_Square},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Intersection), CityObject::CityObjectsType::COT_Intersection},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Section), CityObject::CityObjectsType::COT_Section},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_Waterway), CityObject::CityObjectsType::COT_Waterway},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_PlantCover), CityObject::CityObjectsType::COT_PlantCover},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_SolitaryVegetationObject), CityObject::CityObjectsType::COT_SolitaryVegetationObject},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_WaterBody), CityObject::CityObjectsType::COT_WaterBody},
@@ -272,7 +293,10 @@ namespace citygml {
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_OuterCeilingSurface), CityObject::CityObjectsType::COT_OuterCeilingSurface},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_OuterFloorSurface), CityObject::CityObjectsType::COT_OuterFloorSurface},
          {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_TransportationObject), CityObject::CityObjectsType::COT_TransportationObject},
-	 {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_IntBuildingInstallation), CityObject::CityObjectsType::COT_IntBuildingInstallation}
+	     {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_IntBuildingInstallation), CityObject::CityObjectsType::COT_IntBuildingInstallation},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_GenericOccupiedSpace), CityObject::CityObjectsType::COT_GenericOccupiedSpace},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_GenericUnoccupiedSpace), CityObject::CityObjectsType::COT_GenericUnoccupiedSpace},
+         {cityObjectsTypeToLowerString(CityObject::CityObjectsType::COT_GenericLogicalSpace), CityObject::CityObjectsType::COT_GenericLogicalSpace}
     };
 
     CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid)

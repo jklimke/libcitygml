@@ -113,6 +113,19 @@ namespace citygml {
                 }));
             }
             return true;
+        } else if (node == NodeType::CORE_RelativeGeometryNode) {
+
+            if (attributes.hasXLinkAttribute()) {
+
+                std::string sharedGeomID = attributes.getXLinkValue();
+                m_factory.requestSharedGeometryWithID(m_model, sharedGeomID);
+            } else {
+
+                setParserForNextElement(new GeometryElementParser(m_documentParser, m_factory, m_logger, m_lodLevel, m_parentType, [this](Geometry* geom) {
+                    m_model->addGeometry(m_factory.shareGeometry(geom));
+                }));
+            }
+            return true;
         } else if (node == NodeType::CORE_LibraryObjectNode) {
             CITYGML_LOG_INFO(m_logger, "Skipping ImplicitGeometry child element <" << node  << ">  at " << getDocumentLocation() << " (Currently not supported!)");
             setParserForNextElement(new SkipElementParser(m_documentParser, m_logger));
@@ -139,6 +152,7 @@ namespace citygml {
             m_model->setReferencePoint(parseValue<TVec3d>(characters, m_logger, getDocumentLocation()));
             return true;
         } else if (   node == NodeType::CORE_RelativeGMLGeometryNode
+                   || node == NodeType::CORE_RelativeGeometryNode
                    || node == NodeType::GML_PointNode
                    || node == NodeType::CORE_ReferencePointNode
                    || node == NodeType::GML_ReferencePointNode
