@@ -41,6 +41,7 @@ namespace citygml {
         , m_lastAttributeType(AttributeType::String)
     {
         m_callback = callback;
+		m_model = nullptr;
     }
 
     std::string CityObjectElementParser::elementParserName() const

@@ -304,7 +304,7 @@ namespace citygml
         }
 #endif
 
-        delete parser;
+            delete parser;
 
         return handler.getModel();
     }
