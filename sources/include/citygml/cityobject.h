@@ -92,6 +92,7 @@ namespace citygml {
             COT_BuildingSubdivision,
             COT_Storey,
             COT_PointCloud,
+            COT_OtherConstruction,
 
             COT_All
         };

@@ -64,6 +64,11 @@ namespace citygml {
         NODETYPE( CORE, LibraryObject)
         NODETYPE( CORE, GenericAttribute)
 
+        NODETYPE( CORE, Lod0MultiSurface)
+        NODETYPE( CORE, Lod1MultiSurface)
+        NODETYPE( CORE, Lod2MultiSurface)
+        NODETYPE( CORE, Lod3MultiSurface)
+
         NODETYPE( CORE, Boundary )
         NODETYPE( CORE, RelativeGeometry )
 
@@ -230,6 +235,7 @@ namespace citygml {
         NODETYPE( CON, FillingSurface )
         NODETYPE( CON, WindowSurface )
         NODETYPE( CON, DoorSurface )
+        NODETYPE( CON, OtherConstruction )
 
         // BoundarySurfaceType
         NODETYPE( BLDG, WallSurface )
@@ -241,6 +247,15 @@ namespace citygml {
         NODETYPE( BLDG, CeilingSurface )
         NODETYPE( BLDG, OuterCeilingSurface )
         NODETYPE( BLDG, OuterFloorSurface )
+
+        NODETYPE( CON, WallSurface )
+        NODETYPE( CON, RoofSurface )
+        NODETYPE( CON, GroundSurface )
+        NODETYPE( CON, FloorSurface )
+        NODETYPE( CON, InteriorWallSurface )
+        NODETYPE( CON, CeilingSurface )
+        NODETYPE( CON, OuterCeilingSurface )
+        NODETYPE( CON, OuterFloorSurface )
         NODETYPE( BLDG, BuildingFurniture )
         NODETYPE( BLDG, IntBuildingInstallation)
         NODETYPE( BLDG, BuildingConstructiveElement)

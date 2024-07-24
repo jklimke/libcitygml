@@ -307,12 +307,20 @@ namespace citygml {
             return "TrafficSpace";
         case CityObject::CityObjectsType::COT_AuxiliaryTrafficSpace:
             return "AuxiliaryTrafficSpace";
+        case CityObject::CityObjectsType::COT_FillingSurface:
+            return "FillingSurface";
+        case CityObject::CityObjectsType::COT_WindowSurface:
+            return "WindowSurface";
+        case CityObject::CityObjectsType::COT_DoorSurface:
+            return "DoorSurface";
         case CityObject::CityObjectsType::COT_BuildingSubdivision:
             return "BuildingSubdivision";
         case CityObject::CityObjectsType::COT_Storey:
             return "Storey";
         case CityObject::CityObjectsType::COT_PointCloud:
             return "PointCloud";
+        case CityObject::CityObjectsType::COT_OtherConstruction:
+            return "OtherConstruction";
         default:
             return "Unknown";
         }

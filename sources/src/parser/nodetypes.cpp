@@ -107,6 +107,11 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, LibraryObject)
                 INITIALIZE_NODE( CORE, GenericAttribute)
 
+                INITIALIZE_NODE( CORE, Lod0MultiSurface)
+                INITIALIZE_NODE( CORE, Lod1MultiSurface)
+                INITIALIZE_NODE( CORE, Lod2MultiSurface)
+                INITIALIZE_NODE( CORE, Lod3MultiSurface)
+
                 INITIALIZE_NODE( CORE, Boundary)
                 INITIALIZE_NODE( CORE, RelativeGeometry)
 
@@ -278,6 +283,7 @@ namespace citygml {
                 INITIALIZE_NODE( CON, FillingSurface )
                 INITIALIZE_NODE( CON, WindowSurface )
                 INITIALIZE_NODE( CON, DoorSurface )
+                INITIALIZE_NODE( CON, OtherConstruction )
 
                 // BoundarySurfaceType
                 INITIALIZE_NODE( BLDG, WallSurface )
@@ -289,6 +295,15 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, CeilingSurface )
                 INITIALIZE_NODE( BLDG, OuterCeilingSurface )
                 INITIALIZE_NODE( BLDG, OuterFloorSurface )
+
+                INITIALIZE_NODE( CON, WallSurface )
+                INITIALIZE_NODE( CON, RoofSurface )
+                INITIALIZE_NODE( CON, GroundSurface )
+                INITIALIZE_NODE( CON, FloorSurface )
+                INITIALIZE_NODE( CON, InteriorWallSurface )
+                INITIALIZE_NODE( CON, CeilingSurface )
+                INITIALIZE_NODE( CON, OuterCeilingSurface )
+                INITIALIZE_NODE( CON, OuterFloorSurface )
                 INITIALIZE_NODE( BLDG, BuildingFurniture )
                 INITIALIZE_NODE( BLDG, RoofType)
                 INITIALIZE_NODE( BLDG, IntBuildingInstallation)
@@ -521,6 +536,11 @@ namespace citygml {
     DEFINE_NODE( CORE, LibraryObject)
     DEFINE_NODE( CORE, GenericAttribute)
 
+    DEFINE_NODE( CORE, Lod0MultiSurface)
+    DEFINE_NODE( CORE, Lod1MultiSurface)
+    DEFINE_NODE( CORE, Lod2MultiSurface)
+    DEFINE_NODE( CORE, Lod3MultiSurface)
+
     DEFINE_NODE( CORE, Boundary)
     DEFINE_NODE( CORE, RelativeGeometry)
 
@@ -703,6 +723,7 @@ namespace citygml {
     DEFINE_NODE( CON, FillingSurface )
     DEFINE_NODE( CON, WindowSurface )
     DEFINE_NODE( CON, DoorSurface )
+    DEFINE_NODE( CON, OtherConstruction )
 
     // BoundarySurfaceType
     DEFINE_NODE( BLDG, WallSurface )
@@ -714,6 +735,16 @@ namespace citygml {
     DEFINE_NODE( BLDG, CeilingSurface )
     DEFINE_NODE( BLDG, OuterCeilingSurface )
     DEFINE_NODE( BLDG, OuterFloorSurface )
+
+    DEFINE_NODE( CON, WallSurface )
+    DEFINE_NODE( CON, RoofSurface )
+    DEFINE_NODE( CON, GroundSurface )
+    DEFINE_NODE( CON, FloorSurface )
+    DEFINE_NODE( CON, InteriorWallSurface )
+    DEFINE_NODE( CON, CeilingSurface )
+    DEFINE_NODE( CON, OuterCeilingSurface )
+    DEFINE_NODE( CON, OuterFloorSurface )
+
     DEFINE_NODE( BLDG, BuildingFurniture )
     DEFINE_NODE( BLDG, RoofType)
     DEFINE_NODE( BLDG, IntBuildingInstallation)
@@ -748,9 +779,9 @@ namespace citygml {
     DEFINE_NODE( WTR, Function )
     DEFINE_NODE( WTR, Usage )
     DEFINE_NODE( WTR, WaterLevel )
-    DEFINE_NODE( WTR, Lod0MultiCurve )
-    DEFINE_NODE( WTR, Lod0MultiSurface )
+    DEFINE_NODE( WTR, Lod0MultiCurve)
     DEFINE_NODE( WTR, Lod1MultiCurve )
+    DEFINE_NODE( WTR, Lod0MultiSurface)
     DEFINE_NODE( WTR, Lod1MultiSurface )
     DEFINE_NODE( WTR, Lod1Solid )
     DEFINE_NODE( WTR, Lod2Solid )
