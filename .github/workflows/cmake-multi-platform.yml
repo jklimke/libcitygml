@@ -81,7 +81,7 @@ jobs:
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DLIBCITYGML_TESTS=true
-        -DLIBCITYGML_OSGPLUGIN=true
+        -DLIBCITYGML_OSGPLUGIN=${{ contains(matrix.os, 'windows') && 'false' || 'true' }}
         -DLIBCITYGML_USE_OPENGL=true
         ${{ contains(matrix.os, 'windows') && format('-DCMAKE_SYSTEM_PREFIX_PATH={0} -DLIBCITYGML_USE_GDAL=OFF -DLIBCITYGML_STATIC_CRT=OFF', steps.xerces-build.outputs.Xerces-C-install-dir) || '' }}
         -S ${{ github.workspace }}
