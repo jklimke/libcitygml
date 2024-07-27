@@ -8,6 +8,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  XERCES_C_VERSION: v3.2.5
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -23,9 +26,9 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
         build_type: [Release]
-        c_compiler: [gcc, clang]
+        c_compiler: [gcc, clang, msvc]
         include:
           - os: ubuntu-latest
             c_compiler: gcc
@@ -39,14 +42,29 @@ jobs:
           - os: windows-latest
             c_compiler: clang
           - os: ubuntu-latest
-            c_compiler: cl
+            c_compiler: msvc
           
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install Packages for Ubuntu      
-      run:  sudo apt-get update && sudo apt-get install -y --fix-missing libxerces-c-dev libxerces-c3.2 libgdal30 libgdal-dev libopenscenegraph-dev     
+    - name: Install Packages for Ubuntu
+      if: ${{ (contains(matrix.os, 'ubuntu')) }}
+      run: sudo apt-get update && sudo apt-get install -y --fix-missing libxerces-c-dev libxerces-c3.2 libgdal30 libgdal-dev libopenscenegraph-dev
+
+    - name: Prebuild XercesC on Windows
+      id: xerces-build
+      if: ${{ (contains(matrix.os, 'windows')) }}
+      run: >
+        git clone https://github.com/apache/xerces-c.git &&
+        cd xerces-c &&
+        git checkout ${{env.XERCES_C_VERSION}} &&
+        cmake -B build -DBUILD_SHARED_LIBS=False -DCMAKE_INSTALL_PREFIX="./installDir" &&
+        cmake --build build --config ${{ matrix.build_type }} &&
+        cmake --install build --config ${{ matrix.build_type }} &&
+        echo "Xerces-C-install-dir=$PWD/installDir" >> "$env:GITHUB_OUTPUT" &&
+        cd ..
+
     - name: Set reusable strings
       # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
       id: strings
@@ -64,7 +82,8 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DLIBCITYGML_TESTS=true
         -DLIBCITYGML_OSGPLUGIN=true
-        -DLIBCITYGML_USE_OPENGL=true        
+        -DLIBCITYGML_USE_OPENGL=true
+        ${{ contains(matrix.os, 'windows') && format('-DCMAKE_SYSTEM_PREFIX_PATH={0} -DLIBCITYGML_USE_GDAL=OFF -DLIBCITYGML_STATIC_CRT=OFF', steps.xerces-build.outputs.Xerces-C-install-dir) || '' }}
         -S ${{ github.workspace }}
 
     - name: Build
