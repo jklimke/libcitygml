@@ -434,6 +434,7 @@ namespace citygml {
                 INITIALIZE_NODE( BRID, BridgeConstructionElement )
                 INITIALIZE_NODE( BRID, BridgeInstallation )
                 INITIALIZE_NODE( BRID, BridgePart )
+                INITIALIZE_NODE( BRID, BoundedBy )
                 INITIALIZE_NODE( BRID, OuterBridgeConstruction )
                 INITIALIZE_NODE( BRID, OuterBridgeInstallation )
                 INITIALIZE_NODE( BRID, Lod1Geometry )
@@ -888,6 +889,7 @@ namespace citygml {
     DEFINE_NODE( BRID, Lod2Geometry )
     DEFINE_NODE( BRID, Lod3Geometry ) 
     DEFINE_NODE( BRID, Lod4Geometry )
+    DEFINE_NODE( BRID, BoundedBy )
 
     // APP
     DEFINE_NODE( APP, Appearance )

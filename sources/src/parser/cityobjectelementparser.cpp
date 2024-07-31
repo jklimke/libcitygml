@@ -386,7 +386,8 @@ namespace citygml {
                    || node == NodeType::BRID_OuterBridgeInstallationNode
                    || node == NodeType::BRID_BridgeConstructionElementNode
                    || node == NodeType::BRID_BridgeInstallationNode
-                   || node == NodeType::BRID_BridgePartNode) {
+                   || node == NodeType::BRID_BridgePartNode
+                   || node == NodeType::BRID_BoundedByNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -746,7 +747,8 @@ namespace citygml {
                     || node == NodeType::BRID_OuterBridgeInstallationNode
                     || node == NodeType::BRID_BridgeConstructionElementNode
                     || node == NodeType::BRID_BridgeInstallationNode
-                    || node == NodeType::BRID_BridgePartNode) {
+                    || node == NodeType::BRID_BridgePartNode
+                    || node == NodeType::BRID_BoundedByNode) {
 
             return true;
         }
