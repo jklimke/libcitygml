@@ -36,9 +36,16 @@ namespace citygml {
         const bool validBounds() const;
 
     protected:
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         TVec3d m_lowerBound;
         TVec3d m_upperBound;
         std::string m_srsName;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream&, const citygml::Envelope& );

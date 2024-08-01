@@ -45,7 +45,14 @@ public:
     int asInteger(int defaultValue=0) const;
 private:
     AttributeType m_type;
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
     std::string m_value;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 };
 
 LIBCITYGML_EXPORT std::ostream& operator<<(std::ostream& os, const AttributeValue& o);

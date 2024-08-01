@@ -52,10 +52,24 @@ namespace citygml {
     protected:
         Texture( const std::string& id );
         Texture( const std::string& id, const std::string& type );
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::string m_url;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
         bool m_repeat;
         WrapMode m_wrapMode;
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         TVec4f m_borderColor;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     };
 
 }

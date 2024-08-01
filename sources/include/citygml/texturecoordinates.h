@@ -28,7 +28,14 @@ namespace citygml {
         bool eraseCoordinate(unsigned int i);
 
     protected:
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::string m_targetID;
         std::vector<TVec2f> m_coordlist;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     };
 }

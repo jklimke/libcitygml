@@ -141,12 +141,19 @@ namespace citygml {
     protected:
         CityObjectsType m_type;
 
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::vector<std::unique_ptr<Geometry> > m_geometries;
         std::vector<std::unique_ptr<ImplicitGeometry> > m_implicitGeometries;
         std::vector<std::unique_ptr<CityObject> > m_children;
         std::unique_ptr<Address> m_address;
         std::unique_ptr<RectifiedGridCoverage> m_rectifiedGridCoverage;
         std::unique_ptr<ExternalReference> m_externalReference;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream& os, const CityObject& o );

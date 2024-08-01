@@ -45,11 +45,18 @@ namespace citygml {
 
 
     private:
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition> > m_themeMatMapFront;
         std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition> > m_themeMatMapBack;
 
         std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition> > m_themeTexMapFront;
         std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition> > m_themeTexMapBack;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 
     };
 }
