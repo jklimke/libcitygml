@@ -53,12 +53,19 @@ namespace citygml {
 
 
     protected:
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::unordered_map<std::string, std::shared_ptr<Appearance> > m_appearancesMap;
         std::vector<std::shared_ptr<MaterialTargetDefinition> > m_materialTargetDefinitions;
         std::vector<std::shared_ptr<TextureTargetDefinition> > m_texTargetDefinitions;
         std::unordered_set<std::string> m_themes;
         std::unordered_map<std::string, AppearanceTarget*> m_appearanceTargetsMap;
         std::shared_ptr<CityGMLLogger> m_logger;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
 
         void addThemesFrom(std::shared_ptr<Appearance> surfaceData);
     };

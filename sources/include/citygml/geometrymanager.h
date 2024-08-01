@@ -36,9 +36,16 @@ namespace citygml {
             std::string geometryID;
         };
 
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::shared_ptr<CityGMLLogger> m_logger;
         std::vector<GeometryRequest> m_geometryRequests;
         std::unordered_map<std::string, std::shared_ptr<Geometry> > m_sharedGeometries;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     };
 
 }

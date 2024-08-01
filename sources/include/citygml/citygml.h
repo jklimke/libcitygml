@@ -82,8 +82,15 @@ namespace citygml
         bool pruneEmptyObjects;
         bool tesselate;
         bool keepVertices;
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::string destSRS;
         std::string srcSRS;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     };
 
     LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( std::istream& stream, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger = nullptr);

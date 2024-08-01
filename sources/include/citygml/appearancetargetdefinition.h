@@ -39,8 +39,16 @@ namespace citygml {
         virtual ~AppearanceTargetDefinition() {}
 
     protected:
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::string m_targetID;
         std::shared_ptr<T> m_appearance;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
+
     };
 
 }

@@ -45,9 +45,16 @@ namespace citygml {
 
     protected:
         Material( const std::string& id );
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         TVec3f m_diffuse;
         TVec3f m_emissive;
         TVec3f m_specular;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
         float m_ambientIntensity;
         float m_shininess;
         float m_transparency;

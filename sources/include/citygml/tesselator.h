@@ -77,8 +77,16 @@ private:
     GLUtesselator *_tobj;
     GLenum _curMode;
     GLenum _windingRule;
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
     std::vector<TVec3d> _originalVertices;
     std::vector<ContourRef> _contourQueue;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
+
 };
 
 #endif // __TESSELATOR_H__

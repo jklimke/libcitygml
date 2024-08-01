@@ -14,8 +14,16 @@ namespace citygml {
     class Texture;
     class GeoreferencedTexture;
 
+
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
     class LIBCITYGML_EXPORT Appearance : public Object, public std::enable_shared_from_this<Appearance>
     {
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     public:
         std::string getType() const;
 
@@ -41,8 +49,16 @@ namespace citygml {
 
     protected:
         Appearance( const std::string& id, const std::string& typeString );
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::string m_typeString;
         std::vector<std::string> m_themes;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
+
         bool m_isFront;
     };
 

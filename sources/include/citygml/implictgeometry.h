@@ -38,8 +38,15 @@ namespace citygml {
         ImplicitGeometry(const std::string& id);
 
         TransformationMatrix     m_matrix;
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         TVec3d                   m_referencePoint;
         std::vector<std::shared_ptr<Geometry> >   m_geometries;
         std::string              m_srsName;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     };
 }

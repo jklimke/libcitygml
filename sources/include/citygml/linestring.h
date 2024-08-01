@@ -32,8 +32,15 @@ namespace citygml {
 
     protected:
         LineString(const std::string& id);
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::vector<TVec2d> m_vertices_2d;
         std::vector<TVec3d> m_vertices_3d;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
         int m_dimensions;
     };
 

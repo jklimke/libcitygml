@@ -70,10 +70,17 @@ namespace citygml {
     protected:
         void appearanceTargetCreated(AppearanceTarget* obj);
 
+#ifdef _MSC_VER
+#	pragma warning(push)
+#	pragma warning(disable : 4251 4275)
+#endif
         std::shared_ptr<CityGMLLogger> m_logger;
         std::unique_ptr<AppearanceManager> m_appearanceManager;
         std::unique_ptr<PolygonManager> m_polygonManager;
         std::unique_ptr<GeometryManager> m_geometryManager;
+#ifdef _MSC_VER
+#	pragma warning(pop)
+#endif
     };
 
 }
