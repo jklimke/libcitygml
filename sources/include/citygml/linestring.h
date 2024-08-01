@@ -2,6 +2,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/object.h>
+#include <citygml/warnings.h>
 #include <citygml/vecs.hpp>
 #include <memory>
 
@@ -32,15 +33,10 @@ namespace citygml {
 
     protected:
         LineString(const std::string& id);
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::vector<TVec2d> m_vertices_2d;
         std::vector<TVec3d> m_vertices_3d;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
         int m_dimensions;
     };
 

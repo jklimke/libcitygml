@@ -159,6 +159,7 @@ SET(PUBLIC_HEADER
   include/citygml/address.h
   include/citygml/rectifiedgridcoverage.h
   include/citygml/externalreference.h
+  include/citygml/warnings.h
 )
 
 

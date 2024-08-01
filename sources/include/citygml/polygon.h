@@ -10,6 +10,7 @@
 #include <citygml/vecs.hpp>
 #include <citygml/linearring.h>
 #include <citygml/geometry.h>
+#include <citygml/warnings.h>
 
 class TesselatorBase;
 
@@ -121,10 +122,7 @@ namespace citygml {
 
         TVec3d computeNormal();
 
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::vector<TVec3d> m_vertices;
         std::unordered_map<std::string, std::vector<TVec2f> > m_themeToFrontTexCoordsMap;
         std::unordered_map<std::string, std::vector<TVec2f> > m_themeToBackTexCoordsMap;
@@ -132,20 +130,13 @@ namespace citygml {
 
         std::shared_ptr<LinearRing> m_exteriorRing;
         std::vector<std::shared_ptr<LinearRing> > m_interiorRings;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
 
         bool m_negNormal;
         bool m_finished;
 
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::shared_ptr<CityGMLLogger> m_logger;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
     };
 }

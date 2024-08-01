@@ -32,6 +32,7 @@
 #include <citygml/cityobject.h>
 #include <citygml/envelope.h>
 #include <citygml/tesselatorbase.h>
+#include <citygml/warnings.h>
 
 namespace citygml
 {
@@ -82,15 +83,10 @@ namespace citygml
         bool pruneEmptyObjects;
         bool tesselate;
         bool keepVertices;
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::string destSRS;
         std::string srcSRS;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
     };
 
     LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( std::istream& stream, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger = nullptr);

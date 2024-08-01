@@ -5,6 +5,7 @@
 
 #include <citygml/object.h>
 #include <citygml/transformmatrix.h>
+#include <citygml/warnings.h>
 #include <citygml/vecs.hpp>
 
 namespace citygml {
@@ -38,15 +39,10 @@ namespace citygml {
         ImplicitGeometry(const std::string& id);
 
         TransformationMatrix     m_matrix;
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         TVec3d                   m_referencePoint;
         std::vector<std::shared_ptr<Geometry> >   m_geometries;
         std::string              m_srsName;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
     };
 }

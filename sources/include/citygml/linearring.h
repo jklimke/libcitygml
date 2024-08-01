@@ -5,6 +5,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/object.h>
+#include <citygml/warnings.h>
 #include <citygml/vecs.hpp>
 
 namespace citygml {
@@ -36,14 +37,9 @@ namespace citygml {
     protected:
         bool m_exterior;
 
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::vector<TVec3d> m_vertices;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
     };
 
 }

@@ -2,6 +2,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/object.h>
+#include <citygml/warnings.h>
 
 namespace citygml {
 
@@ -26,18 +27,13 @@ namespace citygml {
         void setThoroughfareNumber(const std::string& thoroughfareNumber);
 
     protected:
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::string m_country;
         std::string m_locality;
         std::string m_thoroughfareName;
         std::string m_thoroughfareNumber;
         std::string m_postalCode;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
     };
 
 } /* namespace citygml */

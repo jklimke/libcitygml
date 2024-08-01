@@ -6,6 +6,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/vecs.hpp>
+#include <citygml/warnings.h>
 #include <citygml/object.h>
 
 namespace citygml {
@@ -28,14 +29,9 @@ namespace citygml {
         bool eraseCoordinate(unsigned int i);
 
     protected:
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::string m_targetID;
         std::vector<TVec2f> m_coordlist;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
     };
 }

@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <citygml/citygml_api.h>
+#include <citygml/warnings.h>
 
 namespace citygml {
 
@@ -36,16 +37,11 @@ namespace citygml {
             std::string polygonID;
         };
 
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::shared_ptr<CityGMLLogger> m_logger;
         std::vector<PolygonRequest> m_polygonRequests;
         std::unordered_map<std::string, std::shared_ptr<Polygon> > m_sharedPolygons;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
     };
 
 }

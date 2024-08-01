@@ -6,6 +6,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/appearancetarget.h>
+#include <citygml/warnings.h>
 
 class TesselatorBase;
 
@@ -87,19 +88,14 @@ namespace citygml {
 
         unsigned int m_lod;
 
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         std::string m_srsName;
 
         std::vector<std::shared_ptr<Geometry> > m_childGeometries;
 
         std::vector<std::shared_ptr<Polygon> > m_polygons;
         std::vector<std::shared_ptr<LineString> > m_lineStrings;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream& os, const citygml::Geometry& s );

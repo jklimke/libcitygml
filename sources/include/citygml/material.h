@@ -2,6 +2,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/appearance.h>
+#include <citygml/warnings.h>
 #include <citygml/vecs.hpp>
 #include <unordered_set>
 
@@ -45,16 +46,11 @@ namespace citygml {
 
     protected:
         Material( const std::string& id );
-#ifdef _MSC_VER
-#	pragma warning(push)
-#	pragma warning(disable : 4251 4275)
-#endif
+        PRAGMA_WARN_DLL_BEGIN
         TVec3f m_diffuse;
         TVec3f m_emissive;
         TVec3f m_specular;
-#ifdef _MSC_VER
-#	pragma warning(pop)
-#endif
+        PRAGMA_WARN_DLL_END
         float m_ambientIntensity;
         float m_shininess;
         float m_transparency;
