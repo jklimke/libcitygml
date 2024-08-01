@@ -125,7 +125,7 @@ namespace citygml {
         }
 
         for (std::unique_ptr<ImplicitGeometry>& implictGeom : m_implicitGeometries) {
-            for (int i = 0; i < implictGeom->getGeometriesCount(); i++) {
+            for (unsigned int i = 0; i < implictGeom->getGeometriesCount(); i++) {
                 implictGeom->getGeometry(i).finish(tesselator, optimize, logger);
             }
         }
