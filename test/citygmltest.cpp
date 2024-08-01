@@ -92,7 +92,7 @@ int main( int argc, char **argv )
 #endif // LIBCITYGML_USE_OPENGL
     try{
         city = citygml::load( argv[fargc], params, std::move(tesselator) );
-    }catch(const std::runtime_error& e){
+    }catch(const std::runtime_error&){
         
     }
 #endif

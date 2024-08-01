@@ -35,7 +35,7 @@ namespace citygml {
 
     unsigned int ImplicitGeometry::getGeometriesCount() const
     {
-        return m_geometries.size();
+        return static_cast<unsigned int>(m_geometries.size());
     }
 
     Geometry& ImplicitGeometry::getGeometry(unsigned int i) const

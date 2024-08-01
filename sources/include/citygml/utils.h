@@ -72,3 +72,11 @@ inline std::string trim( const std::string& s, const std::string& t = " \t\r\n" 
     return trim_left( trim_right( s, t ), t );
 }
 
+#ifdef _MSC_VER
+#define PRAGMA_WARN_DLL_BEGIN _Pragma("warning(push)") \
+_Pragma("warning(disable : 4251 4275)")
+#define PRAGMA_WARN_DLL_END _Pragma("warning(pop)")
+#else
+#define PRAGMA_WARN_DLL_BEGIN
+#define PRAGMA_WARN_DLL_END
+#endif

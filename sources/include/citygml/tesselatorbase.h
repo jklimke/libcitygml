@@ -18,6 +18,7 @@
 #define __TESSELATORBASE_H__
 
 #include <citygml/citygml_api.h>
+#include <citygml/utils.h>
 #include <citygml/vecs.hpp>
 #include <vector>
 #include <memory>
@@ -55,6 +56,7 @@ public:
     bool keepVertices() const;
 
 protected:
+    PRAGMA_WARN_DLL_BEGIN
     std::vector<TVec3d> _vertices;
     std::vector<std::vector<TVec2f> > _texCoordsLists;
     std::vector<unsigned int> _indices;
@@ -62,6 +64,7 @@ protected:
 
     std::vector<unsigned int> _curIndices;
     std::shared_ptr<citygml::CityGMLLogger> _logger;
+    PRAGMA_WARN_DLL_END
 
     bool _keepVertices;
 };
