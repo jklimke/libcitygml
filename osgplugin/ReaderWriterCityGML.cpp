@@ -177,7 +177,7 @@ public:
 
     virtual ReadResult readNode( const std::string&, const osgDB::ReaderWriter::Options* ) const override;
     virtual ReadResult readNode( std::istream&, const osgDB::ReaderWriter::Options* ) const override;
-  virtual ReadResult readObject(const std::string& fileName, const osgDB::ReaderWriter::Options* options) const
+    virtual ReadResult readObject(const std::string& fileName, const osgDB::ReaderWriter::Options* options) const override
     {
         ReadResult result = readNode(fileName, options);
         osg::Node* node = result.getNode();
@@ -185,7 +185,7 @@ public:
         else return result;
     }
 
-    virtual ReadResult readObject(std::istream& fin, const Options* options) const
+    virtual ReadResult readObject(std::istream& fin, const Options* options) const override
     {
         ReadResult result = readNode(fin, options);
         osg::Node* node = result.getNode();
