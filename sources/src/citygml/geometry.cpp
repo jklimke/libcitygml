@@ -20,7 +20,7 @@ namespace citygml {
 
     unsigned int Geometry::getPolygonsCount() const
     {
-        return m_polygons.size();
+        return static_cast<unsigned int>(m_polygons.size());
     }
 
     std::shared_ptr<Polygon> Geometry::getPolygon(unsigned int i)
@@ -35,7 +35,7 @@ namespace citygml {
 
     unsigned int Geometry::getLineStringCount() const
     {
-        return m_lineStrings.size();
+        return static_cast<unsigned int>(m_lineStrings.size());
     }
 
     std::shared_ptr<LineString> Geometry::getLineString(unsigned int i)
@@ -50,7 +50,7 @@ namespace citygml {
 
     unsigned int Geometry::getGeometriesCount() const
     {
-        return m_childGeometries.size();
+        return static_cast<unsigned int>(m_childGeometries.size());
     }
 
     const Geometry& Geometry::getGeometry(unsigned int i) const
@@ -164,7 +164,7 @@ namespace citygml {
         for ( unsigned int i = 0; i < s.getPolygonsCount(); i++ )
         {
             os << s.getPolygon(i);
-            count += s.getPolygon(i)->getVertices().size();
+            count += static_cast<unsigned int>(s.getPolygon(i)->getVertices().size());
         }
 
         os << "  @ " << s.getPolygonsCount() << " polys [" << count << " vertices]" << std::endl;

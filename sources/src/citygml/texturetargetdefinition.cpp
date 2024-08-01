@@ -9,7 +9,7 @@ namespace citygml {
 
     unsigned int TextureTargetDefinition::getTextureCoordinatesCount() const
     {
-        return m_coordinatesList.size();
+        return static_cast<unsigned int>(m_coordinatesList.size());
     }
 
     std::shared_ptr<TextureCoordinates> TextureTargetDefinition::getTextureCoordinates(unsigned int i)

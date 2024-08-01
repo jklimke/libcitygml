@@ -96,7 +96,7 @@ namespace citygml
 
     unsigned int CityModel::getNumRootCityObjects() const
     {
-        return m_roots.size();
+        return static_cast<unsigned int>(m_roots.size());
     }
 
     CityObject& CityModel::getRootCityObject(int i)
