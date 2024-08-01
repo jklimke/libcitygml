@@ -112,6 +112,10 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, Lod2MultiSurface)
                 INITIALIZE_NODE( CORE, Lod3MultiSurface)
 
+                INITIALIZE_NODE( CORE, Lod1Solid)
+                INITIALIZE_NODE( CORE, Lod2Solid)
+                INITIALIZE_NODE( CORE, Lod3Solid)
+
                 INITIALIZE_NODE( CORE, Boundary)
                 INITIALIZE_NODE( CORE, RelativeGeometry)
 
@@ -547,6 +551,10 @@ namespace citygml {
     DEFINE_NODE( CORE, Lod1MultiSurface)
     DEFINE_NODE( CORE, Lod2MultiSurface)
     DEFINE_NODE( CORE, Lod3MultiSurface)
+
+    DEFINE_NODE( CORE, Lod1Solid)
+    DEFINE_NODE( CORE, Lod2Solid)
+    DEFINE_NODE( CORE, Lod3Solid)
 
     DEFINE_NODE( CORE, Boundary)
     DEFINE_NODE( CORE, RelativeGeometry)

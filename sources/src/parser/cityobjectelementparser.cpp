@@ -452,7 +452,10 @@ namespace citygml {
                    || node == NodeType::GEN_Lod3MultiSurfaceNode
                    || node == NodeType::CORE_Lod0MultiSurfaceNode
                    || node == NodeType::CORE_Lod2MultiSurfaceNode
-                   || node == NodeType::CORE_Lod3MultiSurfaceNode) {
+                   || node == NodeType::CORE_Lod3MultiSurfaceNode
+                   || node == NodeType::CORE_Lod1SolidNode
+                   || node == NodeType::CORE_Lod2SolidNode
+                   || node == NodeType::CORE_Lod3SolidNode) {
 
             parseGeometryForLODLevel(2);
         } else if (node == NodeType::BLDG_Lod3MultiCurveNode
@@ -742,6 +745,9 @@ namespace citygml {
                     || node == NodeType::CORE_Lod1MultiSurfaceNode
                     || node == NodeType::CORE_Lod2MultiSurfaceNode
                     || node == NodeType::CORE_Lod3MultiSurfaceNode
+                    || node == NodeType::CORE_Lod1SolidNode
+                    || node == NodeType::CORE_Lod2SolidNode
+                    || node == NodeType::CORE_Lod3SolidNode
                     || node == NodeType::CORE_BoundaryNode
                     || node == NodeType::BRID_OuterBridgeConstructionNode
                     || node == NodeType::BRID_OuterBridgeInstallationNode

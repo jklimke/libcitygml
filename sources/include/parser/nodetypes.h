@@ -69,6 +69,10 @@ namespace citygml {
         NODETYPE( CORE, Lod2MultiSurface)
         NODETYPE( CORE, Lod3MultiSurface)
 
+        NODETYPE( CORE, Lod1Solid )
+        NODETYPE( CORE, Lod2Solid )
+        NODETYPE( CORE, Lod3Solid )
+
         NODETYPE( CORE, Boundary )
         NODETYPE( CORE, RelativeGeometry )
 
