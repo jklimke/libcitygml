@@ -17,6 +17,7 @@
 #include <citygml/citygml.h>
 #include <citygml/citygmllogger.h>
 
+#include <atomic>
 #include <fstream>
 #include <string>
 #include <memory>
@@ -246,20 +247,20 @@ namespace citygml
     };
 
     std::mutex xerces_init_mutex;
-    bool xerces_initialized;
+    std::atomic_bool xerces_initialized;
 
     bool initXerces(std::shared_ptr<CityGMLLogger> logger) {
 
-        if (xerces_initialized) {
+        if (xerces_initialized.load()) {
             return true;
         }
 
         try {
             xerces_init_mutex.lock();
             // Check xerces_initialized again... it could have changed while waiting for the mutex
-            if (!xerces_initialized) {
+            if (!xerces_initialized.load()) {
                 xercesc::XMLPlatformUtils::Initialize();
-                xerces_initialized = true;
+                xerces_initialized.exchange(true);
             }
             xerces_init_mutex.unlock();
         }
