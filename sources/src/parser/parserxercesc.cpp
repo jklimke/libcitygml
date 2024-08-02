@@ -256,13 +256,12 @@ namespace citygml
         }
 
         try {
-            xerces_init_mutex.lock();
+            std::lock_guard<std::mutex> lock(xerces_init_mutex);
             // Check xerces_initialized again... it could have changed while waiting for the mutex
             if (!xerces_initialized.load()) {
                 xercesc::XMLPlatformUtils::Initialize();
                 xerces_initialized.exchange(true);
             }
-            xerces_init_mutex.unlock();
         }
         catch (const xercesc::XMLException& e) {
             CITYGML_LOG_ERROR(logger, "Could not initialize xercesc XMLPlatformUtils, a XML Exception occurred : " << toStdString(e.getMessage()));
