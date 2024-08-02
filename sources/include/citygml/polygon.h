@@ -101,7 +101,7 @@ namespace citygml {
             return m_interiorRings;
         }
 
-        virtual ~Polygon();
+        ~Polygon() override;
 
     protected:
         Polygon( const std::string& id, std::shared_ptr<CityGMLLogger> logger );

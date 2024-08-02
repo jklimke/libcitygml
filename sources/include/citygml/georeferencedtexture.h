@@ -15,11 +15,11 @@ namespace citygml {
         bool getPreferWorldFile() const;
         void setPreferWorldFile(bool value);
 
-        virtual std::shared_ptr<Texture> asTexture();
-        virtual std::shared_ptr<const Texture> asTexture() const;
+        std::shared_ptr<Texture> asTexture() override;
+        std::shared_ptr<const Texture> asTexture() const override;
 
-        virtual std::shared_ptr<GeoreferencedTexture> asGeoreferencedTexture();
-        virtual std::shared_ptr<const GeoreferencedTexture> asGeoreferencedTexture() const;
+        std::shared_ptr<GeoreferencedTexture> asGeoreferencedTexture() override;
+        std::shared_ptr<const GeoreferencedTexture> asGeoreferencedTexture() const override;
 
         // TODO support referencePoint and orientation
 

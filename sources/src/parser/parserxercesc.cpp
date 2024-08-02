@@ -77,14 +77,14 @@ public:
     }
 
     // DocumentLocation interface
-    virtual const std::string& getDocumentFileName() const {
+    const std::string& getDocumentFileName() const override {
         return m_fileName;
     }
 
-    virtual uint64_t getCurrentLine() const {
+    uint64_t getCurrentLine() const override {
         return m_locator != nullptr ? m_locator->getLineNumber() : 0;
     }
-    virtual uint64_t getCurrentColumn() const {
+    uint64_t getCurrentColumn() const override {
         return m_locator != nullptr ? m_locator->getColumnNumber() : 0;
     }
 
@@ -99,13 +99,13 @@ public:
      : citygml::Attributes(logger), m_attrs(attrs), m_location(docLoc) {}
 
     // Attributes interface
-    virtual std::string getAttribute(const std::string& attname, const std::string& defvalue) const {
+    std::string getAttribute(const std::string& attname, const std::string& defvalue) const override {
         std::shared_ptr<XMLCh> name = toXercesString(attname);
         std::string value = toStdString(m_attrs.getValue(name.get()));
         return value.empty() ? defvalue : value;
     }
 
-    virtual const DocumentLocation& getDocumentLocation() const {
+    const DocumentLocation& getDocumentLocation() const override {
         return m_location;
     }
 
@@ -123,36 +123,36 @@ public:
 
 
     // ContentHandler interface
-    virtual void startElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname, const xercesc::Attributes& attrs) override {
+    void startElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname, const xercesc::Attributes& attrs) override {
         AttributesXercesAdapter attributes(attrs, m_documentLocation, m_logger);
         // We need to empty m_lastcharacters here, because if a tag is empty, characters(...) will never be called and this variable will contain wrong values
         m_lastcharacters = "";
         CityGMLDocumentParser::startElement(toStdString(qname), attributes);
     }
 
-    virtual void endElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname) override {
+    void endElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname) override {
         CityGMLDocumentParser::endElement(toStdString(qname), m_lastcharacters);
         m_lastcharacters = "";
     }
 
-    virtual void characters(const XMLCh* const chars, const XMLSize_t) override {
+    void characters(const XMLCh* const chars, const XMLSize_t) override {
         m_lastcharacters += toStdString(chars);
     }
 
-    virtual void startDocument() override {
+    void startDocument() override {
         CityGMLDocumentParser::startDocument();
     }
 
-    virtual void endDocument() override {
+    void endDocument() override {
         CityGMLDocumentParser::endDocument();
     }
 
-    virtual void setDocumentLocator(const xercesc::Locator* const locator) override {
+    void setDocumentLocator(const xercesc::Locator* const locator) override {
         m_documentLocation.setLocator(locator);
     }
 
     // CityGMLDocumentParser interface
-    virtual const citygml::DocumentLocation& getDocumentLocation() const override {
+    const citygml::DocumentLocation& getDocumentLocation() const override {
         return m_documentLocation;
     }
 protected:
@@ -166,11 +166,11 @@ class StdBinInputStream : public xercesc::BinInputStream
 public:
     explicit StdBinInputStream( std::istream& stream ) : BinInputStream(), m_stream( stream ) {}
 
-    virtual ~StdBinInputStream() {}
+    ~StdBinInputStream() override {}
 
-    virtual XMLFilePos curPos() const { return m_stream.tellg(); }
+    XMLFilePos curPos() const override { return m_stream.tellg(); }
 
-    virtual XMLSize_t readBytes( XMLByte* const buf, const XMLSize_t maxToRead )
+    XMLSize_t readBytes( XMLByte* const buf, const XMLSize_t maxToRead ) override
     {
         assert( sizeof(XMLByte) == sizeof(char) );
         if ( !m_stream ) return 0;
@@ -178,7 +178,7 @@ public:
         return (XMLSize_t)m_stream.gcount();
     }
 
-    virtual const XMLCh* getContentType() const { return nullptr; }
+    const XMLCh* getContentType() const override { return nullptr; }
 
 private:
     std::istream& m_stream;
@@ -189,12 +189,12 @@ class StdBinInputSource : public xercesc::InputSource
 public:
     explicit StdBinInputSource( std::istream& stream ) : m_stream( stream ) {}
 
-    virtual xercesc::BinInputStream* makeStream() const
+    xercesc::BinInputStream* makeStream() const override
     {
         return new StdBinInputStream( m_stream );
     }
 
-    ~StdBinInputSource() {
+    ~StdBinInputSource() override {
     }
 
 private:
@@ -212,7 +212,7 @@ namespace citygml
 
         };
 
-        virtual void log(LOGLEVEL level, const std::string& message, const char* file, int line) const
+        void log(LOGLEVEL level, const std::string& message, const char* file, int line) const override
         {
             std::ostream& stream = level == LOGLEVEL::LL_ERROR ? std::cerr : std::cout;
 

@@ -45,10 +45,10 @@ namespace citygml {
 
         std::string toString() const override;
 
-        virtual std::shared_ptr<Texture> asTexture() override;
-        virtual std::shared_ptr<const Texture> asTexture() const override;
+        std::shared_ptr<Texture> asTexture() override;
+        std::shared_ptr<const Texture> asTexture() const override;
 
-        virtual ~Texture();
+        ~Texture() override;
 
     protected:
         Texture( const std::string& id );

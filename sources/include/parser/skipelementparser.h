@@ -21,10 +21,10 @@ namespace citygml {
         SkipElementParser(CityGMLDocumentParser& documentParser, std::shared_ptr<CityGMLLogger> logger, const NodeType::XMLNode& skipNode = NodeType::XMLNode());
 
         // ElementParser interface
-        virtual std::string elementParserName() const override;
-        virtual bool handlesElement(const NodeType::XMLNode &node) const override;
-        virtual bool startElement(const NodeType::XMLNode& node, Attributes& attributes) override;
-        virtual bool endElement(const NodeType::XMLNode& node, const std::string& characters)  override;
+        std::string elementParserName() const override;
+        bool handlesElement(const NodeType::XMLNode &node) const override;
+        bool startElement(const NodeType::XMLNode& node, Attributes& attributes) override;
+        bool endElement(const NodeType::XMLNode& node, const std::string& characters)  override;
 
     private:
         NodeType::XMLNode m_skipNode;
