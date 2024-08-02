@@ -309,24 +309,19 @@ namespace citygml
         return handler.getModel();
     }
 
-    std::shared_ptr<const CityModel> load(std::istream& stream, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger)
+    inline std::unique_ptr<StdBinInputSource> createInputSource(std::istream& stream)
     {
-        if (!logger) {
-            logger = std::make_shared<StdLogger>();
-            if(tesselator) {
-                tesselator->setLogger(logger);
-            }
-        }
-
-        if (!initXerces(logger)) {
-            return nullptr;
-        }
-
-        StdBinInputSource streamSource(stream);
-        return parse(streamSource, params, logger, std::move(tesselator));
+        return std::unique_ptr<StdBinInputSource>(new StdBinInputSource(stream));
     }
 
-    std::shared_ptr<const CityModel> load( const std::string& fname, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger)
+    inline std::unique_ptr<xercesc::LocalFileInputSource> createInputSource(const std::string& fname)
+    {
+        std::shared_ptr<XMLCh> fileName = toXercesString(fname);
+        return std::unique_ptr<xercesc::LocalFileInputSource>(new xercesc::LocalFileInputSource(fileName.get()));
+    }
+
+    template <typename T>
+    std::shared_ptr<const CityModel> loadInternal(T& input, const ParserParams& params, std::unique_ptr<TesselatorBase>& tesselator, std::shared_ptr<CityGMLLogger>& logger)
     {
         if (!logger) {
             logger = std::make_shared<StdLogger>();
@@ -338,21 +333,28 @@ namespace citygml
         if (!initXerces(logger)) {
             return nullptr;
         }
-
-        std::shared_ptr<XMLCh> fileName = toXercesString(fname);
 
 #ifdef NDEBUG
         try {
 #endif
-            xercesc::LocalFileInputSource fileSource(fileName.get());
-            return parse(fileSource, params, logger, std::move(tesselator), fname);
+            std::unique_ptr<xercesc::InputSource> source = createInputSource(input);
+            return parse(*source, params, logger, std::move(tesselator));
 #ifdef NDEBUG
         } catch (xercesc::XMLException& e) {
-            CITYGML_LOG_ERROR(logger, "Error parsing file " << fname << ": " << e.getMessage());
+            CITYGML_LOG_ERROR(logger, "Error parsing file: " << e.getMessage());
             return nullptr;
         }
 #endif
+    }
 
+    std::shared_ptr<const CityModel> load(std::istream& stream, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger)
+    {
+        return loadInternal(stream, params, tesselator, logger);
+    }
+
+    std::shared_ptr<const CityModel> load( const std::string& fname, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger)
+    {
+        return loadInternal(fname, params, tesselator, logger);
     }
 }
 
