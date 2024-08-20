@@ -415,6 +415,10 @@ namespace citygml {
         NODETYPE( BRID, Lod2Geometry)
         NODETYPE( BRID, Lod3Geometry)
         NODETYPE( BRID, Lod4Geometry)
+        NODETYPE( BRID, Lod1MultiSurface)
+        NODETYPE( BRID, Lod2MultiSurface)
+        NODETYPE( BRID, Lod3MultiSurface)
+        NODETYPE( BRID, Lod4MultiSurface)
         
         NODETYPE( BRID, WallSurface)
         NODETYPE( BRID, RoofSurface)

@@ -431,6 +431,7 @@ namespace citygml {
             parseGeometryForLODLevel(0, CityObject::CityObjectsType::COT_RoofSurface);
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
+                   || node == NodeType::BRID_Lod1MultiSurfaceNode
                    || node == NodeType::BLDG_Lod1SolidNode
                    || node == NodeType::BLDG_Lod1TerrainIntersectionNode
                    || node == NodeType::GEN_Lod1TerrainIntersectionNode
@@ -446,6 +447,7 @@ namespace citygml {
             parseGeometryForLODLevel(1);
         } else if (node == NodeType::BLDG_Lod2MultiCurveNode
                    || node == NodeType::BLDG_Lod2MultiSurfaceNode
+                   || node == NodeType::BRID_Lod2MultiSurfaceNode
                    || node == NodeType::BLDG_Lod2SolidNode
                    || node == NodeType::BLDG_Lod2TerrainIntersectionNode
                    || node == NodeType::GEN_Lod2TerrainIntersectionNode
@@ -470,6 +472,7 @@ namespace citygml {
             parseGeometryForLODLevel(2);
         } else if (node == NodeType::BLDG_Lod3MultiCurveNode
                    || node == NodeType::BLDG_Lod3MultiSurfaceNode
+                   || node == NodeType::BRID_Lod3MultiSurfaceNode
                    || node == NodeType::CORE_Lod3MultiSurfaceNode
                    || node == NodeType::BLDG_Lod3SolidNode
                    || node == NodeType::BLDG_Lod3TerrainIntersectionNode
@@ -484,6 +487,7 @@ namespace citygml {
         } else if (node == NodeType::BLDG_Lod4MultiCurveNode
                    || node == NodeType::BLDG_Lod4SolidNode
                    || node == NodeType::BLDG_Lod4MultiSurfaceNode
+                   || node == NodeType::BRID_Lod4MultiSurfaceNode
                    || node == NodeType::BLDG_Lod4SolidNode
                    || node == NodeType::BLDG_Lod4TerrainIntersectionNode
                    || node == NodeType::GEN_Lod4TerrainIntersectionNode
@@ -768,7 +772,11 @@ namespace citygml {
                     || node == NodeType::BRID_Lod1GeometryNode
                     || node == NodeType::BRID_Lod2GeometryNode
                     || node == NodeType::BRID_Lod3GeometryNode
-                    || node == NodeType::BRID_Lod4GeometryNode) {
+                    || node == NodeType::BRID_Lod4GeometryNode
+                    || node == NodeType::BRID_Lod1MultiSurfaceNode
+                    || node == NodeType::BRID_Lod2MultiSurfaceNode
+                    || node == NodeType::BRID_Lod3MultiSurfaceNode
+                    || node == NodeType::BRID_Lod4MultiSurfaceNode) {
 
             return true;
         }
