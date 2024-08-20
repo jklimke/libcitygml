@@ -78,6 +78,7 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingSubdivision));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingRoom));
                 typeIDTypeMap.insert(HANDLE_TYPE(CORE, PointCloud));
+                typeIDTypeMap.insert(HANDLE_TYPE(CORE, ClosureSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(FRN, CityFurniture));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Track));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Road));
@@ -105,6 +106,15 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgePart));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, OuterBridgeConstruction));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, OuterBridgeInstallation));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, WallSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, RoofSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, GroundSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, ClosureSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, FloorSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, InteriorWallSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, CeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, OuterCeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, OuterFloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(CON, FillingSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(CON, WindowSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(CON, DoorSurface));
@@ -754,7 +764,11 @@ namespace citygml {
                     || node == NodeType::BRID_BridgeConstructionElementNode
                     || node == NodeType::BRID_BridgeInstallationNode
                     || node == NodeType::BRID_BridgePartNode
-                    || node == NodeType::BRID_BoundedByNode) {
+                    || node == NodeType::BRID_BoundedByNode
+                    || node == NodeType::BRID_Lod1GeometryNode
+                    || node == NodeType::BRID_Lod2GeometryNode
+                    || node == NodeType::BRID_Lod3GeometryNode
+                    || node == NodeType::BRID_Lod4GeometryNode) {
 
             return true;
         }

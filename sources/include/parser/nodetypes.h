@@ -75,6 +75,7 @@ namespace citygml {
 
         NODETYPE( CORE, Boundary )
         NODETYPE( CORE, RelativeGeometry )
+        NODETYPE( CORE, ClosureSurface)
 
         // GRP
         NODETYPE( GRP, CityObjectGroup )
@@ -414,6 +415,16 @@ namespace citygml {
         NODETYPE( BRID, Lod2Geometry)
         NODETYPE( BRID, Lod3Geometry)
         NODETYPE( BRID, Lod4Geometry)
+        
+        NODETYPE( BRID, WallSurface)
+        NODETYPE( BRID, RoofSurface)
+        NODETYPE( BRID, GroundSurface)
+        NODETYPE( BRID, ClosureSurface)
+        NODETYPE( BRID, FloorSurface)
+        NODETYPE( BRID, InteriorWallSurface)
+        NODETYPE( BRID, CeilingSurface)
+        NODETYPE( BRID, OuterCeilingSurface)
+        NODETYPE( BRID, OuterFloorSurface)
 
         // APP
         NODETYPE( APP, Appearance )

@@ -118,6 +118,7 @@ namespace citygml {
 
                 INITIALIZE_NODE( CORE, Boundary)
                 INITIALIZE_NODE( CORE, RelativeGeometry)
+                INITIALIZE_NODE( CORE, ClosureSurface)
 
                 // GRP
                 INITIALIZE_NODE( GRP, CityObjectGroup )
@@ -445,7 +446,16 @@ namespace citygml {
                 INITIALIZE_NODE( BRID, Lod2Geometry )
                 INITIALIZE_NODE( BRID, Lod3Geometry )
                 INITIALIZE_NODE( BRID, Lod4Geometry )
-                
+                INITIALIZE_NODE( BRID, WallSurface)
+                INITIALIZE_NODE( BRID, RoofSurface)
+                INITIALIZE_NODE( BRID, GroundSurface)
+                INITIALIZE_NODE( BRID, ClosureSurface)
+                INITIALIZE_NODE( BRID, FloorSurface)
+                INITIALIZE_NODE( BRID, InteriorWallSurface)
+                INITIALIZE_NODE( BRID, CeilingSurface)
+                INITIALIZE_NODE( BRID, OuterCeilingSurface)
+                INITIALIZE_NODE( BRID, OuterFloorSurface)
+
                 // APP
                 INITIALIZE_NODE( APP, Appearance )
                 INITIALIZE_NODE( APP, SimpleTexture )
@@ -558,6 +568,7 @@ namespace citygml {
 
     DEFINE_NODE( CORE, Boundary)
     DEFINE_NODE( CORE, RelativeGeometry)
+    DEFINE_NODE( CORE, ClosureSurface)
 
     // GRP
     DEFINE_NODE( GRP, CityObjectGroup )
@@ -898,6 +909,15 @@ namespace citygml {
     DEFINE_NODE( BRID, Lod3Geometry ) 
     DEFINE_NODE( BRID, Lod4Geometry )
     DEFINE_NODE( BRID, BoundedBy )
+    DEFINE_NODE( BRID, WallSurface)
+    DEFINE_NODE( BRID, RoofSurface)
+    DEFINE_NODE( BRID, GroundSurface)
+    DEFINE_NODE( BRID, ClosureSurface)
+    DEFINE_NODE( BRID, FloorSurface)
+    DEFINE_NODE( BRID, InteriorWallSurface)
+    DEFINE_NODE( BRID, CeilingSurface)
+    DEFINE_NODE( BRID, OuterCeilingSurface)
+    DEFINE_NODE( BRID, OuterFloorSurface)
 
     // APP
     DEFINE_NODE( APP, Appearance )
