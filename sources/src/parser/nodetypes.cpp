@@ -517,11 +517,17 @@ namespace citygml {
         std::string nodeName = lowerName;
 
         size_t pos = nodeName.find_first_of( ":" );
-        if ( pos != std::string::npos ) {
+        auto prefix = nodeName.substr(0, pos);
+        if (pos != std::string::npos) {
             nodeName = nodeName.substr(pos + 1);
         } else {
             // node has no prefix... try with core prefix
             return getXMLNodeFor("core:" + name);
+        }
+
+        if (prefix == "tran")
+        {
+            return getXMLNodeFor("trans:" + nodeName);
         }
 
         auto it = nodeNameTypeMap.find(nodeName);
