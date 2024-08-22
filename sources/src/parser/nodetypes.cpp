@@ -376,6 +376,10 @@ namespace citygml {
                 INITIALIZE_NODE( VEG, Lod2Geometry )
                 INITIALIZE_NODE( VEG, Lod3Geometry )
                 INITIALIZE_NODE( VEG, Lod4Geometry )
+                INITIALIZE_NODE(VEG, Lod1MultiSurface)
+                INITIALIZE_NODE(VEG, Lod2MultiSurface)
+                INITIALIZE_NODE(VEG, Lod3MultiSurface)
+                INITIALIZE_NODE(VEG, Lod4MultiSurface)
 
                 // TRANS
                 INITIALIZE_NODE( TRANS, TransportationComplex )
@@ -523,6 +527,14 @@ namespace citygml {
         } else {
             // node has no prefix... try with core prefix
             return getXMLNodeFor("core:" + name);
+        }
+
+        // It's technically possible to name the prefix anything
+        // but adding handling for common alternatives used in test files
+        // brg used instead of brid in Delft_3dfier_v2.gml
+        if (prefix == "brg")
+        {
+            return getXMLNodeFor("brid:" + nodeName);
         }
 
         if (prefix == "tran")
@@ -849,6 +861,10 @@ namespace citygml {
     DEFINE_NODE( VEG, Lod2Geometry )
     DEFINE_NODE( VEG, Lod3Geometry )
     DEFINE_NODE( VEG, Lod4Geometry )
+    DEFINE_NODE(VEG, Lod1MultiSurface)
+    DEFINE_NODE(VEG, Lod2MultiSurface)
+    DEFINE_NODE(VEG, Lod3MultiSurface)
+    DEFINE_NODE(VEG, Lod4MultiSurface)
 
     // TRANS
     DEFINE_NODE( TRANS, TransportationComplex )
