@@ -114,17 +114,10 @@ typedef TVec2< double >			TVec2d;
 template< class T > class TVec3
 {
 public:
-    union
-    {
-        T xyz[3];
-        T rgb[3];
-        struct { T x, y, z; };
-        struct { T r, g, b; };
-    };
+    T x, y, z;
 
 public:
     TVec3( const T x = (T)0, const T y = (T)0, const T z = (T)0 );
-    TVec3( const T vec[] );
 
     inline T length() const;
     inline T sqrLength() const;
@@ -148,9 +141,6 @@ public:
 
     inline bool operator==( const TVec3<T>& rhs ) const;
     inline bool operator!=( const TVec3<T>& rhs ) const;
-
-    inline operator T*() { return xyz; }
-    inline operator const T*() const { return xyz; }
 };
 
 template< class T > inline TVec3<T>::TVec3( const T x, const T y, const T z )
@@ -158,11 +148,6 @@ template< class T > inline TVec3<T>::TVec3( const T x, const T y, const T z )
     this->x = x;
     this->y = y;
     this->z = z;
-}
-
-template< class T >	inline TVec3<T>::TVec3( const T vec[] )
-{
-    memcpy( xyz, vec, 3 * sizeof(T) );
 }
 
 template< class T > inline T TVec3<T>::length() const
@@ -301,13 +286,7 @@ typedef TVec3< double >			TVec3d;
 template< class T > class TVec4
 {
 public:
-    union
-    {
-        T xyzw[4];
-        T rgba[4];
-        struct { T x, y, z, w; };
-        struct { T r, g, b, a; };
-    };
+    T x, y, z, w;
 
 public:
     TVec4( const T x = (T)0, const T y = (T)0, const T z = (T)0, const T w = (T)0 )
@@ -317,10 +296,6 @@ public:
         this->z = z;
         this->w = w;
     }
-
-    TVec4( const T vec[], const T w ) { memcpy( xyzw, vec, 4 * sizeof(T) ); this->w = w; }
-
-    TVec4( const T vec[] ) { memcpy( xyzw, vec, 4 * sizeof(T) ); }
 };
 
 template<class T> inline std::ostream& operator<<( std::ostream & os, TVec4<T> const & v )
