@@ -60,9 +60,9 @@ namespace citygml {
         } else if (node == NodeType::CORE_InformationSystemNode) {
             model->informationSystem = characters;
         } else if (node == NodeType::CORE_NameNode) {
-            model->externalObject.name = characters;
+            model->externalObject.setName(characters);
         } else if (node == NodeType::CORE_UriNode) {
-            model->externalObject.uri = characters;
+            model->externalObject.setUri(characters);
         }
         
         return GMLObjectElementParser::parseChildElementEndTag(node, characters);
