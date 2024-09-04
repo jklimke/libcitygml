@@ -20,7 +20,7 @@ The project is based on the CMAKE build system and should be pretty straight for
 
 Dependencies:
 
-The XercesC xml parsing library is the only requirement compiling and using libcitygml. Please use a version > 3.1 compiled with an SDK that is compatible with C++11.
+The XercesC xml parsing library is the only requirement compiling and using libcitygml. Please use a version > 3.1 compiled with an SDK that is compatible with C++11. If the library is not found by CMake use `-DCMAKE_SYSTEM_PREFIX_PATH=<XercesC install path>`.
 
 OpenGL is required if you want to use the tesselator provided in the project. Otherwise, you can provide another implementation by inheriting TesselatorBase, or not use tesselation. Set the cmake option "LIBCITYGML_USE_OPENGL" to OFF to disable the use of OpenGL.
 
