@@ -4,6 +4,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/vecs.hpp>
+#include <citygml/warnings.h>
 
 namespace citygml {
 
@@ -36,9 +37,11 @@ namespace citygml {
         const bool validBounds() const;
 
     protected:
+        PRAGMA_WARN_DLL_BEGIN
         TVec3d m_lowerBound;
         TVec3d m_upperBound;
         std::string m_srsName;
+        PRAGMA_WARN_DLL_END
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream&, const citygml::Envelope& );

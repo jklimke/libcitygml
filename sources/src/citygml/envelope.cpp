@@ -54,8 +54,8 @@ namespace citygml {
 
     const bool Envelope::validBounds() const
     {
-        return !(ISNAN(m_lowerBound[0]) ||  ISNAN(m_lowerBound[1]) || ISNAN(m_lowerBound[2])
-                || ISNAN(m_upperBound[0]) ||  ISNAN(m_upperBound[1]) || ISNAN(m_upperBound[2]));
+        return !(ISNAN(m_lowerBound.x) ||  ISNAN(m_lowerBound.y) || ISNAN(m_lowerBound.z)
+                || ISNAN(m_upperBound.x) ||  ISNAN(m_upperBound.y) || ISNAN(m_upperBound.z));
     }
 
     std::ostream& operator<<( std::ostream& os, const Envelope& e )
