@@ -4,6 +4,7 @@
 #include <string>
 
 #include <citygml/object.h>
+#include <citygml/warnings.h>
 
 namespace citygml {
 
@@ -39,8 +40,11 @@ namespace citygml {
         virtual ~AppearanceTargetDefinition() {}
 
     protected:
+        PRAGMA_WARN_DLL_BEGIN
         std::string m_targetID;
         std::shared_ptr<T> m_appearance;
+        PRAGMA_WARN_DLL_END
+
     };
 
 }
