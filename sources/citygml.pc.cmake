@@ -1,11 +1,11 @@
 prefix=${CMAKE_INSTALL_PREFIX}
-exec_prefix=${BIN_INSTALL_DIR}
-libdir=${LIB_INSTALL_DIR}
+exec_prefix=${CMAKE_INSTALL_BINDIR}
+libdir=${CMAKE_INSTALL_LIBDIR}
 includedir=${INCLUDE_INSTALL_DIR}
 
 Name: citygml
 Description: Read and Write CityGML files
 Requires: ${PKG_CONFIG_REQUIRES}
 Version: ${META_VERSION}
-Libs: -L${LIB_INSTALL_DIR} -lcitygml${LIBCITYGML_POSTFIX}
+Libs: -L${CMAKE_INSTALL_LIBDIR} -lcitygml${LIBCITYGML_POSTFIX}
 Cflags: -I${INCLUDE_INSTALL_DIR}
