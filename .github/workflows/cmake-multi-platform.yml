@@ -72,6 +72,7 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "install-output-dir=${{ github.workspace }}/install" >> "$GITHUB_OUTPUT"
     
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
@@ -84,12 +85,21 @@ jobs:
         -DLIBCITYGML_TESTS=true
         -DLIBCITYGML_OSGPLUGIN=${{ contains(matrix.os, 'windows') && 'false' || 'true' }}
         -DLIBCITYGML_USE_OPENGL=true
+        -DCMAKE_INSTALL_PREFIX="${{ steps.strings.outputs.install-output-dir }}"
         ${{ contains(matrix.os, 'windows') && format('-DCMAKE_SYSTEM_PREFIX_PATH={0} -DLIBCITYGML_USE_GDAL=OFF -DLIBCITYGML_STATIC_CRT=OFF', steps.xerces-build.outputs.Xerces-C-install-dir) || '' }}
         -S ${{ github.workspace }}
 
     - name: Build
       # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+      run: |
+        cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+        cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: libcitygml-${{ matrix.os }}-${{ matrix.c_compiler }}-${{ matrix.build_type }}
+        path: ${{ steps.strings.outputs.install-output-dir }}
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
