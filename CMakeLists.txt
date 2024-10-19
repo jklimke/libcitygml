@@ -152,6 +152,8 @@ OPTION(LIBCITYGML_TESTS "Set to ON to build libcitygml tests programs." ON)
 IF   (LIBCITYGML_TESTS)
   enable_testing()
   ADD_SUBDIRECTORY( test )
+
+  ADD_SUBDIRECTORY( systemTests )
 ENDIF(LIBCITYGML_TESTS)
 
 
