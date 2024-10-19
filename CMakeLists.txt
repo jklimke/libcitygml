@@ -1,4 +1,6 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.8.0 FATAL_ERROR)
+
+set(CMAKE_CXX_STANDARD 17)
 
 PROJECT ( libcitygml )
 
@@ -58,9 +60,9 @@ ENDIF(WIN32)
 if(UNIX)
     if(APPLE)
         MESSAGE(STATUS "APPLE")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
     else(APPLE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
         MESSAGE(STATUS "Setting UNIX compile flags: ${CMAKE_CXX_FLAGS}")
     endif(APPLE)
