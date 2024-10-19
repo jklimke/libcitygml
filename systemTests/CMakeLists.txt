@@ -14,6 +14,7 @@ FetchContent_MakeAvailable(gtest)
 
 add_executable(citygmlSystemTests
 	systemTestsMain.cpp
+	FileReadTests.cpp
 )
 
 target_include_directories(citygmlSystemTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../sources/include)
