@@ -39,17 +39,3 @@ public:
    friend std::istream& operator>> (std::istream &is, EnumClassBitmask& r) { underlying_type tmp;  is >> tmp; r.t = static_cast<T>(tmp);  return is; }
    friend std::ostream& operator<< (std::ostream &os, const EnumClassBitmask& r) { os << static_cast<underlying_type>(r.t); return os; }
 };
-
-#define ENUM_CLASS_BITWISE_OPERATORS(type_name) \
-/*constexpr*/ LIBCITYGML_EXPORT type_name operator|(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) | std::underlying_type<type_name>::type(r)); } \
-/*constexpr*/ LIBCITYGML_EXPORT type_name operator&(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) & std::underlying_type<type_name>::type(r)); } \
-/*constexpr*/ LIBCITYGML_EXPORT type_name operator^(type_name l, type_name r) { return type_name(std::underlying_type<type_name>::type(l) ^ std::underlying_type<type_name>::type(r)); } \
-/*constexpr*/ LIBCITYGML_EXPORT type_name operator~(type_name l) { return type_name(~std::underlying_type<type_name>::type(l)); }
-
-#define ENUM_CLASS_BITWISE_OPERATORS_DEFS(type_name) \
-/*constexpr*/ LIBCITYGML_EXPORT type_name operator|(type_name l, type_name r); \
-/*constexpr*/ LIBCITYGML_EXPORT type_name operator&(type_name l, type_name r); \
-/*constexpr*/ LIBCITYGML_EXPORT type_name operator^(type_name l, type_name r);\
-/*constexpr*/ LIBCITYGML_EXPORT type_name operator~(type_name l);
-
-

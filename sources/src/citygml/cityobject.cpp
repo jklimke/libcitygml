@@ -9,9 +9,41 @@
 #include <unordered_map>
 #include <algorithm>
 
-ENUM_CLASS_BITWISE_OPERATORS(citygml::CityObject::CityObjectsType);
 
 namespace citygml {
+
+    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { 
+        return EnumClassBitmask<CityObject::CityObjectsType>(l) | EnumClassBitmask<CityObject::CityObjectsType>(r);
+    }
+    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r) {
+        return EnumClassBitmask<CityObject::CityObjectsType>(l) & EnumClassBitmask<CityObject::CityObjectsType>(r);
+    }
+    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r) {
+        return EnumClassBitmask<CityObject::CityObjectsType>(l) ^ EnumClassBitmask<CityObject::CityObjectsType>(r);
+    }
+    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator~(CityObject::CityObjectsType l) {
+        return ~EnumClassBitmask<CityObject::CityObjectsType>(l);
+    }
+
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObjectsTypeMask l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+        return l | toMask(r);
+    }
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator&(CityObjectsTypeMask l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+        return l & toMask(r);
+    }
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator^(CityObjectsTypeMask l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+        return l ^ toMask(r);
+    }
+
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObjectsTypeMask r) { /* constexpr with C++23*/
+        return toMask(l) | r;
+    }
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator&(CityObject::CityObjectsType l, CityObjectsTypeMask r) { /* constexpr with C++23*/
+        return toMask(l) & r;
+    }
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator^(CityObject::CityObjectsType l, CityObjectsTypeMask r) { /* constexpr with C++23*/
+        return toMask(l) ^ r;
+    }
 
     CityObject::CityObject(const std::string& id, CityObject::CityObjectsType type)  : FeatureObject( id ), m_type( type )
     {

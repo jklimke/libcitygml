@@ -157,7 +157,18 @@ namespace citygml {
     LIBCITYGML_EXPORT std::string cityObjectsTypeToString(const CityObject::CityObjectsType& t);
     LIBCITYGML_EXPORT CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid);
 
-}
+    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator~(CityObject::CityObjectsType l);
 
-ENUM_CLASS_BITWISE_OPERATORS_DEFS(citygml::CityObject::CityObjectsType);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObjectsTypeMask l, CityObject::CityObjectsType r);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator&(CityObjectsTypeMask l, CityObject::CityObjectsType r);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator^(CityObjectsTypeMask l, CityObject::CityObjectsType r);
+
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObjectsTypeMask r);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator&(CityObject::CityObjectsType l, CityObjectsTypeMask r);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator^(CityObject::CityObjectsType l, CityObjectsTypeMask r);
+
+}
 
