@@ -14,6 +14,7 @@ FetchContent_MakeAvailable(gtest)
 
 add_executable(citygmlSystemTests
 	systemTestsMain.cpp
+	CityObjectsTypeMaskTests.cpp
 	FileReadTests.cpp
 )
 
