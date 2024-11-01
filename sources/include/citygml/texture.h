@@ -4,6 +4,7 @@
 
 #include <citygml/citygml_api.h>
 #include <citygml/appearance.h>
+#include <citygml/warnings.h>
 #include <citygml/vecs.hpp>
 
 namespace citygml {
@@ -52,10 +53,14 @@ namespace citygml {
     protected:
         Texture( const std::string& id );
         Texture( const std::string& id, const std::string& type );
+        PRAGMA_WARN_DLL_BEGIN
         std::string m_url;
+        PRAGMA_WARN_DLL_END
         bool m_repeat;
         WrapMode m_wrapMode;
+        PRAGMA_WARN_DLL_BEGIN
         TVec4f m_borderColor;
+        PRAGMA_WARN_DLL_END
     };
 
 }

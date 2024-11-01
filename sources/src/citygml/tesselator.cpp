@@ -67,10 +67,10 @@ void Tesselator::compute()
 
 void Tesselator::addContour(const std::vector<TVec3d>& pts, std::vector<std::vector<TVec2f> > textureCoordinatesLists )
 {
-    unsigned int pos = _vertices.size();
+    unsigned int pos = static_cast<unsigned int>(_vertices.size());
     TesselatorBase::addContour(pts, textureCoordinatesLists);
 
-    unsigned int len = pts.size();
+    unsigned int len = static_cast<unsigned int>(pts.size());
     // Add contour to queue, and process later.
     ContourRef contour(pos, len);
     _contourQueue.push_back(contour);
@@ -115,7 +115,7 @@ void CALLBACK Tesselator::vertexDataCallback( GLvoid *data, void* userData )
 void CALLBACK Tesselator::combineCallback( GLdouble coords[3], void* vertex_data[4], GLfloat weight[4], void** outData, void* userData )
 {
     Tesselator *tess = static_cast<Tesselator*>(userData);
-    tess->_indices.push_back(tess->_indices.size());
+    tess->_indices.push_back(static_cast<unsigned int>(tess->_indices.size()));
     tess->_vertices.push_back( TVec3d( coords[0], coords[1], coords[2] ) );
 
     if (!tess->_texCoordsLists.empty()) {
@@ -149,7 +149,7 @@ void CALLBACK Tesselator::endCallback( void* userData )
 {
     Tesselator *tess = static_cast<Tesselator*>(userData);
 
-    unsigned int len = tess->_curIndices.size();
+    unsigned int len = static_cast<unsigned int>(tess->_curIndices.size());
 
     switch ( tess->_curMode )
     {

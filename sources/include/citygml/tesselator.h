@@ -33,6 +33,7 @@
 #include <citygml/citygml_api.h>
 #include <citygml/tesselatorbase.h>
 #include <citygml/vecs.hpp>
+#include <citygml/warnings.h>
 
 namespace citygml {
     class CityGMLLogger;
@@ -77,8 +78,11 @@ private:
     GLUtesselator *_tobj;
     GLenum _curMode;
     GLenum _windingRule;
+    PRAGMA_WARN_DLL_BEGIN
     std::vector<TVec3d> _originalVertices;
     std::vector<ContourRef> _contourQueue;
+    PRAGMA_WARN_DLL_END
+
 };
 
 #endif // __TESSELATOR_H__
