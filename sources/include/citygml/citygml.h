@@ -62,7 +62,7 @@ namespace citygml
     {
     public:
         ParserParams()
-            : objectsMask(CityObject::CityObjectsType::COT_All)
+            : objectsMask(~CityObject::CityObjectsTypeMask{})
             , minLOD( 0 )
             , maxLOD( 4 )
             , optimize( false )
@@ -74,8 +74,21 @@ namespace citygml
         { }
 
     public:
+        template <typename New, typename Old, New (*Transform)(Old)>
+        class LegacyAssignable {
+        public:
+            LegacyAssignable(New const& val) : value(val) {}
+            New& operator=(New const& val) { value = val; return value; }
+            [[deprecated]] Old operator=(Old val) { value = Transform(val); return val; }
+            New const& operator->() const { return value; }
+            New const& get() const { return value; }
+            operator New const&() const { return value; }
+        private:
+            New value;
+        };
+
         PRAGMA_WARN_DLL_BEGIN
-        CityObjectsTypeMask objectsMask;
+        LegacyAssignable<CityObject::CityObjectsTypeMask, CityObject::CityObjectsType, toMask> objectsMask;
         PRAGMA_WARN_DLL_END
         unsigned int minLOD;
         unsigned int maxLOD;
