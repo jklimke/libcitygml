@@ -105,7 +105,11 @@ public:
         {
             std::transform( currentOption.begin(), currentOption.end(), currentOption.begin(), ::tolower );
             if ( currentOption == "names" ) _printNames = true;
-            else if ( currentOption == "mask" ) iss >> _params.objectsMask;
+            else if ( currentOption == "mask" ) {
+                citygml::CityObjectsTypeMask mask;
+                iss >> mask;
+                _params.objectsMask = mask;
+            }
             else if ( currentOption == "minlod" ) iss >> _params.minLOD;
             else if ( currentOption == "maxlod" ) iss >> _params.maxLOD;
             else if ( currentOption == "optimize" ) _params.optimize = true;
