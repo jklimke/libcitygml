@@ -12,8 +12,14 @@
 
 namespace citygml {
 
-    inline CityObject::CityObjectsTypeMask toMask(CityObject::CityObjectsType value) { /* constexpr with C++23*/
-        return CityObject::CityObjectsTypeMask(static_cast<unsigned long long>(value));
+    CityObject::CityObjectsTypeMask toMask(CityObject::CityObjectsType value) { /* constexpr with C++23*/
+        CityObject::CityObjectsTypeMask result;
+        if (value == CityObject::CityObjectsType::COT_All) {
+            result = ~result;
+        } else {
+            result.set(static_cast<size_t>(value));
+        }
+        return result;
     }
 
     LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
