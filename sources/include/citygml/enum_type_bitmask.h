@@ -7,7 +7,7 @@
 #include <citygml/citygml_api.h>
 
 template <typename T>
-class LIBCITYGML_EXPORT EnumClassBitmask
+class EnumClassBitmask
 {
 private:
     T t;
