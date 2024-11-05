@@ -76,7 +76,9 @@ namespace citygml
         { }
 
     public:
+        PRAGMA_WARN_DLL_BEGIN
         CityObjectsTypeMask objectsMask;
+        PRAGMA_WARN_DLL_END
         unsigned int minLOD;
         unsigned int maxLOD;
         bool optimize;
