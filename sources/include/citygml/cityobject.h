@@ -1,11 +1,11 @@
 #pragma once
 
+#include <bitset>
 #include <vector>
 #include <memory>
 
 #include <citygml/featureobject.h>
 #include <citygml/citygml_api.h>
-#include <citygml/enum_type_bitmask.h>
 #include <citygml/rectifiedgridcoverage.h>
 #include <citygml/externalreference.h>
 #include <citygml/warnings.h>
@@ -92,6 +92,8 @@ namespace citygml {
             COT_All                         = 0xFFFFFFFFFFFFFFFFll
         };
 
+        using CityObjectsTypeMask = std::bitset<sizeof(uint64_t)>;
+
         CityObject( const std::string& id, CityObjectsType type );
 
         // Get the object type
@@ -157,10 +159,11 @@ namespace citygml {
     LIBCITYGML_EXPORT std::string cityObjectsTypeToString(const CityObject::CityObjectsType& t);
     LIBCITYGML_EXPORT CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid);
 
-    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
-    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
-    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
-    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator~(CityObject::CityObjectsType l);
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask toMask(CityObject::CityObjectsType l);
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator~(CityObject::CityObjectsType l);
 
     LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObjectsTypeMask l, CityObject::CityObjectsType r);
     LIBCITYGML_EXPORT CityObjectsTypeMask operator&(CityObjectsTypeMask l, CityObject::CityObjectsType r);
