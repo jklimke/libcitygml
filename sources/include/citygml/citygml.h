@@ -43,8 +43,6 @@ namespace citygml
     class Material;
     class AppearanceManager;
 
-    typedef EnumClassBitmask<CityObject::CityObjectsType> CityObjectsTypeMask;
-
 
     ///////////////////////////////////////////////////////////////////////////////
     // Parsing routines

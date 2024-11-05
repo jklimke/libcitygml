@@ -12,17 +12,21 @@
 
 namespace citygml {
 
-    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { 
-        return EnumClassBitmask<CityObject::CityObjectsType>(l) | EnumClassBitmask<CityObject::CityObjectsType>(r);
+    inline CityObject::CityObjectsTypeMask toMask(CityObject::CityObjectsType value) { /* constexpr with C++23*/
+        return CityObject::CityObjectsTypeMask(static_cast<unsigned long long>(value));
     }
-    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r) {
-        return EnumClassBitmask<CityObject::CityObjectsType>(l) & EnumClassBitmask<CityObject::CityObjectsType>(r);
+
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+        return toMask(l) | toMask(r);
     }
-    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r) {
-        return EnumClassBitmask<CityObject::CityObjectsType>(l) ^ EnumClassBitmask<CityObject::CityObjectsType>(r);
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+        return toMask(l) & toMask(r);
     }
-    /*constexpr*/ LIBCITYGML_EXPORT EnumClassBitmask<CityObject::CityObjectsType> operator~(CityObject::CityObjectsType l) {
-        return ~EnumClassBitmask<CityObject::CityObjectsType>(l);
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+        return toMask(l) ^ toMask(r);
+    }
+    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator~(CityObject::CityObjectsType l) { /* constexpr with C++23*/
+        return ~toMask(l);
     }
 
     LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObjectsTypeMask l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
