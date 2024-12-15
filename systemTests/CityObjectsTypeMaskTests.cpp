@@ -1,6 +1,7 @@
 #include <citygml/citygml.h>
 #include <citygml/citymodel.h>
 #include <citygml/cityobject.h>
+#include <citygml/warnings.h>
 
 #include <gtest/gtest.h>
 
@@ -23,7 +24,11 @@ TEST(CityObjectsTypeMask, FilterBuilding) {
     ParserParams params;
     EXPECT_EQ(toMask(CityObject::CityObjectsType::COT_All), params.objectsMask);
 
+
+    // This is intentionally calling the deprecated assignment to test/verify that it works.
+    PRAGMA_NO_DEPRECATION_BEGIN
     params.objectsMask = CityObject::CityObjectsType::COT_All;
+    PRAGMA_NO_DEPRECATION_END
     readBridgeAndBuildingWithParams(params, 2);
 
     params.objectsMask = CityObject::CityObjectsType::COT_Door & CityObject::CityObjectsType::COT_Building;
