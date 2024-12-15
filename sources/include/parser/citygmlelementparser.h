@@ -82,6 +82,7 @@ namespace citygml {
         CityGMLFactory& m_factory;
     private:
         NodeType::XMLNode m_boundElement;
+        NodeType::XMLNode m_skippedElement;
     };
 
 }

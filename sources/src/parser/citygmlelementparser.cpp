@@ -24,8 +24,13 @@ namespace citygml {
         }
 
         if (!m_boundElement.valid()) {
-            m_boundElement = node;
-            return parseElementStartTag(node, attributes);
+            bool const result = parseElementStartTag(node, attributes);
+            if (result) {
+                m_boundElement = node;
+            } else {
+                m_skippedElement = node;
+            }
+            return result;
         } else {
             return parseChildElementStartTag(node, attributes);
         }
@@ -33,7 +38,11 @@ namespace citygml {
 
     bool CityGMLElementParser::endElement(const NodeType::XMLNode& node, const std::string& characters)
     {
-        if (!m_boundElement.valid()) {
+        if (m_skippedElement.valid()) {
+            CITYGML_LOG_TRACE(m_logger, "CityGMLElementParser::endElement called on " << elementParserName() << " object for skipped element <" << node << "> at " << getDocumentLocation());
+            m_documentParser.removeCurrentElementParser(this);
+            return true;
+        } else if (!m_boundElement.valid()) {
             // This might happen if an container element that usally contains a child element links to an exting object using XLink an thus
             // uses a combined start/end element: e.g.: <surfaceMember xlink:href="#..."/>
             // For such elements a child parser must only be created if there is no xlink attribute.

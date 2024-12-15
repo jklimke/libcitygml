@@ -135,7 +135,6 @@ SET(PUBLIC_HEADER
   include/citygml/citygml_api.h
   include/citygml/citygml_export.h
   include/citygml/attributesmap.h
-  include/citygml/enum_type_bitmask.h
   include/citygml/citygmllogger.h
   include/citygml/polygon.h
   include/citygml/material.h
@@ -164,6 +163,7 @@ SET(PUBLIC_HEADER
   include/citygml/address.h
   include/citygml/rectifiedgridcoverage.h
   include/citygml/externalreference.h
+  include/citygml/warnings.h
 )
 
 

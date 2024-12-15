@@ -32,6 +32,7 @@
 #include <citygml/cityobject.h>
 #include <citygml/envelope.h>
 #include <citygml/tesselatorbase.h>
+#include <citygml/warnings.h>
 
 namespace citygml
 {
@@ -41,8 +42,6 @@ namespace citygml
     class Texture;
     class Material;
     class AppearanceManager;
-
-    typedef EnumClassBitmask<CityObject::CityObjectsType> CityObjectsTypeMask;
 
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -63,7 +62,7 @@ namespace citygml
     {
     public:
         ParserParams()
-            : objectsMask(CityObject::CityObjectsType::COT_All)
+            : objectsMask(~CityObjectsTypeMask{})
             , minLOD( 0 )
             , maxLOD( 4 )
             , optimize( false )
@@ -75,15 +74,32 @@ namespace citygml
         { }
 
     public:
-        CityObjectsTypeMask objectsMask;
+        template <typename New, typename Old, New (*Transform)(Old)>
+        class LegacyAssignable {
+        public:
+            LegacyAssignable(New const& val) : value(val) {}
+            New& operator=(New const& val) { value = val; return value; }
+            [[deprecated]] Old operator=(Old val) { value = Transform(val); return val; }
+            New const& operator->() const { return value; }
+            New const& get() const { return value; }
+            operator New const&() const { return value; }
+        private:
+            New value;
+        };
+
+        PRAGMA_WARN_DLL_BEGIN
+        LegacyAssignable<CityObjectsTypeMask, CityObject::CityObjectsType, toMask> objectsMask;
+        PRAGMA_WARN_DLL_END
         unsigned int minLOD;
         unsigned int maxLOD;
         bool optimize;
         bool pruneEmptyObjects;
         bool tesselate;
         bool keepVertices;
+        PRAGMA_WARN_DLL_BEGIN
         std::string destSRS;
         std::string srcSRS;
+        PRAGMA_WARN_DLL_END
     };
 
     LIBCITYGML_EXPORT std::shared_ptr<const CityModel> load( std::istream& stream, const ParserParams& params, std::unique_ptr<TesselatorBase> tesselator, std::shared_ptr<CityGMLLogger> logger = nullptr);

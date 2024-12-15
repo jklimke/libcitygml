@@ -6,6 +6,7 @@
 #include <unordered_map>
 
 #include <citygml/object.h>
+#include <citygml/warnings.h>
 #include <citygml/vecs.hpp>
 
 namespace citygml {
@@ -53,12 +54,14 @@ namespace citygml {
 
 
     protected:
+        PRAGMA_WARN_DLL_BEGIN
         std::unordered_map<std::string, std::shared_ptr<Appearance> > m_appearancesMap;
         std::vector<std::shared_ptr<MaterialTargetDefinition> > m_materialTargetDefinitions;
         std::vector<std::shared_ptr<TextureTargetDefinition> > m_texTargetDefinitions;
         std::unordered_set<std::string> m_themes;
         std::unordered_map<std::string, AppearanceTarget*> m_appearanceTargetsMap;
         std::shared_ptr<CityGMLLogger> m_logger;
+        PRAGMA_WARN_DLL_END
 
         void addThemesFrom(std::shared_ptr<Appearance> surfaceData);
     };
