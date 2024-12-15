@@ -2,6 +2,8 @@
 
 #include <parser/gmlfeaturecollectionparser.h>
 
+#include <citygml/cityobject.h>
+
 #include <functional>
 #include <unordered_map>
 #include <unordered_set>
@@ -38,6 +40,8 @@ namespace citygml {
         std::function<void(CityObject*)> m_callback;
         std::string m_lastAttributeName;
         AttributeType m_lastAttributeType;
+        CityObjectsTypeMask const m_typeMask; // TODO: Make this a reference once getParserParams doesn't return a copy
+        bool m_skipped;
 
         // The nodes that are valid CityObjects
         static std::mutex initializedTypeIDMutex;

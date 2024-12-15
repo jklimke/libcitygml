@@ -1,4 +1,5 @@
 #include "parser/cityobjectelementparser.h"
+#include "parser/citygmldocumentparser.h"
 #include "parser/nodetypes.h"
 #include "parser/attributes.h"
 #include "parser/documentlocation.h"
@@ -39,6 +40,8 @@ namespace citygml {
     CityObjectElementParser::CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (CityObject*)> callback)
         : GMLFeatureCollectionElementParser(documentParser, factory, logger)
         , m_lastAttributeType(AttributeType::String)
+        , m_typeMask(documentParser.getParserParams().objectsMask.get())
+        , m_skipped(false)
     {
         m_callback = callback;
 		m_model = nullptr;
@@ -261,8 +264,15 @@ namespace citygml {
             throw std::runtime_error("Unexpected start tag found.");
         }
 
-        m_model = m_factory.createCityObject(attributes.getCityGMLIDAttribute(), static_cast<CityObject::CityObjectsType>(it->second));
-        return true;
+        auto const type = static_cast<CityObject::CityObjectsType>(it->second);
+        if (m_typeMask.test(static_cast<size_t>(type))) {
+            m_model = m_factory.createCityObject(attributes.getCityGMLIDAttribute(), type);
+            return true;
+        } else {
+            m_skipped = true;//skipUnknownOrUnexpectedElement(node.name());//m_skipped = true;
+            CITYGML_LOG_TRACE(m_logger, "Ignoring start tag <" << node.name() << "> because it is ignored at " << getDocumentLocation());
+            return false;
+        }
 
     }
 
@@ -281,6 +291,9 @@ namespace citygml {
 
     bool CityObjectElementParser::parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes)
     {
+        if (m_skipped) {
+            return false;
+        }
         initializeAttributesSet();
 
         if (m_model == nullptr) {
@@ -498,7 +511,9 @@ namespace citygml {
 
     bool CityObjectElementParser::parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters)
     {
-        if (m_model == nullptr) {
+        if (m_skipped) {
+            return false;
+        } else if (m_model == nullptr) {
             throw std::runtime_error("CityObjectElementParser::parseChildElementEndTag called before CityObjectElementParser::parseElementStartTag");
         }
 
