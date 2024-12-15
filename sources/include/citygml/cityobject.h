@@ -92,8 +92,6 @@ namespace citygml {
             COT_All
         };
 
-        using CityObjectsTypeMask = std::bitset<static_cast<size_t>(CityObject::CityObjectsType::COT_All)>;
-
         CityObject( const std::string& id, CityObjectsType type );
 
         // Get the object type
@@ -159,11 +157,13 @@ namespace citygml {
     LIBCITYGML_EXPORT std::string cityObjectsTypeToString(const CityObject::CityObjectsType& t);
     LIBCITYGML_EXPORT CityObject::CityObjectsType cityObjectsTypeFromString(const std::string& s, bool& valid);
 
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask toMask(CityObject::CityObjectsType l);
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator~(CityObject::CityObjectsType l);
+    using CityObjectsTypeMask = std::bitset<static_cast<size_t>(CityObject::CityObjectsType::COT_All)>;
+
+    LIBCITYGML_EXPORT CityObjectsTypeMask toMask(CityObject::CityObjectsType l);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r);
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator~(CityObject::CityObjectsType l);
 
     LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObjectsTypeMask l, CityObject::CityObjectsType r);
     LIBCITYGML_EXPORT CityObjectsTypeMask operator&(CityObjectsTypeMask l, CityObject::CityObjectsType r);
