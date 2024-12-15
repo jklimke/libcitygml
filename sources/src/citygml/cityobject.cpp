@@ -12,8 +12,8 @@
 
 namespace citygml {
 
-    CityObject::CityObjectsTypeMask toMask(CityObject::CityObjectsType value) { /* constexpr with C++23*/
-        CityObject::CityObjectsTypeMask result;
+    CityObjectsTypeMask toMask(CityObject::CityObjectsType value) { /* constexpr with C++23*/
+        CityObjectsTypeMask result;
         if (value == CityObject::CityObjectsType::COT_All) {
             result = ~result;
         } else {
@@ -22,16 +22,16 @@ namespace citygml {
         return result;
     }
 
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator|(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
         return toMask(l) | toMask(r);
     }
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator&(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
         return toMask(l) & toMask(r);
     }
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator^(CityObject::CityObjectsType l, CityObject::CityObjectsType r) { /* constexpr with C++23*/
         return toMask(l) ^ toMask(r);
     }
-    LIBCITYGML_EXPORT CityObject::CityObjectsTypeMask operator~(CityObject::CityObjectsType l) { /* constexpr with C++23*/
+    LIBCITYGML_EXPORT CityObjectsTypeMask operator~(CityObject::CityObjectsType l) { /* constexpr with C++23*/
         return ~toMask(l);
     }
 

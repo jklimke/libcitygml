@@ -62,7 +62,7 @@ namespace citygml
     {
     public:
         ParserParams()
-            : objectsMask(~CityObject::CityObjectsTypeMask{})
+            : objectsMask(~CityObjectsTypeMask{})
             , minLOD( 0 )
             , maxLOD( 4 )
             , optimize( false )
@@ -88,7 +88,7 @@ namespace citygml
         };
 
         PRAGMA_WARN_DLL_BEGIN
-        LegacyAssignable<CityObject::CityObjectsTypeMask, CityObject::CityObjectsType, toMask> objectsMask;
+        LegacyAssignable<CityObjectsTypeMask, CityObject::CityObjectsType, toMask> objectsMask;
         PRAGMA_WARN_DLL_END
         unsigned int minLOD;
         unsigned int maxLOD;
