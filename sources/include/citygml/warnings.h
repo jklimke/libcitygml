@@ -17,10 +17,31 @@
 #pragma once
 
 #ifdef _MSC_VER
+// MSVC defines
 #define PRAGMA_WARN_DLL_BEGIN _Pragma("warning(push)") \
 _Pragma("warning(disable : 4251 4275)")
 #define PRAGMA_WARN_DLL_END _Pragma("warning(pop)")
-#else
+
+#define PRAGMA_NO_DEPRECATION_BEGIN _Pragma("warning(push)") \
+_Pragma("warning(disable : 4996)")
+#define PRAGMA_NO_DEPRECATION_END _Pragma("warning(pop)") \
+
+#elif defined(__GNUC__)
+// GCC defines
 #define PRAGMA_WARN_DLL_BEGIN
 #define PRAGMA_WARN_DLL_END
+
+#define PRAGMA_NO_DEPRECATION_BEGIN _Pragma("GCC diagnostic push") \
+_Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"")
+#define PRAGMA_NO_DEPRECATION_END _Pragma("GCC diagnostic pop") \
+
+#else
+// LLVM defines
+#define PRAGMA_WARN_DLL_BEGIN
+#define PRAGMA_WARN_DLL_END
+
+#define PRAGMA_NO_DEPRECATION_BEGIN _Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Wdeprecated-declarations\"")
+#define PRAGMA_NO_DEPRECATION_END _Pragma("clang diagnostic pop") \
+
 #endif
