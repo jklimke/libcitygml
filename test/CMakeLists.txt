@@ -33,11 +33,7 @@ IF(LIBCITYGML_USE_OPENGL)
   TARGET_LINK_LIBRARIES( citygmltest citygml ${OPENGL_LIBRARIES} )
 ENDIF(LIBCITYGML_USE_OPENGL)
 
-if(NOT DEFINED BIN_INSTALL_DIR)
-    set(BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin")
-endif(NOT DEFINED BIN_INSTALL_DIR)
-
-install(TARGETS citygmltest RUNTIME DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS citygmltest RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 
 add_test(NAME berlin_open_data_sample_data COMMAND citygmltest ../../data/berlin_open_data_sample_data.citygml)
