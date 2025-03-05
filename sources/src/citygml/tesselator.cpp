@@ -87,7 +87,7 @@ void Tesselator::processContours()
         for ( unsigned int i = 0; i < contour.length; i++ )
         {
             void* data = reinterpret_cast<void*>(static_cast<uintptr_t>(_indices[contour.index + i]));
-            gluTessVertex( _tobj, &(_originalVertices[contour.index + i][0]), data );
+            gluTessVertex( _tobj, &(_originalVertices[contour.index + i].x), data );
         }
 
         gluTessEndContour( _tobj );

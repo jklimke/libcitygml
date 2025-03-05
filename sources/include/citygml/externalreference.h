@@ -5,14 +5,23 @@
 
 
 namespace citygml {
-    union LIBCITYGML_EXPORT ExternalObjectReference {
+    class LIBCITYGML_EXPORT ExternalObjectReference {
+    public:
+        ExternalObjectReference() = default;
+        ~ExternalObjectReference() = default;
+
+        const std::string& getName() const;
+        const std::string& getUri() const;
+        void setName(const std::string& name);
+        void setUri(const std::string& uri);
+
+    private:
         PRAGMA_WARN_DLL_BEGIN
-        std::string name;
-        std::string uri;
+        std::string value;
         PRAGMA_WARN_DLL_END
-        
-        ExternalObjectReference();
-        ~ExternalObjectReference();
+
+        enum class ObjectRefType { NAME, URI };
+        ObjectRefType type;
     };
 
     class LIBCITYGML_EXPORT ExternalReference: public Object {

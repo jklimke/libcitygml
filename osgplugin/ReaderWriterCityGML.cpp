@@ -526,16 +526,16 @@ void setMaterial(osg::ref_ptr<osg::StateSet> stateset, const citygml::Polygon& p
         return;
     }
 
-    TVec4f diffuse( citygmlMaterial->getDiffuse(), 0.f );
-    TVec4f emissive( citygmlMaterial->getEmissive(), 0.f );
-    TVec4f specular( citygmlMaterial->getSpecular(), 0.f );
+    TVec3f diffuse = citygmlMaterial->getDiffuse();
+    TVec3f emissive = citygmlMaterial->getEmissive();
+    TVec3f specular = citygmlMaterial->getSpecular();
     float ambient = citygmlMaterial->getAmbientIntensity();
 
     osg::Material* material = new osg::Material;
     material->setColorMode( osg::Material::OFF );
-    material->setDiffuse( osg::Material::FRONT_AND_BACK, osg::Vec4(diffuse.r, diffuse.g, diffuse.b, diffuse.a ) );
-    material->setSpecular( osg::Material::FRONT_AND_BACK, osg::Vec4(specular.r, specular.g, specular.b, specular.a ) );
-    material->setEmission( osg::Material::FRONT_AND_BACK, osg::Vec4(emissive.r, emissive.g, emissive.b, emissive.a ) );
+    material->setDiffuse( osg::Material::FRONT_AND_BACK, osg::Vec4(diffuse.x, diffuse.y, diffuse.z, 0.f ) );
+    material->setSpecular( osg::Material::FRONT_AND_BACK, osg::Vec4(specular.x, specular.y, specular.z, 0.f ) );
+    material->setEmission( osg::Material::FRONT_AND_BACK, osg::Vec4(emissive.x, emissive.y, emissive.z, 0.f ) );
     material->setShininess( osg::Material::FRONT_AND_BACK, 128.f * citygmlMaterial->getShininess() );
     material->setAmbient( osg::Material::FRONT_AND_BACK, osg::Vec4( ambient, ambient, ambient, 1.0 ) );
     material->setTransparency( osg::Material::FRONT_AND_BACK, citygmlMaterial->getTransparency() );
