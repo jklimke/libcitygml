@@ -50,7 +50,7 @@ jobs:
 
     - name: Install Packages for Ubuntu
       if: ${{ (contains(matrix.os, 'ubuntu')) }}
-      run: sudo apt-get update && sudo apt-get install -y --fix-missing libxerces-c-dev libxerces-c3.2 libgdal30 libgdal-dev libopenscenegraph-dev
+      run: sudo apt-get update && sudo apt-get install -y --fix-missing libxerces-c-dev libxerces-c3.2 libgdal34t64 libgdal-dev libopenscenegraph-dev
 
     - name: Prebuild XercesC on Windows
       id: xerces-build
