@@ -6,6 +6,7 @@
 
 #include <citygml/object.h>
 #include <citygml/appearancetargetdefinition.h>
+#include <citygml/warnings.h>
 
 
 namespace citygml {
@@ -45,11 +46,13 @@ namespace citygml {
 
 
     private:
+        PRAGMA_WARN_DLL_BEGIN
         std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition> > m_themeMatMapFront;
         std::unordered_map<std::string, std::shared_ptr<MaterialTargetDefinition> > m_themeMatMapBack;
 
         std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition> > m_themeTexMapFront;
         std::unordered_map<std::string, std::shared_ptr<TextureTargetDefinition> > m_themeTexMapBack;
+        PRAGMA_WARN_DLL_END
 
     };
 }

@@ -30,7 +30,7 @@ namespace citygml {
 
     unsigned int CityObject::getGeometriesCount() const
     {
-        return m_geometries.size();
+        return static_cast<unsigned int>(m_geometries.size());
     }
 
     const Geometry& CityObject::getGeometry(unsigned int i) const
@@ -50,7 +50,7 @@ namespace citygml {
 
     unsigned int CityObject::getImplicitGeometryCount() const
     {
-        return m_implicitGeometries.size();
+        return static_cast<unsigned int>(m_implicitGeometries.size());
     }
 
     const ImplicitGeometry& CityObject::getImplicitGeometry(unsigned int i) const
@@ -70,7 +70,7 @@ namespace citygml {
 
     unsigned int CityObject::getChildCityObjectsCount() const
     {
-        return m_children.size();
+        return static_cast<unsigned int>(m_children.size());
     }
 
     const CityObject& CityObject::getChildCityObject(unsigned int i) const
@@ -125,7 +125,7 @@ namespace citygml {
         }
 
         for (std::unique_ptr<ImplicitGeometry>& implictGeom : m_implicitGeometries) {
-            for (int i = 0; i < implictGeom->getGeometriesCount(); i++) {
+            for (unsigned int i = 0; i < implictGeom->getGeometriesCount(); i++) {
                 implictGeom->getGeometry(i).finish(tesselator, optimize, logger);
             }
         }

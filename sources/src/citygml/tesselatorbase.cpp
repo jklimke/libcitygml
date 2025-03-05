@@ -80,7 +80,7 @@ bool TesselatorBase::keepVertices() const
 
 void TesselatorBase::addContour(const std::vector<TVec3d>& pts, std::vector<std::vector<TVec2f> > textureCoordinatesLists )
 {
-    unsigned int len = pts.size();
+    unsigned int len = static_cast<unsigned int>(pts.size());
     if ( len < 3 ) return;
 
     for (size_t i = 0; i < textureCoordinatesLists.size(); i++) {
@@ -113,7 +113,7 @@ void TesselatorBase::addContour(const std::vector<TVec3d>& pts, std::vector<std:
 
     }
 
-    unsigned int pos = _vertices.size();
+    unsigned int pos = static_cast<unsigned int>(_vertices.size());
 
     for ( unsigned int i = 0; i < len; i++ )
     {

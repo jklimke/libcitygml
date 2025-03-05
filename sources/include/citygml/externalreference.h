@@ -1,12 +1,15 @@
 #pragma once
 
 #include <citygml/object.h>
+#include <citygml/warnings.h>
 
 
 namespace citygml {
     union LIBCITYGML_EXPORT ExternalObjectReference {
+        PRAGMA_WARN_DLL_BEGIN
         std::string name;
         std::string uri;
+        PRAGMA_WARN_DLL_END
         
         ExternalObjectReference();
         ~ExternalObjectReference();
@@ -19,7 +22,9 @@ namespace citygml {
         ExternalReference(std::string const& id);
 //        ~ExternalReference() noexcept override;                    // Destructor
     public:
+        PRAGMA_WARN_DLL_BEGIN
         std::string informationSystem;
+        PRAGMA_WARN_DLL_END
         ExternalObjectReference externalObject;
     };
 }

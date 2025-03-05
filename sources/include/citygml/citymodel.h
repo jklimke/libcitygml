@@ -7,6 +7,7 @@
 #include <citygml/citygml_api.h>
 #include <citygml/cityobject.h>
 #include <citygml/featureobject.h>
+#include <citygml/warnings.h>
 
 class TesselatorBase;
 
@@ -54,6 +55,7 @@ namespace citygml {
 
         void addToCityObjectsMapRecursive(const CityObject* cityObj);
 
+        PRAGMA_WARN_DLL_BEGIN
         CityObjects m_roots;
 
         CityObjectsMap m_cityObjectsMap;
@@ -61,6 +63,7 @@ namespace citygml {
         std::string m_srsName;
 
         std::vector<std::string> m_themes;
+        PRAGMA_WARN_DLL_END
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream&, const citygml::CityModel & );

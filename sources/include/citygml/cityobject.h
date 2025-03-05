@@ -8,6 +8,7 @@
 #include <citygml/enum_type_bitmask.h>
 #include <citygml/rectifiedgridcoverage.h>
 #include <citygml/externalreference.h>
+#include <citygml/warnings.h>
 class TesselatorBase;
 
 namespace citygml {
@@ -141,12 +142,14 @@ namespace citygml {
     protected:
         CityObjectsType m_type;
 
+        PRAGMA_WARN_DLL_BEGIN
         std::vector<std::unique_ptr<Geometry> > m_geometries;
         std::vector<std::unique_ptr<ImplicitGeometry> > m_implicitGeometries;
         std::vector<std::unique_ptr<CityObject> > m_children;
         std::unique_ptr<Address> m_address;
         std::unique_ptr<RectifiedGridCoverage> m_rectifiedGridCoverage;
         std::unique_ptr<ExternalReference> m_externalReference;
+        PRAGMA_WARN_DLL_END
     };
 
     LIBCITYGML_EXPORT std::ostream& operator<<( std::ostream& os, const CityObject& o );

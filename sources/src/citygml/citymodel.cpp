@@ -55,7 +55,7 @@ namespace citygml
             it->second.push_back(cityObj);
         }
 
-        for (int i = 0; i < cityObj->getChildCityObjectsCount(); i++) {
+        for (unsigned int i = 0; i < cityObj->getChildCityObjectsCount(); i++) {
             addToCityObjectsMapRecursive(&cityObj->getChildCityObject(i));
         }
     }
@@ -96,7 +96,7 @@ namespace citygml
 
     unsigned int CityModel::getNumRootCityObjects() const
     {
-        return m_roots.size();
+        return static_cast<unsigned int>(m_roots.size());
     }
 
     CityObject& CityModel::getRootCityObject(int i)

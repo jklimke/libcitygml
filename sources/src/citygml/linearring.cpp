@@ -20,7 +20,7 @@ namespace citygml {
 
     unsigned int LinearRing::size() const
     {
-        return m_vertices.size();
+        return static_cast<unsigned int>(m_vertices.size());
     }
 
     void LinearRing::addVertex(const TVec3d& v)
@@ -91,7 +91,7 @@ namespace citygml {
         }
 
         // Remove duplicated vertex
-        unsigned int len = m_vertices.size();
+        unsigned int len = static_cast<unsigned int>(m_vertices.size());
         if ( len < 2 ) return;
 
         unsigned int i = 0;
