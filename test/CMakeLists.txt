@@ -36,6 +36,7 @@ ENDIF(LIBCITYGML_USE_OPENGL)
 install(TARGETS citygmltest RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 
+add_test(NAME System_Tests COMMAND citygmlSystemTests)
 add_test(NAME berlin_open_data_sample_data COMMAND citygmltest ../../data/berlin_open_data_sample_data.citygml)
 add_test(NAME b1_lod2_s COMMAND citygmltest ../../data/b1_lod2_s.gml)
 add_test(NAME FZK-Haus-LoD0-KIT-IAI-KHH-B36-V1 COMMAND citygmltest ../../data/FZK-Haus-LoD0-KIT-IAI-KHH-B36-V1.gml)
