@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <type_traits>
 #include <vector>
 
@@ -15,15 +16,6 @@
 #include <citygml/vecs.hpp>
 
 namespace citygml {
-
-    template<class T> inline T parseValue( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>&, const DocumentLocation&)
-    {
-        std::stringstream ss;
-        ss << s;
-        T v;
-        ss >> v;
-        return v;
-    }
 
     inline TransformationMatrix parseMatrix( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location)
     {
@@ -49,6 +41,25 @@ namespace citygml {
         return TransformationMatrix(matrix);
     }
 
+    template <typename T, std::enable_if_t<std::is_fundamental_v<T>, bool> = true>
+    char const* readNextValue(std::string_view view, T& target) {
+        char const* end;
+        std::tie(target, end) = readNextNumber<T>(view);
+        return end;
+    }
+
+    template <typename T, std::enable_if_t<!std::is_fundamental_v<T>, bool> = true>
+    char const* readNextValue(std::string_view view, T& target) {
+         return target.fromString(view);
+    }
+
+    template<class T> inline T parseValue( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>&, const DocumentLocation&)
+    {
+        T value;
+        readNextValue<T>(s, value);
+        return value;
+    }
+
     template<> inline bool parseValue( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location )
     {
         // parsing a bool is special because "true" and "1" are true while "false" and "0" are false
@@ -60,18 +71,6 @@ namespace citygml {
             CITYGML_LOG_WARN(logger, "Boolean expected, got '" << s << "' at " << location << " set value to false.");
         }
         return false;
-    }
-
-    template <typename T, std::enable_if_t<std::is_fundamental_v<T>, bool> = true>
-    char const* readNextValue(std::string_view view, T& target) {
-        char const* end;
-        std::tie(target, end) = readNextNumber<T>(view);
-        return end;
-    }
-
-    template <typename T, std::enable_if_t<!std::is_fundamental_v<T>, bool> = true>
-    char const* readNextValue(std::string_view view, T& target) {
-         return target.fromString(view);
     }
 
     template<class T>
