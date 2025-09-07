@@ -1,5 +1,7 @@
 #pragma once
+#include <algorithm>
 #include <array>
+#include <cctype>
 #include <charconv>
 #include <iostream>
 #include <math.h>
@@ -15,10 +17,27 @@ std::pair<T, char const*> readNextNumber(std::string_view const& string) {
     T result;
     auto [patternEnd, errorCode] = std::from_chars(string.data(), string.data() + string.size(), result);
     if (errorCode == std::errc()) {
-        return { result, patternEnd };
+        char const* const nextPattern = std::find_if(patternEnd, string.data() + string.size(), [](char ch) {
+            return !std::isspace(ch);
+        });
+        return { result, nextPattern };
     } else {
         throw std::runtime_error("Cannot parse number.");
     }
+}
+
+template <typename T, size_t N>
+char const* readNextNumbers(std::string_view view, std::array<T*, N> const& targets) {
+    for (T* target : targets) {
+        if (view.empty()) {
+            throw std::runtime_error("Cannot parse number from empty string.");
+        } else {
+            char const* end;
+            std::tie(*target, end) = readNextNumber<T>(view);
+            view = view.substr(std::distance(view.data(), end));
+        }
+    }
+    return view.data();
 }
 
 template <typename T, size_t N>
@@ -50,6 +69,8 @@ public:
 
     TVec2( const T x = (T)0, const T y = (T)0 );
     TVec2( const T vec[] );
+
+    char const* fromString(std::string_view view);
 
     TVec2 operator+( const TVec2<T>& v ) const;
     TVec2 operator-( const TVec2<T>& v ) const;
@@ -130,6 +151,10 @@ template<class T> inline std::ostream& operator<<(std::ostream & os, TVec2<T> co
     return os << std::fixed << v.x << " " << std::fixed << v.y;
 }
 
+template<class T> char const* TVec2<T>::fromString(std::string_view view) {
+    return readNextNumbers(view, std::array<T*, 2>{ &x, &y });
+}
+
 template<class T> inline std::istream& operator>>(std::istream & is, TVec2<T> & v)
 {
     readNextNumbers(is, std::array<T*, 2>{ &v.x, &v.y });
@@ -152,6 +177,8 @@ public:
 
     inline T length() const;
     inline T sqrLength() const;
+
+    char const* fromString(std::string_view view);
 
     T dot( const TVec3<T>& vec ) const;
     TVec3 cross( const TVec3<T>& vec ) const;
@@ -293,6 +320,10 @@ template<class T> inline std::ostream& operator<<(std::ostream & os, const TVec3
     return os << std::fixed << v.x << " " << std::fixed << v.y << " " << std::fixed << v.z;
 }
 
+template<class T> char const* TVec3<T>::fromString(std::string_view view) {
+    return readNextNumbers(view, std::array<T*, 3>{ &x, &y, &z });
+}
+
 template<class T> inline std::istream& operator>>(std::istream & is, TVec3<T> & v) {
     readNextNumbers(is, std::array<T*, 3>{ &v.x, &v.y, &v.z });
     return is;
@@ -317,11 +348,17 @@ public:
         this->z = z;
         this->w = w;
     }
+
+    char const* fromString(std::string_view view);
 };
 
 template<class T> inline std::ostream& operator<<( std::ostream & os, TVec4<T> const & v )
 {
     return os << std::fixed << v.x << " " << std::fixed << v.y << " " << std::fixed << v.z << " " << std::fixed << v.w;
+}
+
+template<class T> char const* TVec4<T>::fromString(std::string_view view) {
+    return readNextNumbers(view, std::array<T*, 4>{ &x, &y, &z, &w });
 }
 
 template<class T> inline std::istream& operator>>( std::istream & is, TVec4<T> & v )

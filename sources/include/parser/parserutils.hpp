@@ -1,8 +1,11 @@
 #pragma once
 
+#include <iterator>
 #include <memory>
 #include <sstream>
 #include <string>
+#include <string_view>
+#include <type_traits>
 #include <vector>
 
 #include <parser/documentlocation.h>
@@ -59,21 +62,29 @@ namespace citygml {
         return false;
     }
 
-    template<class T> inline std::vector<T> parseVecList( const std::string &s,  std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location )
+    template <typename T, std::enable_if_t<std::is_fundamental_v<T>, bool> = true>
+    char const* readNextValue(std::string_view view, T& target) {
+        char const* end;
+        std::tie(target, end) = readNextNumber<T>(view);
+        return end;
+    }
+
+    template <typename T, std::enable_if_t<!std::is_fundamental_v<T>, bool> = true>
+    char const* readNextValue(std::string_view view, T& target) {
+         return target.fromString(view);
+    }
+
+    template<class T>
+    inline std::vector<T> parseVecList( const std::string &s,  std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location )
     {
-        std::stringstream ss;
-        ss << s;
-
-        T v;
+        std::string_view view(s);
         std::vector<T> vec;
-        while ( ss >> v )
-            vec.push_back( v );
-
-        if ( !ss.eof() )
-        {
-            CITYGML_LOG_WARN(logger, "Mismatch type, list of " << typeid(T).name() << " expected at " << location << " Ring/Polygon may be incomplete!");
+        while (!view.empty()) {
+            T value;
+            char const* end = readNextValue(view, value);
+            vec.push_back(value);
+            view = view.substr(std::distance(view.data(), end));
         }
-
         return vec;
     }
 
