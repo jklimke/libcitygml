@@ -17,7 +17,7 @@ namespace citygml {
         const Envelope& getEnvelope() const;
         void setEnvelope(Envelope* e);
 
-        virtual ~FeatureObject();
+        ~FeatureObject() override;
 
     protected:
         PRAGMA_WARN_DLL_BEGIN

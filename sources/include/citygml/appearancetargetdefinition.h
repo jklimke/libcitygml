@@ -37,7 +37,7 @@ namespace citygml {
         std::shared_ptr<const T> getAppearance() const { return m_appearance; }
         std::shared_ptr<T> getAppearance() { return m_appearance; }
 
-        virtual ~AppearanceTargetDefinition() {}
+        ~AppearanceTargetDefinition() override {}
 
     protected:
         PRAGMA_WARN_DLL_BEGIN

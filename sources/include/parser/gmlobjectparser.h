@@ -15,8 +15,8 @@ namespace citygml {
 
     protected:
         // CityGMLElementParser interface
-        virtual bool parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes) override;
-        virtual bool parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;
+        bool parseChildElementStartTag(const NodeType::XMLNode& node, Attributes& attributes) override;
+        bool parseChildElementEndTag(const NodeType::XMLNode& node, const std::string& characters) override;
 
         /**
          * @brief returns the object in which the parsed information will be stored

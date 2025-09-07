@@ -41,8 +41,8 @@ namespace citygml {
         bool isSmooth() const;
         void setIsSmooth(bool isSmooth);
 
-        virtual std::shared_ptr<Material> asMaterial() override;
-        virtual std::shared_ptr<const Material> asMaterial() const override;
+        std::shared_ptr<Material> asMaterial() override;
+        std::shared_ptr<const Material> asMaterial() const override;
 
     protected:
         Material( const std::string& id );

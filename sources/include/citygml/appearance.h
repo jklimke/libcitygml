@@ -41,7 +41,7 @@ namespace citygml {
         void addToTheme(std::string themeName);
         const std::vector<std::string>& getThemes() const;
 
-        virtual ~Appearance() {}
+        ~Appearance() override {}
 
     protected:
         Appearance( const std::string& id, const std::string& typeString );

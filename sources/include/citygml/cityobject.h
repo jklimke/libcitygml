@@ -137,7 +137,7 @@ namespace citygml {
 
         void finish(TesselatorBase* tesselator, bool optimize, std::shared_ptr<citygml::CityGMLLogger> logger);
 
-        virtual ~CityObject();
+        ~CityObject() override;
 
     protected:
         CityObjectsType m_type;

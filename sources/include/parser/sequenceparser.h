@@ -27,10 +27,10 @@ namespace citygml {
         SequenceParser(CityGMLDocumentParser& documentParser, std::shared_ptr<CityGMLLogger> logger, std::function<ElementParser*()> childParserFactory, const NodeType::XMLNode& parentElement);
 
         // ElementParser interface
-        virtual bool startElement(const NodeType::XMLNode& node, Attributes& attributes);
-        virtual bool endElement(const NodeType::XMLNode& node, const std::string& characters);
-        virtual bool handlesElement(const NodeType::XMLNode& node) const;
-        virtual std::string elementParserName() const;
+        bool startElement(const NodeType::XMLNode& node, Attributes& attributes) override;
+        bool endElement(const NodeType::XMLNode& node, const std::string& characters) override;
+        bool handlesElement(const NodeType::XMLNode& node) const override;
+        std::string elementParserName() const override;
 
     private:
         std::function<ElementParser*()> m_childParserFactory;
