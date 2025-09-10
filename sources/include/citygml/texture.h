@@ -24,7 +24,7 @@ namespace citygml {
             WM_BORDER       // the resulting color is specified by the borderColor element (RGBA)
         };
 
-        std::string getUrl() const;
+        const std::string& getUrl() const;
 
         void setUrl(const std::string& url);
 

@@ -87,6 +87,7 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, CreationDate )
                 INITIALIZE_NODE( CORE, TerminationDate )
                 INITIALIZE_NODE( CORE, GeneralizesTo)
+                INITIALIZE_NODE( CORE, PointCloud)
 
                 INITIALIZE_NODE( CORE, ExternalReference)
                 INITIALIZE_NODE( CORE, InformationSystem)
@@ -104,9 +105,20 @@ namespace citygml {
                 INITIALIZE_NODE( CORE, ReferencePoint)
                 INITIALIZE_NODE( CORE, MimeType)
                 INITIALIZE_NODE( CORE, LibraryObject)
+                INITIALIZE_NODE( CORE, GenericAttribute)
+
+                INITIALIZE_NODE( CORE, Lod0MultiSurface)
+                INITIALIZE_NODE( CORE, Lod1MultiSurface)
+                INITIALIZE_NODE( CORE, Lod2MultiSurface)
+                INITIALIZE_NODE( CORE, Lod3MultiSurface)
+
+                INITIALIZE_NODE( CORE, Lod1Solid)
+                INITIALIZE_NODE( CORE, Lod2Solid)
+                INITIALIZE_NODE( CORE, Lod3Solid)
 
                 INITIALIZE_NODE( CORE, Boundary)
                 INITIALIZE_NODE( CORE, RelativeGeometry)
+                INITIALIZE_NODE( CORE, ClosureSurface)
 
                 // GRP
                 INITIALIZE_NODE( GRP, CityObjectGroup )
@@ -127,6 +139,7 @@ namespace citygml {
                 INITIALIZE_NODE( GEN, IntAttribute )
                 INITIALIZE_NODE( GEN, DateAttribute )
                 INITIALIZE_NODE( GEN, UriAttribute )
+                INITIALIZE_NODE( GEN, Name )
                 INITIALIZE_NODE( GEN, Value )
 
                 INITIALIZE_NODE( GEN, Lod0Geometry )
@@ -209,6 +222,8 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, Lod2TerrainIntersection )
                 INITIALIZE_NODE( BLDG, Lod3TerrainIntersection )
                 INITIALIZE_NODE( BLDG, Lod4TerrainIntersection )
+                INITIALIZE_NODE( BLDG, BuildingSubdivision )
+                INITIALIZE_NODE( BLDG, Storey)
 
                 INITIALIZE_NODE( GML, MultiPoint )
                 INITIALIZE_NODE( GML, MultiCurve )
@@ -273,6 +288,7 @@ namespace citygml {
                 INITIALIZE_NODE( CON, FillingSurface )
                 INITIALIZE_NODE( CON, WindowSurface )
                 INITIALIZE_NODE( CON, DoorSurface )
+                INITIALIZE_NODE( CON, OtherConstruction )
 
                 // BoundarySurfaceType
                 INITIALIZE_NODE( BLDG, WallSurface )
@@ -284,6 +300,15 @@ namespace citygml {
                 INITIALIZE_NODE( BLDG, CeilingSurface )
                 INITIALIZE_NODE( BLDG, OuterCeilingSurface )
                 INITIALIZE_NODE( BLDG, OuterFloorSurface )
+
+                INITIALIZE_NODE( CON, WallSurface )
+                INITIALIZE_NODE( CON, RoofSurface )
+                INITIALIZE_NODE( CON, GroundSurface )
+                INITIALIZE_NODE( CON, FloorSurface )
+                INITIALIZE_NODE( CON, InteriorWallSurface )
+                INITIALIZE_NODE( CON, CeilingSurface )
+                INITIALIZE_NODE( CON, OuterCeilingSurface )
+                INITIALIZE_NODE( CON, OuterFloorSurface )
                 INITIALIZE_NODE( BLDG, BuildingFurniture )
                 INITIALIZE_NODE( BLDG, RoofType)
                 INITIALIZE_NODE( BLDG, IntBuildingInstallation)
@@ -351,6 +376,10 @@ namespace citygml {
                 INITIALIZE_NODE( VEG, Lod2Geometry )
                 INITIALIZE_NODE( VEG, Lod3Geometry )
                 INITIALIZE_NODE( VEG, Lod4Geometry )
+                INITIALIZE_NODE(VEG, Lod1MultiSurface)
+                INITIALIZE_NODE(VEG, Lod2MultiSurface)
+                INITIALIZE_NODE(VEG, Lod3MultiSurface)
+                INITIALIZE_NODE(VEG, Lod4MultiSurface)
 
                 // TRANS
                 INITIALIZE_NODE( TRANS, TransportationComplex )
@@ -414,6 +443,26 @@ namespace citygml {
                 INITIALIZE_NODE( BRID, BridgeConstructionElement )
                 INITIALIZE_NODE( BRID, BridgeInstallation )
                 INITIALIZE_NODE( BRID, BridgePart )
+                INITIALIZE_NODE( BRID, BoundedBy )
+                INITIALIZE_NODE( BRID, OuterBridgeConstruction )
+                INITIALIZE_NODE( BRID, OuterBridgeInstallation )
+                INITIALIZE_NODE( BRID, Lod1Geometry )
+                INITIALIZE_NODE( BRID, Lod2Geometry )
+                INITIALIZE_NODE( BRID, Lod3Geometry )
+                INITIALIZE_NODE( BRID, Lod4Geometry )
+                INITIALIZE_NODE( BRID, Lod1MultiSurface)
+                INITIALIZE_NODE( BRID, Lod2MultiSurface)
+                INITIALIZE_NODE( BRID, Lod3MultiSurface)
+                INITIALIZE_NODE( BRID, Lod4MultiSurface)
+                INITIALIZE_NODE( BRID, WallSurface)
+                INITIALIZE_NODE( BRID, RoofSurface)
+                INITIALIZE_NODE( BRID, GroundSurface)
+                INITIALIZE_NODE( BRID, ClosureSurface)
+                INITIALIZE_NODE( BRID, FloorSurface)
+                INITIALIZE_NODE( BRID, InteriorWallSurface)
+                INITIALIZE_NODE( BRID, CeilingSurface)
+                INITIALIZE_NODE( BRID, OuterCeilingSurface)
+                INITIALIZE_NODE( BRID, OuterFloorSurface)
 
                 // APP
                 INITIALIZE_NODE( APP, Appearance )
@@ -472,11 +521,25 @@ namespace citygml {
         std::string nodeName = lowerName;
 
         size_t pos = nodeName.find_first_of( ":" );
-        if ( pos != std::string::npos ) {
+        auto prefix = nodeName.substr(0, pos);
+        if (pos != std::string::npos) {
             nodeName = nodeName.substr(pos + 1);
         } else {
             // node has no prefix... try with core prefix
             return getXMLNodeFor("core:" + name);
+        }
+
+        // It's technically possible to name the prefix anything
+        // but adding handling for common alternatives used in test files
+        // brg used instead of brid in Delft_3dfier_v2.gml
+        if (prefix == "brg")
+        {
+            return getXMLNodeFor("brid:" + nodeName);
+        }
+
+        if (prefix == "tran")
+        {
+            return getXMLNodeFor("trans:" + nodeName);
         }
 
         auto it = nodeNameTypeMap.find(nodeName);
@@ -496,6 +559,7 @@ namespace citygml {
     DEFINE_NODE( CORE, CreationDate )
     DEFINE_NODE( CORE, TerminationDate )
     DEFINE_NODE( CORE, GeneralizesTo)
+    DEFINE_NODE( CORE, PointCloud)
 
     DEFINE_NODE( CORE, ExternalReference)
     DEFINE_NODE( CORE, InformationSystem)
@@ -513,9 +577,20 @@ namespace citygml {
     DEFINE_NODE( CORE, ReferencePoint)
     DEFINE_NODE( CORE, MimeType)
     DEFINE_NODE( CORE, LibraryObject)
+    DEFINE_NODE( CORE, GenericAttribute)
+
+    DEFINE_NODE( CORE, Lod0MultiSurface)
+    DEFINE_NODE( CORE, Lod1MultiSurface)
+    DEFINE_NODE( CORE, Lod2MultiSurface)
+    DEFINE_NODE( CORE, Lod3MultiSurface)
+
+    DEFINE_NODE( CORE, Lod1Solid)
+    DEFINE_NODE( CORE, Lod2Solid)
+    DEFINE_NODE( CORE, Lod3Solid)
 
     DEFINE_NODE( CORE, Boundary)
     DEFINE_NODE( CORE, RelativeGeometry)
+    DEFINE_NODE( CORE, ClosureSurface)
 
     // GRP
     DEFINE_NODE( GRP, CityObjectGroup )
@@ -536,6 +611,7 @@ namespace citygml {
     DEFINE_NODE( GEN, IntAttribute )
     DEFINE_NODE( GEN, DateAttribute )
     DEFINE_NODE( GEN, UriAttribute )
+    DEFINE_NODE( GEN, Name )
     DEFINE_NODE( GEN, Value )
 
     DEFINE_NODE( GEN, Lod0Geometry )
@@ -620,6 +696,8 @@ namespace citygml {
     DEFINE_NODE( BLDG, Lod2TerrainIntersection )
     DEFINE_NODE( BLDG, Lod3TerrainIntersection )
     DEFINE_NODE( BLDG, Lod4TerrainIntersection )
+    DEFINE_NODE( BLDG, BuildingSubdivision )
+    DEFINE_NODE( BLDG, Storey )
 
     DEFINE_NODE( GML, MultiPoint )
     DEFINE_NODE( GML, MultiCurve )
@@ -693,6 +771,7 @@ namespace citygml {
     DEFINE_NODE( CON, FillingSurface )
     DEFINE_NODE( CON, WindowSurface )
     DEFINE_NODE( CON, DoorSurface )
+    DEFINE_NODE( CON, OtherConstruction )
 
     // BoundarySurfaceType
     DEFINE_NODE( BLDG, WallSurface )
@@ -704,6 +783,16 @@ namespace citygml {
     DEFINE_NODE( BLDG, CeilingSurface )
     DEFINE_NODE( BLDG, OuterCeilingSurface )
     DEFINE_NODE( BLDG, OuterFloorSurface )
+
+    DEFINE_NODE( CON, WallSurface )
+    DEFINE_NODE( CON, RoofSurface )
+    DEFINE_NODE( CON, GroundSurface )
+    DEFINE_NODE( CON, FloorSurface )
+    DEFINE_NODE( CON, InteriorWallSurface )
+    DEFINE_NODE( CON, CeilingSurface )
+    DEFINE_NODE( CON, OuterCeilingSurface )
+    DEFINE_NODE( CON, OuterFloorSurface )
+
     DEFINE_NODE( BLDG, BuildingFurniture )
     DEFINE_NODE( BLDG, RoofType)
     DEFINE_NODE( BLDG, IntBuildingInstallation)
@@ -738,9 +827,9 @@ namespace citygml {
     DEFINE_NODE( WTR, Function )
     DEFINE_NODE( WTR, Usage )
     DEFINE_NODE( WTR, WaterLevel )
-    DEFINE_NODE( WTR, Lod0MultiCurve )
-    DEFINE_NODE( WTR, Lod0MultiSurface )
+    DEFINE_NODE( WTR, Lod0MultiCurve)
     DEFINE_NODE( WTR, Lod1MultiCurve )
+    DEFINE_NODE( WTR, Lod0MultiSurface)
     DEFINE_NODE( WTR, Lod1MultiSurface )
     DEFINE_NODE( WTR, Lod1Solid )
     DEFINE_NODE( WTR, Lod2Solid )
@@ -772,6 +861,10 @@ namespace citygml {
     DEFINE_NODE( VEG, Lod2Geometry )
     DEFINE_NODE( VEG, Lod3Geometry )
     DEFINE_NODE( VEG, Lod4Geometry )
+    DEFINE_NODE(VEG, Lod1MultiSurface)
+    DEFINE_NODE(VEG, Lod2MultiSurface)
+    DEFINE_NODE(VEG, Lod3MultiSurface)
+    DEFINE_NODE(VEG, Lod4MultiSurface)
 
     // TRANS
     DEFINE_NODE( TRANS, TransportationComplex )
@@ -835,6 +928,26 @@ namespace citygml {
     DEFINE_NODE( BRID, BridgeConstructionElement )
     DEFINE_NODE( BRID, BridgeInstallation )
     DEFINE_NODE( BRID, BridgePart )
+    DEFINE_NODE( BRID, OuterBridgeConstruction )
+    DEFINE_NODE( BRID, OuterBridgeInstallation )
+    DEFINE_NODE( BRID, Lod1Geometry )
+    DEFINE_NODE( BRID, Lod2Geometry )
+    DEFINE_NODE( BRID, Lod3Geometry ) 
+    DEFINE_NODE( BRID, Lod4Geometry )
+    DEFINE_NODE( BRID, Lod1MultiSurface)
+    DEFINE_NODE( BRID, Lod2MultiSurface)
+    DEFINE_NODE( BRID, Lod3MultiSurface)
+    DEFINE_NODE( BRID, Lod4MultiSurface)
+    DEFINE_NODE( BRID, BoundedBy )
+    DEFINE_NODE( BRID, WallSurface)
+    DEFINE_NODE( BRID, RoofSurface)
+    DEFINE_NODE( BRID, GroundSurface)
+    DEFINE_NODE( BRID, ClosureSurface)
+    DEFINE_NODE( BRID, FloorSurface)
+    DEFINE_NODE( BRID, InteriorWallSurface)
+    DEFINE_NODE( BRID, CeilingSurface)
+    DEFINE_NODE( BRID, OuterCeilingSurface)
+    DEFINE_NODE( BRID, OuterFloorSurface)
 
     // APP
     DEFINE_NODE( APP, Appearance )

@@ -89,6 +89,13 @@ namespace citygml {
             COT_WindowSurface,
             COT_DoorSurface,
 
+            COT_BuildingSubdivision,
+            COT_Storey,
+            COT_PointCloud,
+            COT_OuterBridgeConstruction,
+            COT_OtherConstruction,
+            COT_OuterBridgeInstallation,
+
             COT_All
         };
 

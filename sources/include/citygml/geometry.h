@@ -62,7 +62,7 @@ namespace citygml {
         void setLod(unsigned int lod);
 
         // Access the srs of the implicit geometry
-        std::string getSRSName() const;
+        [[nodiscard]] const std::string& getSRSName() const;
         void setSRSName(const std::string& srsName);
 
         void addPolygon(std::shared_ptr<Polygon> );
