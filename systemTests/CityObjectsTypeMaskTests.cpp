@@ -129,5 +129,5 @@ TEST(CityObjectsTypeMask, FilterStreamInterface) {
     std::stringstream outStream(std::ios_base::out);
     CityObjectsTypeMask outMask(CityObject::CityObjectsType::COT_Building | CityObject::CityObjectsType::COT_Door);
     outStream << outMask;
-    EXPECT_EQ(outStream.str(), "000000000000000000000000000000000000000000000000100010");
+    EXPECT_EQ(outStream.str(), "000000000000000000000000000000000000000000000000000000100010");
 }
