@@ -14,8 +14,15 @@
 
 template <typename T>
 std::pair<T, char const*> readNextNumber(std::string_view const& string) {
+    char const* const firstPattern = std::find_if(string.data(), string.data() + string.size(), [](char ch) {
+        return !std::isspace(ch);
+    });
+    if (firstPattern == string.data() + string.size()) {
+        throw std::runtime_error("Cannot parse number.");
+    }
+
     T result;
-    auto [patternEnd, errorCode] = std::from_chars(string.data(), string.data() + string.size(), result);
+    auto [patternEnd, errorCode] = std::from_chars(firstPattern, string.data() + string.size(), result);
     if (errorCode == std::errc()) {
         char const* const nextPattern = std::find_if(patternEnd, string.data() + string.size(), [](char ch) {
             return !std::isspace(ch);
