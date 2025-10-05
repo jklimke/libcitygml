@@ -27,6 +27,10 @@ std::pair<T, char const*> readNextNumber(std::string_view const& string) {
         char const* const nextPattern = std::find_if(patternEnd, string.data() + string.size(), [](char ch) {
             return !std::isspace(ch);
         });
+        bool const nonWhitespaceAfterNumber = patternEnd != string.data() + string.size() && nextPattern == patternEnd;
+        if (nonWhitespaceAfterNumber) {
+            throw std::runtime_error("Cannot parse number.");
+        }
         return { result, nextPattern };
     } else {
         throw std::runtime_error("Cannot parse number.");
