@@ -40,19 +40,6 @@ char const* readNextNumbers(std::string_view view, std::array<T*, N> const& targ
     return view.data();
 }
 
-template <typename T, size_t N>
-void readNextNumbers(std::istream& is, std::array<T*, N> const& targets) {
-    std::string input;
-    char const* end;
-    for ( T* target : targets) {
-        if (is >> input) {
-            std::tie(*target, end) = readNextNumber<T>(input);
-        } else {
-            return;
-        }
-    }
-}
-
 // 2D vector class.
 
 template< class T > class TVec2
@@ -153,12 +140,6 @@ template<class T> inline std::ostream& operator<<(std::ostream & os, TVec2<T> co
 
 template<class T> char const* TVec2<T>::fromString(std::string_view view) {
     return readNextNumbers(view, std::array<T*, 2>{ &x, &y });
-}
-
-template<class T> inline std::istream& operator>>(std::istream & is, TVec2<T> & v)
-{
-    readNextNumbers(is, std::array<T*, 2>{ &v.x, &v.y });
-    return is;
 }
 
 typedef TVec2< float >			TVec2f;
@@ -324,11 +305,6 @@ template<class T> char const* TVec3<T>::fromString(std::string_view view) {
     return readNextNumbers(view, std::array<T*, 3>{ &x, &y, &z });
 }
 
-template<class T> inline std::istream& operator>>(std::istream & is, TVec3<T> & v) {
-    readNextNumbers(is, std::array<T*, 3>{ &v.x, &v.y, &v.z });
-    return is;
-}
-
 typedef TVec3< float >			TVec3f;
 typedef TVec3< double >			TVec3d;
 
@@ -359,12 +335,6 @@ template<class T> inline std::ostream& operator<<( std::ostream & os, TVec4<T> c
 
 template<class T> char const* TVec4<T>::fromString(std::string_view view) {
     return readNextNumbers(view, std::array<T*, 4>{ &x, &y, &z, &w });
-}
-
-template<class T> inline std::istream& operator>>( std::istream & is, TVec4<T> & v )
-{
-    readNextNumbers(is, std::array<T*, 4>{ &v.x, &v.y, &v.z, &v.w });
-    return is;
 }
 
 typedef TVec4< float >			TVec4f;
