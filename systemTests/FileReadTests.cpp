@@ -130,6 +130,7 @@ void readFile(char const* fileName) {
 	std::cout << "Done.\n";
 }
 
+// TODO: Duplicated with VecsTests.cpp
 class LocaleModifier {
 public:
     LocaleModifier(char const* newLocale) : previousLocale(std::locale::global(std::locale(newLocale))) {}

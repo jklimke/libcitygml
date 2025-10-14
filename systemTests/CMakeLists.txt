@@ -16,6 +16,7 @@ add_executable(citygmlSystemTests
 	systemTestsMain.cpp
 	CityObjectsTypeMaskTests.cpp
 	FileReadTests.cpp
+    VecsTests.cpp
 )
 
 target_include_directories(citygmlSystemTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../sources/include)
