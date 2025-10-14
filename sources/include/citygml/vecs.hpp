@@ -14,8 +14,10 @@
 
 template <typename T>
 std::pair<T, char const*> readNextNumber(std::string_view const& string) {
+    static const auto shouldSkip = [](char value) { return !std::isspace(value) && value != '+'; }; // std::from_chars does NOT handle the '+' character as part of a number.
+
     char const* const firstPattern = std::find_if(string.data(), string.data() + string.size(), [](char ch) {
-        return !std::isspace(ch);
+        return shouldSkip(ch);
     });
     if (firstPattern == string.data() + string.size()) {
         throw std::runtime_error("Cannot parse number.");
@@ -25,7 +27,7 @@ std::pair<T, char const*> readNextNumber(std::string_view const& string) {
     auto [patternEnd, errorCode] = std::from_chars(firstPattern, string.data() + string.size(), result);
     if (errorCode == std::errc()) {
         char const* const nextPattern = std::find_if(patternEnd, string.data() + string.size(), [](char ch) {
-            return !std::isspace(ch);
+            return shouldSkip(ch);
         });
         bool const nonWhitespaceAfterNumber = patternEnd != string.data() + string.size() && nextPattern == patternEnd;
         if (nonWhitespaceAfterNumber) {
