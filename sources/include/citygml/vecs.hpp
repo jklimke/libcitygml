@@ -17,10 +17,12 @@ namespace {
     constexpr std::array<char, 7> NUMBER_WHITESPACE { ' ', '\f', '\n', '\r', '\t', '\v', '+' }; 
 } // anonymous namespace
 
+inline bool shouldSkip(char value) {
+    return std::any_of(NUMBER_WHITESPACE.begin(), NUMBER_WHITESPACE.end(), [value](char v) { return v == value; });
+}
+
 template <typename T>
 std::pair<T, char const*> readNextNumber(std::string_view const& string) {
-    static const auto shouldSkip = [](char value) { return std::any_of(NUMBER_WHITESPACE.begin(), NUMBER_WHITESPACE.end(), [value](char v) { return v == value; }); };
-
     char const* const firstPattern = std::find_if(string.data(), string.data() + string.size(), [](char ch) {
         return !shouldSkip(ch);
     });

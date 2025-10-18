@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <iterator>
 #include <memory>
 #include <string>
@@ -51,13 +52,22 @@ namespace citygml {
     template<class T>
     inline std::vector<T> parseVecList( const std::string &s,  std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location )
     {
+        if (std::all_of(s.begin(), s.end(), shouldSkip)) {
+            return {};
+        }
+
         std::string_view view(s);
         std::vector<T> vec;
         while (!view.empty()) {
             T value;
             char const* end = readNextValue(view, value);
-            vec.push_back(value);
-            view = view.substr(std::distance(view.data(), end));
+            std::ptrdiff_t const consumedChars = std::distance(view.data(), end);
+            if (consumedChars > 0) {
+                vec.push_back(value);
+                view = view.substr(consumedChars);
+            } else {
+                break; // reading stopped at an invalid character
+            }
         }
         return vec;
     }
@@ -71,7 +81,7 @@ namespace citygml {
                               0.0, 0.0, 1.0, 0.0,
                               0.0, 0.0, 0.0, 1.0 };
         for (size_t i = 0; i < 16; ++i){
-            if(view.empty()) {
+            if(view.empty() || std::all_of(view.begin(), view.end(), shouldSkip)) {
                 CITYGML_LOG_WARN(logger, "Matrix with 16 elements expected, got '" << i + 1 << "' at " << location << ". Matrix may be invalid.");
                 break;
             }
