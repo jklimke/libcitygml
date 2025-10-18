@@ -7,10 +7,11 @@
 	#include <citygml/tesselator.h>
 #endif
 
+#include "GlobalLocaleSwitcher.hpp"
+
 #include <gtest/gtest.h>
 
 #include <fstream>
-#include <locale>
 #include <memory>
 #include <stdexcept>
 #include <time.h>
@@ -133,18 +134,6 @@ void readFile(char const* fileName) {
 	if constexpr (LOG) std::cout << "Done.\n";
 }
 
-// TODO: Duplicated with VecsTests.cpp
-class LocaleModifier {
-public:
-    LocaleModifier(char const* newLocale) : previousLocale(std::locale::global(std::locale(newLocale))) {}
-
-    ~LocaleModifier() {
-        std::locale::global(previousLocale);
-    }
-
-private:
-    std::locale const previousLocale;
-};
 } // anonymous namespace
 
 TEST(FileReadTests, berlin_open_data_sample_data) {
@@ -160,6 +149,6 @@ TEST(FileReadTests, FZK_Haus_LoD0_KIT_IAI_KHH_B36_V1) {
 }
 
 TEST(FileReadTests, CommaFileSeparator) {
-    LocaleModifier const localeModifier("de_DE.UTF-8");
+    test::GlobalLocaleSwitcher const localeModifier("de_DE.UTF-8");
     readFile("../../data/FZK-Haus-LoD0-KIT-IAI-KHH-B36-V1.gml");
 }

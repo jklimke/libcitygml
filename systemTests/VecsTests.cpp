@@ -1,11 +1,12 @@
 #include <citygml/vecs.hpp>
 
+#include "GlobalLocaleSwitcher.hpp"
+
 #include <gtest/gtest.h>
 
 #include <array>
 #include <cmath>
 #include <limits>
-#include <locale>
 #include <stdexcept>
 #include <string_view>
 using namespace std::literals;
@@ -18,19 +19,6 @@ namespace {
 void printIndent(unsigned int indent) {
 	for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
 }
-
-// TODO: Duplicated with FileReadTests.cpp
-class LocaleModifier {
-public:
-    LocaleModifier(char const* newLocale) : previousLocale(std::locale::global(std::locale(newLocale))) {}
-
-    ~LocaleModifier() {
-        std::locale::global(previousLocale);
-    }
-
-private:
-    std::locale const previousLocale;
-};
 
 template <size_t N>
 struct TestData {
@@ -233,7 +221,7 @@ TEST(VecsTests, TVec4FromString) {
 }
 
 TEST(VecsTests, DifferentGlobalLocale) {
-    LocaleModifier tempLocale("de_DE.UTF-8");
+    test::GlobalLocaleSwitcher const tempLocale("de_DE.UTF-8");
 
     TVec2f float2;
     float2.fromString("0.0 1.0");
