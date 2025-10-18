@@ -4,7 +4,7 @@ if (NOT ${LIBCITYGML_STATIC_CRT})
 	set(gtest_force_shared_crt ON)
 endif()
 
-set(BUILD_GMOCK OFF)
+set(BUILD_GMOCK ON)
 
 FetchContent_Declare(
   gtest
@@ -21,6 +21,6 @@ add_executable(citygmlSystemTests
 
 target_include_directories(citygmlSystemTests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../sources/include)
 
-target_link_libraries(citygmlSystemTests PRIVATE citygml gtest)
+target_link_libraries(citygmlSystemTests PRIVATE citygml gtest gmock)
 
 install(TARGETS citygmlSystemTests RUNTIME DESTINATION ${BIN_INSTALL_DIR})
