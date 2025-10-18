@@ -86,7 +86,7 @@ TEST(VecsTests, TVec2FromString) {
         compareNumberOrNaN(doubleTarget.y, data.expectedDoubles[1]);
     }
 
-    constexpr std::array<std::string_view, 22> ERROR_STRINGS{
+    constexpr std::array<std::string_view, 23> ERROR_STRINGS{
         "0,0 0,0"sv,
         "0 0,0"sv,
         "0, 0,"sv,
@@ -109,6 +109,7 @@ TEST(VecsTests, TVec2FromString) {
         "5 7e+"sv,
         "5e- 7e-"sv,
         "5 7e-"sv,
+        "   "sv,
     };
     for (std::string_view const& sourceString : ERROR_STRINGS) {
         EXPECT_THROW(floatTarget.fromString(sourceString), std::runtime_error);
@@ -150,7 +151,7 @@ TEST(VecsTests, TVec3FromString) {
         compareNumberOrNaN(doubleTarget.z, data.expectedDoubles[2]);
     }
 
-    constexpr std::array<std::string_view, 11> ERROR_STRINGS{
+    constexpr std::array<std::string_view, 12> ERROR_STRINGS{
         "0 0 0,0"sv,
         "0 0 0,"sv,
         "0 0 ,0"sv,
@@ -162,6 +163,7 @@ TEST(VecsTests, TVec3FromString) {
         "0 0 9e"sv,
         "0 0 9e+"sv,
         "0 0 9e-"sv,
+        "   "sv,
     };
     for (std::string_view const& sourceString : ERROR_STRINGS) {
         EXPECT_THROW(floatTarget.fromString(sourceString), std::runtime_error);
@@ -205,7 +207,7 @@ TEST(VecsTests, TVec4FromString) {
         compareNumberOrNaN(doubleTarget.w, data.expectedDoubles[3]);
     }
 
-    constexpr std::array<std::string_view, 11> ERROR_STRINGS{
+    constexpr std::array<std::string_view, 12> ERROR_STRINGS{
         "0 0 0 0,0"sv,
         "0 0 0 0,"sv,
         "0 0 0 ,0"sv,
@@ -217,6 +219,7 @@ TEST(VecsTests, TVec4FromString) {
         "0 0 0 11e"sv,
         "0 0 0 11e+"sv,
         "0 0 0 11e-"sv,
+        "   "sv,
     };
     for (std::string_view const& sourceString : ERROR_STRINGS) {
         EXPECT_THROW(floatTarget.fromString(sourceString), std::runtime_error);
@@ -290,10 +293,11 @@ namespace {
 } // anonymous namespace
 
 TEST(VecsTests, Matrix) {
-    const std::array<MatrixTestData, 3> TEST_STRINGS{
+    const std::array<MatrixTestData, 4> TEST_STRINGS{
         MatrixTestData{"0 -1 1 +1  0. -1. 1. +1.  0.0 -1.0 1.0 +1.0  0.00 -0.1 0.1 +0.1"sv, { 0., -1., 1., 1.,  0., -1., 1., 1.,  0., -1., 1., 1.,  0., -0.1, 0.1, 0.1 } },
         MatrixTestData{"0.0e0 -1.1e0 1.1e0 +1.1e0  0.0e10 -1.1e10 1.1e10 +1.1e10  0.0e-10 -1.1e-10 1.1e-10 +1.1e-10  0.0e+10 -1.1e+10 1.1e+10 +1.1e+10"sv, { 0., -1.1, 1.1, 1.1,  0., -1.1e10, 1.1e10, 1.1e10,  0., -1.1e-10, 1.1e-10, 1.1e-10,  0., -1.1e10, 1.1e10, 1.1e10 } },
         MatrixTestData{"INF -INF +INF 0  0 1 0 0  0 0 1 0  0 0 0 1"sv, { doubleLimits::infinity(), -doubleLimits::infinity(), doubleLimits::infinity(), 0.,  0., 1., 0., 0.,  0., 0., 1., 0.,  0., 0., 0., 1. } },
+        MatrixTestData{"   ", { 1., 0., 0., 0.,  0., 1., 0., 0.,  0., 0., 1., 0.,  0., 0., 0., 1. } },
     };
     std::shared_ptr<citygml::CityGMLLogger> noLogger;
     TestDocumentLocation loc;
