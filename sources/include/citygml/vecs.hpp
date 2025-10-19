@@ -26,31 +26,27 @@ std::pair<T, char const*> readNextNumber(std::string_view const& string) {
     char const* const firstPattern = std::find_if(string.data(), string.data() + string.size(), [](char ch) {
         return !shouldSkip(ch);
     });
-    if (firstPattern == string.data() + string.size()) {
-        throw std::runtime_error("Cannot parse number.");
+
+    if (firstPattern != string.data() + string.size()) {
+        T result;
+        auto [patternEnd, errorCode] = std::from_chars(firstPattern, string.data() + string.size(), result);
+        if (errorCode == std::errc()) {
+            char const* const nextPattern = std::find_if(patternEnd, string.data() + string.size(), [](char ch) {
+                return !shouldSkip(ch);
+            });
+            return { result, nextPattern };
+        }
     }
 
-    T result;
-    auto [patternEnd, errorCode] = std::from_chars(firstPattern, string.data() + string.size(), result);
-    if (errorCode == std::errc()) {
-        char const* const nextPattern = std::find_if(patternEnd, string.data() + string.size(), [](char ch) {
-            return !shouldSkip(ch);
-        });
-        bool const nonWhitespaceAfterNumber = patternEnd != string.data() + string.size() && nextPattern == patternEnd;
-        if (nonWhitespaceAfterNumber) {
-            throw std::runtime_error("Cannot parse number.");
-        }
-        return { result, nextPattern };
-    } else {
-        throw std::runtime_error("Cannot parse number.");
-    }
+    // invalid pattern - be lenient and return default value
+    return { T{}, firstPattern };
 }
 
 template <typename T, size_t N>
 char const* readNextNumbers(std::string_view view, std::array<T*, N> const& targets) {
     for (T* target : targets) {
         if (view.empty()) {
-            throw std::runtime_error("Cannot parse number from empty string.");
+            break; // Illegal number input - be lenient and not set missing targets.
         } else {
             char const* end;
             std::tie(*target, end) = readNextNumber<T>(view);

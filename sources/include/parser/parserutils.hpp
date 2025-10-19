@@ -85,8 +85,15 @@ namespace citygml {
                 CITYGML_LOG_WARN(logger, "Matrix with 16 elements expected, got '" << i + 1 << "' at " << location << ". Matrix may be invalid.");
                 break;
             }
-            char const* next = readNextValue(view, matrix[i]);
-            view = view.substr(std::distance(view.data(), next));
+            double nextValue;
+            char const* nextChar = readNextValue(view, nextValue);
+            std::ptrdiff_t const consumedChars = std::distance(view.data(), nextChar);
+            if (consumedChars > 0) {
+                view = view.substr(consumedChars);
+                matrix[i] = nextValue;
+            } else {
+                view = std::string_view{};
+            }
         }
         return TransformationMatrix(matrix);
     }
