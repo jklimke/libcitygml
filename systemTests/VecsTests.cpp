@@ -326,3 +326,132 @@ TEST(VecsTests, Matrix) {
     EXPECT_THAT(logs, testing::StartsWith("Level: 3")); // Checks that log level is Warning
     EXPECT_THAT(logs, testing::HasSubstr("Matrix with 16 elements expected, got '5' at " + locatorString.str() + ". Matrix may be invalid."));
 }
+
+namespace {
+
+    template <typename T>
+    struct VecListTestData {
+        std::string_view sourceString;
+        std::vector<T> expectedDoubles;
+
+        VecListTestData(std::string_view s, std::vector<T> expectedDoubles)
+            : sourceString(s), expectedDoubles(expectedDoubles) {}
+    };
+
+} // anonymous namespace
+
+TEST(VecsTests, VecList) {
+    std::shared_ptr<citygml::CityGMLLogger> noLogger;
+    TestDocumentLocation loc;
+    const std::array<VecListTestData<double>, 16> TEST_STRINGS_DOUBLE{
+        VecListTestData<double>{"0 -1 1 +1  0. -1. 1. +1.  0.0 -1.0 1.0 +1.0"sv, { 0., -1., 1., 1.,  0., -1., 1., 1.,  0., -1., 1., 1. } },
+        {"-0.1 0.1 +0.1  -1.1e0 1.1e0 +1.1e0"sv, { -0.1, 0.1, 0.1,  -1.1, 1.1, 1.1 } },
+        {"-1.1e10 1.1e10 +1.1e10  -1.1e-10 1.1e-10 +1.1e-10  -1.1e+10 1.1e+10 +1.1e+10"sv, { -1.1e10, 1.1e10, 1.1e10,  -1.1e-10, 1.1e-10, 1.1e-10,  -1.1e10, 1.1e10, 1.1e10 }},
+        {"INF -INF +INF"sv, { doubleLimits::infinity(), -doubleLimits::infinity(), doubleLimits::infinity() } },
+        // Unexpected inputs - document expected behavior
+        {"2,1 3", { 2. } },
+        {"2, 3", { 2. } },
+        {",2 3", { } },
+        {"2.100,3 4", { 2.1 } },
+        {"2,100.3 4", { 2. } },
+        {"2'100.3 4", { 2. } },
+        {"1.2.3   4", { 1.2, 0.3, 4. } },
+        {".1.2    3", { 0.1, 0.2, 3. } },
+        {"2e      3", { 2. } },
+        {"2e+     3", { 2. } },
+        {"2e-     3", { 2. } },
+        {"   ", { } },
+    };
+    for (VecListTestData<double> const& data : TEST_STRINGS_DOUBLE) {
+        std::vector<double> const doubleVec = citygml::parseVecList<double>(std::string(data.sourceString), noLogger, loc);
+        ASSERT_THAT(doubleVec, testing::ElementsAreArray(data.expectedDoubles));
+
+        std::vector<float> const floatVec = citygml::parseVecList<float>(std::string(data.sourceString), noLogger, loc);
+        std::vector<float> expectedFloats(data.expectedDoubles.size());
+        std::transform(data.expectedDoubles.begin(), data.expectedDoubles.end(), expectedFloats.begin(), [](double val){ return static_cast<float>(val); });
+        ASSERT_THAT(floatVec, testing::ElementsAreArray(expectedFloats));
+    }
+    std::vector<double> const doubleVec = citygml::parseVecList<double>(std::string("NaN -NaN +NaN"), noLogger, loc);
+    ASSERT_TRUE(std::isnan(doubleVec[0]));
+    ASSERT_TRUE(std::isnan(doubleVec[1]));
+    ASSERT_TRUE(std::isnan(doubleVec[2]));
+    std::vector<float> const floatVec = citygml::parseVecList<float>(std::string("NaN -NaN +NaN"), noLogger, loc);
+    ASSERT_TRUE(std::isnan(floatVec[0]));
+    ASSERT_TRUE(std::isnan(floatVec[1]));
+    ASSERT_TRUE(std::isnan(floatVec[2]));
+
+
+    const std::array<VecListTestData<TVec2d>, 16> TEST_STRINGS_VEC2{
+        VecListTestData<TVec2d>{"0 -1  1 +1  0. -1.  1. +1.  0.0 -1.0  1.0 +1.0"sv, { { 0., -1. }, { 1., 1. }, { 0., -1. }, { 1., 1. }, { 0., -1. }, { 1., 1. } } },
+        {"-0.1 0.1  +0.1 -1.1e0  1.1e0 +1.1e0"sv, { { -0.1, 0.1 }, { 0.1, -1.1 }, { 1.1, 1.1 } } },
+        {"-1.1e10 1.1e10  +1.1e10 -1.1e-10  1.1e-10 +1.1e-10  -1.1e+10 1.1e+10  +1.1e+10 0"sv, { { -1.1e10, 1.1e10 }, { 1.1e10, -1.1e-10 }, { 1.1e-10, 1.1e-10 }, { -1.1e10, 1.1e10 }, { 1.1e10, 0. } }},
+        {"INF -INF +INF 0"sv, { {doubleLimits::infinity(), -doubleLimits::infinity() }, { doubleLimits::infinity(), 0. } } },
+        // Unexpected inputs - document expected behavior
+        {"2,1 3", { { 2., 0. } } },
+        {"2, 3", { { 2., 0. } } },
+        {",2 3", { } },
+        {"2.100,3 4", { { 2.1, 0. } } },
+        {"2,100.3 4", { { 2., 0. } } },
+        {"2'100.3 4", { { 2., 0. } } },
+        {"1.2.3   4", { { 1.2, 0.3 }, { 4., 0. } } },
+        {".1.2    3", { { 0.1, 0.2 }, { 3., 0. } } },
+        {"2e      3", { { 2., 0. } } },
+        {"2e+     3", { { 2., 0. } } },
+        {"2e-     3", { { 2., 0. } } },
+        {"   ", { } },
+    };
+    for (VecListTestData<TVec2d> const& data : TEST_STRINGS_VEC2) {
+        std::vector<TVec2d> const doubleVec = citygml::parseVecList<TVec2d>(std::string(data.sourceString), noLogger, loc);
+        ASSERT_THAT(doubleVec, testing::ElementsAreArray(data.expectedDoubles));
+
+        std::vector<TVec2f> const floatVec = citygml::parseVecList<TVec2f>(std::string(data.sourceString), noLogger, loc);
+        std::vector<TVec2f> expectedFloats(data.expectedDoubles.size());
+        std::transform(data.expectedDoubles.begin(), data.expectedDoubles.end(), expectedFloats.begin(), [](TVec2d val){ return TVec2f(static_cast<float>(val.x), static_cast<float>(val.y)); });
+        ASSERT_THAT(floatVec, testing::ElementsAreArray(expectedFloats));
+    }
+    std::vector<TVec2d> const doubleVec2Vec = citygml::parseVecList<TVec2d>(std::string("NaN -NaN +NaN"), noLogger, loc);
+    ASSERT_TRUE(std::isnan(doubleVec2Vec[0].x));
+    ASSERT_TRUE(std::isnan(doubleVec2Vec[0].y));
+    ASSERT_TRUE(std::isnan(doubleVec2Vec[1].x));
+    std::vector<TVec2f> const floatVec2Vec = citygml::parseVecList<TVec2f>(std::string("NaN -NaN +NaN"), noLogger, loc);
+    ASSERT_TRUE(std::isnan(floatVec2Vec[0].x));
+    ASSERT_TRUE(std::isnan(floatVec2Vec[0].y));
+    ASSERT_TRUE(std::isnan(floatVec2Vec[1].x));
+
+    const std::array<VecListTestData<TVec3d>, 16> TEST_STRINGS_VEC3{
+        VecListTestData<TVec3d>{"0 -1 1  +1 0. -1.  1. +1. 0.0  -1.0 1.0 +1.0"sv, { { 0., -1., 1. }, { 1., 0., -1. }, { 1., 1., 0. }, { -1., 1., 1. } } },
+        {"-0.1 0.1 +0.1  -1.1e0 1.1e0 +1.1e0"sv, { { -0.1, 0.1, 0.1 }, { -1.1, 1.1, 1.1 } } },
+        {"-1.1e10 1.1e10 +1.1e10  -1.1e-10 1.1e-10 +1.1e-10  -1.1e+10 1.1e+10 +1.1e+10"sv, { { -1.1e10, 1.1e10, 1.1e10 }, { -1.1e-10, 1.1e-10, 1.1e-10 }, { -1.1e10, 1.1e10, 1.1e10 } }},
+        {"INF -INF +INF"sv, { {doubleLimits::infinity(), -doubleLimits::infinity(), doubleLimits::infinity() } } },
+        // Unexpected inputs - document expected behavior
+        {"2,1 3", { { 2., 0., 0. } } },
+        {"2, 3", { { 2., 0., 0. } } },
+        {",2 3", { } },
+        {"2.100,3 4", { { 2.1, 0., 0. } } },
+        {"2,100.3 4", { { 2., 0., 0. } } },
+        {"2'100.3 4", { { 2., 0., 0. } } },
+        {"1.2.3   4", { { 1.2, 0.3, 4. } } },
+        {".1.2    3", { { 0.1, 0.2, 3. } } },
+        {"2e      3", { { 2., 0., 0. } } },
+        {"2e+     3", { { 2., 0., 0. } } },
+        {"2e-     3", { { 2., 0., 0. } } },
+        {"   ", { } },
+    };
+    for (VecListTestData<TVec3d> const& data : TEST_STRINGS_VEC3) {
+        std::vector<TVec3d> const doubleVec = citygml::parseVecList<TVec3d>(std::string(data.sourceString), noLogger, loc);
+        ASSERT_THAT(doubleVec, testing::ElementsAreArray(data.expectedDoubles));
+
+        std::vector<TVec3f> const floatVec = citygml::parseVecList<TVec3f>(std::string(data.sourceString), noLogger, loc);
+        std::vector<TVec3f> expectedFloats(data.expectedDoubles.size());
+        std::transform(data.expectedDoubles.begin(), data.expectedDoubles.end(), expectedFloats.begin(), [](TVec3d val){ return TVec3f(static_cast<float>(val.x), static_cast<float>(val.y), static_cast<float>(val.z)); });
+        ASSERT_THAT(floatVec, testing::ElementsAreArray(expectedFloats));
+    }
+    std::vector<TVec3d> const doubleVec3Vec = citygml::parseVecList<TVec3d>(std::string("NaN -NaN +NaN"), noLogger, loc);
+    ASSERT_TRUE(std::isnan(doubleVec3Vec[0].x));
+    ASSERT_TRUE(std::isnan(doubleVec3Vec[0].y));
+    ASSERT_TRUE(std::isnan(doubleVec3Vec[0].z));
+    std::vector<TVec3f> const floatVec3Vec = citygml::parseVecList<TVec3f>(std::string("NaN -NaN +NaN"), noLogger, loc);
+    ASSERT_TRUE(std::isnan(floatVec3Vec[0].x));
+    ASSERT_TRUE(std::isnan(floatVec3Vec[0].y));
+    ASSERT_TRUE(std::isnan(floatVec3Vec[0].z));
+}
