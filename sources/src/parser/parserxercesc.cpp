@@ -39,6 +39,7 @@
 #include <xercesc/util/BinInputStream.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/TransService.hpp>
 
 using namespace citygml;
 
@@ -48,10 +49,33 @@ std::string toStdString( const XMLCh* const wstr )
         return "";
     }
 
-    char* tmp = xercesc::XMLString::transcode(wstr);
-    std::string str(tmp);
-    xercesc::XMLString::release(&tmp);
-    return str;
+    xercesc::XMLTransService::Codes failReason;
+    std::unique_ptr<xercesc::XMLTranscoder> utf8Transcoder(xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor("UTF-8", failReason, 16*1024));
+
+    if (utf8Transcoder != nullptr) {
+        XMLSize_t const len = xercesc::XMLString::stringLen(wstr);
+        // Needs a minimum size as 1 utf16 character can be several utf8 characters.
+        size_t const utf8Len = std::max(static_cast<size_t>(10u), static_cast<size_t>(2 * len));
+        auto utf8Bytes = std::make_unique<XMLByte[]>(utf8Len);
+
+        std::string result{};
+        XMLSize_t utf16Window = 1, utf16Consumed = 0; // Assigning 1 to the window to fulfill the first iteration condition
+        while (utf16Consumed < len && utf16Window > 0) {
+            XMLSize_t utf8Written = utf8Transcoder->transcodeTo(wstr + utf16Consumed, len - utf16Consumed, utf8Bytes.get(), utf8Len, utf16Window,
+                    xercesc::XMLTranscoder::UnRep_RepChar);
+            utf16Consumed += utf16Window;
+            result += std::string(utf8Bytes.get(), utf8Bytes.get() + utf8Written);
+        }
+
+        return result;
+    } else {
+        // This is a fallback if for some reason xerces-c doesn't come with a UTF-8 transcoder
+        // TODO: We should log this - once per file
+        char* tmp = xercesc::XMLString::transcode(wstr);
+        std::string str(tmp);
+        xercesc::XMLString::release(&tmp);
+        return str;
+    }
 }
 
 std::shared_ptr<XMLCh> toXercesString(const std::string& str) {
