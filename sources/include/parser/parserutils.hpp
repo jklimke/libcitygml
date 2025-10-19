@@ -29,15 +29,13 @@ namespace citygml {
          return target.fromString(view);
     }
 
-    template<class T> inline T parseValue( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>&, const DocumentLocation&)
-    {
+    template<class T> inline T parseValue(std::string_view s, std::shared_ptr<citygml::CityGMLLogger>&, const DocumentLocation&) {
         T value;
         readNextValue<T>(s, value);
         return value;
     }
 
-    template<> inline bool parseValue( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location )
-    {
+    template<> inline bool parseValue(std::string_view s, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location ) {
         // parsing a bool is special because "true" and "1" are true while "false" and "0" are false
         if (s == "1" || s == "true") {
             return true;
@@ -50,13 +48,11 @@ namespace citygml {
     }
 
     template<class T>
-    inline std::vector<T> parseVecList( const std::string &s,  std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location )
-    {
-        if (std::all_of(s.begin(), s.end(), shouldSkip)) {
+    inline std::vector<T> parseVecList(std::string_view view,  std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location ) {
+        if (std::all_of(view.begin(), view.end(), shouldSkip)) {
             return {};
         }
 
-        std::string_view view(s);
         std::vector<T> vec;
         while (!view.empty()) {
             T value;
@@ -72,10 +68,7 @@ namespace citygml {
         return vec;
     }
 
-    inline TransformationMatrix parseMatrix( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location)
-    {
-        std::string_view view(s);
-
+    inline TransformationMatrix parseMatrix(std::string_view view, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location) {
         double matrix[16] = { 1.0, 0.0, 0.0, 0.0,
                               0.0, 1.0, 0.0, 0.0,
                               0.0, 0.0, 1.0, 0.0,
