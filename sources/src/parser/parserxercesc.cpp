@@ -43,16 +43,28 @@
 
 using namespace citygml;
 
-std::string toStdString( const XMLCh* const wstr )
+std::unique_ptr<xercesc::XMLTranscoder> createTranscoder(const std::shared_ptr<CityGMLLogger>& logger) {
+    xercesc::XMLTransService::Codes failReason;
+    std::unique_ptr<xercesc::XMLTranscoder> transcoder(xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor("UTF-8", failReason, 16*1024));
+    if (!transcoder && logger) {
+        // TODO: It would be best to write this error once per load() call instead of once per library startup.
+        if (failReason != xercesc::XMLTransService::Codes::Ok) {
+            logger->log(CityGMLLogger::LOGLEVEL::LL_WARNING, "Could not initialize UTF-8 Transcoder. Error code: " + std::to_string(static_cast<size_t>(failReason)));
+        } else {
+            logger->log(CityGMLLogger::LOGLEVEL::LL_WARNING, "Could not initialize UTF-8 Transcoder. Unknown error.");
+        }
+    }
+    return transcoder;
+}
+
+std::string toStdString( const XMLCh* const wstr, const std::shared_ptr<CityGMLLogger>& logger)
 {
     if (wstr == nullptr) {
         return "";
     }
 
-    xercesc::XMLTransService::Codes failReason;
-    std::unique_ptr<xercesc::XMLTranscoder> utf8Transcoder(xercesc::XMLPlatformUtils::fgTransService->makeNewTranscoderFor("UTF-8", failReason, 16*1024));
-
-    if (utf8Transcoder != nullptr) {
+    static std::unique_ptr<xercesc::XMLTranscoder> const UTF8_TRANSCODER = createTranscoder(logger);
+    if (UTF8_TRANSCODER != nullptr) {
         XMLSize_t const len = xercesc::XMLString::stringLen(wstr);
         // Needs a minimum size as 1 utf16 character can be several utf8 characters.
         size_t const utf8Len = std::max(static_cast<size_t>(10u), static_cast<size_t>(2 * len));
@@ -61,7 +73,7 @@ std::string toStdString( const XMLCh* const wstr )
         std::string result{};
         XMLSize_t utf16Window = 1, utf16Consumed = 0; // Assigning 1 to the window to fulfill the first iteration condition
         while (utf16Consumed < len && utf16Window > 0) {
-            XMLSize_t utf8Written = utf8Transcoder->transcodeTo(wstr + utf16Consumed, len - utf16Consumed, utf8Bytes.get(), utf8Len, utf16Window,
+            XMLSize_t utf8Written = UTF8_TRANSCODER->transcodeTo(wstr + utf16Consumed, len - utf16Consumed, utf8Bytes.get(), utf8Len, utf16Window,
                     xercesc::XMLTranscoder::UnRep_RepChar);
             utf16Consumed += utf16Window;
             result += std::string(utf8Bytes.get(), utf8Bytes.get() + utf8Written);
@@ -70,7 +82,6 @@ std::string toStdString( const XMLCh* const wstr )
         return result;
     } else {
         // This is a fallback if for some reason xerces-c doesn't come with a UTF-8 transcoder
-        // TODO: We should log this - once per file
         char* tmp = xercesc::XMLString::transcode(wstr);
         std::string str(tmp);
         xercesc::XMLString::release(&tmp);
@@ -125,7 +136,7 @@ public:
     // Attributes interface
     std::string getAttribute(const std::string& attname, const std::string& defvalue) const override {
         std::shared_ptr<XMLCh> name = toXercesString(attname);
-        std::string value = toStdString(m_attrs.getValue(name.get()));
+        std::string value = toStdString(m_attrs.getValue(name.get()), m_logger);
         return value.empty() ? defvalue : value;
     }
 
@@ -151,16 +162,16 @@ public:
         AttributesXercesAdapter attributes(attrs, m_documentLocation, m_logger);
         // We need to empty m_lastcharacters here, because if a tag is empty, characters(...) will never be called and this variable will contain wrong values
         m_lastcharacters = "";
-        CityGMLDocumentParser::startElement(toStdString(qname), attributes);
+        CityGMLDocumentParser::startElement(toStdString(qname, m_logger), attributes);
     }
 
     void endElement(const XMLCh* const, const XMLCh* const, const XMLCh* const qname) override {
-        CityGMLDocumentParser::endElement(toStdString(qname), m_lastcharacters);
+        CityGMLDocumentParser::endElement(toStdString(qname, m_logger), m_lastcharacters);
         m_lastcharacters = "";
     }
 
     void characters(const XMLCh* const chars, const XMLSize_t) override {
-        m_lastcharacters += toStdString(chars);
+        m_lastcharacters += toStdString(chars, m_logger);
     }
 
     void startDocument() override {
@@ -288,7 +299,7 @@ namespace citygml
             }
         }
         catch (const xercesc::XMLException& e) {
-            CITYGML_LOG_ERROR(logger, "Could not initialize xercesc XMLPlatformUtils, a XML Exception occurred : " << toStdString(e.getMessage()));
+            CITYGML_LOG_ERROR(logger, "Could not initialize xercesc XMLPlatformUtils, a XML Exception occurred : " << toStdString(e.getMessage(), logger));
             return false;
         }
 
@@ -316,11 +327,11 @@ namespace citygml
         }
         catch ( const xercesc::XMLException& e )
         {
-            CITYGML_LOG_ERROR(logger, "XML Exception occurred: " << toStdString(e.getMessage()));
+            CITYGML_LOG_ERROR(logger, "XML Exception occurred: " << toStdString(e.getMessage(), logger));
         }
         catch ( const xercesc::SAXParseException& e )
         {
-            CITYGML_LOG_ERROR(logger, "SAXParser Exception occurred: " << toStdString(e.getMessage()));
+            CITYGML_LOG_ERROR(logger, "SAXParser Exception occurred: " << toStdString(e.getMessage(), logger));
         }
         catch ( const std::exception& e )
         {
