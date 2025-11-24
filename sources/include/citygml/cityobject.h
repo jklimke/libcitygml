@@ -9,6 +9,7 @@
 #include <citygml/rectifiedgridcoverage.h>
 #include <citygml/externalreference.h>
 #include <citygml/warnings.h>
+#include <cstdint>
 class TesselatorBase;
 
 namespace citygml {
