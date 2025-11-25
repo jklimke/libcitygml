@@ -17,9 +17,12 @@ namespace citygml {
     {
         std::string id = getAttribute("gml:id", "");
         if (id.empty()) {
-            std::stringstream defaultID;
-            defaultID << "genID_" << getDocumentLocation().getDocumentFileName() << "_" << getDocumentLocation().getCurrentLine() << "_" << + getDocumentLocation().getCurrentColumn();
-            id = defaultID.str();
+            id += "genID_";
+            id += getDocumentLocation().getDocumentFileName();
+            id += "_";
+            id += std::to_string(getDocumentLocation().getCurrentLine());
+            id += "_";
+            id += std::to_string(getDocumentLocation().getCurrentColumn());
         }
         return id;
     }

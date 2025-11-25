@@ -224,6 +224,17 @@ SET(HEADERS
   include/parser/addressparser.h
 )
 
+# Add version.rc for Windows builds
+if(WIN32)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/version.rc.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/version.rc
+    @ONLY
+  )
+  set(VERSION_RC "${CMAKE_CURRENT_SOURCE_DIR}/version.rc")
+  list(APPEND SOURCES ${VERSION_RC})
+endif()
+
 ADD_LIBRARY( ${target} ${LIBCITYGML_USER_DEFINED_DYNAMIC_OR_STATIC} ${SOURCES} ${HEADERS} )
 
 

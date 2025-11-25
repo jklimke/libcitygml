@@ -13,7 +13,7 @@ namespace citygml {
         return m_targetID == ring.getId();
     }
 
-    std::string TextureCoordinates::getTargetLinearRingID() const
+    const std::string & TextureCoordinates::getTargetLinearRingID() const
     {
         return m_targetID;
     }

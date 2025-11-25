@@ -44,6 +44,7 @@ namespace citygml {
         NODETYPE( CORE, CreationDate )
         NODETYPE( CORE, TerminationDate )
         NODETYPE( CORE, GeneralizesTo)
+        NODETYPE( CORE, PointCloud)
 
         NODETYPE( CORE, ExternalReference)
         NODETYPE( CORE, InformationSystem)
@@ -61,9 +62,20 @@ namespace citygml {
         NODETYPE( CORE, ReferencePoint)
         NODETYPE( CORE, MimeType)
         NODETYPE( CORE, LibraryObject)
+        NODETYPE( CORE, GenericAttribute)
+
+        NODETYPE( CORE, Lod0MultiSurface)
+        NODETYPE( CORE, Lod1MultiSurface)
+        NODETYPE( CORE, Lod2MultiSurface)
+        NODETYPE( CORE, Lod3MultiSurface)
+
+        NODETYPE( CORE, Lod1Solid )
+        NODETYPE( CORE, Lod2Solid )
+        NODETYPE( CORE, Lod3Solid )
 
         NODETYPE( CORE, Boundary )
         NODETYPE( CORE, RelativeGeometry )
+        NODETYPE( CORE, ClosureSurface)
 
         // GRP
         NODETYPE( GRP, CityObjectGroup )
@@ -84,6 +96,7 @@ namespace citygml {
         NODETYPE( GEN, IntAttribute )
         NODETYPE( GEN, DateAttribute )
         NODETYPE( GEN, UriAttribute )
+        NODETYPE( GEN, Name )
         NODETYPE( GEN, Value )
 
         NODETYPE( GEN, Lod0Geometry )
@@ -198,6 +211,8 @@ namespace citygml {
         NODETYPE( BLDG, RoomInstallation)
         NODETYPE( BLDG, Opening)
         NODETYPE( BLDG, RoofType)
+        NODETYPE( BLDG, BuildingSubdivision)
+        NODETYPE( BLDG, Storey)
         
         NODETYPE( BLDG, Lod0FootPrint )
         NODETYPE( BLDG, Lod0RoofEdge )
@@ -225,6 +240,7 @@ namespace citygml {
         NODETYPE( CON, FillingSurface )
         NODETYPE( CON, WindowSurface )
         NODETYPE( CON, DoorSurface )
+        NODETYPE( CON, OtherConstruction )
 
         // BoundarySurfaceType
         NODETYPE( BLDG, WallSurface )
@@ -236,6 +252,15 @@ namespace citygml {
         NODETYPE( BLDG, CeilingSurface )
         NODETYPE( BLDG, OuterCeilingSurface )
         NODETYPE( BLDG, OuterFloorSurface )
+
+        NODETYPE( CON, WallSurface )
+        NODETYPE( CON, RoofSurface )
+        NODETYPE( CON, GroundSurface )
+        NODETYPE( CON, FloorSurface )
+        NODETYPE( CON, InteriorWallSurface )
+        NODETYPE( CON, CeilingSurface )
+        NODETYPE( CON, OuterCeilingSurface )
+        NODETYPE( CON, OuterFloorSurface )
         NODETYPE( BLDG, BuildingFurniture )
         NODETYPE( BLDG, IntBuildingInstallation)
         NODETYPE( BLDG, BuildingConstructiveElement)
@@ -313,12 +338,15 @@ namespace citygml {
         NODETYPE( VEG, Height )
         NODETYPE( VEG, TrunkDiameter )
         NODETYPE( VEG, CrownDiameter )
-
         NODETYPE( VEG, Lod0Geometry )
         NODETYPE( VEG, Lod1Geometry )
         NODETYPE( VEG, Lod2Geometry )
         NODETYPE( VEG, Lod3Geometry )
         NODETYPE( VEG, Lod4Geometry )
+        NODETYPE( VEG, Lod1MultiSurface )
+        NODETYPE( VEG, Lod2MultiSurface )
+        NODETYPE( VEG, Lod3MultiSurface )
+        NODETYPE( VEG, Lod4MultiSurface )
 
         // TRANS
         NODETYPE( TRANS, TransportationComplex )
@@ -383,6 +411,27 @@ namespace citygml {
         NODETYPE( BRID, BridgeConstructionElement )
         NODETYPE( BRID, BridgeInstallation )
         NODETYPE( BRID, BridgePart )
+        NODETYPE( BRID, BoundedBy)
+        NODETYPE( BRID, OuterBridgeConstruction )
+        NODETYPE( BRID, OuterBridgeInstallation )
+        NODETYPE( BRID, Lod1Geometry)
+        NODETYPE( BRID, Lod2Geometry)
+        NODETYPE( BRID, Lod3Geometry)
+        NODETYPE( BRID, Lod4Geometry)
+        NODETYPE( BRID, Lod1MultiSurface)
+        NODETYPE( BRID, Lod2MultiSurface)
+        NODETYPE( BRID, Lod3MultiSurface)
+        NODETYPE( BRID, Lod4MultiSurface)
+        
+        NODETYPE( BRID, WallSurface)
+        NODETYPE( BRID, RoofSurface)
+        NODETYPE( BRID, GroundSurface)
+        NODETYPE( BRID, ClosureSurface)
+        NODETYPE( BRID, FloorSurface)
+        NODETYPE( BRID, InteriorWallSurface)
+        NODETYPE( BRID, CeilingSurface)
+        NODETYPE( BRID, OuterCeilingSurface)
+        NODETYPE( BRID, OuterFloorSurface)
 
         // APP
         NODETYPE( APP, Appearance )

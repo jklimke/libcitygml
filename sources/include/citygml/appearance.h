@@ -21,7 +21,7 @@ namespace citygml {
     {
     PRAGMA_WARN_DLL_END
     public:
-        std::string getType() const;
+        const std::string& getType() const;
 
         bool getIsFront() const;
         void setIsFront(bool front);

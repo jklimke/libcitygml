@@ -68,7 +68,7 @@ void AttributeValue::setValue(int value)
     m_value = sstream.str();
 }
 
-std::string AttributeValue::asString() const
+const std::string& AttributeValue::asString() const
 {
     return m_value;
 }

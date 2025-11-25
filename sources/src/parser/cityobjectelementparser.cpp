@@ -39,7 +39,7 @@ namespace citygml {
 
     CityObjectElementParser::CityObjectElementParser(CityGMLDocumentParser& documentParser, CityGMLFactory& factory, std::shared_ptr<CityGMLLogger> logger, std::function<void (CityObject*)> callback)
         : GMLFeatureCollectionElementParser(documentParser, factory, logger)
-        , m_lastAttributeType(AttributeType::String)
+        , m_lastGenericAttributeType(AttributeType::String), m_lastAttributeType(AttributeType::String)
         , m_typeMask(documentParser.getParserParams().objectsMask.get())
         , m_skipped(false)
     {
@@ -74,6 +74,11 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Door));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Window));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CityFurniture));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, Storey));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingSubdivision));
+                typeIDTypeMap.insert(HANDLE_TYPE(BLDG, BuildingRoom));
+                typeIDTypeMap.insert(HANDLE_TYPE(CORE, PointCloud));
+                typeIDTypeMap.insert(HANDLE_TYPE(CORE, ClosureSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(FRN, CityFurniture));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Track));
                 typeIDTypeMap.insert(HANDLE_TYPE(TRANS, Road));
@@ -99,18 +104,38 @@ namespace citygml {
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeConstructionElement));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgeInstallation));
                 typeIDTypeMap.insert(HANDLE_TYPE(BRID, BridgePart));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, OuterBridgeConstruction));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, OuterBridgeInstallation));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, WallSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, RoofSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, GroundSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, ClosureSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, FloorSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, InteriorWallSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, CeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, OuterCeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(BRID, OuterFloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(CON, FillingSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(CON, WindowSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(CON, DoorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, WallSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, RoofSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, GroundSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, WallSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, RoofSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, GroundSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, ClosureSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, FloorSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, InteriorWallSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, CeilingSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, OuterCeilingSurface));
                 typeIDTypeMap.insert(HANDLE_TYPE(BLDG, OuterFloorSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, FloorSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, InteriorWallSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, CeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, OuterCeilingSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, OuterFloorSurface));
+                typeIDTypeMap.insert(HANDLE_TYPE(CON, OtherConstruction));
                 typeIDTypeMap.insert(HANDLE_TYPE(GRP, CityObjectGroup));
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefFeature));
                 typeIDTypeMap.insert(HANDLE_TYPE(DEM, ReliefComponent));
@@ -240,6 +265,8 @@ namespace citygml {
             return AttributeType::Date;
         } else if (node == NodeType::GEN_UriAttributeNode) {
             return AttributeType::Uri;
+        } else if (node == NodeType::CORE_GenericAttributeNode) {
+            return AttributeType::Generic;
         } else {
             // fallback to string for other types
             return AttributeType::String;
@@ -306,9 +333,17 @@ namespace citygml {
              || node == NodeType::GEN_DateAttributeNode
              || node == NodeType::GEN_UriAttributeNode) {
 
-            m_lastAttributeName = attributes.getAttribute("name");
+            if (m_lastAttributeType == AttributeType::Generic) {
+                m_lastGenericAttributeType = getAttributeType(node);
+            } else {
+                m_lastAttributeName = attributes.getAttribute("name");
+                m_lastAttributeType = getAttributeType(node);
+            }
+        } else if (node == NodeType::CORE_GenericAttributeNode) {
             m_lastAttributeType = getAttributeType(node);
-        } else if (attributesSet.count(node.typeID()) > 0 || node == NodeType::GEN_ValueNode) {
+        } else if (attributesSet.count(node.typeID()) > 0 
+            || node == NodeType::GEN_NameNode
+            || node == NodeType::GEN_ValueNode) {
 
             return true;
         } else if (node == NodeType::GML_RectifiedGridCoverageNode) {
@@ -328,6 +363,8 @@ namespace citygml {
                    || node == NodeType::BLDG_BuildingConstructiveElementNode
                    || node == NodeType::BLDG_BuildingRoomNode
                    || node == NodeType::BLDG_BuildingInstallationNode
+                   || node == NodeType::BLDG_BuildingSubdivisionNode
+                   || node == NodeType::BLDG_StoreyNode
                    || node == NodeType::GRP_GroupMemberNode
                    || node == NodeType::GRP_ParentNode
                    || node == NodeType::TRANS_TrafficAreaNode
@@ -352,7 +389,15 @@ namespace citygml {
                    || node == NodeType::CORE_BoundaryNode
                    || node == NodeType::CON_FillingSurfaceNode
                    || node == NodeType::CON_WindowSurfaceNode
-                   || node == NodeType::CON_DoorSurfaceNode) {
+                   || node == NodeType::CON_DoorSurfaceNode
+                   || node == NodeType::CORE_PointCloudNode
+                   || node == NodeType::CON_OtherConstructionNode
+                   || node == NodeType::BRID_OuterBridgeConstructionNode
+                   || node == NodeType::BRID_OuterBridgeInstallationNode
+                   || node == NodeType::BRID_BridgeConstructionElementNode
+                   || node == NodeType::BRID_BridgeInstallationNode
+                   || node == NodeType::BRID_BridgePartNode
+                   || node == NodeType::BRID_BoundedByNode) {
             setParserForNextElement(new CityObjectElementParser(m_documentParser, m_factory, m_logger, [this](CityObject* obj) {
                                         m_model->addChildCityObject(obj);
                                     }));
@@ -374,7 +419,8 @@ namespace citygml {
             }
         } else if (node == NodeType::GEN_Lod0TerrainIntersectionNode
                    || node == NodeType::WTR_Lod0MultiCurveNode
-                   || node == NodeType::WTR_Lod0MultiSurfaceNode) {
+                   || node == NodeType::WTR_Lod0MultiSurfaceNode
+                   || node == NodeType::CORE_Lod0MultiSurfaceNode) {
             
             parseGeometryForLODLevel(0);
         } else if (node == NodeType::BLDG_Lod0FootPrintNode) {
@@ -385,6 +431,8 @@ namespace citygml {
             parseGeometryForLODLevel(0, CityObject::CityObjectsType::COT_RoofSurface);
         } else if (node == NodeType::BLDG_Lod1MultiCurveNode
                    || node == NodeType::BLDG_Lod1MultiSurfaceNode
+                   || node == NodeType::BRID_Lod1MultiSurfaceNode
+                   || node == NodeType::VEG_Lod1MultiSurfaceNode
                    || node == NodeType::BLDG_Lod1SolidNode
                    || node == NodeType::BLDG_Lod1TerrainIntersectionNode
                    || node == NodeType::GEN_Lod1TerrainIntersectionNode
@@ -393,11 +441,15 @@ namespace citygml {
                    || node == NodeType::TRANS_Lod1MultiSurfaceNode
                    || node == NodeType::WTR_Lod1MultiCurveNode
                    || node == NodeType::WTR_Lod1MultiSurfaceNode
+                   || node == NodeType::CORE_Lod0MultiSurfaceNode
+                   || node == NodeType::CORE_Lod1MultiSurfaceNode
                    || node == NodeType::WTR_Lod1SolidNode) {
 
             parseGeometryForLODLevel(1);
         } else if (node == NodeType::BLDG_Lod2MultiCurveNode
                    || node == NodeType::BLDG_Lod2MultiSurfaceNode
+                   || node == NodeType::BRID_Lod2MultiSurfaceNode
+                   || node == NodeType::VEG_Lod2MultiSurfaceNode
                    || node == NodeType::BLDG_Lod2SolidNode
                    || node == NodeType::BLDG_Lod2TerrainIntersectionNode
                    || node == NodeType::GEN_Lod2TerrainIntersectionNode
@@ -411,11 +463,20 @@ namespace citygml {
                    || node == NodeType::GEN_Lod3MultiCurveNode
                    || node == NodeType::GEN_Lod0MultiSurfaceNode
                    || node == NodeType::GEN_Lod2MultiSurfaceNode
-                   || node == NodeType::GEN_Lod3MultiSurfaceNode) {
+                   || node == NodeType::GEN_Lod3MultiSurfaceNode
+                   || node == NodeType::CORE_Lod0MultiSurfaceNode
+                   || node == NodeType::CORE_Lod2MultiSurfaceNode
+                   || node == NodeType::CORE_Lod3MultiSurfaceNode
+                   || node == NodeType::CORE_Lod1SolidNode
+                   || node == NodeType::CORE_Lod2SolidNode
+                   || node == NodeType::CORE_Lod3SolidNode) {
 
             parseGeometryForLODLevel(2);
         } else if (node == NodeType::BLDG_Lod3MultiCurveNode
                    || node == NodeType::BLDG_Lod3MultiSurfaceNode
+                   || node == NodeType::BRID_Lod3MultiSurfaceNode
+                   || node == NodeType::VEG_Lod3MultiSurfaceNode
+                   || node == NodeType::CORE_Lod3MultiSurfaceNode
                    || node == NodeType::BLDG_Lod3SolidNode
                    || node == NodeType::BLDG_Lod3TerrainIntersectionNode
                    || node == NodeType::GEN_Lod3TerrainIntersectionNode
@@ -427,7 +488,10 @@ namespace citygml {
 
             parseGeometryForLODLevel(3);
         } else if (node == NodeType::BLDG_Lod4MultiCurveNode
+                   || node == NodeType::BLDG_Lod4SolidNode
+                   || node == NodeType::VEG_Lod4MultiSurfaceNode
                    || node == NodeType::BLDG_Lod4MultiSurfaceNode
+                   || node == NodeType::BRID_Lod4MultiSurfaceNode
                    || node == NodeType::BLDG_Lod4SolidNode
                    || node == NodeType::BLDG_Lod4TerrainIntersectionNode
                    || node == NodeType::GEN_Lod4TerrainIntersectionNode
@@ -443,22 +507,26 @@ namespace citygml {
         }
         else if (node == NodeType::GEN_Lod1GeometryNode
                    || node == NodeType::FRN_Lod1GeometryNode
-                   || node == NodeType::VEG_Lod1GeometryNode) {
+                   || node == NodeType::VEG_Lod1GeometryNode
+                   || node == NodeType::BRID_Lod1GeometryNode) {
             parseGeometryPropertyElementForLODLevel(1, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::GEN_Lod2GeometryNode
                    || node == NodeType::FRN_Lod2GeometryNode
                    || node == NodeType::BLDG_Lod2GeometryNode
-                   || node == NodeType::VEG_Lod2GeometryNode) {
+                   || node == NodeType::VEG_Lod2GeometryNode
+                   || node == NodeType::BRID_Lod2GeometryNode ) {
             parseGeometryPropertyElementForLODLevel(2, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::GEN_Lod3GeometryNode
                    || node == NodeType::FRN_Lod3GeometryNode
                    || node == NodeType::BLDG_Lod3GeometryNode
-                   || node == NodeType::VEG_Lod3GeometryNode) {
+                   || node == NodeType::VEG_Lod3GeometryNode
+                   || node == NodeType::BRID_Lod3GeometryNode) {
             parseGeometryPropertyElementForLODLevel(3, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::GEN_Lod4GeometryNode
                    || node == NodeType::FRN_Lod4GeometryNode
                    || node == NodeType::BLDG_Lod4GeometryNode
-                   || node == NodeType::VEG_Lod4GeometryNode) {
+                   || node == NodeType::VEG_Lod4GeometryNode
+                   || node == NodeType::BRID_Lod4GeometryNode) {
             parseGeometryPropertyElementForLODLevel(4, attributes.getCityGMLIDAttribute());
         } else if (node == NodeType::GEN_Lod0ImplicitRepresentationNode) {
           
@@ -525,16 +593,33 @@ namespace citygml {
              || node == NodeType::GEN_DateAttributeNode
              || node == NodeType::GEN_UriAttributeNode) {
 
-            m_lastAttributeName = "";
-            m_lastAttributeType = AttributeType::String;
+            if (m_lastAttributeType != AttributeType::Generic) {
+                m_lastAttributeName = "";
+                m_lastAttributeType = AttributeType::String;
+            }
 
+            return true;
+        } else if (node == NodeType::CORE_GenericAttributeNode) {
+            if(!m_lastAttributeName.empty())
+                m_model->setAttribute(m_lastAttributeName, m_lastGenericAttributeValue, m_lastGenericAttributeType);
+            m_lastAttributeName = "";
+            m_lastGenericAttributeValue = "";
+            m_lastAttributeType = AttributeType::String;
+            m_lastGenericAttributeType = AttributeType::String;
+            return true;
+        } else if (node == NodeType::GEN_NameNode) {
+            m_lastAttributeName = characters;
             return true;
         } else if (node == NodeType::GEN_ValueNode) {
 
-            if (!m_lastAttributeName.empty()) {
-                m_model->setAttribute(m_lastAttributeName, characters, m_lastAttributeType);
+            if (m_lastAttributeType == AttributeType::Generic) {
+                m_lastGenericAttributeValue = characters;
             } else {
-                CITYGML_LOG_WARN(m_logger, "Found value node (" << NodeType::GEN_ValueNode << ") outside attribute node... ignore.");
+                if (!m_lastAttributeName.empty()) {
+                    m_model->setAttribute(m_lastAttributeName, characters, m_lastAttributeType);
+                } else {
+                    CITYGML_LOG_WARN(m_logger, "Found value node (" << NodeType::GEN_ValueNode << ") outside attribute node... ignore.");
+                }
             }
 
             return true;
@@ -580,6 +665,9 @@ namespace citygml {
                     || node == NodeType::CON_FillingSurfaceNode
                     || node == NodeType::CON_WindowSurfaceNode
                     || node == NodeType::CON_DoorSurfaceNode
+                    || node == NodeType::BLDG_BuildingSubdivisionNode
+                    || node == NodeType::BLDG_StoreyNode
+                    || node == NodeType::CON_OtherConstructionNode
                     || node == NodeType::GEN_Lod1GeometryNode
                     || node == NodeType::GEN_Lod2GeometryNode
                     || node == NodeType::GEN_Lod3GeometryNode
@@ -596,6 +684,7 @@ namespace citygml {
                     || node == NodeType::VEG_Lod2ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod3ImplicitRepresentationNode
                     || node == NodeType::VEG_Lod4ImplicitRepresentationNode
+                    || node == NodeType::VEG_Lod2GeometryNode
                     || node == NodeType::CORE_ExternalReferenceNode
                     || node == NodeType::BLDG_ConsistsOfBuildingPartNode
                     || node == NodeType::FRN_Lod1GeometryNode
@@ -611,6 +700,8 @@ namespace citygml {
                     || node == NodeType::FRN_Lod4TerrainIntersectionNode
                     || node == NodeType::FRN_Lod4ImplicitRepresentationNode
                     || node == NodeType::CORE_GeneralizesToNode
+                    || node == NodeType::CORE_BoundaryNode
+                    || node == NodeType::CORE_PointCloudNode
                     || node == NodeType::GML_MultiPointNode
                     || node == NodeType::GRP_GroupMemberNode
                     || node == NodeType::GRP_ParentNode
@@ -668,7 +759,32 @@ namespace citygml {
                     || node == NodeType::GEN_Lod0MultiSurfaceNode
                     || node == NodeType::GEN_Lod2MultiSurfaceNode
                     || node == NodeType::GEN_Lod3MultiSurfaceNode
-                    || node == NodeType::CORE_BoundaryNode) {
+                    || node == NodeType::CORE_Lod0MultiSurfaceNode
+                    || node == NodeType::CORE_Lod1MultiSurfaceNode
+                    || node == NodeType::CORE_Lod2MultiSurfaceNode
+                    || node == NodeType::CORE_Lod3MultiSurfaceNode
+                    || node == NodeType::CORE_Lod1SolidNode
+                    || node == NodeType::CORE_Lod2SolidNode
+                    || node == NodeType::CORE_Lod3SolidNode
+                    || node == NodeType::CORE_BoundaryNode
+                    || node == NodeType::BRID_OuterBridgeConstructionNode
+                    || node == NodeType::BRID_OuterBridgeInstallationNode
+                    || node == NodeType::BRID_BridgeConstructionElementNode
+                    || node == NodeType::BRID_BridgeInstallationNode
+                    || node == NodeType::BRID_BridgePartNode
+                    || node == NodeType::BRID_BoundedByNode
+                    || node == NodeType::BRID_Lod1GeometryNode
+                    || node == NodeType::BRID_Lod2GeometryNode
+                    || node == NodeType::BRID_Lod3GeometryNode
+                    || node == NodeType::BRID_Lod4GeometryNode
+                    || node == NodeType::BRID_Lod1MultiSurfaceNode
+                    || node == NodeType::BRID_Lod2MultiSurfaceNode
+                    || node == NodeType::BRID_Lod3MultiSurfaceNode
+                    || node == NodeType::BRID_Lod4MultiSurfaceNode
+                    || node == NodeType::VEG_Lod1MultiSurfaceNode
+                    || node == NodeType::VEG_Lod2MultiSurfaceNode
+                    || node == NodeType::VEG_Lod3MultiSurfaceNode
+                    || node == NodeType::VEG_Lod4MultiSurfaceNode) {
 
             return true;
         }

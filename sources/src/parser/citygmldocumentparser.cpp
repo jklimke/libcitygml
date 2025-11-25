@@ -52,7 +52,7 @@ namespace citygml {
 
     void CityGMLDocumentParser::startElement(const std::string& name, Attributes& attributes)
     {
-        if (checkCurrentElementUnownOrUnexpected_start(name)) {
+        if (checkCurrentElementUnknownOrUnexpected_start(name)) {
             CITYGML_LOG_DEBUG(m_logger, "Skipping element <" << name << "> at " << getDocumentLocation());
             return;
         }
@@ -81,7 +81,7 @@ namespace citygml {
 
     void CityGMLDocumentParser::endElement(const std::string& name, const std::string& characters)
     {
-        if (checkCurrentElementUnownOrUnexpected_end(name)) {
+        if (checkCurrentElementUnknownOrUnexpected_end(name)) {
             CITYGML_LOG_DEBUG(m_logger, "Skipped element <" << name << "> at " << getDocumentLocation());
             return;
         }
@@ -168,7 +168,7 @@ namespace citygml {
         m_currentElementUnknownOrUnexpected = true;
     }
 
-    bool CityGMLDocumentParser::checkCurrentElementUnownOrUnexpected_start(const std::string& name)
+    bool CityGMLDocumentParser::checkCurrentElementUnknownOrUnexpected_start(const std::string& name)
     {
         if (!m_currentElementUnknownOrUnexpected) {
             return false;
@@ -181,7 +181,7 @@ namespace citygml {
         return true;
     }
 
-    bool CityGMLDocumentParser::checkCurrentElementUnownOrUnexpected_end(const std::string& name)
+    bool CityGMLDocumentParser::checkCurrentElementUnknownOrUnexpected_end(const std::string& name)
     {
         if (!m_currentElementUnknownOrUnexpected) {
             return false;

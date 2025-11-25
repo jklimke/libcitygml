@@ -96,7 +96,7 @@ namespace citygml {
         return it->second;
     }
 
-    std::vector<TextureTargetDefinition*> AppearanceTarget::getTextureTargetDefinitions()
+    std::vector<TextureTargetDefinition*> AppearanceTarget::getTextureTargetDefinitions() const
     {
         std::unordered_set<TextureTargetDefinition*> texTargetDefs;
         for (auto& pair : m_themeTexMapFront) {
