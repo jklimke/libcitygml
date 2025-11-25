@@ -47,7 +47,7 @@ namespace citygml {
       */
     #define CITYGML_LOG(logger, level, message)                             \
         do {                                                                \
-            if (logger->isEnabledFor(level)) {                              \
+            if (logger && logger->isEnabledFor(level)) {                              \
                 std::stringstream ss;                                       \
                 ss << message;                                              \
                 logger->log(level, ss.str(), __FILE__,  __LINE__);          \

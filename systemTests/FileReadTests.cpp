@@ -7,10 +7,13 @@
 	#include <citygml/tesselator.h>
 #endif
 
+#include "GlobalLocaleSwitcher.hpp"
+
 #include <gtest/gtest.h>
 
 #include <fstream>
 #include <memory>
+#include <stdexcept>
 #include <time.h>
 
 
@@ -19,26 +22,29 @@ namespace {
 	constexpr bool LOG = false;
 
 void printIndent(unsigned int indent) {
+	if constexpr (!LOG) {
+		return;
+	}
 	for ( unsigned int i = 0; i < indent; i++ ) std::cout << " ";
 }
 
 void printGeometry( const citygml::Geometry& geometry, unsigned int indent ) {
 	printIndent(indent);
-	std::cout << "Geometry for LOD" << geometry.getLOD() << ", type: " << geometry.getTypeAsString() << "\n";
+	if constexpr (LOG) std::cout << "Geometry for LOD" << geometry.getLOD() << ", type: " << geometry.getTypeAsString() << "\n";
 
 	if(geometry.getLineStringCount() > 0) {
 		printIndent(indent+1);
-		std::cout << "Linestrings:" << geometry.getLineStringCount() << "\n";
+		if constexpr (LOG) std::cout << "Linestrings:" << geometry.getLineStringCount() << "\n";
 	}
 
 	if(geometry.getPolygonsCount() > 0) {
 		printIndent(indent+1);
-		std::cout << "Polygons:" << geometry.getPolygonsCount() << "\n";
+		if constexpr (LOG) std::cout << "Polygons:" << geometry.getPolygonsCount() << "\n";
 	}
 
 	if(geometry.getGeometriesCount() > 0) {
 		printIndent(indent+1);
-		std::cout << "SubGeometries:" << "\n";
+		if constexpr (LOG) std::cout << "SubGeometries:" << "\n";
 		for( unsigned int i = 0; i < geometry.getGeometriesCount(); i++ ) {
 			printGeometry(geometry.getGeometry(i), indent+1);
 		}
@@ -48,7 +54,7 @@ void printGeometry( const citygml::Geometry& geometry, unsigned int indent ) {
 
 void printImplicitGeometry( const citygml::ImplicitGeometry& implicitGeometry, unsigned int indent ) {
 	printIndent(indent);
-	std::cout << "Reference point " << implicitGeometry.getReferencePoint() << "\n";
+	if constexpr (LOG) std::cout << "Reference point " << implicitGeometry.getReferencePoint() << "\n";
 	for ( unsigned int i = 0; i < implicitGeometry.getGeometriesCount(); i++ ) {
 		printGeometry( implicitGeometry.getGeometry(i), indent+1 );
 	}
@@ -56,7 +62,7 @@ void printImplicitGeometry( const citygml::ImplicitGeometry& implicitGeometry, u
 
 void analyzeObject( const citygml::CityObject& object, unsigned int indent ) {
 	printIndent(indent);
-	std::cout << "Object " << object.getTypeAsString() << ": " << object.getId() << "\n";
+	if constexpr (LOG) std::cout << "Object " << object.getTypeAsString() << ": " << object.getId() << "\n";
 
 	for ( unsigned int i = 0; i < object.getGeometriesCount(); i++ ) {
 		printGeometry( object.getGeometry(i), indent+1 );
@@ -72,7 +78,7 @@ void analyzeObject( const citygml::CityObject& object, unsigned int indent ) {
 }
 
 void readFile(char const* fileName) {
-	std::cout << "Parsing CityGML file " << fileName << " using libcitygml v." << LIBCITYGML_VERSIONSTR << "...\n";
+	if constexpr (LOG) std::cout << "Parsing CityGML file " << fileName << " using libcitygml v." << LIBCITYGML_VERSIONSTR << "...\n";
 
 	time_t start;
 	time( &start );
@@ -99,7 +105,7 @@ void readFile(char const* fileName) {
 	time_t end;
 	time( &end );
 
-	std::cout << "Done in " << difftime( end, start ) << " seconds.\n";
+	if constexpr (LOG) std::cout << "Done in " << difftime( end, start ) << " seconds.\n";
 
 	if (!city) {
 		FAIL();
@@ -125,8 +131,9 @@ void readFile(char const* fileName) {
 		for ( unsigned int i = 0; i < roots.size(); i++ ) analyzeObject( *(roots[ i ]), 2 );
 	}
 
-	std::cout << "Done.\n";
+	if constexpr (LOG) std::cout << "Done.\n";
 }
+
 } // anonymous namespace
 
 TEST(FileReadTests, berlin_open_data_sample_data) {
@@ -137,6 +144,11 @@ TEST(FileReadTests, b1_lod2_s) {
 	readFile("../../data/b1_lod2_s.gml");
 }
 
-TEST(FileRedTests, FZK_Haus_LoD0_KIT_IAI_KHH_B36_V1) {
+TEST(FileReadTests, FZK_Haus_LoD0_KIT_IAI_KHH_B36_V1) {
 	readFile("../../data/FZK-Haus-LoD0-KIT-IAI-KHH-B36-V1.gml");
+}
+
+TEST(FileReadTests, CommaFileSeparator) {
+    test::GlobalLocaleSwitcher const localeModifier("de_DE.UTF-8");
+    readFile("../../data/FZK-Haus-LoD0-KIT-IAI-KHH-B36-V1.gml");
 }

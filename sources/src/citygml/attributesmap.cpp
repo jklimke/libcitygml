@@ -1,4 +1,5 @@
 #include <citygml/attributesmap.h>
+#include <parser/parserutils.hpp>
 
 #include <sstream>
 
@@ -78,9 +79,7 @@ double AttributeValue::asDouble(double defaultValue) const
 
     if (m_type == AttributeType::Double)
     {
-        std::stringstream sstream;
-        sstream << m_value;
-        sstream >> value;
+        readNextValue<double>(m_value, value);
     }
 
     return value;
@@ -92,9 +91,7 @@ int AttributeValue::asInteger(int defaultValue) const
 
     if (m_type == AttributeType::Integer)
     {
-        std::stringstream sstream;
-        sstream << m_value;
-        sstream >> value;
+        readNextValue<int>(m_value, value);
     }
 
     return value;

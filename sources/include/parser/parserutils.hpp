@@ -1,8 +1,12 @@
 #pragma once
 
+#include <algorithm>
+#include <iterator>
 #include <memory>
-#include <sstream>
 #include <string>
+#include <string_view>
+#include <tuple>
+#include <type_traits>
 #include <vector>
 
 #include <parser/documentlocation.h>
@@ -13,41 +17,25 @@
 
 namespace citygml {
 
-    template<class T> inline T parseValue( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>&, const DocumentLocation&)
-    {
-        std::stringstream ss;
-        ss << s;
-        T v;
-        ss >> v;
-        return v;
+    template <typename T, std::enable_if_t<std::is_fundamental_v<T>, bool> = true>
+    char const* readNextValue(std::string_view view, T& target) {
+        char const* end;
+        std::tie(target, end) = readNextNumber<T>(view);
+        return end;
     }
 
-    inline TransformationMatrix parseMatrix( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location)
-    {
-        std::stringstream ss;
-        ss << s;
-
-
-        double matrix[16] = { 1.0, 0.0, 0.0, 0.0,
-                              0.0, 1.0, 0.0, 0.0,
-                              0.0, 0.0, 1.0, 0.0,
-                              0.0, 0.0, 0.0, 1.0 };
-
-        for (size_t i = 0; i < 16; ++i)
-        {
-            if(ss.eof()) {
-                CITYGML_LOG_WARN(logger, "Matrix with 16 elements expected, got '" << i + 1 << "' at " << location << ". Matrix may be invalid.");
-                break;
-            }
-
-            ss >> matrix[i];
-        }
-
-        return TransformationMatrix(matrix);
+    template <typename T, std::enable_if_t<!std::is_fundamental_v<T>, bool> = true>
+    char const* readNextValue(std::string_view view, T& target) {
+         return target.fromString(view);
     }
 
-    template<> inline bool parseValue( const std::string &s, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location )
-    {
+    template<class T> inline T parseValue(std::string_view s, std::shared_ptr<citygml::CityGMLLogger>&, const DocumentLocation&) {
+        T value;
+        readNextValue<T>(s, value);
+        return value;
+    }
+
+    template<> inline bool parseValue(std::string_view s, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location ) {
         // parsing a bool is special because "true" and "1" are true while "false" and "0" are false
         if (s == "1" || s == "true") {
             return true;
@@ -59,22 +47,48 @@ namespace citygml {
         return false;
     }
 
-    template<class T> inline std::vector<T> parseVecList( const std::string &s,  std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location )
-    {
-        std::stringstream ss;
-        ss << s;
-
-        T v;
-        std::vector<T> vec;
-        while ( ss >> v )
-            vec.push_back( v );
-
-        if ( !ss.eof() )
-        {
-            CITYGML_LOG_WARN(logger, "Mismatch type, list of " << typeid(T).name() << " expected at " << location << " Ring/Polygon may be incomplete!");
+    template<class T>
+    inline std::vector<T> parseVecList(std::string_view view,  std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location ) {
+        if (std::all_of(view.begin(), view.end(), shouldSkip)) {
+            return {};
         }
 
+        std::vector<T> vec;
+        while (!view.empty()) {
+            T value;
+            char const* end = readNextValue(view, value);
+            std::ptrdiff_t const consumedChars = std::distance(view.data(), end);
+            if (consumedChars > 0) {
+                vec.push_back(value);
+                view = view.substr(consumedChars);
+            } else {
+                break; // reading stopped at an invalid character
+            }
+        }
         return vec;
+    }
+
+    inline TransformationMatrix parseMatrix(std::string_view view, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location) {
+        double matrix[16] = { 1.0, 0.0, 0.0, 0.0,
+                              0.0, 1.0, 0.0, 0.0,
+                              0.0, 0.0, 1.0, 0.0,
+                              0.0, 0.0, 0.0, 1.0 };
+        for (size_t i = 0; i < 16; ++i){
+            if(view.empty() || std::all_of(view.begin(), view.end(), shouldSkip)) {
+                CITYGML_LOG_WARN(logger, "Matrix with 16 elements expected, got '" << i + 1 << "' at " << location << ". Matrix may be invalid.");
+                break;
+            }
+            double nextValue;
+            char const* nextChar = readNextValue(view, nextValue);
+            std::ptrdiff_t const consumedChars = std::distance(view.data(), nextChar);
+            if (consumedChars > 0) {
+                view = view.substr(consumedChars);
+                matrix[i] = nextValue;
+            } else {
+                view = std::string_view{};
+            }
+        }
+        return TransformationMatrix(matrix);
     }
 
     inline std::string parseReference(const std::string& reference, std::shared_ptr<citygml::CityGMLLogger>& logger, const DocumentLocation& location) {

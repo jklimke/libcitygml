@@ -18,14 +18,12 @@
 
 #include <string>
 #include <vector>
-#include <sstream>
 #include <map>
 #include <memory>
 #include <functional>
 #include <unordered_set>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sstream>
 
 #include <citygml/citygml_api.h>
 #include <citygml/vecs.hpp>

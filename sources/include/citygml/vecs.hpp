@@ -1,8 +1,60 @@
 #pragma once
-#include <sstream>
+#include <algorithm>
+#include <array>
+#include <cctype>
+#include <charconv>
 #include <iostream>
 #include <math.h>
+#include <stdexcept>
 #include <string.h>
+#include <string_view>
+#include <utility>
+
+// Utils
+
+namespace {
+    // C whitespaces plus '+' as std::from_chars does NOT handle leading plus characters.
+    constexpr std::array<char, 7> NUMBER_WHITESPACE { ' ', '\f', '\n', '\r', '\t', '\v', '+' }; 
+} // anonymous namespace
+
+inline bool shouldSkip(char value) {
+    return std::any_of(NUMBER_WHITESPACE.begin(), NUMBER_WHITESPACE.end(), [value](char v) { return v == value; });
+}
+
+template <typename T>
+std::pair<T, char const*> readNextNumber(std::string_view const& string) {
+    char const* const firstPattern = std::find_if(string.data(), string.data() + string.size(), [](char ch) {
+        return !shouldSkip(ch);
+    });
+
+    if (firstPattern != string.data() + string.size()) {
+        T result;
+        auto [patternEnd, errorCode] = std::from_chars(firstPattern, string.data() + string.size(), result);
+        if (errorCode == std::errc()) {
+            char const* const nextPattern = std::find_if(patternEnd, string.data() + string.size(), [](char ch) {
+                return !shouldSkip(ch);
+            });
+            return { result, nextPattern };
+        }
+    }
+
+    // invalid pattern - be lenient and return default value
+    return { T{}, firstPattern };
+}
+
+template <typename T, size_t N>
+char const* readNextNumbers(std::string_view view, std::array<T*, N> const& targets) {
+    for (T* target : targets) {
+        if (view.empty()) {
+            break; // Illegal number input - be lenient and not set missing targets.
+        } else {
+            char const* end;
+            std::tie(*target, end) = readNextNumber<T>(view);
+            view = view.substr(std::distance(view.data(), end));
+        }
+    }
+    return view.data();
+}
 
 // 2D vector class.
 
@@ -20,6 +72,8 @@ public:
 
     TVec2( const T x = (T)0, const T y = (T)0 );
     TVec2( const T vec[] );
+
+    char const* fromString(std::string_view view);
 
     TVec2 operator+( const TVec2<T>& v ) const;
     TVec2 operator-( const TVec2<T>& v ) const;
@@ -100,9 +154,8 @@ template<class T> inline std::ostream& operator<<(std::ostream & os, TVec2<T> co
     return os << std::fixed << v.x << " " << std::fixed << v.y;
 }
 
-template<class T> inline std::istream& operator>>(std::istream & is, TVec2<T> & v)
-{
-    return is >> v.x >> v.y;
+template<class T> char const* TVec2<T>::fromString(std::string_view view) {
+    return readNextNumbers(view, std::array<T*, 2>{ &x, &y });
 }
 
 typedef TVec2< float >			TVec2f;
@@ -121,6 +174,8 @@ public:
 
     inline T length() const;
     inline T sqrLength() const;
+
+    char const* fromString(std::string_view view);
 
     T dot( const TVec3<T>& vec ) const;
     TVec3 cross( const TVec3<T>& vec ) const;
@@ -262,23 +317,12 @@ template<class T> inline std::ostream& operator<<(std::ostream & os, const TVec3
     return os << std::fixed << v.x << " " << std::fixed << v.y << " " << std::fixed << v.z;
 }
 
-template<class T> inline std::istream& operator>>(std::istream & is, TVec3<T> & v) {
-    return is >> v.x >> v.y >> v.z;
+template<class T> char const* TVec3<T>::fromString(std::string_view view) {
+    return readNextNumbers(view, std::array<T*, 3>{ &x, &y, &z });
 }
 
 typedef TVec3< float >			TVec3f;
 typedef TVec3< double >			TVec3d;
-
-
-//std::istream& operator>>(std::istream & is, TVec3d & v)
-//{
-//    return is >> v.x >> v.y >> v.z;
-//}
-
-//std::istream& operator>>(std::istream & is, TVec3f & v)
-//{
-//    return is >> v.x >> v.y >> v.z;
-//}
 
 
 // 4D vector class.
@@ -296,6 +340,8 @@ public:
         this->z = z;
         this->w = w;
     }
+
+    char const* fromString(std::string_view view);
 };
 
 template<class T> inline std::ostream& operator<<( std::ostream & os, TVec4<T> const & v )
@@ -303,9 +349,8 @@ template<class T> inline std::ostream& operator<<( std::ostream & os, TVec4<T> c
     return os << std::fixed << v.x << " " << std::fixed << v.y << " " << std::fixed << v.z << " " << std::fixed << v.w;
 }
 
-template<class T> inline std::istream& operator>>( std::istream & is, TVec4<T> & v )
-{
-    return is >> v.x >> v.y >> v.z >>  v.w;
+template<class T> char const* TVec4<T>::fromString(std::string_view view) {
+    return readNextNumbers(view, std::array<T*, 4>{ &x, &y, &z, &w });
 }
 
 typedef TVec4< float >			TVec4f;

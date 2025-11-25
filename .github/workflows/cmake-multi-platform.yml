@@ -51,7 +51,7 @@ jobs:
 
     - name: Install Packages for Ubuntu
       if: ${{ (contains(matrix.os, 'ubuntu')) }}
-      run: sudo apt-get update && sudo apt-get install -y --fix-missing libxerces-c-dev libxerces-c3.2 libgdal34t64 libgdal-dev libopenscenegraph-dev
+      run: sudo apt-get update && sudo apt-get install -y --fix-missing libxerces-c-dev libxerces-c3.2 libgdal34t64 libgdal-dev libopenscenegraph-dev && locale -a && sudo locale-gen de_DE.UTF-8 && sudo update-locale
 
     - name: Prebuild XercesC on Windows
       id: xerces-build
@@ -105,4 +105,4 @@ jobs:
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest --build-config ${{ matrix.build_type }}
+      run: ctest --build-config ${{ matrix.build_type }} --output-on-failure
